@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base{
+	body{
+		@apply bg-primary-variant bg-opacity-5
+	}
+}
+@layer components {
+	.side-card {
+		@apply bg-white text-primary rounded-md p-3 flex items-center w-auto gap-x-4 cursor-pointer shadow-[0_2px_2px_gray];
+	}
+	.side-icon {
+		@apply text-2xl block float-left bg-primary rounded-full p-2 text-white;
+	}
+}
+
+/*  text-gray-300 text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-light-white rounded-md 
+   */
