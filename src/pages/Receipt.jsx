@@ -1,12 +1,25 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
+import Sidebar from "../components/layouts/Sidebar";
 import api from "../instance/TokenInstance";
+import { MdDelete } from "react-icons/md";
+import { CiEdit } from "react-icons/ci";
 import Modal from "../components/modals/Modal";
+import { BsEye } from "react-icons/bs";
+import UploadModal from "../components/modals/UploadModal";
+import axios from "axios";
+import url from "../data/Url";
+import { Select, Dropdown } from "antd";
 import DataTable from "../components/layouts/Datatable";
 import CustomAlert from "../components/alerts/CustomAlert";
+import EndlessCircularLoader from "../components/loaders/EndlessCircularLoader";
 import CircularLoader from "../components/loaders/CircularLoader";
-
+import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
+import { IoMdMore } from "react-icons/io";
+import { Link } from "react-router-dom";
+import { fieldSize } from "../data/fieldSize";
+
 const Receipt = () => {
   const [groups, setGroups] = useState([]);
   const [TableDaybook, setTableDaybook] = useState([]);
@@ -26,21 +39,23 @@ const Receipt = () => {
   const [receiptNo, setReceiptNo] = useState("");
   const [paymentMode, setPaymentMode] = useState("cash");
   const [searchText, setSearchText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showFilterField, setShowFilterField] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState("Today");
+
+  const now = new Date();
   const onGlobalSearchChangeHandler = (e) => {
     setSearchText(e.target.value);
   };
-  const [selectedFromDate, setSelectedFromDate] = useState(() => {
-    const today = new Date();
-    return today.toISOString().split("T")[0];
-  });
-  const [selectedDate, setSelectedDate] = useState(() => {
-    const today = new Date();
-    return today.toISOString().split("T")[0];
-  });
+  const todayString = now.toISOString().split("T")[0];
+  const [selectedFromDate, setSelectedFromDate] = useState(todayString);
+  const [selectedDate, setSelectedDate] = useState(todayString);
   const [selectedPaymentMode, setSelectedPaymentMode] = useState("");
+  const [hideAccountType, setHideAccountType] = useState("");
+  const [selectedAccountType, setSelectedAccountType] = useState("");
   const [selectedCustomers, setSelectedCustomers] = useState("");
   const [payments, setPayments] = useState([]);
-
+  const [showAllPaymentModes, setShowAllPaymentModes] = useState(false);
   const [formData, setFormData] = useState({
     group_id: "",
     user_id: "",
@@ -57,7 +72,38 @@ const Receipt = () => {
     type: "info",
   });
   const handleModalClose = () => setShowUploadModal(false);
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    const userObj = JSON.parse(user);
 
+    if (
+      userObj &&
+      userObj.admin_access_right_id?.access_permissions?.edit_payment
+    ) {
+      const showPaymentsModes =
+        userObj.admin_access_right_id?.access_permissions?.edit_payment ===
+        "true"
+          ? true
+          : false;
+      setShowAllPaymentModes(showPaymentsModes);
+    }
+  }, []);
+  useEffect(() => {
+      const user = localStorage.getItem("user");
+      const userObj = JSON.parse(user);
+  
+      if (
+        userObj &&
+        userObj.admin_access_right_id?.access_permissions?.edit_payment
+      ) {
+        const isModify =
+          userObj.admin_access_right_id?.access_permissions?.edit_payment ===
+          "true"
+            ? true
+            : false;
+        setHideAccountType(isModify);
+      }
+    }, []);
   useEffect(() => {
     const fetchGroups = async () => {
       try {
@@ -80,6 +126,18 @@ const Receipt = () => {
       }
     };
     fetchReceipt();
+  }, []);
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const response = await api.get("/user/get-user");
+        setFilteredUsers(response.data);
+      } catch (error) {
+        console.error("Error fetching group data:", error);
+      }
+    };
+    fetchGroups();
   }, []);
 
   useEffect(() => {
@@ -109,37 +167,6 @@ const Receipt = () => {
     }));
   };
 
-  // const handleGroupChange = async (groupId) => {
-  //     setSelectedGroup(groupId);
-  //     if (groupId) {
-  //         try {
-  //             const response = await api.get(`/enroll/get-group-enroll/${groupId}`);
-  //             if (response.data && response.data.length > 0) {
-  //                 setFilteredUsers(response.data);
-  //             } else {
-  //                 setFilteredUsers([]);
-  //             }
-  //         } catch (error) {
-  //             console.error("Error fetching enrollment data:", error);
-  //             setFilteredUsers([]);
-  //         }
-  //     } else {
-  //         setFilteredUsers([]);
-  //     }
-  // };
-
-  useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const response = await api.get("/user/get-user");
-        setFilteredUsers(response.data);
-      } catch (error) {
-        console.error("Error fetching group data:", error);
-      }
-    };
-    fetchGroups();
-  }, []);
-
   const handleGroup = async (event) => {
     const groupId = event.target.value;
     setSelectedGroupId(groupId);
@@ -163,46 +190,68 @@ const Receipt = () => {
     }
   };
 
-  const handleGroupPayment = async (event) => {
-    const groupId = event.target.value;
+  const groupOptions = [
+    { value: "Today", label: "Today" },
+    { value: "Yesterday", label: "Yesterday" },
+    { value: "ThisMonth", label: "This Month" },
+    { value: "LastMonth", label: "Last Month" },
+    { value: "ThisYear", label: "This Year" },
+    { value: "Custom", label: "Custom" },
+  ];
+
+  const handleGroupPayment = async (groupId) => {
+    // const groupId = event.target.value;
     setSelectedAuctionGroupId(groupId);
-    handleGroupChange(groupId);
   };
 
-  // const handleGroupPaymentChange = async (groupId) => {
-  //     setSelectedAuctionGroup(groupId);
-  //     if (groupId) {
-  //         try {
-  //             // Include selectedDate in the query parameters
-  //             const response = await api.get(
-  //                 `/payment/get-group-payment/${groupId}`,
-  //                 {
-  //                     params: { pay_date: selectedDate }, // Send selectedDate as a query parameter
-  //                 }
-  //             );
-  //             if (response.data && response.data.length > 0) {
-  //                 setFilteredAuction(response.data);
-  //             } else {
-  //                 setFilteredAuction([]);
-  //             }
-  //         } catch (error) {
-  //             console.error("Error fetching payment data:", error);
-  //             setFilteredAuction([]);
-  //         }
-  //     } else {
-  //         setFilteredAuction([]);
-  //     }
-  // };
+  const handleSelectFilter = (value) => {
+    setSelectedLabel(value);
+    //const { value } = e.target;
+    setShowFilterField(false);
 
+    const today = new Date();
+    const formatDate = (date) => date.toLocaleDateString("en-CA");
+
+    if (value === "Today") {
+      const formatted = formatDate(today);
+      setSelectedFromDate(formatted);
+      setSelectedDate(formatted);
+    } else if (value === "Yesterday") {
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const formatted = formatDate(yesterday);
+      setSelectedFromDate(formatted);
+      setSelectedDate(formatted);
+    } else if (value === "ThisMonth") {
+      const start = new Date(today.getFullYear(), today.getMonth(), 1);
+      const end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      setSelectedFromDate(formatDate(start));
+      setSelectedDate(formatDate(end));
+    } else if (value === "LastMonth") {
+      const start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+      const end = new Date(today.getFullYear(), today.getMonth(), 0);
+      setSelectedFromDate(formatDate(start));
+      setSelectedDate(formatDate(end));
+    } else if (value === "ThisYear") {
+      const start = new Date(today.getFullYear(), 0, 1);
+      const end = new Date(today.getFullYear(), 11, 31);
+      setSelectedFromDate(formatDate(start));
+      setSelectedDate(formatDate(end));
+    } else if (value === "Custom") {
+      setShowFilterField(true);
+    }
+  };
   const formatPayDate = (dateString) => {
     const date = new Date(dateString);
-    const options = { day: "numeric", month: "short", year: "numeric" };
+    const options = { day: "numeric", month: "long", year: "numeric" };
     return date.toLocaleDateString("en-US", options).replace(",", "");
   };
 
   useEffect(() => {
+    const abortController = new AbortController();
     const fetchPayments = async () => {
       try {
+        setIsLoading(true);
         const response = await api.get(`/payment/get-report-receipt`, {
           params: {
             from_date: selectedFromDate,
@@ -210,36 +259,71 @@ const Receipt = () => {
             groupId: selectedAuctionGroupId,
             userId: selectedCustomers,
             pay_type: selectedPaymentMode,
+            account_type: selectedAccountType,
+            
           },
+          signal:abortController.signal
         });
+        console.info(response.data, "testing account type")
         if (response.data && response.data.length > 0) {
           const validPayments = response.data.filter(
             (payment) => payment.group_id !== null
           );
 
           setFilteredAuction(validPayments);
-          console.log("payment:", validPayments);
 
           const totalAmount = validPayments.reduce(
             (sum, payment) => sum + Number(payment.amount || 0),
             0
           );
+          console.info(totalAmount,"check amount");
           setPayments(totalAmount);
 
           const formattedData = validPayments.map((group, index) => ({
-            _id:group._id,
+            _id: group?._id,
             id: index + 1,
-            date: group.pay_date,
-            group: group.group_id.group_name,
-            name: group.user_id?.full_name,
-            phone_number: group.user_id?.phone_number,
-            receipt_no: group?.receipt_no
-              ? group.receipt_no
-              : `#${group.old_receipt_no.split("-")[1]}`,
-            ticket: group.ticket,
-            amount: group.amount,
-            mode: group.pay_type,
-            collected_by: group?.collected_by?.name || "Admin",
+            date: group?.pay_date,
+            group: group?.group_id?.group_name || group.pay_for,
+            name: group?.user_id?.full_name,
+            category: group?.pay_for || "Chit",
+            phone_number: group?.user_id?.phone_number,
+            receipt_no: group?.receipt_no,
+            old_receipt_no: group?.old_receipt_no,
+            ticket: group?.ticket,
+            amount: group?.amount,
+            transaction_date: group?.createdAt?.split("T")?.[0],
+            mode: group?.pay_type,
+            account_type: group?.account_type,
+            collected_by:
+              group?.collected_by?.name ||
+              group?.admin_type?.admin_name ||
+              "Super Admin",
+            action: (
+              <div className="flex justify-center gap-2">
+                <Dropdown
+                  trigger={["click"]}
+                  menu={{
+                    items: [
+                      {
+                        key: "1",
+                        label: (
+                          <Link
+                            target="_blank"
+                            to={`/print/${group._id}`}
+                            className="text-blue-600 "
+                          >
+                            Print
+                          </Link>
+                        ),
+                      },
+                    ],
+                  }}
+                  placement="bottomLeft"
+                >
+                  <IoMdMore className="text-bold" />
+                </Dropdown>
+              </div>
+            ),
           }));
 
           setTableDaybook(formattedData);
@@ -250,29 +334,41 @@ const Receipt = () => {
         console.error("Error fetching payment data:", error);
         setFilteredAuction([]);
         setPayments(0);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchPayments();
+     return ()=>{
+        abortController.abort();
+      }
   }, [
     selectedAuctionGroupId,
     selectedDate,
     selectedPaymentMode,
     selectedCustomers,
     selectedFromDate,
+    selectedAccountType,
   ]);
 
   const columns = [
     { key: "id", header: "SL. NO" },
-    { key: "date", header: "Date" },
+    { key: "date", header: "Paid Date" },
+    { key: "transaction_date", header: "Transaction Date" },
     { key: "group", header: "Group Name" },
     { key: "name", header: "Customer Name" },
+    { key: "category", header: "Category" },
     { key: "phone_number", header: "Customer Phone Number" },
     { key: "receipt_no", header: "Receipt Number" },
+    { key: "old_receipt_no", header: "Old Receipt" },
     { key: "ticket", header: "Ticket" },
     { key: "amount", header: "Amount" },
     { key: "mode", header: "Payment Mode" },
+    ...(hideAccountType
+    ? [{ key: "account_type", header: "Account Type" }]: []),
     { key: "collected_by", header: "Collected By" },
+    { key: "action", header: "Action" },
   ];
 
   useEffect(() => {
@@ -314,7 +410,6 @@ const Receipt = () => {
       const response = await api.post("/payment/add-payment", formData);
       if (response.status === 201) {
         alert("Payment Added Successfully");
-        //window.location.reload();
         setShowModal(false);
       }
     } catch (error) {
@@ -386,39 +481,80 @@ const Receipt = () => {
   return (
     <>
       <div className="w-screen">
-        <div className="flex mt-20">
-        
+        <div className="flex mt-30">
+          <Navbar
+            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+            visibility={true}
+          />
           <CustomAlert
             type={alertConfig.type}
             isVisible={alertConfig.visibility}
             message={alertConfig.message}
           />
           <div className="flex-grow p-7">
-            <h1 className="text-2xl font-semibold">Reports - Receipt</h1>
+            <h1 className="text-2xl font-bold">Reports - Receipt</h1>
             <div className="mt-6 mb-8">
               <div className="mb-2">
                 <div className="flex justify-start items-center w-full gap-4">
                   <div className="mb-2">
-                    <label>From Date</label>
-                    <input
-                      type="date"
-                      value={selectedFromDate}
-                      onChange={(e) => setSelectedFromDate(e.target.value)}
-                      className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full max-w-xs"
-                    />
+                    <label>Filter Option</label>
+                    {/* <select
+                      onChange={handleSelectFilter}
+                      className="border border-gray-300 rounded px-6 shadow-sm outline-none w-full max-w-md"
+                    >
+                      <option value="Today">Today</option>
+                      <option value="Yesterday">Yesterday</option>
+                      <option value="ThisMonth">This Month</option>
+                      <option value="LastMonth">Last Month</option>
+                      <option value="ThisYear">This Year</option>
+                      <option value="Custom">Custom</option>
+                    </select> */}
+                    <Select
+                      showSearch
+                      popupMatchSelectWidth={false}
+                      onChange={handleSelectFilter}
+                      value={selectedLabel}
+                      placeholder="Search Or Select Filter"
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      className="w-full max-w-xs h-11"
+                    >
+                      {groupOptions.map((time) => (
+                        <Select.Option key={time.value} value={time.value}>
+                          {time.label}
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </div>
-                  <div className="mb-2">
-                    <label>To Date</label>
-                    <input
-                      type="date"
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full max-w-xs"
-                    />
-                  </div>
+                  {showFilterField && (
+                    <div className="flex gap-4">
+                      <div className="mb-2">
+                        <label>From Date</label>
+                        <input
+                          type="date"
+                          value={selectedFromDate}
+                          onChange={(e) => setSelectedFromDate(e.target.value)}
+                          className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full max-w-xs"
+                        />
+                      </div>
+                      <div className="mb-2">
+                        <label>To Date</label>
+                        <input
+                          type="date"
+                          value={selectedDate}
+                          onChange={(e) => setSelectedDate(e.target.value)}
+                          className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full max-w-xs"
+                        />
+                      </div>
+                    </div>
+                  )}
                   <div className="mb-2">
                     <label>Group</label>
-                    <select
+                    {/* <select
                       value={selectedAuctionGroupId}
                       onChange={handleGroupPayment}
                       className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
@@ -429,11 +565,32 @@ const Receipt = () => {
                           {group.group_name}
                         </option>
                       ))}
-                    </select>
+                    </select> */}
+                    <Select
+                      showSearch
+                      popupMatchSelectWidth={false}
+                      value={selectedAuctionGroupId}
+                      onChange={handleGroupPayment}
+                      placeholder="Search Or Select Group"
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      className="w-full max-w-xs h-11"
+                    >
+                      <Select.Option value={""}>All</Select.Option>
+                      {groups.map((group) => (
+                        <Select.Option key={group._id} value={group._id}>
+                          {group.group_name}
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </div>
                   <div className="mb-2">
                     <label>Customer</label>
-                    <select
+                    {/* <select
                       value={selectedCustomers}
                       onChange={(e) => setSelectedCustomers(e.target.value)}
                       className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
@@ -444,11 +601,33 @@ const Receipt = () => {
                           {group?.full_name} - {group.phone_number}
                         </option>
                       ))}
-                    </select>
+                    </select> */}
+                    <Select
+                      showSearch
+                      popupMatchSelectWidth={false}
+                      value={selectedCustomers}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      placeholder="Search Or Select Customer"
+                      onChange={(groupId) => setSelectedCustomers(groupId)}
+                      className="w-full max-w-xs h-11"
+                      // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
+                    >
+                      <Select.Option value="">All</Select.Option>
+                      {filteredUsers.map((group) => (
+                        <Select.Option key={group?._id} value={group?._id}>
+                          {group?.full_name} - {group.phone_number}
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </div>
                   <div className="mb-2">
                     <label>Payment Mode</label>
-                    <select
+                    {/* <select
                       value={selectedPaymentMode}
                       onChange={(e) => setSelectedPaymentMode(e.target.value)}
                       className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
@@ -456,8 +635,66 @@ const Receipt = () => {
                       <option value="">All</option>
                       <option value="cash">Cash</option>
                       <option value="online">Online</option>
-                    </select>
+                    </select> */}
+                    <Select
+                      value={selectedPaymentMode}
+                      showSearch
+                      placeholder="Search Or Select Payment"
+                      popupMatchSelectWidth={false}
+                      onChange={(groupId) => setSelectedPaymentMode(groupId)}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      className="w-full max-w-xs h-11"
+                      // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
+                    >
+                      <Select.Option value="">All</Select.Option>
+                      <Select.Option value="cash">Cash</Select.Option>
+                      <Select.Option value="online">Online</Select.Option>
+                    
+                    </Select>
                   </div>
+                  {showAllPaymentModes && (
+                  <div className="mb-2">
+                    <label>Account Type</label>
+                    {/* <select
+                      value={selectedPaymentMode}
+                      onChange={(e) => setSelectedPaymentMode(e.target.value)}
+                      className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
+                    >
+                      <option value="">All</option>
+                      <option value="cash">Cash</option>
+                      <option value="online">Online</option>
+                    </select> */}
+                    <Select
+                      value={selectedAccountType}
+                      showSearch
+                      placeholder="Search Or Select Account Type"
+                      popupMatchSelectWidth={false}
+                      onChange={(groupId) => setSelectedAccountType(groupId)}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      className="w-full max-w-xs h-11"
+                      // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
+                    >
+                        <>
+                         <option value="">Select Account Type</option>
+                          <option value="suspense">Suspense</option>
+                          <option value="credit">Credit</option>
+                          <option value="adjustment">Adjustment</option>
+                          <option value="others">Others</option>
+                        </>
+                      
+                    </Select>
+                  </div>
+                  )}
                   <div>
                     <h1 className="text-md mt-6">
                       Total Amount:{" "}
@@ -466,10 +703,10 @@ const Receipt = () => {
                   </div>
                 </div>
               </div>
-              {filteredAuction && filteredAuction.length > 0 ? (
+              {filteredAuction && filteredAuction.length > 0 && !isLoading ? (
                 <div className="mt-10">
                   <DataTable
-                    data={filterOption(TableDaybook,searchText)}
+                    data={filterOption(TableDaybook, searchText)}
                     columns={columns}
                     exportedFileName={`ReportsReceipt-${
                       TableDaybook.length > 0
@@ -479,10 +716,19 @@ const Receipt = () => {
                         : "empty"
                     }.csv`}
                   />
+                  <div className="flex justify-end mt-4 pr-4">
+                    <span className="text-lg font-semibold">
+                      Total Amount: ₹{payments}
+                    </span>
+                  </div>
                 </div>
               ) : (
                 <div className="mt-10 text-center text-gray-500">
-                  <CircularLoader />
+                  <CircularLoader
+                    isLoading={isLoading}
+                    failure={filteredAuction.length <= 0}
+                    data="Receipt Data"
+                  />
                 </div>
               )}
             </div>

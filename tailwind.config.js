@@ -5,8 +5,8 @@ export default {
 	safelist: [
 		{
 			pattern:
-				/bg-(primary|custom-blue|custom-yellow|custom-violet|custom-green|custom-dark-green)/,
-			variants: ["hover"], // Essential for hover states
+				/bg-(primary|custom-blue|custom-yellow|custom-violet|custom-green|custom-dark-green|custom-pink|custom-orange|custom-purple)/,
+			variants: ["hover"], 
 		},
 	],
 	theme: {
@@ -23,6 +23,10 @@ export default {
 				"custom-green": "#04A6C6",
 				"custom-dark-blue": "#316FE8",
 				"custom-dark-green": "#227B94",
+				"custom-pink":"#E75480",
+				"custom-orange":"#9D4EDD",
+				"custom-purple":"#CEA2FD",
+
 			},
 			container: {
 				center: true,

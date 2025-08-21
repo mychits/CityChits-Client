@@ -4,6 +4,7 @@ import html2canvas from "html2canvas";
 import { BiPrinter } from "react-icons/bi";
 import { useParams } from "react-router-dom";
 import api from "../instance/TokenInstance";
+import mychitsLogo from "../assets/images/mychits.png"; 
 
 const ReceiptComponent = () => {
     const { id } = useParams()
@@ -81,7 +82,12 @@ const ReceiptComponent = () => {
                         padding: "15px",
                         boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
                     }}
-                >
+                >    <img
+  src={mychitsLogo}
+  alt="Company Logo"
+  width="40"
+  style={{ margin: "0 auto 8px", display: "block" }}
+/>
                     <h2 style={{ textAlign: "center", margin: 0 }}>MY CHITS</h2>
                     <p style={{ textAlign: "center", fontSize: "12px", margin: "5px 0" }}>
                         No.11/36-25, 2nd Main, Kathriguppe Main Road,
@@ -130,6 +136,12 @@ const ReceiptComponent = () => {
                         boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
                     }}
                 >
+                     <img
+  src={mychitsLogo}
+  alt="Company Logo"
+  width="40"
+  style={{ margin: "0 auto 8px", display: "block" }}
+/>
                     <h2 style={{ textAlign: "center", margin: 0 }}>MY CHITS</h2>
                     <p style={{ textAlign: "center", fontSize: "12px", margin: "5px 0" }}>
                         No.11/36-25, 2nd Main, Kathriguppe Main Road,

@@ -56,7 +56,6 @@ const UploadModal = ({ show, onClose, onSubmit, groups, selectedGroupId, handleG
           <div className="flex justify-between mb-4">
             <select
               name="group_id"
-              value={`${formData.group_id}|${formData.ticket}`}
               onChange={handleChangeUser}
               required
               className="w-full border border-gray-300 rounded-md p-2 mr-2"
@@ -68,7 +67,7 @@ const UploadModal = ({ show, onClose, onSubmit, groups, selectedGroupId, handleG
                 return (
                   <option
                     key={group.enrollment.group._id}
-                    value={`${group.enrollment.group._id}|${group.enrollment.tickets}`}
+                    value={`chit-${group.enrollment.group._id}|${group.enrollment.tickets}`}
                   >
                     {group.enrollment.group.group_name} | {group.enrollment.tickets}
                   </option>

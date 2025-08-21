@@ -1,140 +1,195 @@
-import React, { useState } from "react";
-import { BsArrowLeftShort, BsChevronDown } from "react-icons/bs";
-import { RiDashboardFill } from "react-icons/ri";
+import { Fragment, useState } from "react";
+import { BsArrowLeftShort } from "react-icons/bs";
+import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+import { NavLink } from "react-router-dom";
+import {
+  RiDashboardFill,
+  RiAdminLine,
+} from "react-icons/ri";
 import { SiGoogleanalytics } from "react-icons/si";
-import { TbCategoryPlus } from "react-icons/tb";
-import { IoIosPersonAdd } from "react-icons/io";
-import { BsCash } from "react-icons/bs";
-import { GrAnalytics } from "react-icons/gr";
-import { CgProfile } from "react-icons/cg";
-import { IoIosSettings } from "react-icons/io";
-import { IoIosHelpCircle } from "react-icons/io";
-import { RiAuctionLine } from "react-icons/ri";
-import { FaPeopleArrows, FaLayerGroup, FaUserLock } from "react-icons/fa";
-import { GiGoldBar } from "react-icons/gi";
 import { IoPeopleOutline } from "react-icons/io5";
+import { GoGraph } from "react-icons/go";
+import { CgProfile } from "react-icons/cg";
+import { IoIosHelpCircle } from "react-icons/io";
 import { TiSpanner } from "react-icons/ti";
-import { Link } from "react-router-dom";
-import { Fragment } from "react";
-const MenuSidebar = [
-  { title: "Dashboard", icon: <RiDashboardFill />, link: "/dashboard" },
+import { MdOutlineGroups, MdAppSettingsAlt } from "react-icons/md";
+import { ImHappy } from "react-icons/im";
+import { FaPersonMilitaryPointing } from "react-icons/fa6";
+
+const settingMenu = [
+  { id: 1, title: "Dashboard", icon: RiDashboardFill, link: "/dashboard" },
+  { id: 2, title: "Analytics", icon: SiGoogleanalytics, link: "/analytics" },
   {
-    title: "Analytics",
-    icon: <SiGoogleanalytics />,
-    link: "/analytics",
-  },
-  {
-    title: "App Settings ",
-    spacing: true,
-    icon: <TiSpanner />,
+    id: 3,
+    title: "App Settings",
+    icon: TiSpanner,
     submenu: true,
-    submenuItems: [{ title: "Groups", link: "app-settings/groups" }],
-    // link: "/group",
+    submenuItems: [
+      {
+        id: "3-1",
+        title: "Groups",
+        icon: MdOutlineGroups,
+        submenu: true,
+        submenuItems: [
+          {
+            id: "3-1-1",
+            title: "Mobile Access",
+            icon: MdAppSettingsAlt,
+            link: "/lead-setting/app-settings/groups/mobile-access",
+          },
+          {
+            id: "3-1-2",
+            title: "Dream Asset",
+            icon: ImHappy,
+            link: "/lead-setting/app-settings/groups/asset",
+          },
+          {
+            id: "3-1-3",
+            title: "Become Agent",
+            icon: FaPersonMilitaryPointing,
+            link: "/lead-setting/app-settings/groups/become-agent",
+          },
+        ],
+      },
+    ],
   },
-  {
-    title: "Leads",
-    spacing: true,
-    icon: <IoPeopleOutline />,
-    link: "/lead",
-  },
-  { title: "Payments ", icon: <BsCash />, link: "/payment" },
-  {
-    title: "Profile",
-    spacing: true,
-    icon: <CgProfile />,
-    link: "/profile",
-  },
-  { title: "Help & Support", icon: <IoIosHelpCircle />, link: "/help" },
+  { id: 4, title: "Designations", icon: IoPeopleOutline, link: "/designation" },
+  { id: 5, title: "Administrative Privileges", icon: RiAdminLine, link: "/administrative-privileges" },
+  { id: 6, title: "Agent Target", icon: GoGraph, link: "/target" },
+  { id: 7, title: "Profile", icon: CgProfile, link: "/profile" },
+  { id: 8, title: "Help & Support", icon: IoIosHelpCircle, link: "/help" },
 ];
 
 const SettingSidebar = () => {
   const [open, setOpen] = useState(true);
+  const [showArrowLeft, setShowArrowLeft] = useState(false);
   const [submenuOpenIndex, setSubmenuOpenIndex] = useState(null);
+  const [nestedSubmenuOpenIndex, setNestedSubmenuOpenIndex] = useState({});
+
   const toggleSubMenu = (index) => {
-    if (submenuOpenIndex === index) {
-      setSubmenuOpenIndex(null);
-    } else {
-      setSubmenuOpenIndex(index);
-    }
+    setSubmenuOpenIndex(submenuOpenIndex === index ? null : index);
   };
+
+  const toggleNestedSubMenu = (submenuIndex, subIndex) => {
+    setNestedSubmenuOpenIndex((prevState) => ({
+      ...prevState,
+      [submenuIndex]: prevState[submenuIndex] === subIndex ? null : subIndex,
+    }));
+  };
+
   return (
-    <>
-      <div
-        className={`bg-secondary h-auto p-5 pt-8 ${
-          open ? "w-64" : "w-20"
-        } duration-300 relative`}
-      >
+    <div
+      className={`bg-primary-variant min-h-screen p-5 pt-8 ${
+        open ? "w-64" : "w-28"
+      } duration-300 relative border-r-8 border-primary outline-r-8 outline-primary-variant`}
+      onMouseEnter={() => setShowArrowLeft(true)}
+      onMouseLeave={() => setShowArrowLeft(false)}
+    >
+      {showArrowLeft && (
         <BsArrowLeftShort
-          className={`bg-white text-secondary text-3xl rounded-full absolute -right-3 top-9 border border-secondary cursor-pointer ${
+          className={`bg-white text-custom-violet text-3xl rounded-full absolute z-20 -right-3 top-20 border border-custom-violet cursor-pointer ${
             !open && "rotate-180"
           }`}
           onClick={() => setOpen(!open)}
         />
-        <div className="inline-flex">
-          <GiGoldBar
-            className={`bg-amber-300 text-4xl rounded cursor-pointer block float-left mr-2 duration-500 ${
-              open && "rotate-[360deg]"
-            }`}
-          />
-          <h3
-            className={`text-white origin-left font-medium text-2xl ${
-              !open && "scale-0"
-            } duration-300 `}
-          >
-            Settings
-          </h3>
-        </div>
+      )}
 
-        <ul className="pt-2">
-          {MenuSidebar.map((menu, index) => (
-            <>
-              <a href={menu.link}>
-                <li
-                  key={index}
-                  className={`text-gray-300 text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-light-white rounded-md ${
-                    menu.spacing ? "mt-9" : "mt-2"
+      <ul className="pt-2 space-y-2">
+        {settingMenu.map((menu, index) => {
+          const isOpen = submenuOpenIndex === index;
+
+          return (
+            <Fragment key={menu.id}>
+              <NavLink
+                to={menu.link || "#"}
+                onClick={(e) => {
+                  if (menu.submenu) {
+                    e.preventDefault();
+                    toggleSubMenu(index);
+                  }
+                }}
+                className={({ isActive }) =>
+                  `flex items-center gap-x-4 p-3 rounded-xl shadow-sm transition-all duration-200 ${
+                    isActive
+                      ? "bg-custom-violet text-white"
+                      : "bg-white text-gray-700 hover:bg-purple-100"
+                  } ${menu.spacing ? "mt-6" : ""}`
+                }
+              >
+                <span className="text-xl w-6 flex justify-center">
+                  <menu.icon />
+                </span>
+                <span
+                  className={`text-base font-medium flex-1 ${
+                    !open && "hidden"
                   }`}
                 >
-                  <span className="text-2xl block float-left">{menu.icon}</span>
-                  <span
-                    className={`text-base font-medium flex-1 ${
-                      !open && "hidden"
-                    } `}
-                    onClick={() => toggleSubMenu(index)}
-                  >
-                    {menu.title}
-                  </span>
-                  {menu.submenu && open && (
-                    <BsChevronDown
-                      className={`${submenuOpenIndex && "rotate-180"}`}
-                      onClick={() => toggleSubMenu(index)}
-                    />
-                  )}
-                </li>
-              </a>
-              {menu.submenu && submenuOpenIndex === index && open && (
-                <ul>
-                  {menu.submenuItems.map((submenuItem, index) => (
-                    <>
-                      <Link to={submenuItem.link}>
-                        <li
-                          key={index}
-                          className={`text-gray-100 text-sm flex items-center gap-x-4 cursor-pointer p-2 px-5 hover:bg-light-white rounded-md ${
-                            menu.spacing ? "mt-2" : "mt-2"
-                          }`}
-                        >
-                          {submenuItem.title}
-                        </li>
-                      </Link>
-                    </>
+                  {menu.title}
+                </span>
+                {menu.submenu &&
+                  open &&
+                  (isOpen ? (
+                    <AiOutlineMinus className="ml-auto" />
+                  ) : (
+                    <AiOutlinePlus className="ml-auto" />
                   ))}
+              </NavLink>
+
+              {menu.submenu && isOpen && open && (
+                <ul className="ml-4 mt-1 font-medium space-y-1">
+                  {menu.submenuItems.map((submenuItem, subIndex) => {
+                    const isNestedOpen = nestedSubmenuOpenIndex[index] === subIndex;
+
+                    return (
+                      <Fragment key={submenuItem.id}>
+                        <a
+                          href={submenuItem.link || "#"}
+                          onClick={(e) => {
+                            if (submenuItem.submenu) {
+                              e.preventDefault();
+                              toggleNestedSubMenu(index, subIndex);
+                            }
+                          }}
+                          className="p-2 pl-5 rounded-lg bg-white shadow-sm text-sm text-gray-600 hover:bg-purple-100 flex items-center"
+                        >
+                          {submenuItem.icon && (
+                            <span className="mr-2">{<submenuItem.icon />}</span>
+                          )}
+                          {submenuItem.title}
+                          {submenuItem.submenu &&
+                            (isNestedOpen ? (
+                              <AiOutlineMinus className="ml-auto" />
+                            ) : (
+                              <AiOutlinePlus className="ml-auto" />
+                            ))}
+                        </a>
+
+                        {submenuItem.submenu && isNestedOpen && (
+                          <ul className="ml-6 mt-1 space-y-1">
+                            {submenuItem.submenuItems.map((subSubItem) => (
+                              <a
+                                key={subSubItem.id}
+                                href={subSubItem.link}
+                                className="p-2 pl-6 rounded-lg bg-white shadow-sm text-sm text-gray-600 hover:bg-purple-100 flex items-center"
+                              >
+                                {subSubItem.icon && (
+                                  <span className="mr-2">{subSubItem.icon}</span>
+                                )}
+                                {subSubItem.title}
+                              </a>
+                            ))}
+                          </ul>
+                        )}
+                      </Fragment>
+                    );
+                  })}
                 </ul>
               )}
-            </>
-          ))}
-        </ul>
-      </div>
-    </>
+            </Fragment>
+          );
+        })}
+      </ul>
+    </div>
   );
 };
 

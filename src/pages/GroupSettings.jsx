@@ -4,7 +4,8 @@ import { EyeIcon } from "lucide-react";
 import Modal from "../components/modals/Modal";
 import api from "../instance/TokenInstance";
 import DataTable from "../components/layouts/Datatable";
-import CustomAlert from "../components/alerts/CustomAlert";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
+import CircularLoader from "../components/loaders/CircularLoader";
 
 const GroupSettings = () => {
   const [groups, setGroups] = useState([]);
@@ -13,13 +14,13 @@ const GroupSettings = () => {
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [currentUpdateGroup, setCurrentUpdateGroup] = useState(null);
   const [updatingGroups, setUpdatingGroups] = useState(new Set());
-
+  const [reloadTrigger, setReloadTrigger] = useState(0);
   const [alertConfig, setAlertConfig] = useState({
     visibility: false,
     message: "Something went wrong!",
     type: "info",
   });
-
+  const [isLoading, setIsLoading] = useState(false);
   const [updateFormData, setUpdateFormData] = useState({
     group_name: "",
     group_type: "",
@@ -38,6 +39,7 @@ const GroupSettings = () => {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
+        setIsLoading(true);
         const response = await api.get("/group/get-group-admin");
         setGroups(response.data);
         const formattedData = response.data.map((group, index) => ({
@@ -78,10 +80,12 @@ const GroupSettings = () => {
         setTableGroups(formattedData);
       } catch (error) {
         console.error("Error fetching group data:", error);
+      }finally {
+        setIsLoading(false);
       }
     };
     fetchGroups();
-  }, [updatingGroups]);
+  }, [updatingGroups, reloadTrigger]);
 
   const handleMobileAccessChange = async (groupId, newValue) => {
     setUpdatingGroups((prev) => new Set([...prev, groupId]));
@@ -158,6 +162,7 @@ const GroupSettings = () => {
           updateFormData
         );
         setShowModalUpdate(false);
+        setReloadTrigger((prev) => prev + 1);
         setAlertConfig({
           message: "Group updated successfully",
           type: "success",
@@ -183,10 +188,13 @@ const GroupSettings = () => {
   return (
     <>
       <div>
-        <CustomAlert
+         <CustomAlertDialog
           type={alertConfig.type}
           isVisible={alertConfig.visibility}
           message={alertConfig.message}
+          onClose={() =>
+            setAlertConfig((prev) => ({ ...prev, visibility: false }))
+          }
         />
         <div className="flex mt-20">
           <div className="flex-grow p-7">
@@ -195,7 +203,7 @@ const GroupSettings = () => {
                 <h1 className="text-2xl font-semibold">Groups</h1>
               </div>
             </div>
-
+           {(TableGroups.length > 0 && !isLoading) ? (
             <DataTable
               data={TableGroups}
               columns={columns}
@@ -207,6 +215,13 @@ const GroupSettings = () => {
                   : "empty"
               }.csv`}
             />
+             ) : (
+              <CircularLoader
+                isLoading={isLoading}
+                failure={TableGroups.length <= 0}
+                data={"Group Data"}
+              />
+            )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"></div>
           </div>

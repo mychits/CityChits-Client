@@ -1,18 +1,22 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-
 import api from "../instance/TokenInstance";
-
 import DataTable from "../components/layouts/Datatable";
 import CircularLoader from "../components/loaders/CircularLoader";
 import { Select } from "antd";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
+import { useSearchParams } from "react-router-dom";
+import { FiSearch } from "react-icons/fi";
+import Fuse from "fuse.js";
 const UserReport = () => {
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get("user_id");
   const [groups, setGroups] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [TableDaybook, setTableDaybook] = useState([]);
   const [TableAuctions, setTableAuctions] = useState([]);
-  const [selectedGroup, setSelectedGroup] = useState("");
+  const [selectedGroup, setSelectedGroup] = useState(userId ? userId : "");
   const [group, setGroup] = useState([]);
   const [commission, setCommission] = useState("");
   const [TableEnrolls, setTableEnrolls] = useState([]);
@@ -29,7 +33,6 @@ const UserReport = () => {
     return today.toISOString().split("T")[0];
   });
   const [totalAmount, setTotalAmount] = useState(0);
-
   const [groupPaidDate, setGroupPaidDate] = useState("");
   const [groupToBePaidDate, setGroupToBePaidDate] = useState("");
   const [detailsLoading, setDetailLoading] = useState(false);
@@ -39,42 +42,76 @@ const UserReport = () => {
     groupId: "",
     ticket: "",
   });
+  const [registrationFee, setRegistrationFee] = useState({
+    amount: 0,
+    createdAt: null,
+  });
+  const [visibleRows, setVisibleRows] = useState({
+  row1: false,
+  row2: false,
+  row3: false,
+  row4: false,
+  row5: false,
+  row6: false,
+  row7: false,
+  row8: false,
+  row9: false,
+});
+
+// Reusable Input component
+const Input = ({ label, value }) => (
+  <div className="flex flex-col flex-1">
+    <label className="mb-1 text-sm font-medium text-gray-700">{label}</label>
+    <input
+      type="text"
+      placeholder={label}
+      value={value || ""}
+      readOnly
+      className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
+    />
+  </div>
+);
   const [TotalToBepaid, setTotalToBePaid] = useState("");
   const [Totalpaid, setTotalPaid] = useState("");
   const [Totalprofit, setTotalProfit] = useState("");
-  const [NetTotalprofit, setNetTotalProfit] = useState("");
 
-  const [selectedAuctionGroup, setSelectedAuctionGroup] = useState("");
-  const [selectedGroupId, setSelectedGroupId] = useState("");
-  const [selectedAuctionGroupId, setSelectedAuctionGroupId] = useState("");
+  const [NetTotalprofit, setNetTotalProfit] = useState("");
+  const [selectedAuctionGroupId, setSelectedAuctionGroupId] = useState(
+    userId ? userId : ""
+  );
   const [filteredAuction, setFilteredAuction] = useState([]);
   const [groupInfo, setGroupInfo] = useState({});
-  const [showModal, setShowModal] = useState(false);
-  const [showModalDelete, setShowModalDelete] = useState(false);
-  const [currentGroup, setCurrentGroup] = useState(null);
-  const [showModalUpdate, setShowModalUpdate] = useState(false);
-  const [currentUpdateGroup, setCurrentUpdateGroup] = useState(null);
-  const [showUploadModal, setShowUploadModal] = useState(false);
-  const [receiptNo, setReceiptNo] = useState("");
-  const [paymentMode, setPaymentMode] = useState("cash");
+
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
     return today.toISOString().split("T")[0];
   });
   const [selectedPaymentMode, setSelectedPaymentMode] = useState("");
-  const [selectedCustomers, setSelectedCustomers] = useState("");
+  const [selectedCustomers, setSelectedCustomers] = useState(
+    userId ? userId : ""
+  );
   const [payments, setPayments] = useState([]);
   const [availableTickets, setAvailableTickets] = useState([]);
   const [screenLoading, setScreenLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("groupDetails");
   const [searchText, setSearchText] = useState("");
+  const [groupDetails, setGroupDetails] = useState(" ");
+  const [loanCustomers, setLoanCustomers] = useState([]);
+  const [borrowersData, setBorrowersData] = useState([]);
+  const [borrowerId, setBorrowerId] = useState("No");
+  const [filteredBorrowerData, setFilteredBorrowerData] = useState([]);
+  const [filteredDisbursement, setFilteredDisbursement] = useState([]);
+  const [disbursementLoading, setDisbursementLoading] = useState(false);
+  const [registrationAmount, setRegistrationAmount] = useState(null);
+  const [registrationDate, setRegistrationDate] = useState(null);
+  const [finalPaymentBalance, setFinalPaymentBalance] = useState(0);
   const onGlobalSearchChangeHandler = (e) => {
     setSearchText(e.target.value);
   };
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
-  const [groupDetails, setGroupDetails] = useState(" ");
+
   const [formData, setFormData] = useState({
     group_id: "",
     user_id: "",
@@ -86,13 +123,192 @@ const UserReport = () => {
     transaction_id: "",
   });
 
-  const handleFromDateChange = (e) => {
-    setFromDate(e.target.value);
-  };
+  const BasicLoanColumns = [
+    { key: "id", header: "SL. NO" },
+    { key: "pay_date", header: "Payment Date" },
+    { key: "receipt_no", header: "Receipt No" },
+    { key: "amount", header: "Amount" },
+    { key: "pay_type", header: "Payment Type" },
+    { key: "balance", header: "Balance" },
+  ];
+  const DisbursementColumns = [
+    { key: "id", header: "SL. NO" },
+    { key: "pay_date", header: "Disbursed Date" },
+    { key: "transaction_date", header: "Transaction Date" },
+    { key: "ticket", header: "Ticket" },
+    { key: "amount", header: "Amount" },
+    { key: "receipt_no", header: "Receipt No" },
+    { key: "pay_type", header: "Payment Type" },
+    { key: "disbursement_type", header: "Disbursement Type" },
+    { key: "disbursed_by", header: "Disbursed By" },
+    { key: "balance", header: "Balance" },
+  ];
 
-  const handleToDateChange = (e) => {
-    setToDate(e.target.value);
-  };
+  useEffect(() => {
+    const fetchRegistrationFee = async () => {
+      if (
+        activeTab === "basicReport" &&
+        selectedGroup &&
+        EnrollGroupId.groupId &&
+        EnrollGroupId.ticket &&
+        EnrollGroupId.groupId !== "Loan"
+      ) {
+        try {
+          setTableEnrolls([]);
+          setGroupPaid("");
+          setGroupToBePaid("");
+          setRegistrationAmount(null);
+          setRegistrationDate(null);
+          setBasicLoading(true);
+          setIsLoading(true);
+
+          const response = await api.get(
+            "/enroll/get-user-registration-fee-report",
+            {
+              params: {
+                group_id: EnrollGroupId.groupId,
+                ticket: EnrollGroupId.ticket,
+                user_id: selectedGroup,
+              },
+            }
+          );
+
+          const { payments = [], registrationFees = [] } = response.data || {};
+
+          setGroupPaid(payments[0]?.groupPaidAmount || 0);
+          setGroupToBePaid(payments[0]?.totalToBePaidAmount || 0);
+
+          let balance = 0;
+          const formattedData = payments.map((payment, index) => {
+            balance += Number(payment.amount || 0);
+            return {
+              _id: payment._id,
+              id: index + 1,
+              date: formatPayDate(payment?.pay_date),
+              amount: payment.amount,
+              receipt: payment.receipt_no,
+              old_receipt: payment.old_receipt_no,
+              type: payment.pay_type,
+              balance,
+            };
+          });
+
+          let totalRegAmount = 0;
+          registrationFees.forEach((regFee, idx) => {
+            formattedData.push({
+              id: "-",
+              date: regFee.createdAt
+                ? new Date(regFee.createdAt).toLocaleDateString("en-GB")
+                : "",
+              amount: regFee.amount,
+              receipt: regFee.receipt_no,
+              old_receipt: "-",
+              type: regFee.pay_for || "Reg Fee",
+              balance: "-",
+            });
+
+            totalRegAmount += Number(regFee.amount || 0);
+          });
+
+          setRegistrationAmount(totalRegAmount);
+
+          if (registrationFees.length > 0) {
+            setRegistrationDate(
+              registrationFees[0]?.createdAt
+                ? new Date(registrationFees[0].createdAt).toLocaleDateString(
+                    "en-GB"
+                  )
+                : null
+            );
+          }
+
+          if (formattedData.length > 0) {
+            formattedData.push({
+              id: "",
+              date: "",
+              amount: "",
+              receipt: "",
+              old_receipt: "",
+              type: "TOTAL",
+              balance,
+            });
+            setFinalPaymentBalance(balance);
+          } else {
+            setFinalPaymentBalance(0);
+          }
+
+          setTableEnrolls(formattedData);
+        } catch (error) {
+          console.error("Error fetching registration fee and payments:", error);
+          setTableEnrolls([]);
+          setGroupPaid("");
+          setGroupToBePaid("");
+          setRegistrationAmount(null);
+          setRegistrationDate(null);
+        } finally {
+          setBasicLoading(false);
+          setIsLoading(false);
+        }
+      } else {
+        setTableEnrolls([]);
+        setGroupPaid("");
+        setGroupToBePaid("");
+        setRegistrationAmount(null);
+        setRegistrationDate(null);
+      }
+    };
+
+    fetchRegistrationFee();
+  }, [activeTab, selectedGroup, EnrollGroupId.groupId, EnrollGroupId.ticket]);
+
+  useEffect(() => {
+    const fetchAllLoanPaymentsbyId = async () => {
+      setBorrowersData([]);
+      setBasicLoading(true);
+
+      try {
+        const response = await api.get(
+          `/loan-payment/get-all-loan-payments/${EnrollGroupId.ticket}`
+        );
+
+        if (response.data && response.data.length > 0) {
+          let balance = 0;
+          const formattedData = response.data.map((loanPayment, index) => {
+            balance += Number(loanPayment.amount);
+            return {
+              _id: loanPayment._id,
+              id: index + 1,
+              pay_date: formatPayDate(loanPayment?.pay_date),
+              amount: loanPayment.amount,
+              receipt_no: loanPayment.receipt_no,
+              pay_type: loanPayment.pay_type,
+              balance,
+            };
+          });
+          formattedData.push({
+            _id: "",
+            id: "",
+            pay_date: "",
+            receipt_no: "",
+            amount: "",
+            pay_type: "",
+            balance,
+          });
+          setBorrowersData(formattedData);
+        } else {
+          setBorrowersData([]);
+        }
+      } catch (error) {
+        console.error("Error fetching loan payment data:", error);
+        setBorrowersData([]);
+      } finally {
+        setBasicLoading(false);
+      }
+    };
+
+    if (EnrollGroupId.groupId === "Loan") fetchAllLoanPaymentsbyId();
+  }, [EnrollGroupId.ticket]);
+
   useEffect(() => {
     const fetchGroupById = async () => {
       try {
@@ -105,10 +321,12 @@ const UserReport = () => {
         console.log("Failed to fetch group details by ID:", err.message);
       }
     };
-    fetchGroupById();
-  }, [EnrollGroupId]);
+    if (EnrollGroupId.groupId !== "Loan") fetchGroupById();
+  }, [EnrollGroupId?.ticket]);
+
   useEffect(() => {
     setScreenLoading(true);
+
     const fetchGroups = async () => {
       setDetailLoading(true);
       try {
@@ -126,6 +344,36 @@ const UserReport = () => {
   }, []);
 
   useEffect(() => {
+    const fetchBorrower = async () => {
+      try {
+        setLoanCustomers([]);
+        const response = await api.get(
+          `/loans/get-borrower-by-user-id/${selectedGroup}`
+        );
+        if (response.data) {
+          const filteredBorrowerData = response.data.map((loan, index) => ({
+            sl_no: index + 1,
+            loan: loan.loan_id,
+            loan_amount: loan.loan_amount,
+            tenure: loan.tenure,
+            service_charge: loan.service_charges,
+          }));
+          setFilteredBorrowerData(filteredBorrowerData);
+        }
+        setLoanCustomers(response.data);
+
+        if (response.status >= 400) throw new Error("Failed to send message");
+      } catch (err) {
+        console.log("failed to fetch loan customers", err.message);
+        setFilteredBorrowerData([]);
+      }
+    };
+    setBorrowersData([]);
+    setBorrowerId("No");
+    fetchBorrower();
+  }, [selectedGroup]);
+
+  useEffect(() => {
     const fetchGroups = async () => {
       try {
         const response = await api.get(`/user/get-user-by-id/${selectedGroup}`);
@@ -138,27 +386,6 @@ const UserReport = () => {
   }, [selectedGroup]);
 
   useEffect(() => {
-    const fetchReceipt = async () => {
-      try {
-        const response = await api.get("/payment/get-latest-receipt");
-        setReceiptNo(response.data);
-      } catch (error) {
-        console.error("Error fetching receipt data:", error);
-      }
-    };
-    fetchReceipt();
-  }, []);
-
-  useEffect(() => {
-    if (receiptNo) {
-      setFormData((prevData) => ({
-        ...prevData,
-        receipt_no: receiptNo.receipt_no,
-      }));
-    }
-  }, [receiptNo]);
-
-  useEffect(() => {
     const fetchGroups = async () => {
       try {
         const response = await api.get("/user/get-user");
@@ -169,16 +396,68 @@ const UserReport = () => {
     };
     fetchGroups();
   }, []);
+  // disbursement report
+
+  useEffect(() => {
+    const fetchDisbursement = async () => {
+      try {
+        setDisbursementLoading(true);
+        const response = await api.get(
+          `/payment-out/get-payment-out-report-daybook`,
+          {
+            params: {
+              userId: selectedGroup,
+            },
+          }
+        );
+
+        if (response.data) {
+          const formattedData = response.data.map((payment, index) => {
+            let balance = 0;
+
+            balance += Number(payment.amount);
+            return {
+              _id: payment._id,
+              id: index + 1,
+              disbursement_type: payment.disbursement_type,
+              pay_date: formatPayDate(payment?.pay_date),
+              ticket: payment.ticket,
+              transaction_date: formatPayDate(payment.createdAt),
+              amount: payment.amount,
+              receipt_no: payment.receipt_no,
+              pay_type: payment.pay_type,
+              disbursed_by: payment.admin_type?.name,
+              balance,
+            };
+          });
+
+          setFilteredDisbursement(formattedData);
+        } else {
+          setFilteredDisbursement([]);
+        }
+      } catch (error) {
+        console.error("Error fetching disbursement data", error, error.message);
+        setFilteredDisbursement([]);
+      } finally {
+        setDisbursementLoading(false);
+      }
+    };
+    if (selectedGroup) fetchDisbursement();
+  }, [selectedGroup]);
 
   const handleGroupPayment = async (groupId) => {
     setSelectedAuctionGroupId(groupId);
-    //handleGroupChange(groupId);
     setSelectedGroup(groupId);
     handleGroupAuctionChange(groupId);
   };
-
+  useEffect(() => {
+    if (userId) {
+      handleGroupPayment(userId);
+    }
+  }, []);
   const handleEnrollGroup = (event) => {
     const value = event.target.value;
+
     if (value) {
       const [groupId, ticket] = value.split("|");
       setEnrollGroupId({ groupId, ticket });
@@ -198,8 +477,9 @@ const UserReport = () => {
             pay_type: selectedPaymentMode,
           },
         });
+
         if (response.data && response.data.length > 0) {
-          setFilteredAuction(response.data);
+          setFilteredAuction(response);
           const paymentData = response.data;
           const totalAmount = paymentData.reduce(
             (sum, payment) => sum + Number(payment.amount || 0),
@@ -233,7 +513,13 @@ const UserReport = () => {
     selectedPaymentMode,
     selectedCustomers,
   ]);
-
+  const loanColumns = [
+    { key: "sl_no", header: "SL. No" },
+    { key: "loan", header: "Loan ID" },
+    { key: "loan_amount", header: "Loan Amount" },
+    { key: "service_charge", header: "Service Charge" },
+    { key: "tenure", header: "Tenure" },
+  ];
   const columns = [
     { key: "id", header: "SL. NO" },
     { key: "group", header: "Group Name" },
@@ -245,18 +531,20 @@ const UserReport = () => {
   ];
 
   const handleGroupAuctionChange = async (groupId) => {
+    setFilteredAuction([]);
     if (groupId) {
       try {
         const response = await api.post(
-          `/enroll/get-user-tickets-report/${groupId}`
+          `/enroll/get-user-refer-report/${groupId}`
         );
+
         if (response.data && response.data.length > 0) {
           setFilteredAuction(response.data);
 
           const formattedData = response.data
             .map((group, index) => {
-              const groupName = group?.enrollment?.group?.group_name || ""; // Empty if null
-              const tickets = group?.enrollment?.tickets || ""; // Empty if null
+              const groupName = group?.enrollment?.group?.group_name || "";
+              const tickets = group?.enrollment?.tickets || "";
               const groupType = group?.enrollment?.group?.group_type;
               const groupInstall =
                 parseInt(group?.enrollment?.group?.group_install) || 0;
@@ -268,7 +556,7 @@ const UserReport = () => {
                 group?.firstAuction?.firstDividentHead || 0;
 
               if (!group?.enrollment?.group) {
-                return null; // Return null if group is null
+                return null;
               }
 
               return {
@@ -299,9 +587,11 @@ const UserReport = () => {
                       groupInstall +
                       firstDividentHead -
                       totalPaidAmount,
+                referred_type: group?.enrollment?.referred_type || "N/A",
+                referrer_name: group?.enrollment?.referrer_name || "N/A",
               };
             })
-            .filter((item) => item !== null); // Remove null entries from formattedData
+            .filter((item) => item !== null);
 
           setTableAuctions(formattedData);
           setCommission(0);
@@ -341,11 +631,17 @@ const UserReport = () => {
       setCommission(0);
     }
   };
-
+  useEffect(() => {
+    if (userId) {
+      handleGroupAuctionChange(userId);
+    }
+  }, []);
   const Auctioncolumns = [
     { key: "id", header: "SL. NO" },
     { key: "group", header: "Group Name" },
     { key: "ticket", header: "Ticket" },
+    { key: "referred_type", header: "Referrer Type" },
+    { key: "referrer_name", header: "Referred By" },
     { key: "totalBePaid", header: "Amount to be Paid" },
     { key: "profit", header: "Profit" },
     { key: "toBePaidAmount", header: "Net To be Paid" },
@@ -355,7 +651,6 @@ const UserReport = () => {
 
   const formatPayDate = (dateString) => {
     const date = new Date(dateString);
-    // const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
     return date.toISOString().split("T")[0];
   };
 
@@ -365,6 +660,7 @@ const UserReport = () => {
       setBasicLoading(true);
 
       try {
+        setIsLoading(true);
         const response = await api.get(
           `/enroll/get-user-payment?group_id=${EnrollGroupId.groupId}&ticket=${EnrollGroupId.ticket}&user_id=${selectedGroup}`
         );
@@ -413,9 +709,10 @@ const UserReport = () => {
         setTableEnrolls([]);
       } finally {
         setBasicLoading(false);
+        setIsLoading(false);
       }
     };
-    fetchEnroll();
+    if (EnrollGroupId.groupId !== "Loan") fetchEnroll();
   }, [selectedGroup, EnrollGroupId.groupId, EnrollGroupId.ticket]);
 
   const Basiccolumns = [
@@ -458,10 +755,8 @@ const UserReport = () => {
             0
           );
           setTotalAmount(totalAmount);
-
           const formattedData = response.data.map((group, index) => ({
             id: index + 1,
-
             name: group?.user?.full_name,
             phone_number: group?.user?.phone_number,
             ticket: group.ticket,
@@ -507,7 +802,6 @@ const UserReport = () => {
         ? divident / groupInfo.group_members
         : 0;
       const payable = (groupInfo.group_install || 0) - divident_head;
-
       setFormData((prevData) => ({
         ...prevData,
         group_id: groupInfo._id,
@@ -537,30 +831,31 @@ const UserReport = () => {
   if (screenLoading)
     return (
       <div className="w-screen m-24">
-        <CircularLoader color="text-green-600" />;
+        <CircularLoader color="text-green-600" />
       </div>
     );
 
   return (
     <>
-      <div className="w-screen">
-        <div className="flex mt-20">
-          {/* <Sidebar /> */}
-         
+      <div className="w-screen min-h-screen bg-gray-100">
+        <div className="flex mt-30">
+          <Navbar
+            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+            visibility={true}
+          />
           <div className="flex-grow p-7">
-            <h1 className="text-2xl font-semibold text-center">
+            <h1 className="text-2xl font-bold text-center">
               Reports - Customer
             </h1>
-            <div className="mt-6 mb-8">
+            <div className="mt-6 mb-8 bg-white p-6 rounded-xl shadow">
               <div className="mb-2">
-                <div className="flex justify-center items-center w-full gap-4 bg-blue-50 rounded-md shadow-md p-2">
+                <div className="flex justify-center items-center w-full gap-4 bg-violet-50    p-2 w-30 h-40  rounded-3xl  border   space-x-2  ">
                   <div className="mb-2">
                     <label
-                      className="flex w-auto p-4 gap-2 justify-center items-center select-none font-semibold  shadow-sm mb-2 rounded-sm"
+                      className="block text-lg text-gray-500 text-center  font-semibold mb-2"
                       htmlFor={"SS"}
                     >
-                      {" "}
-                      Search Or Select Customer
+                      Customer
                     </label>
                     <Select
                       id="SS"
@@ -593,7 +888,7 @@ const UserReport = () => {
                       <button
                         className={`px-6 py-2 font-medium ${
                           activeTab === "groupDetails"
-                            ? "border-b-2 border-blue-500 text-blue-500"
+                            ? "border-b-2 border-custom-violet text-custom-violet"
                             : "text-gray-500"
                         }`}
                         onClick={() => handleTabChange("groupDetails")}
@@ -603,22 +898,23 @@ const UserReport = () => {
                       <button
                         className={`px-6 py-2 font-medium ${
                           activeTab === "basicReport"
-                            ? "border-b-2 border-blue-500 text-blue-500"
+                            ? "border-b-2 border-custom-violet text-custom-violet"
                             : "text-gray-500"
                         }`}
                         onClick={() => handleTabChange("basicReport")}
                       >
                         Customer Ledger
                       </button>
+
                       <button
                         className={`px-6 py-2 font-medium ${
-                          activeTab === "dateWiseReport"
-                            ? "border-b-2 border-blue-500 text-blue-500"
+                          activeTab === "disbursement"
+                            ? "border-b-2 border-custom-violet text-custom-violet"
                             : "text-gray-500"
                         }`}
-                        onClick={() => handleTabChange("dateWiseReport")}
+                        onClick={() => handleTabChange("disbursement")}
                       >
-                        Passbook
+                        PayOut | Disbursement
                       </button>
                     </div>
 
@@ -628,105 +924,249 @@ const UserReport = () => {
                           <p>loading...</p>
                         ) : (
                           <div className="mt-10">
-                            <div className="flex gap-4">
-                              <div className="flex flex-col flex-1">
-                                <label className="mb-1 text-sm font-medium text-gray-700">
-                                  Name
-                                </label>
+                            <div className="mb-4">
+                              <div className="relative w-full max-w-lg  ">
+                                <span className="absolute inset-y-0 left-4 flex items-center text-gray-400 ">
+                                  <FiSearch className="text-xl" />
+                                </span>
                                 <input
                                   type="text"
-                                  placeholder="Enter Name"
-                                  value={group.full_name}
-                                  readonly
-                                  className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
+                                  placeholder="Search customer details..."
+                                  className="w-full pl-12 pr-5 py-3.5 text-gray-800 bg-white border border-gray-200 rounded-full shadow-3xl 
+                   placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 
+                   transition-all duration-300 ease-in-out text-sm md:text-base"
+                                  value={searchText}
+                                  onChange={(e) =>
+                                    setSearchText(e.target.value)
+                                  }
                                 />
                               </div>
-                              <div className="flex flex-col flex-1">
-                                <label className="mb-1 text-sm font-medium text-gray-700">
-                                  Email
-                                </label>
-                                <input
-                                  type="text"
-                                  placeholder="Enter Email"
-                                  value={group.email}
-                                  readonly
-                                  className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-                                />
-                              </div>
-                              <div className="flex flex-col flex-1">
-                                <label className="mb-1 text-sm font-medium text-gray-700">
-                                  Phone Number
-                                </label>
-                                <input
-                                  type="text"
-                                  placeholder="Enter Phone Number"
-                                  value={group.phone_number}
-                                  readonly
-                                  className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-                                />
-                              </div>
+
+                              {searchText &&
+                                (() => {
+                                  const detailsArray = [
+                                    { key: "Name", value: group.full_name },
+                                    { key: "Email", value: group.email },
+                                    { key: "Phone", value: group.phone_number },
+                                    {
+                                      key: "Alternate Number",
+                                      value: group.alternate_number,
+                                    },
+                                    { key: "Address", value: group.address },
+                                    { key: "Aadhaar", value: group.adhaar_no },
+                                    { key: "PAN", value: group.pan_no },
+                                    { key: "Pincode", value: group.pincode },
+                                    {
+                                      key: "Father Name",
+                                      value: group.father_name,
+                                    },
+                                    {
+                                      key: "Nominee Name",
+                                      value: group.nominee_name,
+                                    },
+                                    {
+                                      key: "Bank Name",
+                                      value: group.bank_name,
+                                    },
+                                    {
+                                      key: "Bank Account",
+                                      value: group.bank_account_number,
+                                    },
+                                  ];
+
+                                  const fuse = new Fuse(detailsArray, {
+                                    keys: ["key", "value"],
+                                    threshold: 0.3, // Fuzzy match
+                                  });
+
+                                  const results = fuse.search(searchText);
+
+                                  return (
+                                    <div className="mt-2 bg-white border rounded shadow p-3 w-1/2">
+                                      {results.length > 0 ? (
+                                        results.map(({ item }) => (
+                                          <div
+                                            key={item.key}
+                                            className="p-1 border-b"
+                                          >
+                                            <strong>{item.key}</strong> →{" "}
+                                            {item.value || "-"}
+                                          </div>
+                                        ))
+                                      ) : (
+                                        <p>No matching details</p>
+                                      )}
+                                    </div>
+                                  );
+                                })()}
                             </div>
-                            <div className="flex gap-4 mt-5">
-                              <div className="flex flex-col flex-1">
-                                <label className="mb-1 text-sm font-medium text-gray-700">
-                                  Adhaar Number
-                                </label>
-                                <input
-                                  type="text"
-                                  placeholder="Enter Adhaar Number"
-                                  value={group.adhaar_no}
-                                  readonly
-                                  className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-                                />
-                              </div>
-                              <div className="flex flex-col flex-1">
-                                <label className="mb-1 text-sm font-medium text-gray-700">
-                                  Pan Number
-                                </label>
-                                <input
-                                  type="text"
-                                  placeholder="Enter Pan Number"
-                                  value={group.pan_no}
-                                  readonly
-                                  className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-                                />
-                              </div>
-                              <div className="flex flex-col flex-1">
-                                <label className="mb-1 text-sm font-medium text-gray-700">
-                                  Pincode
-                                </label>
-                                <input
-                                  type="text"
-                                  placeholder="Enter Pincode"
-                                  value={group.pincode}
-                                  readonly
-                                  className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-                                />
-                              </div>
-                            </div>
-                            <div className="flex gap-4 mt-5">
-                              <div className="flex flex-col flex-1">
-                                <label className="mb-1 text-sm font-medium text-gray-700">
-                                  Address
-                                </label>
-                                <input
-                                  type="text"
-                                  placeholder="Address"
-                                  value={group.address}
-                                  readonly
-                                  className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-                                />
-                              </div>
-                            </div>
+
+      <div className="mt-5">
+  {/* Toggle Buttons */}
+  <div className="flex flex-wrap gap-4 mb-6">
+    <button
+      onClick={() => setVisibleRows((prev) => ({ ...prev, row1: !prev.row1 }))}
+      className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out
+        ${visibleRows.row1
+          ? "bg-gradient-to-r from-custom-violet to-custom-violet text-white shadow-lg"
+          : "bg-gradient-to-r from-violet-100 to-gray-100 shadow-md hover:shadow-lg hover:scale-105"}
+      `}
+    >
+      {visibleRows.row1 ? "✓ Hide Basic Info" : "Show Basic Info"}
+    </button>
+
+    <button
+      onClick={() => setVisibleRows((prev) => ({ ...prev, row2: !prev.row2 }))}
+      className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out
+        ${visibleRows.row2
+          ? "bg-gradient-to-r from-custom-violet to-custom-violet text-white shadow-lg"
+          : "bg-gradient-to-r from-violet-100 to-violet-100  shadow-md hover:shadow-lg hover:scale-105"}
+      `}
+    >
+      {visibleRows.row2 ? "✓ Hide Address Info" : "Show Address Info"}
+    </button>
+
+    <button
+      onClick={() => setVisibleRows((prev) => ({ ...prev, row3: !prev.row3 }))}
+      className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out
+        ${visibleRows.row3
+          ? "bg-gradient-to-r from-custom-violet to-custom-violet text-white shadow-lg"
+          : "bg-gradient-to-r from-violet-100 to-violet-100  shadow-md hover:shadow-lg hover:scale-105"}
+      `}
+    >
+      {visibleRows.row3 ? "✓ Hide Regional Info" : "Show Regional Info"}
+    </button>
+
+    <button
+      onClick={() => setVisibleRows((prev) => ({ ...prev, row4: !prev.row4 }))}
+      className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out
+        ${visibleRows.row4
+          ? "bg-gradient-to-r from-custom-violet to-custom-violet text-white shadow-lg"
+          : "bg-gradient-to-r from-violet-100 to-violet-100  shadow-md hover:shadow-lg hover:scale-105"}
+      `}
+    >
+      {visibleRows.row4
+        ? "✓ Hide Referral, Nominee & Bank Details"
+        : "Show Referral, Nominee & Bank Details"}
+    </button>
+  </div>
+
+  {/* Row 1: Basic Info */}
+  {visibleRows.row1 && (
+    <div className="flex gap-8 mb-6">
+      <div className="flex flex-col w-full gap-4">
+        <Input label="Name" value={group.full_name} />
+        <Input label="Email" value={group.email} />
+      </div>
+      <div className="flex flex-col gap-4 w-full">
+        <Input label="Phone Number" value={group.phone_number} />
+        <Input label="Adhaar Number" value={group.adhaar_no} />
+      </div>
+      <div className="flex flex-col gap-4 w-full">
+        <Input label="PAN Number" value={group.pan_no} />
+        <Input label="Pincode" value={group.pincode} />
+      </div>
+    </div>
+  )}
+
+  {/* Row 2: Address Info */}
+  {visibleRows.row2 && (
+    <div className="flex gap-8 mb-6">
+      <div className="flex flex-col gap-4 w-full">
+        <Input label="Address" value={group.address} />
+        <Input label="Gender" value={group.gender} />
+      </div>
+      <div className="flex flex-col gap-4 w-full">
+        <Input
+          label="Date of Birth"
+          value={
+            group.dateofbirth
+              ? new Date(group.dateofbirth).toISOString().split("T")[0]
+              : ""
+          }
+        />
+        <Input
+          label="Collection Area"
+          value={group?.collection_area?.route_name}
+        />
+      </div>
+      <div className="flex flex-col gap-4 w-full">
+        <Input label="Marital Status" value={group.marital_status} />
+        <Input label="Father Name" value={group.father_name} />
+      </div>
+    </div>
+  )}
+
+  {/* Row 3: Regional Info */}
+  {visibleRows.row3 && (
+    <div className="flex gap-8 mb-6">
+      <div className="flex flex-col gap-4 w-full">
+        <Input label="Nationality" value={group.nationality} />
+        <Input label="Village" value={group.village} />
+      </div>
+      <div className="flex flex-col gap-4 w-full">
+        <Input label="Taluk" value={group.taluk} />
+        <Input label="District" value={group.district} />
+      </div>
+      <div className="flex flex-col gap-4 w-full">
+        <Input label="State" value={group.state} />
+        <Input label="Alternate Number" value={group.alternate_number} />
+      </div>
+    </div>
+  )}
+
+  {/* Row 4: Referral, Nominee & Bank Info */}
+  {visibleRows.row4 && (
+    <div className="flex gap-8 mb-6">
+      <div className="flex flex-col gap-4 w-full">
+        <Input label="Referral Name" value={group.referral_name} />
+        <Input label="Nominee Name" value={group.nominee_name} />
+        <Input
+          label="Nominee DOB"
+          value={
+            group.nominee_dateofbirth
+              ? new Date(group.nominee_dateofbirth).toISOString().split("T")[0]
+              : ""
+          }
+        />
+      </div>
+      <div className="flex flex-col gap-4 w-full">
+        <Input
+          label="Nominee Phone Number"
+          value={group.nominee_phone_number}
+        />
+        <Input
+          label="Nominee Relationship"
+          value={group.nominee_relationship}
+        />
+        <Input label="Bank Name" value={group.bank_name} />
+      </div>
+      <div className="flex flex-col gap-4 w-full">
+        <Input label="Bank Branch Name" value={group.bank_branch_name} />
+        <Input label="Bank Account Number" value={group.bank_account_number} />
+        <Input label="Bank IFSC Code" value={group.bank_IFSC_code} />
+      </div>
+    </div>
+  )}
+</div>
+
+
+
+
+
+
                             <div className="mt-10">
                               <h3 className="text-lg font-medium mb-4">
                                 Enrolled Groups
                               </h3>
-                              {TableAuctions && TableAuctions.length > 0 ? (
+                              {/* Changed conditional to check TableAuctions directly, as it's the formatted data */}
+                              {TableAuctions &&
+                              TableAuctions.length > 0 &&
+                              !isLoading ? (
                                 <div className="mt-5">
                                   <DataTable
                                     data={filterOption(
-                                      TableAuctions,
+                                      TableAuctions, // Use TableAuctions for display
                                       searchText
                                     )}
                                     columns={Auctioncolumns}
@@ -740,9 +1180,28 @@ const UserReport = () => {
                                         : "empty"
                                     }.csv`}
                                   />
+                                  {/* yes you can */}
+                                  {filteredBorrowerData.length > 0 && (
+                                    <div className="mt-10">
+                                      <h3 className="text-lg font-medium mb-4">
+                                        Loan Details
+                                      </h3>
+                                      <DataTable
+                                        data={filteredBorrowerData}
+                                        columns={loanColumns}
+                                        exportedFileName={`CustomerReport.csv`}
+                                      />
+                                    </div>
+                                  )}
                                 </div>
                               ) : (
-                                <CircularLoader />
+                                <CircularLoader isLoading={isLoading} />
+                              )}
+                              {/* Display "No Data" if not loading and TableAuctions is empty */}
+                              {!isLoading && TableAuctions.length === 0 && (
+                                <div className="p-40 w-full flex justify-center items-center">
+                                  No Enrolled Group Data Found
+                                </div>
                               )}
                             </div>
                             <div className="flex gap-4 mt-5">
@@ -753,8 +1212,8 @@ const UserReport = () => {
                                 <input
                                   type="text"
                                   placeholder="-"
-                                  value={TotalToBepaid}
-                                  readonly
+                                  value={TotalToBepaid || ""} // Default to empty string
+                                  readOnly
                                   className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
                                 />
                               </div>
@@ -765,8 +1224,8 @@ const UserReport = () => {
                                 <input
                                   type="text"
                                   placeholder="-"
-                                  value={Totalprofit}
-                                  readonly
+                                  value={Totalprofit || ""} // Default to empty string
+                                  readOnly
                                   className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
                                 />
                               </div>
@@ -777,8 +1236,8 @@ const UserReport = () => {
                                 <input
                                   type="text"
                                   placeholder="-"
-                                  value={NetTotalprofit}
-                                  readonly
+                                  value={NetTotalprofit || ""} // Default to empty string
+                                  readOnly
                                   className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
                                 />
                               </div>
@@ -789,8 +1248,8 @@ const UserReport = () => {
                                 <input
                                   type="text"
                                   placeholder="-"
-                                  value={Totalpaid}
-                                  readonly
+                                  value={Totalpaid || ""} // Default to empty string
+                                  readOnly
                                   className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
                                 />
                               </div>
@@ -801,8 +1260,12 @@ const UserReport = () => {
                                 <input
                                   type="text"
                                   placeholder="-"
-                                  value={NetTotalprofit - Totalpaid}
-                                  readonly
+                                  value={
+                                    NetTotalprofit && Totalpaid
+                                      ? NetTotalprofit - Totalpaid
+                                      : ""
+                                  } // Calculate only if both are numbers
+                                  readOnly
                                   className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
                                 />
                               </div>
@@ -832,7 +1295,7 @@ const UserReport = () => {
                                 <option value="">Select Group | Ticket</option>
                                 {filteredAuction.map((group) => {
                                   if (group?.enrollment?.group) {
-                                    return (
+                                    return ( 
                                       <option
                                         key={group.enrollment.group._id}
                                         value={`${group.enrollment.group._id}|${group.enrollment.tickets}`}
@@ -844,47 +1307,128 @@ const UserReport = () => {
                                   }
                                   return null;
                                 })}
+                                {loanCustomers.map((loan) => (
+                                  <option
+                                    key={loan._id}
+                                    value={`Loan|${loan._id}`}
+                                  >
+                                    {`${loan.loan_id} | ₹${loan.loan_amount}`}
+                                  </option>
+                                ))}
+                                {registrationFee.amount > 0 && (
+                                  <div className="mt-6 p-4 border rounded bg-gray-100 w-fit text-gray-800 shadow">
+                                    <p className="text-sm font-semibold">
+                                      Registration Fee Info
+                                    </p>
+                                    <p>
+                                      <strong>Amount:</strong> ₹
+                                      {registrationFee.amount}
+                                    </p>
+                                    <p>
+                                      <strong>Date:</strong>{" "}
+                                      {registrationFee.createdAt
+                                        ? new Date(
+                                            registrationFee.createdAt
+                                          ).toLocaleDateString("en-GB")
+                                        : "N/A"}
+                                    </p>
+                                  </div>
+                                )}
                               </select>
+                            </div>
+                            <div className="mt-6 flex justify-center gap-8 flex-wrap">
+                              <input
+                                type="text"
+                                value={`Registration Fee: ₹${
+                                  registrationAmount || 0
+                                }`}
+                                readOnly
+                                className="px-4 py-2 border rounded font-semibold w-60 text-center bg-green-100 text-green-800 border-green-400"
+                              />
+
+                              <input
+                                type="text"
+                                value={`Payment Balance: ₹${finalPaymentBalance}`}
+                                readOnly
+                                className="px-4 py-2 border rounded font-semibold w-60 text-center bg-blue-100 text-blue-800 border-blue-400"
+                              />
+
+                              <input
+                                type="text"
+                                value={`Total: ₹${
+                                  Number(finalPaymentBalance) +
+                                  Number(registrationAmount || 0)
+                                }`}
+                                readOnly
+                                className="px-4 py-2 border rounded font-semibold w-60 text-center bg-purple-100 text-purple-800 border-purple-400"
+                              />
                             </div>
                           </div>
 
-                          {TableEnrolls && TableEnrolls.length > 0 ? (
+                          {(TableEnrolls && TableEnrolls.length > 0) ||
+                          (borrowersData.length > 0 && !basicLoading) ? (
                             <div className="mt-10">
                               <DataTable
-                              printHeaderKeys={[
-                                "Customer Name",
-                                "Customer Id",
-                                "Phone Number",
-                                "Ticket Number",
-                                "Group Name",
-                                "Start Date",
-                                "End Date",
-                              ]}
-                              printHeaderValues={[
-                                group.full_name,
-                                group.customer_id,
-                                group.phone_number,
-                                EnrollGroupId.ticket,
-                                groupDetails.group_name,
-                                new Date(groupDetails.start_date).toLocaleDateString("en-GB"),
-                                new Date(groupDetails.end_date).toLocaleDateString("en-GB"),
-
-                              ]}
-                              data={TableEnrolls}
-                              columns={Basiccolumns}
-                            />
-                                
+                                printHeaderKeys={[
+                                  "Customer Name",
+                                  "Customer Id",
+                                  "Phone Number",
+                                  "Ticket Number",
+                                  "Group Name",
+                                  "Start Date",
+                                  "End Date",
+                                ]}
+                                printHeaderValues={[
+                                  group.full_name,
+                                  group.customer_id,
+                                  group.phone_number,
+                                  EnrollGroupId.ticket,
+                                  groupDetails.group_name,
+                                  new Date(
+                                    groupDetails.start_date
+                                  ).toLocaleDateString("en-GB"),
+                                  new Date(
+                                    groupDetails.end_date
+                                  ).toLocaleDateString("en-GB"),
+                                ]}
+                                data={
+                                  EnrollGroupId.groupId === "Loan"
+                                    ? borrowersData
+                                    : TableEnrolls
+                                }
+                                columns={
+                                  EnrollGroupId.groupId === "Loan"
+                                    ? BasicLoanColumns
+                                    : Basiccolumns
+                                }
+                              />
                             </div>
                           ) : (
-                            <CircularLoader />
+                            <CircularLoader isLoading={basicLoading} />
                           )}
                         </div>
                       </>
                     )}
+                    {activeTab === "disbursement" && (
+                      <div className="flex flex-col flex-1">
+                        <label className="mb-1 text-sm  text-gray-700 font-bold">
+                          Disbursement
+                        </label>
 
-                    {activeTab === "dateWiseReport" && (
-                      <div className="mt-7">
-                        <h1 className="text-2xl">Coming Soon</h1>
+                        {disbursementLoading ? (
+                          <CircularLoader />
+                        ) : filteredDisbursement?.length > 0 ? (
+                          <div className="mt-10">
+                            <DataTable
+                              data={filteredDisbursement}
+                              columns={DisbursementColumns}
+                            />
+                          </div>
+                        ) : (
+                          <div className="p-40  w-full flex justify-center items-center ">
+                            No Disbursement Data Found
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

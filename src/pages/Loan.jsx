@@ -5,11 +5,13 @@ import Modal from "../components/modals/Modal";
 import api from "../instance/TokenInstance";
 import DataTable from "../components/layouts/Datatable";
 import CustomAlert from "../components/alerts/CustomAlert";
-import { Dropdown } from "antd";
+import { Input, Select, Dropdown } from "antd";
 import { IoMdMore } from "react-icons/io";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
-
+import { FaCalculator } from "react-icons/fa";
+import CircularLoader from "../components/loaders/CircularLoader";
+import { fieldSize } from "../data/fieldSize";
 const Loan = () => {
   const [users, setUsers] = useState([]);
   const [borrowers, setBorrowers] = useState([]);
@@ -18,11 +20,11 @@ const Loan = () => {
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [currentBorrower, setCurrentBorrower] = useState(null);
-
+  const [reloadTrigger, setReloadTrigger] = useState(0);
   const [currentUpdateBorrower, setCurrentUpdateBorrower] = useState(null);
   const [searchText, setSearchText] = useState("");
-
-  const onGlobalSearchChangeHandler = (e) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const GlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
@@ -37,14 +39,10 @@ const Loan = () => {
     borrower: "",
     loan_amount: "",
     tenure: "",
-    security_deposit: "",
-    total_release_amount: "",
-    interest_percentage: "",
-    monthly_emi: "",
-    interest_payable: "",
-    total_payment: "",
+    service_charges: "",
+    daily_payment_amount: "",
     start_date: "",
-    due_date: "",
+    end_date: "",
     note: "",
   });
   const [errors, setErrors] = useState({});
@@ -53,143 +51,19 @@ const Loan = () => {
     borrower: "",
     loan_amount: "",
     tenure: "",
-    security_deposit: "",
-    total_release_amount: "",
-    interest_percentage: "",
-    monthly_emi: "",
-    interest_payable: "",
-    total_payment: "",
+    service_charges: "",
+    daily_payment_amount: "",
     start_date: "",
-    due_date: "",
+    end_date: "",
     note: "",
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prevData) => {
-      const newData = { ...prevData, [name]: value };
-
-      const loanAmount = parseFloat(newData.loan_amount);
-      const securityDeposit = parseFloat(newData.security_deposit);
-      if (!isNaN(loanAmount) && !isNaN(securityDeposit)) {
-        newData.total_release_amount = String(loanAmount - securityDeposit);
-      } else {
-        newData.total_release_amount = "";
-      }
-
-      const principal = parseFloat(newData.loan_amount) || 0;
-      const rate = parseFloat(newData.interest_percentage) || 0;
-      const tenure = parseFloat(newData.tenure) || 1;
-
-      if (principal > 0 && rate > 0 && tenure > 0) {
-        const monthlyRate = rate / 1200;
-        const emi =
-          (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -tenure));
-        if (!isNaN(emi)) {
-          newData.monthly_emi = emi.toFixed(0);
-          newData.total_payment = (emi * tenure).toFixed(0);
-          newData.interest_payable = (
-            parseFloat(newData.total_payment) - parseFloat(newData.loan_amount)
-          ).toFixed(0);
-        }
-      } else {
-        newData.monthly_emi = "";
-        newData.total_payment = "";
-        newData.interest_payable = "";
-      }
-
-      return newData;
-    });
-
-    setErrors((prev) => ({ ...prev, [name]: "" }));
-  };
-
-  const validateForm = (type) => {
-    const newErrors = {};
-
-    const data = type === "addBorrower" ? formData : updateFormData;
-
-    if (!data.borrower) {
-      newErrors.borrower = "Borrower Name is required";
-    }
-
-    if (!data.loan_amount || isNaN(data.loan_amount) || data.loan_amount <= 0) {
-      newErrors.group_value = "Loan Amount must be a positive number";
-    }
-    if (!data.tenure || isNaN(data.tenure) || data.tenure <= 0) {
-      newErrors.tenure = "Tenure must be a positive number";
-    }
-    if (!data.security_deposit) {
-      newErrors.security_deposit = "Security deposit is required";
-    }
-    if (data.interest_percentage) {
-      if (
-        isNaN(data.interest_percentage) ||
-        data.interest_percentage < 0 ||
-        data.interest_percentage > 100
-      ) {
-        newErrors.interest_percentage =
-          "Interest percentage should be between 0 and 100";
-      }
-    }
-
-    if (!data.start_date) {
-      newErrors.start_date = "Start Date is required";
-    }
-    if (!data.due_date) {
-      newErrors.start_date = "Due Date is required";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const isValid = validateForm("addBorrower");
-    try {
-      console.log(isValid);
-      if (isValid) {
-        const response = await api.post("/loans/add-borrower", formData, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (response.status >= 400) throw new Error("failed to add Borrower");
-        setAlertConfig({
-          visibility: true,
-          message: "Borrower Added Successfully",
-          type: "success",
-        });
-
-        setShowModal(false);
-        setFormData({
-          borrower: "",
-          loan_amount: "",
-          tenure: "",
-          security_deposit: "",
-          total_release_amount: "",
-          interest_percentage: "",
-          monthly_emi: "",
-          interest_payable: "",
-          total_payment: "",
-          start_date: "",
-          due_date: "",
-          note: "",
-        });
-      } else {
-        console.log(errors);
-      }
-    } catch (error) {
-      console.error("Error adding Borrower:", error);
-    }
-  };
 
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
         const response = await api.get("/user/get-user");
+
         if (response.status >= 400)
           throw new Error("Failed to fetch borrowers");
         setUsers(response.data);
@@ -198,31 +72,30 @@ const Loan = () => {
       }
     };
     fetchCustomers();
-  }, []);
+  }, [reloadTrigger]);
   useEffect(() => {
     const fetchBorrowers = async () => {
       try {
+        setIsLoading(true);
         const response = await api.get("/loans/get-all-borrowers");
         setBorrowers(response.data);
         const formattedData = response.data.map((borrower, index) => ({
           _id: borrower._id,
           id: index + 1,
-          borrower_name: borrower.borrower.full_name,
-          date: borrower.createdAt,
-          loan_amount: borrower.loan_amount,
-          tenure: borrower.tenure,
-          security_deposit: borrower.security_deposit,
-          total_release_amount: borrower.total_release_amount,
-          interest_percentage: borrower.interest_percentage,
-          monthly_emi: borrower.monthly_emi,
-          interest_payable: borrower.interest_payable,
-          total_payment: borrower.total_payment,
-          start_date: borrower.start_date.split("T")[0],
-          due_date: borrower.due_date.split("T")[0],
-          note: borrower.note,
+          loan_id: borrower?.loan_id,
+          borrower_name: borrower?.borrower?.full_name,
+          date: borrower?.createdAt,
+          loan_amount: borrower?.loan_amount,
+          tenure: borrower?.tenure,
+          service_charges: borrower?.service_charges,
+          daily_payment_amount: borrower?.daily_payment_amount,
+          start_date: borrower?.start_date?.split("T")[0],
+          end_date: borrower?.end_date?.split("T")[0],
+          note: borrower?.note,
           action: (
             <div className="flex justify-center gap-2" key={borrower._id}>
               <Dropdown
+                trigger={['click']}
                 menu={{
                   items: [
                     {
@@ -259,10 +132,112 @@ const Loan = () => {
         setTableBorrowers(formattedData);
       } catch (error) {
         console.error("Error fetching group data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchBorrowers();
-  }, []);
+  }, [reloadTrigger]);
+
+  const handleAntDSelect = (field, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [field]: "",
+    }));
+  };
+
+  const handleAntInputDSelect = (field, value) => {
+    setUpdateFormData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
+
+    setErrors((prevErrors) => ({ ...prevErrors, [field]: "" }));
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const validateForm = (type) => {
+    const newErrors = {};
+
+    const data = type === "addBorrower" ? formData : updateFormData;
+
+    if (!data.borrower) {
+      newErrors.borrower = "Borrower Name is required";
+    }
+
+    if (!data.loan_amount || isNaN(data.loan_amount) || data.loan_amount <= 0) {
+      newErrors.loan_amount = "Loan Amount must be a positive number";
+    }
+    if (!data.tenure || isNaN(data.tenure) || data.tenure <= 0) {
+      newErrors.tenure = "Tenure must be a positive number";
+    }
+    if (!data.service_charges) {
+      newErrors.service_charges = "service charges is required";
+    }
+    if (!data.daily_payment_amount) {
+      newErrors.daily_payment_amount = "Daily payment amount is required";
+    }
+
+    if (!data.start_date) {
+      newErrors.start_date = "Start Date is required";
+    }
+    if (!data.end_date) {
+      newErrors.end_date = "End Date is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const isValid = validateForm("addBorrower");
+    try {
+
+      if (isValid) {
+        const response = await api.post("/loans/add-borrower", formData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        setReloadTrigger((prev) => prev + 1);
+        setAlertConfig({
+          visibility: true,
+          message: "Borrower Added Successfully",
+          type: "success",
+        });
+
+        setShowModal(false);
+        setFormData({
+          borrower: "",
+          loan_amount: "",
+          tenure: "",
+          service_charges: "",
+          daily_payment_amount: "",
+          start_date: "",
+          end_date: "",
+          note: "",
+        });
+      }
+    } catch (error) {
+      console.error("Error adding Borrower:", error);
+    }
+  };
+
+
 
   const handleDeleteModalOpen = async (borrowerId) => {
     try {
@@ -270,7 +245,7 @@ const Loan = () => {
       setCurrentBorrower(response.data);
       setShowModalDelete(true);
     } catch (error) {
-      console.error("Error fetching group:", error);
+      console.error("Error fetching Borrowers:", error);
     }
   };
 
@@ -279,21 +254,17 @@ const Loan = () => {
       const response = await api.get(`/loans/get-borrower/${borrowerId}`);
       const borrowerData = response.data;
       const formattedStartDate = borrowerData?.start_date?.split("T")[0];
-      const formattedEndDate = borrowerData?.due_date?.split("T")[0];
+      const formattedEndDate = borrowerData?.end_date?.split("T")[0];
       setCurrentUpdateBorrower(response.data);
       setUpdateFormData({
-        borrower: response.data.borrower._id,
-        loan_amount: response.data.loan_amount,
-        tenure: response.data.tenure,
-        security_deposit: response.data.security_deposit,
-        total_release_amount: response.data.total_release_amount,
-        interest_percentage: response.data.interest_percentage,
-        monthly_emi: response.data.monthly_emi,
-        interest_payable: response.data.interest_payable,
-        total_payment: response.data.total_payment,
+        borrower: response?.data?.borrower._id,
+        loan_amount: response?.data?.loan_amount,
+        tenure: response?.data?.tenure,
+        service_charges: response?.data?.service_charges,
+        daily_payment_amount: response?.data?.daily_payment_amount,
         start_date: formattedStartDate,
-        due_date: formattedEndDate,
-        note: response.data.note,
+        end_date: formattedEndDate,
+        note: response?.data?.note,
       });
       setShowModalUpdate(true);
       setErrors({});
@@ -304,47 +275,11 @@ const Loan = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    setUpdateFormData((prevData) => {
-      const newData = { ...prevData, [name]: value };
-
-      const loanAmount = parseFloat(newData.loan_amount);
-      const securityDeposit = parseFloat(newData.security_deposit);
-      if (!isNaN(loanAmount) && !isNaN(securityDeposit)) {
-        newData.total_release_amount = String(loanAmount - securityDeposit);
-      } else {
-        newData.total_release_amount = "";
-      }
-
-      const principal = parseFloat(newData.loan_amount) || 0;
-      const rate = parseFloat(newData.interest_percentage) || 0;
-      const tenure = parseFloat(newData.tenure) || 1;
-
-      if (principal > 0 && rate > 0 && tenure > 0) {
-        const monthlyRate = rate / 1200;
-        const emi =
-          (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -tenure));
-        if (!isNaN(emi)) {
-          newData.monthly_emi = emi.toFixed(0);
-          newData.total_payment = (emi * tenure).toFixed(0);
-          newData.interest_payable = (
-            parseFloat(newData.total_payment) - parseFloat(newData.loan_amount)
-          ).toFixed(0);
-        }
-      } else {
-        newData.monthly_emi = "";
-        newData.total_payment = "";
-        newData.interest_payable = "";
-      }
-
-      return newData;
-    });
-
+    setUpdateFormData((prevData) => ({ ...prevData, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleDeleteBorrower = async () => {
-    console.log(currentBorrower, "urrentjjaksjdk");
     if (currentBorrower) {
       try {
         await api.delete(`/loans/delete-borrower/${currentBorrower._id}`);
@@ -353,6 +288,7 @@ const Loan = () => {
           type: "success",
           visibility: true,
         });
+        setReloadTrigger((prev) => prev + 1);
         setShowModalDelete(false);
         setCurrentBorrower(null);
       } catch (error) {
@@ -360,7 +296,6 @@ const Loan = () => {
       }
     }
   };
-
   const handleUpdate = async (e) => {
     e.preventDefault();
     const isValid = validateForm();
@@ -372,6 +307,7 @@ const Loan = () => {
           updateFormData
         );
         setShowModalUpdate(false);
+        setReloadTrigger((prev) => prev + 1);
         setAlertConfig({
           message: "Borrower updated successfully",
           type: "success",
@@ -386,16 +322,12 @@ const Loan = () => {
   const columns = [
     { key: "id", header: "SL. NO" },
     { key: "borrower_name", header: "Borrower Name" },
+    { key: "loan_id", header: "Loan Id" },
     { key: "loan_amount", header: "Loan Amount" },
     { key: "tenure", header: "Tenure" },
-    { key: "security_deposit", header: "Security Deposit" },
-    { key: "total_release_amount", header: "Total Release Amount" },
-    { key: "interest_percentage", header: "Interest Percentage" },
-    { key: "monthly_emi", header: "Monthly EMI" },
-    { key: "interest_payable", header: "Interest Payable" },
-    { key: "total_payment", header: "Total Payment" },
+    { key: "service_charges", header: "Service Charges" },
     { key: "start_date", header: "Start Date" },
-    { key: "due_date", header: "Due Date" },
+    { key: "end_date", header: "Due Date" },
     { key: "note", header: "Note" },
     { key: "action", header: "Action" },
   ];
@@ -403,48 +335,40 @@ const Loan = () => {
   return (
     <>
       <div>
-        <Navbar
-          visibility={true}
-          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-        />
         <CustomAlert
           type={alertConfig.type}
           isVisible={alertConfig.visibility}
           message={alertConfig.message}
         />
+
         <div className="flex mt-20">
-          <Sidebar />
+          <Sidebar navSearchBarVisibility={true} onGlobalSearchChangeHandler={GlobalSearchChangeHandler} />
 
-          <div className="flex-grow p-7">
-            <div className="mt-6 mb-8">
-              <div className="flex justify-between items-center w-full">
-                <h1 className="text-2xl font-semibold">Loans</h1>
-                <button
-                  onClick={() => {
-                    setShowModal(true);
-                    setErrors({});
-                  }}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
-                >
-                  + Add Loan
-                </button>
-              </div>
-            </div>
 
+
+          <div className="flex-grow p-7 w-8 ">
             <DataTable
               catcher="_id"
               updateHandler={handleUpdateModalOpen}
               data={filterOption(tableBorrowers, searchText)}
               columns={columns}
-              exportedFileName={`Groups-${
-                tableBorrowers.length > 0
-                  ? tableBorrowers[0].date +
-                    " to " +
-                    tableBorrowers[tableBorrowers.length - 1].date
-                  : "empty"
-              }.csv`}
+              selectionColor="custom-violet"
+              exportedFileName={`Groups-${tableBorrowers.length > 0
+                ? tableBorrowers[0].date +
+                " to " +
+                tableBorrowers[tableBorrowers.length - 1].date
+                : "empty"
+                }.csv`}
+              onClickHandler={() => {
+                setShowModal(true);
+                setErrors({});
+              }}
+              iconName="Loans"
+              clickableIconName="Add Loan"
             />
           </div>
+
+
         </div>
         <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
           <div className="py-6 px-5 lg:px-8 text-left">
@@ -455,9 +379,9 @@ const Loan = () => {
                   className="block mb-2 text-sm font-medium text-gray-900"
                   htmlFor="borrower_name"
                 >
-                  Select Borrower Name
+                  Borrower Name  <span className="text-red-500 ">*</span>
                 </label>
-                <select
+                {/* <select
                   name="borrower"
                   id="borrower"
                   value={formData.borrower}
@@ -471,7 +395,30 @@ const Loan = () => {
                   {users.map((user) => (
                     <option value={user._id}>{user.full_name}</option>
                   ))}
-                </select>
+                </select> */}
+                <Select
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  placeholder="Select Or Search  Borrower Name "
+                  popupMatchSelectWidth={false}
+                  showSearch
+                  name="borrower"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  value={formData?.borrower || undefined}
+                  onChange={(value) =>
+                    handleAntDSelect("borrower", value)
+                  }
+                >
+                  {users.map((user) => (
+                    <Select.Option key={user._id} value={user._id}>
+                      {user.full_name}
+                    </Select.Option>
+                  ))}
+                </Select>
                 {errors.borrower && (
                   <p className="text-red-500 text-sm mt-1">{errors.borrower}</p>
                 )}
@@ -483,9 +430,9 @@ const Loan = () => {
                     className="block mb-2 text-sm font-medium text-gray-900"
                     htmlFor="loan_amount"
                   >
-                    Loan Amount
+                    Loan Amount  <span className="text-red-500 ">*</span>
                   </label>
-                  <input
+                  <Input
                     type="number"
                     name="loan_amount"
                     value={formData.loan_amount}
@@ -493,7 +440,7 @@ const Loan = () => {
                     id="loan_amount"
                     placeholder="Enter Loan Amount"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.loan_amount && (
                     <p className="text-red-500 text-sm mt-1">
@@ -506,143 +453,71 @@ const Loan = () => {
                     className="block mb-2 text-sm font-medium text-gray-900"
                     htmlFor="tenure"
                   >
-                    Tenure in Months
+                    Tenure in Days <span className="text-red-500 ">*</span>
                   </label>
-                  <input
+                  <Input
                     type="number"
                     name="tenure"
                     value={formData.tenure}
                     onChange={handleChange}
                     id="tenure"
-                    placeholder="Enter Tenure"
+                    placeholder="Enter Tenure in Days"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.tenure && (
                     <p className="text-red-500 text-sm mt-1">{errors.tenure}</p>
                   )}
                 </div>
               </div>
+
               <div className="flex flex-row justify-between space-x-4">
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="security_deposit"
+                    htmlFor="service_charges"
                   >
-                    Security Deposit
+                    Service Charges <span className="text-red-500 ">*</span>
                   </label>
-                  <input
+                  <Input
                     type="number"
-                    name="security_deposit"
-                    value={formData.security_deposit}
+                    name="service_charges"
+                    value={formData.service_charges}
                     onChange={handleChange}
-                    id="security_deposit"
-                    placeholder="Enter Security Deposit"
+                    id="service_charges"
+                    placeholder="Enter Service Charges"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
-                  {errors.security_deposit && (
+                  {errors.service_charges && (
                     <p className="text-red-500 text-sm mt-1">
-                      {errors.security_deposit}
+                      {errors.service_charges}
                     </p>
                   )}
-                </div>
-                <div className="w-1/2">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="date"
-                  >
-                    Total Release Amount
-                  </label>
-                  <input
-                    type="number"
-                    placeholder="Total Release Amount"
-                    value={formData.total_release_amount}
-                    disabled
-                    id="text"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  w-full p-2.5 cursor-not-allowed"
-                  />
-                </div>
-              </div>
-              <div className="flex flex-row justify-between space-x-4">
-                <div className="w-1/2">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="interest_percentage"
-                  >
-                    Interest Rate per Year (%)
-                  </label>
-                  <input
-                    type="number"
-                    name="interest_percentage"
-                    value={formData.interest_percentage}
-                    onChange={handleChange}
-                    id="interest_percentage"
-                    placeholder="Enter Interest"
-                    required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
-                  />
-                  {errors.interest_percentage && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.interest_percentage}
-                    </p>
-                  )}
-                </div>
-                <div className="w-1/2">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="monthly_emi"
-                  >
-                    Monthly EMI
-                  </label>
-                  <input
-                    type="number"
-                    name="monthly_emi"
-                    value={formData.monthly_emi}
-                    id="monthly_emi"
-                    disabled
-                    placeholder="Monthly EMI"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5 cursor-not-allowed"
-                  />
-                </div>
-              </div>
-              <div className="flex flex-row justify-between space-x-4">
-                <div className="w-1/2">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="interest_payable"
-                  >
-                    Interest Payable
-                  </label>
-                  <input
-                    type="number"
-                    placeholder="Interest Payable"
-                    name="interest_payable"
-                    disabled
-                    value={formData.interest_payable}
-                    id="interest_payable"
-                    required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg cursor-not-allowed w-full p-2.5"
-                  />
                 </div>
 
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="total_payable"
+                    htmlFor="daily_payment_amount"
                   >
-                    Total Payment
+                    Daily Payment Amount  <span className="text-red-500 ">*</span>
                   </label>
-                  <input
+                  <Input
                     type="number"
-                    name="total_payable"
-                    value={formData.total_payment}
-                    disabled
-                    placeholder="Total Payment"
-                    id="total_payable"
+                    placeholder="Daily Payment Amount"
+                    name="daily_payment_amount"
+                    value={formData.daily_payment_amount}
+                    onChange={handleChange}
+                    id="daily_payment_amount"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg cursor-not-allowed w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
+                  {errors.daily_payment_amount && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.daily_payment_amount}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -652,9 +527,9 @@ const Loan = () => {
                     className="block mb-2 text-sm font-medium text-gray-900"
                     htmlFor="start_date"
                   >
-                    Start Date
+                    Start Date  <span className="text-red-500 ">*</span>
                   </label>
-                  <input
+                  <Input
                     type="date"
                     name="start_date"
                     value={formData.start_date}
@@ -662,7 +537,7 @@ const Loan = () => {
                     id="start_date"
                     placeholder="Enter the Date"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.start_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -673,23 +548,23 @@ const Loan = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="due_date"
+                    htmlFor="end_date"
                   >
-                    Due Date
+                    End Date <span className="text-red-500 ">*</span>
                   </label>
-                  <input
+                  <Input
                     type="date"
-                    name="due_date"
-                    value={formData.due_date}
+                    name="end_date"
+                    value={formData.end_date}
                     onChange={handleChange}
-                    id="due_date"
-                    placeholder="Enter the Date"
+                    id="end_date"
+                    placeholder="Enter End Date"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
-                  {errors.due_date && (
+                  {errors.end_date && (
                     <p className="text-red-500 text-sm mt-1">
-                      {errors.due_date}
+                      {errors.end_date}
                     </p>
                   )}
                 </div>
@@ -701,19 +576,26 @@ const Loan = () => {
                 >
                   Note
                 </label>
-                <input
-                  type="text"
-                  name="note"
-                  value={formData.note}
-                  onChange={handleChange}
-                  id="note"
-                  placeholder="Specify Note if any!"
-                  required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
-                />
-                {errors.note && (
-                  <p className="text-red-500 text-sm mt-1">{errors.note}</p>
-                )}
+                <div className="flex w-full gap-2">
+                  <Input
+                    type="text"
+                    name="note"
+                    value={formData.note}
+                    onChange={handleChange}
+                    id="note"
+                    placeholder="Specify Note if any!"
+                    required
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  />
+                  <div
+                    className="bg-blue-700 hover:bg-blue-800 w-10 h-10 flex justify-center items-center rounded-md"
+                    onClick={() => {
+                      window.open("Calculator:///");
+                    }}
+                  >
+                    <FaCalculator color="white" />
+                  </div>
+                </div>
               </div>
               <div className="w-full flex justify-end">
                 <button
@@ -741,13 +623,13 @@ const Loan = () => {
                   className="block mb-2 text-sm font-medium text-gray-900"
                   htmlFor="borrower_name"
                 >
-                  Select Borrower Name
+                  Borrower Name <span className="text-red-500 ">*</span>
                 </label>
-                <select
+                {/* <select
                   name="borrower"
                   id="borrower"
                   value={updateFormData.borrower}
-                  onChange={handleInputChange}
+                  onChange={handleChange}
                   required
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                 >
@@ -755,11 +637,32 @@ const Loan = () => {
                     Select Borrower Name
                   </option>
                   {users.map((user) => (
-                    <option key={user._id} value={user._id}>
-                      {user.full_name}
-                    </option>
+                    <option value={user._id}>{user.full_name}</option>
                   ))}
-                </select>
+                </select> */}
+                <Select
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  placeholder="Select Or Search Borrower Name"
+                  popupMatchSelectWidth={false}
+                  showSearch
+                  name="borrower"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  value={updateFormData?.borrower || undefined}
+                  onChange={(value) =>
+                    handleAntInputDSelect("borrower", value)
+                  }
+                >
+                  {users.map((user) => (
+                    <Select.Option key={user._id} value={user._id}>
+                      {user.full_name}
+                    </Select.Option>
+                  ))}
+                </Select>
                 {errors.borrower && (
                   <p className="text-red-500 text-sm mt-1">{errors.borrower}</p>
                 )}
@@ -771,9 +674,9 @@ const Loan = () => {
                     className="block mb-2 text-sm font-medium text-gray-900"
                     htmlFor="loan_amount"
                   >
-                    Loan Amount
+                    Loan Amount <span className="text-red-500 ">*</span>
                   </label>
-                  <input
+                  <Input
                     type="number"
                     name="loan_amount"
                     value={updateFormData.loan_amount}
@@ -781,7 +684,7 @@ const Loan = () => {
                     id="loan_amount"
                     placeholder="Enter Loan Amount"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.loan_amount && (
                     <p className="text-red-500 text-sm mt-1">
@@ -794,164 +697,71 @@ const Loan = () => {
                     className="block mb-2 text-sm font-medium text-gray-900"
                     htmlFor="tenure"
                   >
-                    Tenure
+                    Tenure in Days <span className="text-red-500 ">*</span>
                   </label>
-                  <input
+                  <Input
                     type="number"
                     name="tenure"
                     value={updateFormData.tenure}
                     onChange={handleInputChange}
                     id="tenure"
-                    placeholder="Enter Tenure"
+                    placeholder="Enter Tenure in Days"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.tenure && (
                     <p className="text-red-500 text-sm mt-1">{errors.tenure}</p>
                   )}
                 </div>
               </div>
+
               <div className="flex flex-row justify-between space-x-4">
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="security_deposit"
+                    htmlFor="service_charges"
                   >
-                    Security Deposit
+                    Service Charges <span className="text-red-500 ">*</span>
                   </label>
-                  <input
+                  <Input
                     type="number"
-                    name="security_deposit"
-                    value={updateFormData.security_deposit}
+                    name="service_charges"
+                    value={updateFormData.service_charges}
                     onChange={handleInputChange}
-                    id="security_deposit"
-                    placeholder="Enter Security Deposit"
+                    id="service_charges"
+                    placeholder="Enter Service Charges"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
-                  {errors.security_deposit && (
+                  {errors.service_charges && (
                     <p className="text-red-500 text-sm mt-1">
-                      {errors.security_deposit}
-                    </p>
-                  )}
-                </div>
-                <div className="w-1/2">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="date"
-                  >
-                    Total Release Amount
-                  </label>
-                  <input
-                    type="number"
-                    disabled
-                    name="total_release_amount"
-                    value={updateFormData.total_release_amount}
-                    onChange={handleInputChange}
-                    id="text"
-                    required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg cursor-not-allowed w-full p-2.5"
-                  />
-                </div>
-              </div>
-              <div className="flex flex-row justify-between space-x-4">
-                <div className="w-1/2">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="interest_percentage"
-                  >
-                    Interest Percentage
-                  </label>
-                  <input
-                    type="number"
-                    name="interest_percentage"
-                    value={
-                      updateFormData.interest_percentage 
-                    }
-                    onChange={handleInputChange}
-                    id="interest_percentage"
-                    placeholder="Enter Interest"
-                    required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
-                  />
-                  {errors.interest_percentage && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.interest_percentage}
+                      {errors.service_charges}
                     </p>
                   )}
                 </div>
 
-
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="monthly_emi"
-                    
+                    htmlFor="daily_payment_amount"
                   >
-                    Monthly EMI
+                    Daily Payment Amount <span className="text-red-500 ">*</span>
                   </label>
-                  <input
+                  <Input
                     type="number"
-                    name="monthly_emi"
-                    disabled
-                    value={
-                     updateFormData.monthly_emi
-                    }
-					placeholder="Monthly EMI"
-                    id="monthly_emi"
+                    placeholder="Daily Payment Amount"
+                    name="daily_payment_amount"
+                    value={updateFormData.daily_payment_amount}
+                    onChange={handleInputChange}
+                    id="daily_payment_amount"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg cursor-not-allowed w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
-                
-                </div>
-
-               
-              </div>
-              <div className="flex flex-row justify-between space-x-4">
-			  <div className="w-1/2">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="interest_payable"
-                  >
-                    Interest Payable
-                  </label>
-                  <input
-                    type="number"
-                    placeholder="Interest Payable"
-                    name="interest_payable"
-                    value={
-                     updateFormData.interest_payable
-                    }
-                    onChange={handleInputChange}
-                    id="interest_payable"
-                    disabled
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg cursor-not-allowed w-full p-2.5"
-                  />
-                
-                </div>
-
-
-
-
-
-                <div className="w-1/2">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="total_payment"
-                  >
-                    Total Payment
-                  </label>
-                  <input
-                    type="number"
-                    name="total_payment"
-					placeholder="Total Payment"
-                    value={updateFormData.total_payment}
-                    onChange={handleInputChange}
-                    id="total_payment"
-                    disabled
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg cursor-not-allowed  w-full p-2.5"
-                  />
-                 
+                  {errors.daily_payment_amount && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.daily_payment_amount}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -961,9 +771,9 @@ const Loan = () => {
                     className="block mb-2 text-sm font-medium text-gray-900"
                     htmlFor="start_date"
                   >
-                    Start Date
+                    Start Date <span className="text-red-500 ">*</span>
                   </label>
-                  <input
+                  <Input
                     type="date"
                     name="start_date"
                     value={updateFormData.start_date}
@@ -971,7 +781,7 @@ const Loan = () => {
                     id="start_date"
                     placeholder="Enter the Date"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.start_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -982,23 +792,23 @@ const Loan = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="due_date"
+                    htmlFor="end_date"
                   >
-                    Due Date
+                    End Date <span className="text-red-500 ">*</span>
                   </label>
-                  <input
+                  <Input
                     type="date"
-                    name="due_date"
-                    value={updateFormData.due_date}
+                    name="end_date"
+                    value={updateFormData.end_date}
                     onChange={handleInputChange}
-                    id="due_date"
-                    placeholder="Enter the Date"
+                    id="end_date"
+                    placeholder="Enter End Date"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
-                  {errors.due_date && (
+                  {errors.end_date && (
                     <p className="text-red-500 text-sm mt-1">
-                      {errors.due_date}
+                      {errors.end_date}
                     </p>
                   )}
                 </div>
@@ -1010,19 +820,26 @@ const Loan = () => {
                 >
                   Note
                 </label>
-                <input
-                  type="text"
-                  name="note"
-                  value={updateFormData.note}
-                  onChange={handleInputChange}
-                  id="note"
-                  placeholder="Specify Note if any!"
-                  required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
-                />
-                {errors.note && (
-                  <p className="text-red-500 text-sm mt-1">{errors.note}</p>
-                )}
+                <div className="flex w-full gap-2">
+                  <Input
+                    type="text"
+                    name="note"
+                    value={updateFormData.note}
+                    onChange={handleInputChange}
+                    id="note"
+                    placeholder="Specify Note if any!"
+                    required
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  />
+                  <div
+                    className="bg-blue-700 hover:bg-blue-800 w-10 h-10 flex justify-center items-center rounded-md"
+                    onClick={() => {
+                      window.open("Calculator:///");
+                    }}
+                  >
+                    <FaCalculator color="white" />
+                  </div>
+                </div>
               </div>
               <div className="w-full flex justify-end">
                 <button
@@ -1040,12 +857,12 @@ const Loan = () => {
           isVisible={showModalDelete}
           onClose={() => {
             setShowModalDelete(false);
-            currentBorrower(null);
+            setCurrentBorrower(null);
           }}
         >
           <div className="py-6 px-5 lg:px-8 text-left">
             <h3 className="mb-4 text-xl font-bold text-gray-900">
-              Delete Group
+              Delete Borrower
             </h3>
             {currentBorrower && (
               <form
@@ -1062,16 +879,16 @@ const Loan = () => {
                   >
                     Please enter{" "}
                     <span className="text-primary font-bold">
-                      {currentBorrower.borrower.full_name}
+                      {currentBorrower?.borrower?.full_name}
                     </span>{" "}
-                    to confirm deletion.
+                    to confirm deletion. <span className="text-red-500 ">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="borrowerName"
                     placeholder="Enter the Borrower Name"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                 </div>
                 <button

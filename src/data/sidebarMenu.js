@@ -2,7 +2,7 @@ import { RiDashboardFill } from "react-icons/ri";
 import { SiGoogleanalytics } from "react-icons/si";
 import { UsergroupAddOutlined } from "@ant-design/icons";
 import { IoIosPersonAdd } from "react-icons/io";
-import { BsCash } from "react-icons/bs";
+
 import { GrAnalytics } from "react-icons/gr";
 import { CgProfile, CgWebsite } from "react-icons/cg";
 import { IoIosSettings } from "react-icons/io";
@@ -11,6 +11,29 @@ import { RiAuctionLine } from "react-icons/ri";
 import { FaPeopleArrows, FaUserLock } from "react-icons/fa";
 import { IoPeopleOutline } from "react-icons/io5";
 import { GoGraph } from "react-icons/go";
+import { SiQuicklook } from "react-icons/si";
+import { FaPersonMilitaryPointing } from "react-icons/fa6";
+import { GiRoundTable } from "react-icons/gi";
+import { FaUserTie } from "react-icons/fa6";
+import { HiOutlineUserGroup } from "react-icons/hi";
+import ids from "../data/ids";
+import { MdCancel } from "react-icons/md";
+import { FaHandshake } from "react-icons/fa";
+import { FaClipboardList } from "react-icons/fa";
+import { TbCoinRupeeFilled } from "react-icons/tb";
+import { TbReceiptRupee } from "react-icons/tb";
+import { RiMoneyRupeeCircleLine } from "react-icons/ri";
+import { TbSettings } from "react-icons/tb";
+import { HiCurrencyRupee } from "react-icons/hi2";
+import { FaMapLocationDot } from "react-icons/fa6";
+import { RiUserLocationFill } from "react-icons/ri";
+import { MdOutlineGroups } from "react-icons/md";
+import { FaFilter } from "react-icons/fa";
+import { BiTransfer } from "react-icons/bi";
+import { GrUserSettings } from "react-icons/gr";
+import { GiTakeMyMoney } from "react-icons/gi";
+import { PiCalculatorBold } from "react-icons/pi";
+
 
 const sidebarMenu = [
 	{
@@ -20,13 +43,21 @@ const sidebarMenu = [
 		activeColor: "primary",
 		link: "/dashboard",
 	},
+
 	{
-		id: "$2",
-		title: "Analytics",
-		icon: SiGoogleanalytics,
-		link: "/analytics",
-		activeColor: "primary",
+		id: "$!GPP",
+		title: "AI Search",
+		icon: SiQuicklook,
+		link: "/quick-search",
 	},
+
+	// {
+	// 	id: "$2",
+	// 	title: "Analytics",
+	// 	icon: SiGoogleanalytics,
+	// 	link: "/analytics",
+	// 	activeColor: "primary",
+	// },
 	{
 		id: "$3",
 		title: "Groups ",
@@ -42,6 +73,12 @@ const sidebarMenu = [
 		activeColor: "custom-yellow",
 	},
 	{
+		id: "&*&",
+		title: "Unverified Customer",
+		icon: MdCancel,
+		link: "/un-approved-customer",
+	},
+	{
 		id: "$5",
 		title: "Enrollments ",
 		icon: FaPeopleArrows,
@@ -49,11 +86,42 @@ const sidebarMenu = [
 		activeColor: "primary",
 	},
 	{
-		id: "$6",
-		title: "Employees",
-		icon: FaUserLock,
-		link: "/agent",
-		activeColor: "custom-violet",
+		id: "$67",
+		title: "Guarantor ",
+		icon: FaHandshake,
+		link: "/guarantor",
+	},
+	{
+		id: ids.seven,
+		title: "Staff",
+		icon: GiRoundTable,
+		submenu: true,
+		submenuItems: [
+			{
+				id: "$101",
+				title: "All",
+				icon: HiOutlineUserGroup,
+				link: "/staff",
+			},
+			{
+				id: "$102",
+				title: "Agent",
+				icon: FaPersonMilitaryPointing,
+				link: "/agent",
+			},
+			{
+				id: "$103",
+				title: "Employee",
+				icon: FaUserTie,
+				link: "/employee",
+			},
+		],
+	},
+	{
+		id: "$18",
+		title: "Tasks",
+		icon: FaClipboardList,
+		link: "/task",
 	},
 	{
 		id: "$7",
@@ -62,6 +130,20 @@ const sidebarMenu = [
 		link: "/lead",
 		activeColor: "primary",
 	},
+
+	{
+		id: "$8",
+		title: "Loans",
+		icon: GiTakeMyMoney ,
+		link: "/loan",
+	},
+	{
+		id: "$9",
+		title: "Pigme",
+		icon: PiCalculatorBold,
+		link: "/pigme",
+	},
+
 	{
 		id: "$8",
 		title: "Auctions ",
@@ -70,11 +152,27 @@ const sidebarMenu = [
 		activeColor: "primary",
 	},
 	{
-		id: "$9",
-		title: "Payments ",
-		icon: BsCash,
-		link: "/payment",
-		activeColor: "custom-green",
+		id: "",
+		title: "Payments",
+		icon: TbCoinRupeeFilled,
+		submenu: true,
+		submenuItems: [
+
+			{
+				id: "",
+				title: "Pay-In ",
+				icon: TbReceiptRupee,
+				link: "/pay-in-menu",
+			},
+			{
+				id: "",
+				title: "Pay-Out ",
+				icon: RiMoneyRupeeCircleLine,
+				link: "/pay-out-menu",
+			},
+
+
+		],
 	},
 	{
 		id: "$10",
@@ -89,6 +187,93 @@ const sidebarMenu = [
 		icon: GoGraph,
 		link: "/marketing",
 		activeColor: "primary",
+	},
+
+	{
+		id: "$199",
+		title: "General Settings",
+		icon: TbSettings,
+		submenu: true,
+		submenuItems: [
+			{
+				id: "#1",
+				title: "Collection",
+				icon: HiCurrencyRupee,
+				hider: true,
+				newTab: true,
+				submenu: true,
+				submenuItems: [
+					{
+						id: ids.fourteen,
+						title: "Collection Area",
+						icon: FaMapLocationDot,
+						link: "/collection-area-request",
+					},
+					{
+						id: ids.fifteen,
+						title: "Collection Mapping",
+						icon: RiUserLocationFill,
+						link: "/collection-area-mapping",
+					},
+				],
+			},
+			{
+				id: "#2",
+				title: "Groups",
+				icon: MdOutlineGroups,
+				hider: true,
+				newTab: true,
+				submenu: true,
+				submenuItems: [
+					{
+						id: ids.sixteen,
+						title: "Filter Groups",
+						icon: FaFilter,
+						link: "/filter-groups",
+					},
+				],
+			},
+			{
+				id: "#3",
+				title: "Employee",
+				hider: true,
+				icon: FaUserTie,
+				newTab: true,
+				submenu: true,
+				submenuItems: [
+					{
+						id: "#206",
+						title: "Employee Profile",
+						icon: GrUserSettings,
+						link: "/employee-profile",
+					},
+				],
+			},
+			{
+				id: "#3",
+				title: "Transfer",
+				hider: true,
+				icon: BiTransfer,
+				newTab: true,
+				submenu: true,
+				submenuItems: [
+					{
+						id: "#206",
+						title: "Soft Transfer",
+						icon: GrUserSettings,
+						link: "/soft-transfer",
+
+					},
+					{
+						id: "#206",
+						title: "Hard Transfer",
+						icon: GrUserSettings,
+						link: "/hard-transfer",
+
+					},
+				],
+			},
+		],
 	},
 	{
 		id: "$12",

@@ -9,8 +9,11 @@ import CustomAlert from "../components/alerts/CustomAlert";
 import whatsappApi from "../instance/WhatsappInstance";
 import { MdDelete } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
+import CircularLoader from "../components/loaders/CircularLoader";
 const WhatsappFailed = () => {
   const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [TableUsers, setTableUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -36,12 +39,13 @@ const WhatsappFailed = () => {
   const [templateErrors, setTemplateErrors] = useState({});
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [reloadTrigger, setReloadTrigger] = useState(0);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        setIsLoading(true);
         const response = await api.get("/whatsapp/get-failed-users");
-        console.log("response", response.data);
         setUsers(response.data);
         const initialSelected = {};
         response.data.forEach((user) => {
@@ -50,10 +54,12 @@ const WhatsappFailed = () => {
         setSelectUser(initialSelected);
       } catch (error) {
         console.error("Error fetching user data:", error.message);
+      }finally {
+        setIsLoading(false);
       }
     };
     fetchUsers();
-  }, []);
+  }, [reloadTrigger]);
   useEffect(() => {
     const updateUI = () => {
       const formattedData = users.map((group, index) => ({
@@ -106,7 +112,7 @@ const WhatsappFailed = () => {
       setTableUsers(formattedData);
     };
     updateUI();
-  }, [selectUser]);
+  }, [selectUser, reloadTrigger]);
   useEffect(() => {
     const countCustomer = () => {
       let counter = 0;
@@ -118,7 +124,7 @@ const WhatsappFailed = () => {
       setCustomerCount(counter);
     };
     countCustomer();
-  }, [selectUser]);
+  }, [selectUser, reloadTrigger]);
 
   const validateTemplate = (type) => {
     const newErrors = {};
@@ -155,6 +161,7 @@ const WhatsappFailed = () => {
           setFormData({
             template_name: "",
           });
+          setReloadTrigger((prev) => prev + 1);
           setAlertConfig({
             type: "success",
             message: "Whatsapped Successfully",
@@ -229,13 +236,13 @@ const WhatsappFailed = () => {
 
     try {
       if (isValid) {
-        console.log(updateFormData);
+       
         await api.patch(
           `/whatsapp/update-failed-user-by-id/${currentUpdateUser._id}`,
           updateFormData
         );
         setShowModalUpdate(false);
-
+        setReloadTrigger((prev) => prev + 1);
         setAlertConfig({
           visibility: true,
           message: "User Updated Successfully",
@@ -308,6 +315,7 @@ const WhatsappFailed = () => {
         await api.delete(
           `/whatsapp/delete-failed-user-by-id/${currentUser._id}`
         );
+        setReloadTrigger((prev) => prev + 1);
         setAlertConfig({
           visibility: true,
           message: "User deleted successfully",
@@ -337,11 +345,14 @@ const WhatsappFailed = () => {
       <div className="w-screen">
         <div className="flex mt-20">
           {/* <Sidebar /> */}
-          <CustomAlert
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-          />
+          <CustomAlertDialog
+          type={alertConfig.type}
+          isVisible={alertConfig.visibility}
+          message={alertConfig.message}
+          onClose={() =>
+            setAlertConfig((prev) => ({ ...prev, visibility: false }))
+          }
+        />
 
           <div className="flex-grow p-7">
             <div className="mt-6 mb-8">
@@ -393,7 +404,7 @@ const WhatsappFailed = () => {
                 </button>
               </div>
             </div>
-
+           {(TableUsers.length > 0 && !isLoading) ? (
             <DataTable
               data={TableUsers}
               columns={columns}
@@ -404,7 +415,13 @@ const WhatsappFailed = () => {
                     TableUsers[TableUsers.length - 1].name
                   : "empty"
               }.csv`}
-            />
+            />): (
+              <CircularLoader
+                isLoading={isLoading}
+                failure={TableUsers.length <= 0}
+                data={"Group Data"}
+              />
+            )}
           </div>
         </div>
         <Modal isVisible={showModal} onClose={() => setShowModal(false)}>

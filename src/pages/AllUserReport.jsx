@@ -3,27 +3,55 @@ import { useEffect, useState } from "react";
 import api from "../instance/TokenInstance";
 import DataTable from "../components/layouts/Datatable";
 import CircularLoader from "../components/loaders/CircularLoader";
+import { Select } from "antd";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
+import { useMemo } from "react";
 
 const AllUserReport = () => {
   const [searchText, setSearchText] = useState("");
-
   const [screenLoading, setScreenLoading] = useState(true);
   const [auctionTableData, setAuctionTableData] = useState([]);
   const [usersData, SetUsersData] = useState([]);
-  // unlimited reloading of page
+  const [groupFilter, setGroupFilter] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
+  const groupOptions = [...new Set(usersData.map((u) => u.groupName))];
+
+  const [totals, setTotals] = useState({
+    totalCustomers: 0,
+    totalGroups: 0,
+    totalToBePaid: 0,
+    totalProfit: 0,
+    totalPaid: 0,
+    totalBalance: 0,
+  });
+
+const filteredUsers = useMemo(() => {
+  return filterOption(
+    usersData.filter((u) => {
+      const matchGroup = groupFilter ? u.groupName === groupFilter : true;
+      const enrollmentDate = new Date(u.enrollmentDate);
+      const matchFromDate = fromDate ? enrollmentDate >= new Date(fromDate) : true;
+      const matchToDate = toDate ? enrollmentDate <= new Date(toDate) : true;
+      return matchGroup && matchFromDate && matchToDate;
+    }),
+    searchText
+  );
+}, [usersData, groupFilter, fromDate, toDate, searchText]);
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const reportResponse = await api.get("/user/all-customers-report");
         const usersList = [];
-        let count =0;
+        let count = 0;
+
         reportResponse.data.forEach((usrData) => {
-          
           if (usrData?.data) {
-            usrData.data.forEach((data, index) => {
+            usrData.data.forEach((data) => {
               if (data?.enrollment?.group) {
                 const groupInstall = parseInt(
                   data.enrollment.group.group_install
@@ -34,17 +62,32 @@ const AllUserReport = () => {
                 const totalPayable = data.payable.totalPayable;
                 const totalProfit = data.profit.totalProfit;
                 const firstDividentHead = data.firstAuction.firstDividentHead;
-                count++
+                count++;
+                const id = data?.enrollment?._id;
                 const tempUsr = {
-                  sl_no:count,
-                  _id: usrData._id,
+                  sl_no: count,
+                  _id:id,
                   userName: usrData.userName,
-                  userPhone:usrData.phone_number,
+                  userPhone: usrData.phone_number,
                   customerId: usrData.customer_id,
                   amountPaid: totalPaidAmount,
                   paymentsTicket: data.payments.ticket,
+                  groupValue: data?.enrollment?.group?.group_value,
                   groupName: data.enrollment.group.group_name,
                   profit: totalProfit,
+
+                  reffered_by: data?.enrollment?.agent
+                    ? data.enrollment.agent
+                    : data?.enrollment?.reffered_customer
+                    ? data.enrollment.reffered_customer
+                    : data?.enrollment?.reffered_lead
+                    ? data.enrollment.reffered_lead
+                    : "N/A",
+                  payment_type: data?.enrollment?.payment_type,
+                  referred_type: data?.enrollment?.referred_type,
+                  enrollmentDate: data?.enrollment?.createdAt
+                    ? data.enrollment.createdAt.split("T")[0]
+                    : "",
                   totalToBePaid:
                     groupType === "double"
                       ? groupInstall * auctionCount + groupInstall
@@ -80,24 +123,29 @@ const AllUserReport = () => {
     fetchData();
   }, []);
 
-  const calculateTotals = (processedData) => ({
-    totalToBePaid: processedData.reduce(
-      (sum, item) => sum + (item.totalBePaid || 0),
-      0
-    ),
-    totalProfit: processedData.reduce(
-      (sum, item) => sum + (item.profit || 0),
-      0
-    ),
-    netTotalProfit: processedData.reduce(
-      (sum, item) => sum + (item.toBePaidAmount || 0),
-      0
-    ),
-    totalPaid: processedData.reduce(
-      (sum, item) => sum + (item.paidAmount || 0),
-      0
-    ),
+ useEffect(() => {
+  const totalCustomers = filteredUsers.length;
+  const groupSet = new Set(filteredUsers.map((user) => user.groupName));
+  const totalGroups = groupFilter ? 1 : groupSet.size;
+
+  const totalToBePaid = filteredUsers.reduce(
+    (sum, u) => sum + (u.totalToBePaid || 0),
+    0
+  );
+  const totalProfit = filteredUsers.reduce((sum, u) => sum + (u.profit || 0), 0);
+  const totalPaid = filteredUsers.reduce((sum, u) => sum + (u.amountPaid || 0), 0);
+  const totalBalance = filteredUsers.reduce((sum, u) => sum + (u.balance || 0), 0);
+
+  setTotals({
+    totalCustomers,
+    totalGroups,
+    totalToBePaid,
+    totalProfit,
+    totalPaid,
+    totalBalance,
   });
+}, [filteredUsers, groupFilter]);
+
 
   const Auctioncolumns = [
     { key: "sl_no", header: "SL. NO" },
@@ -105,37 +153,159 @@ const AllUserReport = () => {
     { key: "userPhone", header: "Phone Number" },
     { key: "customerId", header: "Customer Id" },
     { key: "groupName", header: "Group Name" },
+    { key: "groupValue", header: "Group Value" },
+    { key: "enrollmentDate", header: "Enrollment Date" },
+    { key: "referred_type", header: "Referred Type" },
+    // { key: "agent", header: "Referred Agent" },
+    // { key: "reffered_customer", header: "Referred Customer" },
+    // { key: "reffered_lead", header: "Referred Lead" },
+    { key: "reffered_by", header: "Referred By" },
+    { key: "payment_type", header: "Payment Type" },
     { key: "paymentsTicket", header: "Ticket" },
     { key: "totalToBePaid", header: "Amount to be Paid" },
     { key: "profit", header: "Profit" },
-    { key: "toBePaidAmount", header: "Net To be Paid" },
     { key: "amountPaid", header: "Amount Paid" },
     { key: "balance", header: "Balance" },
   ];
 
   return (
     <div className="w-screen">
-      <div className="flex mt-20">
-      
+      <div className="flex mt-30">
+        <Navbar
+          onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
+          visibility={true}
+        />
         {screenLoading ? (
           <div className="w-full">
             <CircularLoader color="text-green-600" />
           </div>
         ) : (
           <div className="flex-grow p-7">
-            <h1 className="text-2xl font-semibold text-center">
-              All Customer Report
+            <h1 className="text-2xl font-bold text-center">
+              Reports - All Customer
             </h1>
 
             <div className="mt-6 mb-8">
               <div className="mt-6 mb-8">
                 <div className="flex justify-start border-b border-gray-300 mb-4"></div>
                 <div className="mt-10">
+                  <div className="flex flex-wrap items-center gap-4 mb-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Group Filter
+                      </label>
+                      <Select
+                        style={{ width: 200 }}
+                        allowClear
+                        placeholder="--All groups--"
+                        onChange={(value) => setGroupFilter(value)}
+                        value={groupFilter || undefined}
+                      >
+                        {groupOptions.map((group) => (
+                          <Select.Option key={group} value={group}>
+                            {group}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        From Date
+                      </label>
+                      <input
+                        type="date"
+                        value={fromDate}
+                        onChange={(e) => setFromDate(e.target.value)}
+                        className="border rounded px-2 py-1"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        To Date
+                      </label>
+                      <input
+                        type="date"
+                        value={toDate}
+                        onChange={(e) => setToDate(e.target.value)}
+                        className="border rounded px-2 py-1"
+                      />
+                    </div>
+                  </div>
+
                   <DataTable
-                    data={filterOption(usersData, searchText)}
+                    data={filterOption(
+                      usersData.filter((u) => {
+                        const matchGroup = groupFilter
+                          ? u.groupName === groupFilter
+                          : true;
+                        const enrollmentDate = new Date(u.enrollmentDate);
+                        const matchFromDate = fromDate
+                          ? enrollmentDate >= new Date(fromDate)
+                          : true;
+                        const matchToDate = toDate
+                          ? enrollmentDate <= new Date(toDate)
+                          : true;
+                        return matchGroup && matchFromDate && matchToDate;
+                      }),
+                      searchText
+                    )}
                     columns={Auctioncolumns}
-                    exportedFileName={`CustomerReport-${auctionTableData.userId}.csv`}
+                    exportedFileName={`CustomerReport.csv`}
                   />
+                </div>
+
+             
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+                  <div className="flex flex-col border p-4 rounded shadow">
+                    <span className="text-xl font-bold text-gray-700">
+                      Total Customers
+                    </span>
+                    <span className="text-lg font-bold  text-blue-600">
+                      {totals.totalCustomers}
+                    </span>
+                  </div>
+                  <div className="flex flex-col border p-4 rounded shadow">
+                    <span className="text-xl font-bold text-gray-700">
+                      Total Groups
+                    </span>
+                    <span className="text-lg font-bold  text-green-600">
+                      {totals.totalGroups}
+                    </span>
+                  </div>
+                  <div className="flex flex-col border p-4 rounded shadow">
+                    <span className="text-xl font-bold text-gray-700">
+                      Amount to be Paid
+                    </span>
+                    <span className="text-lg font-bold text-blue-600">
+                      ₹{totals.totalToBePaid}
+                    </span>
+                  </div>
+                  <div className="flex flex-col border p-4 rounded shadow">
+                    <span className="text-xl font-bold text-gray-700">
+                      Total Profit
+                    </span>
+                    <span className="text-lg font-bold text-green-600">
+                      ₹{totals.totalProfit}
+                    </span>
+                  </div>
+                  <div className="flex flex-col border p-4 rounded shadow">
+                    <span className="text-xl font-semibold text-gray-700">
+                      Total Amount Paid
+                    </span>
+                    <span className="text-lg font-bold text-indigo-600">
+                      ₹{totals.totalPaid}
+                    </span>
+                  </div>
+                  <div className="flex flex-col border p-4 rounded shadow">
+                    <span className="text-xl font-bold text-gray-700">
+                      Total Balance
+                    </span>
+                    <span className="text-lg font-bold text-red-600">
+                      ₹{totals.totalBalance}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -148,50 +318,4 @@ const AllUserReport = () => {
 
 export default AllUserReport;
 
-// {/* <div className="flex gap-4 mt-5">
-//                     {/* Total Summary Fields */}
-//                     <div className="flex flex-col flex-1">
-//                       <label className="mb-1 text-sm font-medium text-gray-700">
-//                         Total Amount to be Paid
-//                       </label>
-//                       <input
-//                         type="text"
-//                         value={totals.totalToBePaid}
-//                         readOnly
-//                         className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-//                       />
-//                     </div>
-//                     <div className="flex flex-col flex-1">
-//                       <label className="mb-1 text-sm font-medium text-gray-700">
-//                         Total Profit
-//                       </label>
-//                       <input
-//                         type="text"
-//                         value={totals.totalProfit}
-//                         readOnly
-//                         className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-//                       />
-//                     </div>
-//                     <div className="flex flex-col flex-1">
-//                       <label className="mb-1 text-sm font-medium text-gray-700">
-//                         Total Net To be Paid
-//                       </label>
-//                       <input
-//                         type="text"
-//                         value={totals.netTotalProfit}
-//                         readOnly
-//                         className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-//                       />
-//                     </div>
-//                     <div className="flex flex-col flex-1">
-//                       <label className="mb-1 text-sm font-medium text-gray-700">
-//                         Total Amount Paid
-//                       </label>
-//                       <input
-//                         type="text"
-//                         value={totals.totalPaid}
-//                         readOnly
-//                         className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-//                       />
-//                     </div>
-//                   </div> */}
+

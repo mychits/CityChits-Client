@@ -11,9 +11,13 @@ import axios from "axios";
 import url from "../data/Url";
 import DataTable from "../components/layouts/Datatable";
 import CircularLoader from "../components/loaders/CircularLoader";
-import { Select } from "antd";
+import { Select, Dropdown,Input } from "antd";
 import Navbar from "../components/layouts/Navbar";
+
+import { IoMdMore } from "react-icons/io";
+import { Link } from "react-router-dom";
 import filterOption from "../helpers/filterOption";
+import { fieldSize } from "../data/fieldSize";
 const Daybook = () => {
   const [groups, setGroups] = useState([]);
   const [TableDaybook, setTableDaybook] = useState([]);
@@ -32,15 +36,19 @@ const Daybook = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [receiptNo, setReceiptNo] = useState("");
   const [paymentMode, setPaymentMode] = useState("cash");
-  const [selectedDate, setSelectedDate] = useState(() => {
-    const today = new Date();
-    return today.toISOString().split("T")[0];
-  });
+  const today = new Date();
+  const todayString = today.toISOString().split("T")[0];
+  const [selectedDate, setSelectedDate] = useState(todayString);
+  const [showFilterField, setShowFilterField] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedPaymentMode, setSelectedPaymentMode] = useState("");
   const [selectedCustomers, setSelectedCustomers] = useState("");
+    const [hideAccountType, setHideAccountType] = useState("");
+    const [selectedAccountType, setSelectedAccountType] = useState("");
   const [payments, setPayments] = useState([]);
   const [searchText, setSearchText] = useState("");
-
+  const [selectedLabel, setSelectedLabel] = useState("Today")
+const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
   const onGlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
@@ -55,8 +63,50 @@ const Daybook = () => {
     pay_type: "cash",
     transaction_id: "",
   });
+ useEffect(() => {
+    const user = localStorage.getItem("user");
+    const userObj = JSON.parse(user);
 
+    if (
+      userObj &&
+      userObj.admin_access_right_id?.access_permissions?.edit_payment
+    ) {
+      const showPaymentsModes =
+        userObj.admin_access_right_id?.access_permissions?.edit_payment ===
+        "true"
+          ? true
+          : false;
+      setShowAllPaymentModes(showPaymentsModes);
+    }
+  }, []);
+   useEffect(() => {
+        const user = localStorage.getItem("user");
+        const userObj = JSON.parse(user);
+    
+        if (
+          userObj &&
+          userObj.admin_access_right_id?.access_permissions?.edit_payment
+        ) {
+          const isModify =
+            userObj.admin_access_right_id?.access_permissions?.edit_payment ===
+            "true"
+              ? true
+              : false;
+          setHideAccountType(isModify);
+        }
+      }, []);
   const handleModalClose = () => setShowUploadModal(false);
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const response = await api.get("/user/get-user");
+        setFilteredUsers(response.data);
+      } catch (error) {
+        console.error("Error fetching group data:", error);
+      }
+    };
+    fetchGroups();
+  }, []);
 
   useEffect(() => {
     const fetchGroups = async () => {
@@ -99,6 +149,13 @@ const Daybook = () => {
     }));
   };
 
+  const dayGroup = [
+    { value: "Today", label: "Today" },
+    { value: "Yesterday", label: "Yesterday" },
+    { value: "Twodaysago", label: "Two Days Ago" },
+    { value: "Custom", label: "Custom" },
+  ];
+
   const handleChangeUser = (e) => {
     const { name, value } = e.target;
     const [user_id, ticket] = value.split("-");
@@ -109,36 +166,45 @@ const Daybook = () => {
     }));
   };
 
-  // const handleGroupChange = async (groupId) => {
-  //     setSelectedGroup(groupId);
-  //     if (groupId) {
-  //         try {
-  //             const response = await api.get(`/enroll/get-group-enroll/${groupId}`);
-  //             if (response.data && response.data.length > 0) {
-  //                 setFilteredUsers(response.data);
-  //             } else {
-  //                 setFilteredUsers([]);
-  //             }
-  //         } catch (error) {
-  //             console.error("Error fetching enrollment data:", error);
-  //             setFilteredUsers([]);
-  //         }
-  //     } else {
-  //         setFilteredUsers([]);
-  //     }
+  // const handleSelectFilter = (e) => {
+  //   const { value } = e.target;
+  //   setShowFilterField(false);
+  //   const formatDate = (date) => date.toISOString().slice(0, 10);
+  //   if (value === "Today") {
+  //     const formattedToday = formatDate(today);
+  //     setSelectedDate(formattedToday);
+  //   } else if (value === "Yesterday") {
+  //     const yesterday = new Date(today);
+  //     yesterday.setDate(yesterday.getDate() - 1);
+  //     const formatted = formatDate(yesterday);
+  //     setSelectedDate(formatted);
+  //   }else if (value === "Custom") {
+  //     setShowFilterField(true);
+  //   }
   // };
 
-  useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const response = await api.get("/user/get-user");
-        setFilteredUsers(response.data);
-      } catch (error) {
-        console.error("Error fetching group data:", error);
-      }
-    };
-    fetchGroups();
-  }, []);
+  const handleSelectFilter = (value) => {
+    setSelectedLabel(value)
+    setShowFilterField(false);
+    const today = new Date();
+    const formatDate = (date) => date.toISOString().slice(0, 10);
+
+    if (value === "Today") {
+      setSelectedDate(formatDate(today));
+    } else if (value === "Yesterday") {
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      setSelectedDate(formatDate(yesterday));
+    } else if (value === "Twodaysago") {
+      const twodaysago = new Date(today);
+      twodaysago.setDate(twodaysago.getDate() - 2);
+      setSelectedDate(formatDate(twodaysago));
+    } else if (value === "Custom") {
+      setShowFilterField(true);
+    } else {
+      setSelectedDate("");
+    }
+  };
 
   const handleGroup = async (event) => {
     const groupId = event.target.value;
@@ -148,7 +214,11 @@ const Daybook = () => {
       group_id: groupId,
     }));
 
-    handleGroupChange(groupId);
+    //handleGroupChange(groupId);
+    const handleGroupChange = async (groupId) => {
+      //const groupId = event.target.value;
+      setSelectedGroup(groupId);
+    };
 
     if (groupId) {
       try {
@@ -167,40 +237,17 @@ const Daybook = () => {
     setSelectedAuctionGroupId(groupId);
   };
 
-  // const handleGroupPaymentChange = async (groupId) => {
-  //     setSelectedAuctionGroup(groupId);
-  //     if (groupId) {
-  //         try {
-  //             // Include selectedDate in the query parameters
-  //             const response = await api.get(
-  //                 `/payment/get-group-payment/${groupId}`,
-  //                 {
-  //                     params: { pay_date: selectedDate }, // Send selectedDate as a query parameter
-  //                 }
-  //             );
-  //             if (response.data && response.data.length > 0) {
-  //                 setFilteredAuction(response.data);
-  //             } else {
-  //                 setFilteredAuction([]);
-  //             }
-  //         } catch (error) {
-  //             console.error("Error fetching payment data:", error);
-  //             setFilteredAuction([]);
-  //         }
-  //     } else {
-  //         setFilteredAuction([]);
-  //     }
-  // };
-
   useEffect(() => {
     const fetchPayments = async () => {
       try {
+        setIsLoading(true);
         const response = await api.get(`/payment/get-report-daybook`, {
           params: {
             pay_date: selectedDate,
             groupId: selectedAuctionGroupId,
             userId: selectedCustomers,
             pay_type: selectedPaymentMode,
+            account_type: selectedAccountType,
           },
         });
         if (response.data && response.data.length > 0) {
@@ -214,16 +261,45 @@ const Daybook = () => {
           const formattedData = response.data.map((group, index) => ({
             _id: group._id,
             id: index + 1,
-            group: group.group_id.group_name,
-            name: group.user_id?.full_name,
-            phone_number: group.user_id.phone_number,
-            ticket: group.ticket,
-            receipt: group.receipt_no
-              ? group.receipt_no
-              : `#${group.old_receipt_no.split("-")[1]}`,
-            amount: group.amount,
-            mode: group.pay_type,
-            collected_by: group?.collected_by?.name || "Admin",
+            group: group?.group_id?.group_name || group?.pay_for,
+            name: group?.user_id?.full_name,
+            category: group?.pay_for || "Chit",
+            phone_number: group?.user_id?.phone_number,
+            ticket: group?.ticket,
+            receipt: group?.receipt_no,
+            old_receipt_no: group?.old_receipt_no,
+            amount: group?.amount,
+            date:group.pay_date?.split("T")?.[0],
+            transaction_date:group?.createdAt?.split("T")?.[0],
+            mode: group?.pay_type,
+            account_type: group?.account_type,
+            collected_by:
+              group?.collected_by?.name ||
+              group?.admin_type?.admin_name ||
+              "Super Admin",
+            action: (
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: "1",
+                      label: (
+                        <Link
+                          target="_blank"
+                          to={`/print/${group._id}`}
+                          className="text-blue-600 "
+                        >
+                          Print
+                        </Link>
+                      ),
+                    },
+                  ],
+                }}
+                placement="bottomLeft"
+              >
+                <IoMdMore className="text-bold" />
+              </Dropdown>
+            ),
           }));
           setTableDaybook(formattedData);
         } else {
@@ -233,6 +309,8 @@ const Daybook = () => {
         console.error("Error fetching payment data:", error);
         setFilteredAuction([]);
         setPayments(0);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -242,18 +320,26 @@ const Daybook = () => {
     selectedDate,
     selectedPaymentMode,
     selectedCustomers,
+    selectedAccountType,
   ]);
 
   const columns = [
     { key: "id", header: "SL. NO" },
+    { key: "date", header: "Paid Date" },
+    { key: "transaction_date", header: "Transaction Date" },
     { key: "group", header: "Group Name" },
+    { key: "category", header: "Category" },
     { key: "name", header: "Customer Name" },
     { key: "phone_number", header: "Customer Phone Number" },
     { key: "ticket", header: "Ticket" },
     { key: "receipt", header: "Receipt" },
+    { key: "old_receipt_no", header: "Old Receipt" },
     { key: "amount", header: "Amount" },
     { key: "mode", header: "Payment Mode" },
+     ...(hideAccountType
+    ? [{ key: "account_type", header: "Account Type" }]: []),
     { key: "collected_by", header: "Collected By" },
+    { key: "action", header: "Action" },
   ];
 
   useEffect(() => {
@@ -367,11 +453,10 @@ const Daybook = () => {
   return (
     <>
       <div className="w-screen">
-        <div className="flex mt-20">
-          <Sidebar
+        <div className="flex mt-30">
+          <Navbar
             onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-            navSearchBarVisibility={true}
-            navbarVisibility={false}
+            visibility={true}
           />
           <div className="flex-grow p-7">
             <h1 className="text-2xl font-semibold">Reports - Daybook</h1>
@@ -379,20 +464,55 @@ const Daybook = () => {
               <div className="mb-2">
                 <div className="flex justify-start items-center w-full gap-4">
                   <div className="mb-2">
-                    <label>Date</label>
-                    <input
-                      type="date"
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full max-w-xs"
-                    />
+                    <label>Filter Option</label>
+                    {/* <select
+                      onChange={handleSelectFilter}
+                      className="border border-gray-300 rounded px-6 shadow-sm outline-none w-full max-w-md"
+                    >
+                      <option value="Today">Today</option>
+                      <option value="Yesterday">Yesterday</option>
+                    
+                      <option value="Custom">Custom</option>
+                    </select> */}
+                    <Select
+                      showSearch
+                      popupMatchSelectWidth={false}
+                      onChange={handleSelectFilter}
+                      value={selectedLabel || undefined}
+                      placeholder="Search Or Select Filter"
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      className="w-full max-w-xs h-11"
+                    >
+                      {dayGroup.map((time) => (
+                        <Select.Option key={time.value} value={time.value}>
+                          {time.label}
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </div>
-                  <div className="mb-2 flex flex-col">
+
+                  {showFilterField && (
+                    <div className="mb-2">
+                      <label>Date</label>
+                      <Input
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full max-w-xs"
+                      />
+                    </div>
+                  )}
+                  <div className="mb-2">
                     <label>Group</label>
                     <Select
                       showSearch
                       popupMatchSelectWidth={false}
-                      value={selectedAuctionGroupId || undefined}
+                      value={selectedAuctionGroupId}
                       onChange={handleGroupPayment}
                       placeholder="Search Or Select Group"
                       filterOption={(input, option) =>
@@ -411,12 +531,12 @@ const Daybook = () => {
                       ))}
                     </Select>
                   </div>
-                  <div className="mb-2 flex flex-col">
+                  <div className="mb-2">
                     <label>Customers</label>
                     <Select
                       showSearch
                       popupMatchSelectWidth={false}
-                      value={selectedCustomers || undefined}
+                      value={selectedCustomers}
                       filterOption={(input, option) =>
                         option.children
                           .toString()
@@ -426,7 +546,7 @@ const Daybook = () => {
                       placeholder="Search Or Select Customer"
                       onChange={(groupId) => setSelectedCustomers(groupId)}
                       className="w-full max-w-xs h-11"
-                      // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
+                    // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
                     >
                       <Select.Option value="">All</Select.Option>
                       {filteredUsers.map((group) => (
@@ -436,10 +556,10 @@ const Daybook = () => {
                       ))}
                     </Select>
                   </div>
-                  <div className="mb-2 flex flex-col">
+                  <div className="mb-2">
                     <label>Payment Mode</label>
                     <Select
-                      value={selectedPaymentMode || undefined}
+                      value={selectedPaymentMode}
                       showSearch
                       placeholder="Search Or Select Payment"
                       popupMatchSelectWidth={false}
@@ -451,40 +571,90 @@ const Daybook = () => {
                           .includes(input.toLowerCase())
                       }
                       className="w-full max-w-xs h-11"
-                      // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
+                    // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
                     >
                       <Select.Option value="">All</Select.Option>
                       <Select.Option value="cash">Cash</Select.Option>
                       <Select.Option value="online">Online</Select.Option>
+                      </Select>
+                  </div>
+                  {showAllPaymentModes && (
+                  <div className="mb-2">
+                    <label>Account Type</label>
+                    <Select
+                      value={selectedAccountType}
+                      showSearch
+                      placeholder="Search Or Account Type"
+                      popupMatchSelectWidth={false}
+                      onChange={(groupId) => setSelectedAccountType(groupId)}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      className="w-full max-w-xs h-11"
+                    // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
+                    >
+                     
+                       
+                          <>
+                           <option value="">Select Account Type</option>
+                            <option value="suspense">Suspense</option>
+                            <option value="credit">Credit</option>
+                            <option value="adjustment">Adjustment</option>
+                            <option value="others">Others</option>
+                          </>
+                      
                     </Select>
                   </div>
-                  <div>
-                    <h1 className="text-md mt-6">
-                      Total Amount:{" "}
-                      <span className="text-xl">₹{payments + 0}</span>
-                    </h1>
+                   )}
+
+                  <div className="text-md font-semibold text-blue-700 mb-2">
+                    <label> Total Amount </label>
+                    <div>
+                      <input
+                        className="w-full max-w-xs h-11 rounded-md"
+                        readOnly
+                        value={`₹ ${(payments + 0).toLocaleString("en-IN", {
+                          minimumFractionDigits: 2,
+                        })}`}
+                      />
+                    </div>
                   </div>
+
+
+
                 </div>
               </div>
-              {filteredAuction && filteredAuction.length > 0 ? (
+              {filteredAuction && filteredAuction.length > 0 && !isLoading ? (
                 <div className="mt-10">
                   <DataTable
                     data={filterOption(TableDaybook, searchText)}
                     columns={columns}
-                    exportedFileName={`Daybook-${
-                      TableDaybook.length > 0
+                    exportedFileName={`Daybook-${TableDaybook.length > 0
                         ? TableDaybook[0].name +
-                          " to " +
-                          TableDaybook[TableDaybook.length - 1].name
+                        " to " +
+                        TableDaybook[TableDaybook.length - 1].name
                         : "empty"
-                    }.csv`}
+                      }.csv`}
                   />
+                  <div className="flex justify-end mt-4 pr-4">
+                    <span className="text-lg font-semibold">
+                      Total Amount: ₹{payments}
+                    </span>
+                  </div>
                 </div>
               ) : (
-                <CircularLoader />
+                <CircularLoader
+                  isLoading={isLoading}
+                  failure={filteredAuction.length <= 0}
+                  data="Daybook Data"
+                />
               )}
             </div>
           </div>
+
           <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
             <div className="py-6 px-5 lg:px-8 text-left">
               <h3 className="mb-4 text-xl font-bold text-gray-900">
@@ -501,7 +671,7 @@ const Daybook = () => {
                   <select
                     value={selectedGroupId}
                     onChange={handleGroup}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   >
                     <option value="">Select Group</option>
                     {groups.map((group) => (
@@ -523,7 +693,7 @@ const Daybook = () => {
                     value={`${formData.user_id}-${formData.ticket}`}
                     onChange={handleChangeUser}
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   >
                     <Select.Option value="">Select Customer</Select.Option>
                     {filteredUsers.map((user) => (
@@ -551,7 +721,7 @@ const Daybook = () => {
                       id="receipt_no"
                       placeholder="Receipt No."
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                   <div className="w-1/2">
@@ -568,7 +738,7 @@ const Daybook = () => {
                       id="pay_date"
                       onChange={handleChange}
                       placeholder=""
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -587,7 +757,7 @@ const Daybook = () => {
                       id="amount"
                       onChange={handleChange}
                       placeholder="Enter Amount"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                   <div className="w-1/2">
@@ -600,7 +770,7 @@ const Daybook = () => {
                     <select
                       name="pay_mode"
                       id="pay_mode"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                       onChange={handlePaymentModeChange}
                     >
                       <option value="cash">Cash</option>
@@ -623,7 +793,7 @@ const Daybook = () => {
                       value={formData.transaction_id}
                       onChange={handleChange}
                       placeholder="Enter Transaction ID"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                 )}
@@ -645,7 +815,7 @@ const Daybook = () => {
               <h3 className="mb-4 text-xl font-bold text-gray-900">
                 View Auction
               </h3>
-              <form className="space-y-6" onSubmit={() => {}}>
+              <form className="space-y-6" onSubmit={() => { }}>
                 <div>
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
@@ -657,11 +827,11 @@ const Daybook = () => {
                     type="text"
                     name="group_id"
                     value={currentUpdateGroup?.group_id?.group_name}
-                    onChange={() => {}}
+                    onChange={() => { }}
                     id="name"
                     placeholder="Enter the Group Name"
                     readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
@@ -679,7 +849,7 @@ const Daybook = () => {
                       id="group_value"
                       placeholder="select group to check"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                   <div className="w-1/2">
@@ -696,7 +866,7 @@ const Daybook = () => {
                       id="group_install"
                       placeholder="select group to check"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -711,11 +881,11 @@ const Daybook = () => {
                     type="text"
                     name="group_id"
                     value={`${currentUpdateGroup?.user_id?.full_name} | ${currentUpdateGroup?.ticket}`}
-                    onChange={() => {}}
+                    onChange={() => { }}
                     id="name"
                     placeholder="Enter the User Name"
                     readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                 </div>
 
@@ -733,11 +903,11 @@ const Daybook = () => {
                       currentUpdateGroup?.group_id?.group_value -
                       currentUpdateGroup?.win_amount
                     }
-                    onChange={() => {}}
+                    onChange={() => { }}
                     id="name"
                     placeholder="Enter the Bid Amount"
                     readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
@@ -755,7 +925,7 @@ const Daybook = () => {
                       id="commission"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                   <div className="w-1/2">
@@ -772,7 +942,7 @@ const Daybook = () => {
                       id="win_amount"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -791,7 +961,7 @@ const Daybook = () => {
                       id="divident"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                   <div className="w-1/2">
@@ -808,7 +978,7 @@ const Daybook = () => {
                       id="divident_head"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                   <div className="w-1/2">
@@ -825,7 +995,7 @@ const Daybook = () => {
                       id="payable"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -841,11 +1011,11 @@ const Daybook = () => {
                       type="date"
                       name="auction_date"
                       value={currentUpdateGroup?.auction_date}
-                      onChange={() => {}}
+                      onChange={() => { }}
                       id="date"
                       placeholder="Enter the Date"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                   <div className="w-1/2">
@@ -859,11 +1029,11 @@ const Daybook = () => {
                       type="date"
                       name="next_date"
                       value={currentUpdateGroup?.next_date}
-                      onChange={() => {}}
+                      onChange={() => { }}
                       id="date"
                       placeholder="Enter the Date"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
