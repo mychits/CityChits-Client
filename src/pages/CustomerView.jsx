@@ -26,8 +26,7 @@ import {
   FiMail,
   FiCalendar,
   FiCheckCircle,
-  FiXCircle,
-} from "react-icons/fi";
+  FiXCircle, } from "react-icons/fi";
 
 const CustomerView = () => {
   const [searchParams] = useSearchParams();
