@@ -145,7 +145,7 @@ const Sidebar = ({
                                   </a>
                                 ))}
                               </ul>
-                            )}
+                            )} 
                           </Fragment>
                         );
                       })}

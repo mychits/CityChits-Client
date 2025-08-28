@@ -177,8 +177,8 @@ const QuickSearch = () => {
         <div className="flex-grow p-8 space-y-8">
           {/* Page Header */}
           <Card className="shadow-md border border-gray-200 rounded-xl bg-white/80 backdrop-blur-sm">
-            <h1 className="text-3xl font-bold text-gray-800">
-              Customer <span className="text-violet-700">Search</span>
+            <h1 className="text-3xl font-bold text-violet-700">
+              Customer <span className="text-neutral-500">Search</span>
             </h1>
             <p className="text-gray-500 text-sm mt-2">
               Quickly find, filter, and view customer details

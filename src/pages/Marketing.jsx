@@ -222,6 +222,9 @@ const mainMenus = [
             link: "/marketing/over-due-message",
             icon: <RiMoneyRupeeCircleLine size={22} />,
           },
+          ,
+         
+          
         ],
       },
       {
@@ -306,25 +309,21 @@ const mainMenus = [
       
     ],
   },
-  // {
-  //   key: "#main-3",
-  //   title: "SMS Marketing",
-  //   icon: <LiaSmsSolid size={20} />,
-  //   subMenus: [
-  //     {
-  //       key: "#9",
-  //       title: "Due SMS Message",
-  //       link: "/marketing/due-sms",
-  //       icon: <RiMoneyRupeeCircleLine size={20} />,
-  //     },
-  //     {
-  //       key: "#10",
-  //       title: "Over Due SMS Message",
-  //       link: "/marketing/over-due-sms",
-  //       icon: <RiMoneyRupeeCircleLine size={28} />,
-  //     },
-  //   ],
-  // },
+  
+  {
+    key: "#main-3",
+    title: "Payment Links",
+    icon: <RiMoneyRupeeCircleLine size={20} />,
+    subMenus: [
+       {
+            key: "#7",
+            title: "Payment Link",
+            link: "/marketing/payment-link",
+            icon: <RiMoneyRupeeCircleLine size={22} />,
+          },
+      
+    ],
+  },
 ];
 
 const Marketing = () => {

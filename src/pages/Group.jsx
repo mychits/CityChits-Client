@@ -336,9 +336,9 @@ const [employees, setEmployees] = useState([]);
           </div>
 
           <div className="flex gap-4">
-            <InputField name="commission" label="Employee Commission %" value={formData.commission} onChange={handleChange} />
-            <InputField name="group_commission" label="Commission %" value={formData.group_commission} onChange={handleChange} />
-            <InputField name="incentives" label="Incentives %" value={formData.incentives} onChange={handleChange} />
+            <InputField name="commission" label="Agent Commission %" value={formData.commission} onChange={handleChange} />
+            <InputField name="group_commission" label=" Company Commission %" value={formData.group_commission} onChange={handleChange} />
+            <InputField name="incentives" label=" Employee Incentives %" value={formData.incentives} onChange={handleChange} />
           </div>
 
           <div className="w-full flex justify-end">
@@ -488,19 +488,19 @@ const UpdateGroupModal = () => (
         <div className="flex gap-4">
           <InputField
             name="commission"
-            label="Employee Commission %"
+            label="Agent Commission %"
             value={updateFormData.commission}
             onChange={handleInputChange}
           />
           <InputField
             name="group_commission"
-            label="Commission %"
+            label=" Company Commission %"
             value={updateFormData.group_commission}
             onChange={handleInputChange}
           />
           <InputField
             name="incentives"
-            label="Incentives %"
+            label="Employee Incentives %"
             value={updateFormData.incentives}
             onChange={handleInputChange}
           />

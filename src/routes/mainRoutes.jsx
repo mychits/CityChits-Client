@@ -77,9 +77,15 @@ import SoftTransferCustomer from "../pages/SoftTransferCustomer";
 import HardTransferCustomer from "../pages/HardTransfer";
 import UnApprovedCustomer from "../pages/UnApprovedCustomer";
 import CustomerView from "../pages/CustomerView";
+import MobileAppEnroll from "../pages/MobileAppEnroll";
+import PaymentLink from "../pages/PaymentLink"; 
+import PaymentLinkMenu from "../pages/PaymentLinkMenu";
+import ChitBulkPaymentLink from "../pages/BulkChitPaymentLink";
+import Analytics from "../pages/Analytics";
 
 
 import Register from "../pages/Register";
+import IndividualChitPaymentLink from "../pages/IndividualChitPaymentLink";
 
 const mainRoutes = createBrowserRouter([
   {
@@ -110,14 +116,15 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
-    path: "/analytics",
-    element: (
-      <ProtectedRoute>
-        <Navbar />
-      </ProtectedRoute>
-    ),
-  },
+
+{
+  path: "/analytics",
+  element: (
+    <ProtectedRoute>
+      <Analytics />
+    </ProtectedRoute>
+  ),
+},
   {
     path: "/reg-fee-print/:id",
 
@@ -156,11 +163,46 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+
+  {
+    path: "/pay-in-menu/payment-link-menu",
+    element: (
+      <ProtectedRoute>
+        <PaymentLinkMenu />
+      </ProtectedRoute>
+    ),
+  },
+   {
+    path: "/pay-in-menu/payment-link-menu/chit-payment",
+    element: (
+      <ProtectedRoute>
+        <IndividualChitPaymentLink />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/pay-in-menu/payment-link-menu/chit-bulk-payment",
+    element: (
+      <ProtectedRoute>
+        <ChitBulkPaymentLink />
+      </ProtectedRoute>
+    ),
+  },
+  
   {
     path: "/print-payment-out/:id",
     element: (
       <ProtectedRoute>
         <PrintPaymentOut />
+      </ProtectedRoute>
+    ),
+  },
+
+    {
+    path: "/mobile-app-enroll",
+    element: (
+      <ProtectedRoute>
+        <MobileAppEnroll />
       </ProtectedRoute>
     ),
   },
@@ -516,6 +558,7 @@ const mainRoutes = createBrowserRouter([
       { path: "over-due-email", element: <OverDueEmail /> },
       { path: "what-promo", element: <WhatsappPromo /> },
       { path: "bid-winner", element: <BidWinner /> },
+      { path: "payment-link", element: <PaymentLink /> },
     ],
   },
 ]);

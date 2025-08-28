@@ -33,6 +33,8 @@ import { BiTransfer } from "react-icons/bi";
 import { GrUserSettings } from "react-icons/gr";
 import { GiTakeMyMoney } from "react-icons/gi";
 import { PiCalculatorBold } from "react-icons/pi";
+import { FaMobileAlt } from "react-icons/fa";
+
 
 
 const sidebarMenu = [
@@ -51,13 +53,13 @@ const sidebarMenu = [
 		link: "/quick-search",
 	},
 
-	// {
-	// 	id: "$2",
-	// 	title: "Analytics",
-	// 	icon: SiGoogleanalytics,
-	// 	link: "/analytics",
-	// 	activeColor: "primary",
-	// },
+	{
+		id: "$2",
+		title: "Analytics",
+		icon: SiGoogleanalytics,
+		link: "/analytics",
+		activeColor: "primary",
+	},
 	{
 		id: "$3",
 		title: "Groups ",
@@ -85,6 +87,14 @@ const sidebarMenu = [
 		link: "/enrollment",
 		activeColor: "primary",
 	},
+
+	  {
+    id: "$83",
+    title: "Mobile Enrollments ",
+    icon: FaMobileAlt,
+    link: "/mobile-app-enroll",
+  },
+
 	{
 		id: "$67",
 		title: "Guarantor ",
