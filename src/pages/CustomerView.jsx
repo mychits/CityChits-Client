@@ -15,10 +15,14 @@ import Fuse from "fuse.js";
 import { Collapse } from "antd";
 const { Panel } = Collapse;
 import { Tag } from "antd";
-
+import { Modal } from "antd";
 import { Tabs } from "antd";
 const { TabPane } = Tabs;
 import { Button, message } from "antd";
+
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 
 import {
   FiUser,
@@ -26,7 +30,8 @@ import {
   FiMail,
   FiCalendar,
   FiCheckCircle,
-  FiXCircle, } from "react-icons/fi";
+  FiXCircle,
+} from "react-icons/fi";
 
 const CustomerView = () => {
   const [searchParams] = useSearchParams();
@@ -37,7 +42,7 @@ const CustomerView = () => {
   const [TableAuctions, setTableAuctions] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(userId ? userId : "");
   const [group, setGroup] = useState([]);
-  const [commission, setCommission] = useState("");
+  const [commission, setCommission] = useState(""); 0.
   const [TableEnrolls, setTableEnrolls] = useState([]);
   const [TableEnrollsDate, setTableEnrollsDate] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -49,8 +54,15 @@ const CustomerView = () => {
   });
   const [lastPayments, setLastPayments] = useState([]);
 
+  const [selectedDayBookGroup, setSelectedDayBookGroup] = useState(null);
+
+
+
   const [lastPayment, setLastPayment] = useState({ date: null, amount: 0 });
   const [isLoadingPayment, setIsLoadingPayment] = useState(false);
+
+  const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+  const [selectedGroupDetails, setSelectedGroupDetails] = useState(null);
 
   const GlobalSearchChangeHandler = (e) => {
     setSearchText(e.target.value);
@@ -106,6 +118,16 @@ const CustomerView = () => {
     </div>
   );
 
+  const handleGroupClick = (auction) => {
+    setSelectedGroupDetails(auction);
+    setIsGroupModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsGroupModalOpen(false);
+    setSelectedGroupDetails(null);
+  };
+
   const formatEnrollDate = (iso) => {
     if (!iso) return "—";
     const d = new Date(iso);
@@ -151,7 +173,7 @@ const CustomerView = () => {
       const data = await res.json();
 
       message.success("Profile photo updated successfully!");
-      // refresh the profile photo
+
       if (data?.profilephoto) {
         group.profilephoto = data.profilephoto;
       }
@@ -273,10 +295,10 @@ const CustomerView = () => {
     const fetchAllEnrollments = async () => {
       setIsLoading(true);
       try {
-        // Fetch all enrollments for the current user
+
         const response = await api.get(`/enroll/get-by-user-id/${userId}`);
         if (response.data && response.data.length > 0) {
-          // Map through each enrollment to fetch its prized status
+
           const enrollmentsWithStatus = await Promise.all(
             response.data.map(async (enrollment) => {
               let prizedStatus = "Unprized";
@@ -448,8 +470,8 @@ const CustomerView = () => {
             setRegistrationDate(
               registrationFees[0]?.createdAt
                 ? new Date(registrationFees[0].createdAt).toLocaleDateString(
-                    "en-GB"
-                  )
+                  "en-GB"
+                )
                 : null
             );
           }
@@ -498,20 +520,18 @@ const CustomerView = () => {
       if (!userId) return;
       setIsLoadingPayment(true);
       try {
-        // Fetch daily payments for all users
+
         const response = await api.get("/user/get-daily-payments");
         const rawData = response.data;
         let latestPayment = { date: null, amount: null };
 
-        // Find the specific user's data and their latest payment
+
         for (const user of rawData) {
           if (user?._id === userId && user?.data) {
             for (const item of user.data) {
               const pay = item.payments;
               if (pay?.latestPaymentDate && pay?.latestPaymentAmount) {
-                // Assuming this is the only payment entry for this user.
-                // If a user can have multiple entries in a day,
-                // you'll need to sort them to find the latest.
+
                 latestPayment = {
                   date: pay.latestPaymentDate,
                   amount: pay.latestPaymentAmount,
@@ -585,12 +605,12 @@ const CustomerView = () => {
       const fetchGroupDetails = async () => {
         setDetailLoading(true);
         try {
-          // Fetch enrollment details to get the enrollment date
+
           const response = await api.get(
             `/enroll/get-by-id-enroll/${selectedGroup}`
           );
           if (response.data) {
-            setEnrollmentDate(response.data.createdAt); // Use createdAt for enrollment date
+            setEnrollmentDate(response.data.createdAt);
           }
           const groupDataResponse = await api.get(
             `/group/get-by-id-group/${selectedGroup}`
@@ -607,7 +627,7 @@ const CustomerView = () => {
           const auctionResponse = await api.get(
             `/auction/get-auction-report-by-group/${selectedGroup}`
           );
-          // Check if there's a winner to set prized status
+
           const isPrized = auctionResponse.data.some(
             (auction) => auction.winner === userId
           );
@@ -709,7 +729,7 @@ const CustomerView = () => {
     };
     fetchGroups();
   }, []);
-  // disbursement report
+
 
   useEffect(() => {
     const fetchDisbursement = async () => {
@@ -881,8 +901,8 @@ const CustomerView = () => {
                 group_value: group?.enrollment?.group?.group_value || 0,
                 date: group?.enrollment?.createdAt
                   ? new Date(group.enrollment.createdAt).toLocaleDateString(
-                      "en-GB"
-                    )
+                    "en-GB"
+                  )
                   : "N/A",
                 status: group?.enrollment?.status || "Active",
                 totalBePaid:
@@ -898,12 +918,12 @@ const CustomerView = () => {
                 balance:
                   groupType === "double"
                     ? groupInstall * auctionCount +
-                      groupInstall -
-                      totalPaidAmount
+                    groupInstall -
+                    totalPaidAmount
                     : totalPayable +
-                      groupInstall +
-                      firstDividentHead -
-                      totalPaidAmount,
+                    groupInstall +
+                    firstDividentHead -
+                    totalPaidAmount,
                 referred_type: group?.enrollment?.referred_type || "N/A",
                 referrer_name: group?.enrollment?.referrer_name || "N/A",
               };
@@ -1153,215 +1173,663 @@ const CustomerView = () => {
       </div>
     );
 
+  //   return (
+  //     <>
+  //       <div className="w-screen min-h-screen mt-20  bg-gray-100">
+  //         <div className="flex mt-20">
+  //           <Sidebar
+  //             navSearchBarVisibility={true}
+  //             onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+  //           />
+
+  //           <div className="flex-grow p-8 space-y-6">
+  //        <Card className="shadow-lg border border-gray-200 rounded-2xl p-8 bg-white">
+  //   <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+
+
+  //     <div className="col-span-1 flex flex-col items-center lg:items-start space-y-6">
+
+  //       <div className="relative w-44 h-44 rounded-lg  overflow-hidden border-4 border-gray-200 shadow bg-gray-50 flex items-center justify-center">
+  //         <img
+  //           src={
+  //             selectedFile
+  //               ? URL.createObjectURL(selectedFile)
+  //               : group.profilephoto ||
+  //                 "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+  //           }
+  //           alt="Profile"
+  //           className="w-full h-full object-cover"
+  //         />
+  //         {selectedFile && (
+  //           <button
+  //             onClick={() => setSelectedFile(null)}
+  //             className="absolute top-2 right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1 shadow hover:bg-red-600 transition"
+  //           >
+  //             ✕
+  //           </button>
+  //         )}
+  //       </div>
+
+
+  //       <h2 className="mt-3 text-xl font-bold text-gray-800 text-center lg:text-left">
+  //         {group.full_name || "Unnamed"}
+  //       </h2>
+
+
+  //       <div className="w-full space-y-2">
+  //         <input
+  //           type="file"
+  //           accept="image/*"
+  //           onChange={(e) => setSelectedFile(e.target.files[0])}
+  //           className="text-sm"
+  //         />
+  //         <div className="flex gap-3">
+  //           <Button
+  //             type="primary"
+  //             size="small"
+  //             disabled={!selectedFile}
+  //             onClick={handleUploadPhoto}
+  //           >
+  //             Upload
+  //           </Button>
+  //           {selectedFile && (
+  //             <Button danger size="small" onClick={() => setSelectedFile(null)}>
+  //               Cancel
+  //             </Button>
+  //           )}
+  //         </div>
+  //       </div>
+
+
+  //       <div className="bg-gray-50 rounded-lg shadow-sm p-5 w-full space-y-3">
+  //         <h3 className="text-md font-semibold text-gray-800 border-b pb-2">
+  //           Customer Info
+  //         </h3>
+  //         <div className="space-y-1 text-sm text-gray-700">
+  //           <p className="flex justify-between">
+  //             <span className="font-medium">Customer ID:</span>
+  //             <span>{group.customer_id || "—"}</span>
+  //           </p>
+  //           <p className="flex justify-between">
+  //             <span className="font-medium">Phone:</span>
+  //             <span>{group.phone_number || "—"}</span>
+  //           </p>
+  //           <p className="flex justify-between">
+  //             <span className="font-medium">Email:</span>
+  //             <span>{group.email || "—"}</span>
+  //           </p>
+  //         </div>
+  //       </div>
+  //     </div>
+
+
+  //     <div className="col-span-3 grid grid-cols-2 lg:grid-cols-3 gap-4">
+
+  //   <div className="bg-violet-50 rounded-lg shadow-sm p-3 h-20 flex flex-col justify-center items-center">
+  //     <p className="text-xs text-gray-600">Total Groups</p>
+  //     <h3 className="text-lg font-bold text-violet-700">
+  //       {TableAuctions?.length || 0}
+  //     </h3>
+  //   </div>
+
+  //   <div className="bg-green-50 rounded-lg shadow-sm p-3 h-20 flex flex-col justify-center items-center">
+  //     <p className="text-xs text-gray-600">Total Balance</p>
+  //     <h3 className="text-lg font-bold text-green-700">
+  //       {NetTotalprofit && Totalpaid ? NetTotalprofit - Totalpaid : 0}
+  //     </h3>
+  //   </div>
+
+  //   <div className="bg-purple-50 rounded-lg shadow-sm p-3 h-20 flex flex-col justify-center items-center">
+  //     <p className="text-xs text-gray-600">Net To be Paid</p>
+  //     <h3 className="text-lg font-bold text-purple-700">
+  //       ₹ {Number(NetTotalprofit || 0).toLocaleString("en-IN")}
+  //     </h3>
+  //   </div>
+
+  //   <div className="bg-blue-50 rounded-lg shadow-sm p-3 h-20 flex flex-col justify-center items-center">
+  //     <p className="text-xs text-gray-600">Total Profit</p>
+  //     <h3 className="text-lg font-bold text-blue-700">{Totalprofit || 0}</h3>
+  //   </div>
+
+  //   <div className="bg-orange-50 rounded-lg shadow-sm p-3 h-20 flex flex-col justify-center items-center">
+  //     <p className="text-xs text-gray-600">Total Paid</p>
+  //     <h3 className="text-lg font-bold text-orange-700">{Totalpaid || 0}</h3>
+  //   </div>
+
+  //   <div className="bg-teal-50 rounded-lg shadow-sm p-3 h-20 flex flex-col justify-center items-center">
+  //     <p className="text-xs text-gray-600">Latest Payment</p>
+  //     {isLoadingPayment ? (
+  //       <CircularLoader color="text-green-600" />
+  //     ) : (
+  //       <h3 className="text-lg font-bold text-green-700">
+  //         ₹ {Number(lastPayment?.amount || 0).toLocaleString("en-IN")}
+  //       </h3>
+  //     )}
+  //   </div>
+
+  //   <div className="bg-indigo-50 rounded-lg shadow-sm p-3 h-20 flex flex-col justify-center items-center">
+  //     <p className="text-xs text-gray-600">Latest Disbursement</p>
+  //     {detailsLoading ? (
+  //       <CircularLoader color="text-blue-600" />
+  //     ) : (
+  //       <h3 className="text-lg font-bold text-indigo-700">
+  //         ₹ {Number(groupPaid || 0).toLocaleString("en-IN")}
+  //       </h3>
+  //     )}
+  //   </div>
+
+  // </div>
+
+  //   </div>
+  // </Card>
+
+  //             <Card className="shadow-lg border border-gray-200 text-2xl rounded-xl p-6 bg-white mt-6">
+  //               <Tabs defaultActiveKey="1" type="card" className="custom-tabs">
+
+
+
+
+  //                 <TabPane tab="Details" key="2">
+  //                   <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+  //                     <InfoBox label="Full Name" value={group.full_name} />
+  //                     <InfoBox label="Customer ID" value={group.customer_id} />
+  //                     <InfoBox label="Phone Number" value={group.phone_number} />
+  //                     <InfoBox label="Email" value={group.email} />
+  //                     <InfoBox label="Gender" value={group.gender} />
+  //                     <InfoBox label="Date of Birth" value={group.dateofbirth} />
+  //                     <InfoBox
+  //                       label="Marital Status"
+  //                       value={group.marital_status}
+  //                     />
+
+  //                     <InfoBox
+  //                       label="Referred Types"
+  //                       value={[
+  //                         ...new Set(
+  //                           TableAuctions.map(
+  //                             (item) => item.referred_type || "N/A"
+  //                           )
+  //                         ),
+  //                       ].join(", ")}
+  //                     />
+  //                     <InfoBox
+  //                       label="Referred By"
+  //                       value={[
+  //                         ...new Set(
+  //                           TableAuctions.map(
+  //                             (item) => item.referrer_name || "N/A"
+  //                           )
+  //                         ),
+  //                       ].join(", ")}
+  //                     />
+  //                   </div>
+  //                 </TabPane>
+
+
+  //                 <TabPane tab="Address" key="3">
+  //                   <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+  //                     <InfoBox label="Address" value={group.address} />
+  //                     <InfoBox label="Pincode" value={group.pincode} />
+  //                     <InfoBox label="District" value={group.district} />
+  //                     <InfoBox label="State" value={group.state} />
+  //                     <InfoBox label="Nationality" value={group.nationality} />
+  //                   </div>
+  //                 </TabPane>
+
+  //                 <TabPane tab="Groups" key="6">
+  //                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+  //                     {TableAuctions && TableAuctions.length > 0 ? (
+  //                       TableAuctions.map((auction, idx) => (
+  //                         <div
+  //                           key={idx}
+  //                           onClick={() => handleGroupClick(auction)} 
+  //                           className="cursor-pointer border border-gray-300 rounded-lg p-4 shadow-sm bg-gray-50 hover:shadow-md transition"
+  //                         >
+  //                           <div className="flex justify-between items-start mb-2">
+  //                             <h3 className="text-base font-semibold text-gray-800">
+  //                               {auction.group_name}
+  //                             </h3>
+  //                             <Tag
+  //                               color={
+  //                                 auction.prized_status === "Prized" || auction.isPrized
+  //                                   ? "green"
+  //                                   : "red"
+  //                               }
+  //                               className="text-xs font-medium"
+  //                             >
+  //                               {auction.prized_status === "Prized" || auction.isPrized
+  //                                 ? "Prized"
+  //                                 : "Unprized"}
+  //                             </Tag>
+  //                           </div>
+  //                           <p className="text-sm text-gray-600">
+  //                             Ticket: <span className="font-medium">{auction.ticket}</span>
+  //                           </p>
+  //                           <p className="text-sm text-gray-600">
+  //                             Balance:{" "}
+  //                             <span className="font-medium">
+  //                               ₹ {Number(auction.balance || 0).toLocaleString("en-IN")}
+  //                             </span>
+  //                           </p>
+  //                           <p className="text-xs text-gray-400 mt-2 italic">
+  //                             Click for details →
+  //                           </p>
+  //                         </div>
+  //                       ))
+  //                     ) : (
+  //                       <p className="text-gray-500">No groups found for this customer.</p>
+  //                     )}
+  //                   </div>
+
+
+  //                   <Modal
+  //                     title={null}
+  //                     open={isGroupModalOpen}
+  //                     onCancel={handleCloseModal}
+  //                     footer={null}
+  //                     width={900}
+  //                     className="rounded-xl overflow-hidden"
+  //                   >
+  //                     {selectedGroupDetails ? (
+  //                       <div className="space-y-6">
+
+
+  //                         <div className="border-b pb-4">
+  //                           <h2 className="text-xl font-bold text-gray-800 mb-1">
+  //                             {selectedGroupDetails.group_name}
+  //                           </h2>
+  //                           <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+  //                             <span>
+  //                               Ticket: <strong>{selectedGroupDetails.ticket}</strong>
+  //                             </span>
+  //                             <span>
+  //                               Type: <strong>{selectedGroupDetails.group_type}</strong>
+  //                             </span>
+  //                             <span>
+  //                               Value: <strong>₹ {selectedGroupDetails.group_value}</strong>
+  //                             </span>
+  //                             <span>
+  //                               Status:{" "}
+  //                               <Tag
+  //                                 color={
+  //                                   selectedGroupDetails.prized_status === "Prized" ||
+  //                                     selectedGroupDetails.isPrized
+  //                                     ? "green"
+  //                                     : "red"
+  //                                 }
+  //                               >
+  //                                 {selectedGroupDetails.prized_status === "Prized"
+  //                                   ? "Prized"
+  //                                   : "Unprized"}
+  //                               </Tag>
+  //                             </span>
+  //                           </div>
+  //                         </div>
+
+
+  //                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+  //                           <div className="bg-violet-50 p-4 rounded-lg text-center shadow-sm">
+  //                             <p className="text-xs text-gray-500">To Be Paid</p>
+  //                             <p className="text-lg font-semibold text-violet-700">
+  //                               ₹ {selectedGroupDetails.totalBePaid || 0}
+  //                             </p>
+  //                           </div>
+  //                           <div className="bg-green-50 p-4 rounded-lg text-center shadow-sm">
+  //                             <p className="text-xs text-gray-500">Net To Be Paid</p>
+  //                             <p className="text-lg font-semibold text-green-700">
+  //                               ₹ {selectedGroupDetails.toBePaidAmount || 0}
+  //                             </p>
+  //                           </div>
+  //                           <div className="bg-blue-50 p-4 rounded-lg text-center shadow-sm">
+  //                             <p className="text-xs text-gray-500">Paid</p>
+  //                             <p className="text-lg font-semibold text-blue-700">
+  //                               ₹ {selectedGroupDetails.paidAmount || 0}
+  //                             </p>
+  //                           </div>
+  //                           <div className="bg-orange-50 p-4 rounded-lg text-center shadow-sm">
+  //                             <p className="text-xs text-gray-500">Balance</p>
+  //                             <p className="text-lg font-semibold text-orange-700">
+  //                               ₹ {selectedGroupDetails.balance || 0}
+  //                             </p>
+  //                           </div>
+  //                           <div className="bg-indigo-50 p-4 rounded-lg text-center shadow-sm">
+  //                             <p className="text-xs text-gray-500">Profit</p>
+  //                             <p className="text-lg font-semibold text-indigo-700">
+  //                               ₹ {selectedGroupDetails.profit || 0}
+  //                             </p>
+  //                           </div>
+  //                         </div>
+
+
+  //                         <div className="flex justify-end">
+  //                           <Button
+  //                             type="primary"
+  //                             onClick={() => {
+
+  //                               const worksheet = XLSX.utils.json_to_sheet([selectedGroupDetails]);
+  //                               const workbook = XLSX.utils.book_new();
+  //                               XLSX.utils.book_append_sheet(workbook, worksheet, "Group Report");
+
+
+  //                               const excelBuffer = XLSX.write(workbook, {
+  //                                 bookType: "xlsx",
+  //                                 type: "array",
+  //                               });
+  //                               const data = new Blob([excelBuffer], {
+  //                                 type: "application/octet-stream",
+  //                               });
+  //                               saveAs(data, `${selectedGroupDetails.group_name}-report.xlsx`);
+  //                             }}
+  //                           >
+  //                             Export to Excel
+  //                           </Button>
+  //                         </div>
+  //                       </div>
+  //                     ) : (
+  //                       <p>No data</p>
+  //                     )}
+  //                   </Modal>
+  //                 </TabPane>
+
+  //                 <TabPane tab="Bank Info" key="4">
+  //                   <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+  //                     <InfoBox label="Bank Name" value={group.bank_name} />
+  //                     <InfoBox
+  //                       label="Branch Name"
+  //                       value={group.bank_branch_name}
+  //                     />
+  //                     <InfoBox
+  //                       label="Account Number"
+  //                       value={group.bank_account_number}
+  //                     />
+  //                     <InfoBox label="IFSC Code" value={group.bank_IFSC_code} />
+  //                   </div>
+  //                 </TabPane>
+
+  //                 <TabPane tab="Documents" key="5">
+  //                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+  //                     <InfoBox label="Aadhaar Number" value={group.adhaar_no} />
+  //                     <InfoBox label="PAN Number" value={group.pan_no} />
+  //                   </div>
+  //                 </TabPane>
+
+  //                 <TabPane tab="Day Book" key="7">
+  //                   <div>
+  //                     <div className="flex gap-4">
+  //                       <div className="flex flex-col flex-1">
+  //                         <label className="mb-1 text-sm font-medium text-gray-700">
+  //                           Groups and Tickets
+  //                         </label>
+  //                         <select
+  //                           value={
+  //                             EnrollGroupId.groupId
+  //                               ? `${EnrollGroupId.groupId}|${EnrollGroupId.ticket}`
+  //                               : ""
+  //                           }
+  //                           onChange={handleEnrollGroup}  // 👈 uses your existing handler
+  //                           className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
+  //                         >
+  //                           <option value="">Select Group | Ticket</option>
+  //                           {filteredAuction.map((group) => {
+  //                             if (group?.enrollment?.group) {
+  //                               return (
+  //                                 <option
+  //                                   key={group.enrollment.group._id}
+  //                                   value={`${group.enrollment.group._id}|${group.enrollment.tickets}`}
+  //                                 >
+  //                                   {group.enrollment.group.group_name} |{" "}
+  //                                   {group.enrollment.tickets}
+  //                                 </option>
+  //                               );
+  //                             }
+  //                             return null;
+  //                           })}
+  //                           {loanCustomers.map((loan) => (
+  //                             <option key={loan._id} value={`Loan|${loan._id}`}>
+  //                               {`${loan.loan_id} | ₹${loan.loan_amount}`}
+  //                             </option>
+  //                           ))}
+  //                         </select>
+  //                       </div>
+
+  //                       {/* Summary */}
+  //                       <div className="mt-6 flex justify-center gap-8 flex-wrap">
+  //                         <input
+  //                           type="text"
+  //                           value={`Registration Fee: ₹${registrationAmount || 0}`}
+  //                           readOnly
+  //                           className="px-4 py-2 border rounded font-semibold w-60 text-center bg-green-100 text-green-800 border-green-400"
+  //                         />
+
+  //                         <input
+  //                           type="text"
+  //                           value={`Payment Balance: ₹${finalPaymentBalance}`}
+  //                           readOnly
+  //                           className="px-4 py-2 border rounded font-semibold w-60 text-center bg-blue-100 text-blue-800 border-blue-400"
+  //                         />
+
+  //                         <input
+  //                           type="text"
+  //                           value={`Total: ₹${Number(finalPaymentBalance) + Number(registrationAmount || 0)
+  //                             }`}
+  //                           readOnly
+  //                           className="px-4 py-2 border rounded font-semibold w-60 text-center bg-purple-100 text-purple-800 border-purple-400"
+  //                         />
+  //                       </div>
+  //                     </div>
+
+  //                     {/* Table */}
+  //                     {(TableEnrolls && TableEnrolls.length > 0) ||
+  //                       (borrowersData.length > 0 && !basicLoading) ? (
+  //                       <div className="mt-10">
+  //                         <DataTable
+  //                           printHeaderKeys={[
+  //                             "Customer Name",
+  //                             "Customer Id",
+  //                             "Phone Number",
+  //                             "Ticket Number",
+  //                             "Group Name",
+  //                             "Start Date",
+  //                             "End Date",
+  //                           ]}
+  //                           printHeaderValues={[
+  //                             group?.full_name,
+  //                             group?.customer_id,
+  //                             group?.phone_number,
+  //                             EnrollGroupId.ticket,
+  //                             groupDetails?.group_name,
+  //                             groupDetails?.start_date
+  //                               ? new Date(groupDetails.start_date).toLocaleDateString("en-GB")
+  //                               : "",
+  //                             groupDetails?.end_date
+  //                               ? new Date(groupDetails.end_date).toLocaleDateString("en-GB")
+  //                               : "",
+  //                           ]}
+  //                           data={
+  //                             EnrollGroupId.groupId === "Loan"
+  //                               ? borrowersData
+  //                               : TableEnrolls
+  //                           }
+  //                           columns={
+  //                             EnrollGroupId.groupId === "Loan"
+  //                               ? BasicLoanColumns
+  //                               : Basiccolumns
+  //                           }
+  //                         />
+  //                       </div>
+  //                     ) : (
+  //                       <CircularLoader isLoading={basicLoading} />
+  //                     )}
+  //                   </div>
+  //                 </TabPane>
+
+  //               </Tabs>
+  //             </Card>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </>
+  //   );
+
+  // ---- paste this in place of your existing return(...) in CustomerView.jsx ----
+  if (screenLoading)
+    return (
+      <div className="w-screen m-24">
+        <CircularLoader color="text-green-600" />
+      </div>
+    );
+
   return (
     <>
       <div className="w-screen min-h-screen mt-20 bg-gray-100">
         <div className="flex mt-20">
+          {/* Sidebar (keeps your search handler) */}
           <Sidebar
             navSearchBarVisibility={true}
             onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
           />
 
           <div className="flex-grow p-8 space-y-6">
-<Card className="shadow-xl border border-gray-200 rounded-2xl p-8 bg-white">
-  <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-    
-    
-    <div className="col-span-1 flex flex-col items-center md:items-start space-y-6">
-      
-     
-      <div className="flex flex-col items-center w-full">
-        <div className="relative w-36 h-36   rounded-full overflow-hidden border-4 border-gray-200 shadow bg-gray-50 flex items-center justify-center">
-          <img
-            src={
-              selectedFile
-                ? URL.createObjectURL(selectedFile)
-                : group.profilephoto ||
-                  "https://cdn-icons-png.flaticon.com/512/847/847969.png"
-            }
-            alt="Profile"
-            className="w-full h-full object-cover"
-          />
-          {selectedFile && (
-            <button
-              onClick={() => setSelectedFile(null)}
-              className="absolute top-2 right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1 shadow hover:bg-red-600 transition"
-            >
-              ✕
-            </button>
-          )}
-        </div>
+            {/* HERO CARD: Profile + Quick Stats (IDFC-style hero) */}
+            <Card className="shadow-xl border border-gray-200 rounded-2xl p-10 bg-white">
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
 
-    
-        <h2 className="mt-3 text-xl font-bold text-gray-800 text-center md:text-left">
-          {group.full_name || "Unnamed"}
-        </h2>
-      </div>
+                {/* Left: Profile + Name + Customer Info */}
+                <div className="col-span-1 flex flex-col items-center lg:items-start space-y-8">
 
- 
-      <div className="w-full space-y-2">
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setSelectedFile(e.target.files[0])}
-          className="text-sm"
-        />
-        <div className="flex gap-3">
-          <Button
-            type="primary"
-            size="small"
-            disabled={!selectedFile}
-            onClick={handleUploadPhoto}
-          >
-            Upload
-          </Button>
-          {selectedFile && (
-            <Button danger size="small" onClick={() => setSelectedFile(null)}>
-              Cancel
-            </Button>
-          )}
-        </div>
-      </div>
-
-
-      {/* <div className="bg-gray-50 rounded-lg shadow-sm p-5 w-full space-y-4">
-        <h3 className="text-md font-semibold text-gray-800 border-b pb-2">
-          Customer Info
-        </h3>
-        <div className="space-y-2">
-          <p className="flex items-center gap-2 text-gray-700 text-sm">
-            <FiUser className="text-gray-500" /> 
-            <span className="font-medium">Customer ID:</span> 
-            <span className="ml-auto text-gray-900">{group.customer_id || "—"}</span>
-          </p>
-          <p className="flex items-center gap-2 text-gray-700 text-sm">
-            <FiPhone className="text-gray-500" /> 
-            <span className="font-medium">Phone:</span> 
-            <span className="ml-auto text-gray-900">{group.phone_number || "—"}</span>
-          </p>
-          <p className="flex items-center gap-2 text-gray-700 text-sm">
-            <FiMail className="text-gray-500" /> 
-            <span className="font-medium">Email:</span> 
-            <span className="ml-auto text-gray-900">{group.email || "—"}</span>
-          </p>
-        </div>
-      </div> */}
-    </div>
-
-  
-  {/* Right: Stats Section (Compact) */}
-<div className="col-span-3 grid grid-cols-2 lg:grid-cols-3 gap-4">
-  <div className="bg-violet-50 rounded-lg shadow-sm p-3 h-24 flex flex-col justify-center">
-    <p className="text-xs text-gray-600">Total Groups</p>
-    <h3 className="text-lg font-bold text-violet-700">
-      {TableAuctions?.length || 0}
-    </h3>
-  </div>
-
-  <div className="bg-green-50 rounded-lg shadow-sm p-3 h-24 flex flex-col justify-center">
-    <p className="text-xs text-gray-600">Total Balance</p>
-    <h3 className="text-lg font-bold text-green-700">
-      {NetTotalprofit && Totalpaid ? NetTotalprofit - Totalpaid : 0}
-    </h3>
-  </div>
-
-  <div className="bg-blue-50 rounded-lg shadow-sm p-3 h-24 flex flex-col justify-center">
-    <p className="text-xs text-gray-600">Total Profit</p>
-    <h3 className="text-lg font-bold text-blue-700">
-      {Totalprofit || 0}
-    </h3>
-  </div>
-
-  <div className="bg-orange-50 rounded-lg shadow-sm p-3 h-24 flex flex-col justify-center">
-    <p className="text-xs text-gray-600">Total Paid</p>
-    <h3 className="text-lg font-bold text-orange-700">
-      {Totalpaid || 0}
-    </h3>
-  </div>
-
-  <div className="bg-teal-50 rounded-lg shadow-sm p-3 h-24 flex flex-col justify-center">
-    <p className="text-xs text-gray-600">Latest Payment</p>
-    {isLoadingPayment ? (
-      <CircularLoader color="text-green-600" />
-    ) : (
-      <h3 className="text-base font-semibold text-green-700">
-        ₹ {Number(lastPayment?.amount || 0).toLocaleString("en-IN")}
-      </h3>
-    )}
-  </div>
-
-  <div className="bg-indigo-50 rounded-lg shadow-sm p-3 h-24 flex flex-col justify-center">
-    <p className="text-xs text-gray-600">Latest Disbursement</p>
-    {detailsLoading ? (
-      <CircularLoader color="text-blue-600" />
-    ) : (
-      <h3 className="text-base font-semibold text-indigo-700">
-        ₹ {Number(groupPaid || 0).toLocaleString("en-IN")}
-      </h3>
-    )}
-  </div>
-</div>
-
-  </div>
-</Card>
-
-
-
-            <Card className="shadow-lg border border-gray-200 text-2xl rounded-xl p-6 bg-white mt-6">
-              <Tabs defaultActiveKey="1" type="card" className="custom-tabs">
-                {/* Summary Tab */}
-                <TabPane tab="Summary" key="1">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                    <InfoBox
-                      label="Total Groups"
-                      value={TableAuctions?.length || 0}
+                  {/* Profile */}
+                  <div className="relative w-40 h-40 rounded-2xl overflow-hidden border-4 border-gray-100 shadow-md bg-gray-50 flex items-center justify-center">
+                    <img
+                      src={
+                        selectedFile
+                          ? URL.createObjectURL(selectedFile)
+                          : group.profilephoto || "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+                      }
+                      alt="Profile"
+                      className="w-full h-full object-cover"
                     />
-                    <InfoBox
-                      label="Referred Types"
-                      value={[
-                        ...new Set(
-                          TableAuctions.map(
-                            (item) => item.referred_type || "N/A"
-                          )
-                        ),
-                      ].join(", ")}
-                    />
-                    <InfoBox
-                      label="Referred By"
-                      value={[
-                        ...new Set(
-                          TableAuctions.map(
-                            (item) => item.referrer_name || "N/A"
-                          )
-                        ),
-                      ].join(", ")}
-                    />
-
-                    <InfoBox label="Total Profit" value={Totalprofit} />
-                    <InfoBox label="Total Paid" value={Totalpaid} />
-                    <InfoBox label="Net To Be Paid" value={NetTotalprofit} />
                   </div>
-                </TabPane>
 
+                  {/* Name + Info */}
+                  <div className="space-y-2 text-center lg:text-left">
+                    <h2 className="text-2xl font-bold text-gray-800">
+                      {group.full_name || "Unnamed"}
+                    </h2>
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold">Customer ID:</span> {group.customer_id || "—"}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold">Phone:</span> {group.phone_number || "—"}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold">Email:</span> {group.email || "—"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right: Stats Grid */}
+                <div className="col-span-3 grid grid-cols-2 md:grid-cols-3 gap-6">
+
+                  {/* Total Groups */}
+                  <div className="bg-gradient-to-br from-violet-50 to-violet-100 rounded-xl shadow p-5 flex flex-col items-center justify-center">
+                    <p className="text-sm text-gray-600">Total Groups</p>
+                    <h3 className="text-2xl font-bold text-violet-700">
+                      {TableAuctions?.length || 0}
+                    </h3>
+                  </div>
+
+                  {/* Total Balance */}
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow p-5 flex flex-col items-center justify-center">
+                    <p className="text-sm text-gray-600">Total Balance</p>
+                    <h3 className="text-2xl font-bold text-green-700">
+                      ₹ {(NetTotalprofit && Totalpaid) ? Number(NetTotalprofit - Totalpaid).toLocaleString("en-IN") : 0}
+                    </h3>
+                  </div>
+
+                  {/* Net To be Paid */}
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow p-5 flex flex-col items-center justify-center">
+                    <p className="text-sm text-gray-600">Net To be Paid</p>
+                    <h3 className="text-2xl font-bold text-purple-700">
+                      ₹ {Number(NetTotalprofit || 0).toLocaleString("en-IN")}
+                    </h3>
+                  </div>
+
+                  {/* Total Profit */}
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow p-5 flex flex-col items-center justify-center">
+                    <p className="text-sm text-gray-600">Total Profit</p>
+                    <h3 className="text-2xl font-bold text-blue-700">
+                      ₹ {Number(Totalprofit || 0).toLocaleString("en-IN")}
+                    </h3>
+                  </div>
+
+                  {/* Total Paid */}
+                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl shadow p-5 flex flex-col items-center justify-center">
+                    <p className="text-sm text-gray-600">Total Paid</p>
+                    <h3 className="text-2xl font-bold text-orange-700">
+                      ₹ {Number(Totalpaid || 0).toLocaleString("en-IN")}
+                    </h3>
+                  </div>
+
+                  {/* Latest Payment */}
+                  <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl shadow p-5 flex flex-col items-center justify-center">
+                    <p className="text-sm text-gray-600">Latest Payment</p>
+                    {isLoadingPayment ? (
+                      <CircularLoader color="text-green-600" />
+                    ) : (
+                      <h3 className="text-2xl font-bold text-teal-700">
+                        ₹ {Number(lastPayment?.amount || 0).toLocaleString("en-IN")}
+                      </h3>
+                    )}
+                  </div>
+
+                  {/* Latest Disbursement */}
+                  <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl shadow p-5 flex flex-col items-center justify-center md:col-span-3 lg:col-span-1">
+                    <p className="text-sm text-gray-600">Latest Disbursement</p>
+                    {detailsLoading ? (
+                      <CircularLoader color="text-blue-600" />
+                    ) : (
+                      <h3 className="text-2xl font-bold text-indigo-700">
+                        ₹ {Number(groupPaid || 0).toLocaleString("en-IN")}
+                      </h3>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+
+            {/* DETAILS & GROUPS: Tabbed area */}
+            <Card className="shadow-xl border border-gray-200 rounded-2xl p-8 bg-white">
+              <Tabs
+                defaultActiveKey="groupDetails"
+                type="card"
+                className="custom-tabs text-base font-medium"
+                onChange={handleTabChange}
+              >
                 {/* Details Tab */}
-                <TabPane tab="Details" key="2">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <TabPane tab="Details" key="groupDetails">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <InfoBox label="Full Name" value={group.full_name} />
                     <InfoBox label="Customer ID" value={group.customer_id} />
                     <InfoBox label="Phone Number" value={group.phone_number} />
                     <InfoBox label="Email" value={group.email} />
                     <InfoBox label="Gender" value={group.gender} />
                     <InfoBox label="Date of Birth" value={group.dateofbirth} />
+                    <InfoBox label="Marital Status" value={group.marital_status} />
                     <InfoBox
-                      label="Marital Status"
-                      value={group.marital_status}
+                      label="Referred Types"
+                      value={[...new Set(TableAuctions.map((item) => item.referred_type || "N/A"))].join(", ")}
+                    />
+                    <InfoBox
+                      label="Referred By"
+                      value={[...new Set(TableAuctions.map((item) => item.referrer_name || "N/A"))].join(", ")}
                     />
                   </div>
                 </TabPane>
 
                 {/* Address Tab */}
-                <TabPane tab="Address" key="3">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <TabPane tab="Address" key="address">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <InfoBox label="Address" value={group.address} />
                     <InfoBox label="Pincode" value={group.pincode} />
                     <InfoBox label="District" value={group.district} />
@@ -1370,661 +1838,142 @@ const CustomerView = () => {
                   </div>
                 </TabPane>
 
-                {/* Bank Info Tab */}
-                <TabPane tab="Bank Info" key="4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {/* Groups Tab */}
+                <TabPane tab="Groups" key="groups">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {TableAuctions?.length > 0 ? (
+                      TableAuctions.map((auction, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => handleGroupClick(auction)}
+                          className="cursor-pointer border border-gray-200 rounded-xl p-5 shadow-sm bg-gradient-to-br from-gray-50 to-white hover:shadow-md transition"
+                        >
+                          <div className="flex justify-between items-center mb-3">
+                            <h3 className="text-base font-semibold text-gray-800">
+                              {auction.group_name}
+                            </h3>
+                            <Tag
+                              color={auction.prized_status === "Prized" || auction.isPrized ? "green" : "red"}
+                              className="text-xs font-medium"
+                            >
+                              {auction.prized_status === "Prized" || auction.isPrized ? "Prized" : "Unprized"}
+                            </Tag>
+                          </div>
+                          <p className="text-sm text-gray-600">
+                            Ticket: <span className="font-medium">{auction.ticket}</span>
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Balance:{" "}
+                            <span className="font-medium">
+                              ₹ {Number(auction.balance || 0).toLocaleString("en-IN")}
+                            </span>
+                          </p>
+                          <p className="text-xs text-gray-400 mt-2 italic">
+                            Click for details →
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-gray-500">No groups found for this customer.</p>
+                    )}
+                  </div>
+                </TabPane>
+
+                {/* Bank Info */}
+                <TabPane tab="Bank Info" key="bank">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <InfoBox label="Bank Name" value={group.bank_name} />
-                    <InfoBox
-                      label="Branch Name"
-                      value={group.bank_branch_name}
-                    />
-                    <InfoBox
-                      label="Account Number"
-                      value={group.bank_account_number}
-                    />
+                    <InfoBox label="Branch Name" value={group.bank_branch_name} />
+                    <InfoBox label="Account Number" value={group.bank_account_number} />
                     <InfoBox label="IFSC Code" value={group.bank_IFSC_code} />
                   </div>
                 </TabPane>
 
-                {/* Documents Tab */}
-                <TabPane tab="Documents" key="5">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {/* Documents */}
+                <TabPane tab="Documents" key="docs">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <InfoBox label="Aadhaar Number" value={group.adhaar_no} />
                     <InfoBox label="PAN Number" value={group.pan_no} />
                   </div>
                 </TabPane>
-              </Tabs>
-            </Card>
 
-            {/* ================== GROUPS SECTION ================== */}
-            <Card className="shadow-lg border border-gray-200 rounded-xl p-6 bg-white mt-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                Groups
-              </h3>
-
-              {TableAuctions && TableAuctions.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {TableAuctions?.map((auction, idx) => (
-                    <Card
-                      key={idx}
-                      className="shadow-md border border-gray-200 rounded-lg p-4 bg-white"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-800">
-                            {auction.group_name}
-                          </h3>
-                        </div>
-
-                        {/* Prize Status */}
-                        <Tag
-                          color={
-                            auction.prized_status === "Prized" ||
-                            auction.isPrized
-                              ? "green"
-                              : "red"
-                          }
-                          className="text-base font-semibold"
-                        >
-                          {auction.prized_status === "Prized" ||
-                          auction.isPrized
-                            ? "Prized"
-                            : "Unprized"}
-                        </Tag>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500">
-                  No groups found for this customer.
-                </p>
-              )}
-            </Card>
-
-            <Card className="shadow-sm border border-gray-200 rounded-xl p-6">
-              <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-                {/* Search Bar */}
-                <div className="relative w-full lg:w-1/3">
-                  <SearchOutlined className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
-                  <input
-                    type="text"
-                    placeholder="Search details..."
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    className="w-full rounded-full border border-gray-300 pl-12 pr-4 py-3 text-sm shadow-sm 
-                   focus:border-violet-700 focus:ring-2 focus:ring-violet-700 outline-none transition"
-                  />
-                </div>
-
-                {/* Tabs */}
-                <div className="flex gap-3 flex-wrap justify-center">
-                  {[
-                    { label: "Customer Details", key: "groupDetails" },
-                    { label: "Customer Ledger", key: "basicReport" },
-                    { label: "PayOut | Disbursement", key: "disbursement" },
-                  ].map((tab) => (
-                    <button
-                      key={tab.key}
-                      onClick={() => handleTabChange(tab.key)}
-                      className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200
-            ${
-              activeTab === tab.key
-                ? "bg-violet-700 text-white shadow-md"
-                : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200"
-            }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </Card>
-
-            {activeTab === "groupDetails" && (
-              <Card className="shadow-sm border border-gray-200 rounded-lg p-6">
-                <>
-                  {detailsLoading ? (
-                    <p>loading...</p>
-                  ) : (
-                    <div>
-                      <div className="mb-4">
-                        <div className="relative w-full max-w-lg  ">
-                          {/* <span className="absolute inset-y-0 left-4 flex items-center text-gray-400 ">
-                                                        <FiSearch className="text-xl" />
-                                                    </span> */}
-                          {/* <input
-                                                        type="text"
-                                                        placeholder="Search customer details..."
-                                                        className="w-full pl-12 pr-5 py-3.5 text-gray-800 bg-white border border-gray-200 rounded-full shadow-3xl 
-                                  placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 
-                                  transition-all duration-300 ease-in-out text-sm md:text-base"
-                                                        value={searchText}
-                                                        onChange={(e) =>
-                                                            setSearchText(e.target.value)
-                                                        }
-                                                    /> */}
-                        </div>
-
-                        {/* {searchText &&
-                                                    (() => {
-                                                        const detailsArray = [
-                                                            { key: "Name", value: group.full_name },
-                                                            { key: "Email", value: group.email },
-                                                            { key: "Phone", value: group.phone_number },
-                                                            {
-                                                                key: "Alternate Number",
-                                                                value: group.alternate_number,
-                                                            },
-                                                            { key: "Address", value: group.address },
-                                                            { key: "Aadhaar", value: group.adhaar_no },
-                                                            { key: "PAN", value: group.pan_no },
-                                                            { key: "Pincode", value: group.pincode },
-                                                            {
-                                                                key: "Father Name",
-                                                                value: group.father_name,
-                                                            },
-                                                            {
-                                                                key: "Nominee Name",
-                                                                value: group.nominee_name,
-                                                            },
-                                                            {
-                                                                key: "Bank Name",
-                                                                value: group.bank_name,
-                                                            },
-                                                            {
-                                                                key: "Bank Account",
-                                                                value: group.bank_account_number,
-                                                            },
-                                                        ];
-
-                                                        const fuse = new Fuse(detailsArray, {
-                                                            keys: ["key", "value"],
-                                                            threshold: 0.3,
-                                                        });
-
-                                                        const results = fuse.search(searchText);
-
-                                                        return (
-                                                            <div className="mt-2 bg-white border rounded shadow p-3 w-1/2">
-                                                                {results.length > 0 ? (
-                                                                    results.map(({ item }) => (
-                                                                        <div
-                                                                            key={item.key}
-                                                                            className="p-1 border-b"
-                                                                        >
-                                                                            <strong>{item.key}</strong> →{" "}
-                                                                            {item.value || "-"}
-                                                                        </div>
-                                                                    ))
-                                                                ) : (
-                                                                    <p>No matching details</p>
-                                                                )}
-                                                            </div>
-                                                        );
-                                                    })()} */}
-                      </div>
-
-                      {/* <div className="mt-5"> */}
-                      {/* Toggle Buttons */}
-                      {/* <div className="flex flex-wrap gap-4 mb-6">
-                                                    <button
-                                                        onClick={() => setVisibleRows((prev) => ({ ...prev, row1: !prev.row1 }))}
-                                                        className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out
-                       ${visibleRows.row1
-                                                                ? "bg-gradient-to-r from-custom-violet to-custom-violet text-white shadow-lg"
-                                                                : "bg-gradient-to-r from-violet-100 to-gray-100 shadow-md hover:shadow-lg hover:scale-105"}
-                     `}
-                                                    >
-                                                        {visibleRows.row1 ? "✓ Hide Basic Info" : "Show Basic Info"}
-                                                    </button>
-
-                                                    <button
-                                                        onClick={() => setVisibleRows((prev) => ({ ...prev, row2: !prev.row2 }))}
-                                                        className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out
-                       ${visibleRows.row2
-                                                                ? "bg-gradient-to-r from-custom-violet to-custom-violet text-white shadow-lg"
-                                                                : "bg-gradient-to-r from-violet-100 to-violet-100  shadow-md hover:shadow-lg hover:scale-105"}
-                     `}
-                                                    >
-                                                        {visibleRows.row2 ? "✓ Hide Address Info" : "Show Address Info"}
-                                                    </button>
-
-                                                    <button
-                                                        onClick={() => setVisibleRows((prev) => ({ ...prev, row3: !prev.row3 }))}
-                                                        className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out
-                       ${visibleRows.row3
-                                                                ? "bg-gradient-to-r from-custom-violet to-custom-violet text-white shadow-lg"
-                                                                : "bg-gradient-to-r from-violet-100 to-violet-100  shadow-md hover:shadow-lg hover:scale-105"}
-                     `}
-                                                    >
-                                                        {visibleRows.row3 ? "✓ Hide Regional Info" : "Show Regional Info"}
-                                                    </button>
-
-                                                    <button
-                                                        onClick={() => setVisibleRows((prev) => ({ ...prev, row4: !prev.row4 }))}
-                                                        className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out
-                       ${visibleRows.row4
-                                                                ? "bg-gradient-to-r from-custom-violet to-custom-violet text-white shadow-lg"
-                                                                : "bg-gradient-to-r from-violet-100 to-violet-100  shadow-md hover:shadow-lg hover:scale-105"}
-                     `}
-                                                    >
-                                                        {visibleRows.row4
-                                                            ? "✓ Hide Referral, Nominee & Bank Details"
-                                                            : "Show Referral, Nominee & Bank Details"}
-                                                    </button>
-                                                </div> */}
-
-                      {/* Row 1: Basic Info */}
-                      {/* {visibleRows.row1 && (
-                                                    <div className="flex gap-8 mb-6">
-                                                        <div className="flex flex-col w-full gap-4">
-                                                            <Input label="Name" value={group.full_name} />
-                                                            <Input label="Email" value={group.email} />
-                                                        </div>
-                                                        <div className="flex flex-col gap-4 w-full">
-                                                            <Input label="Phone Number" value={group.phone_number} />
-                                                            <Input label="Adhaar Number" value={group.adhaar_no} />
-                                                        </div>
-                                                        <div className="flex flex-col gap-4 w-full">
-                                                            <Input label="PAN Number" value={group.pan_no} />
-                                                            <Input label="Pincode" value={group.pincode} />
-                                                        </div>
-                                                    </div>
-                                                )} */}
-
-                      {/* Row 2: Address Info */}
-                      {/* {visibleRows.row2 && (
-                                                    <div className="flex gap-8 mb-6">
-                                                        <div className="flex flex-col gap-4 w-full">
-                                                            <Input label="Address" value={group.address} />
-                                                            <Input label="Gender" value={group.gender} />
-                                                        </div>
-                                                        <div className="flex flex-col gap-4 w-full">
-                                                            <Input
-                                                                label="Date of Birth"
-                                                                value={
-                                                                    group.dateofbirth
-                                                                        ? new Date(group.dateofbirth).toISOString().split("T")[0]
-                                                                        : ""
-                                                                }
-                                                            />
-                                                            <Input
-                                                                label="Collection Area"
-                                                                value={group?.collection_area?.route_name}
-                                                            />
-                                                        </div>
-                                                        <div className="flex flex-col gap-4 w-full">
-                                                            <Input label="Marital Status" value={group.marital_status} />
-                                                            <Input label="Father Name" value={group.father_name} />
-                                                        </div>
-                                                    </div>
-                                                )} */}
-
-                      {/* Row 3: Regional Info */}
-                      {/* {visibleRows.row3 && (
-                                                    <div className="flex gap-8 mb-6">
-                                                        <div className="flex flex-col gap-4 w-full">
-                                                            <Input label="Nationality" value={group.nationality} />
-                                                            <Input label="Village" value={group.village} />
-                                                        </div>
-                                                        <div className="flex flex-col gap-4 w-full">
-                                                            <Input label="Taluk" value={group.taluk} />
-                                                            <Input label="District" value={group.district} />
-                                                        </div>
-                                                        <div className="flex flex-col gap-4 w-full">
-                                                            <Input label="State" value={group.state} />
-                                                            <Input label="Alternate Number" value={group.alternate_number} />
-                                                        </div>
-                                                    </div>
-                                                )} */}
-
-                      {/* Row 4: Referral, Nominee & Bank Info */}
-                      {/* {visibleRows.row4 && (
-                                                    <div className="flex gap-8 mb-6">
-                                                        <div className="flex flex-col gap-4 w-full">
-                                                            <Input label="Referral Name" value={group.referral_name} />
-                                                            <Input label="Nominee Name" value={group.nominee_name} />
-                                                            <Input
-                                                                label="Nominee DOB"
-                                                                value={
-                                                                    group.nominee_dateofbirth
-                                                                        ? new Date(group.nominee_dateofbirth).toISOString().split("T")[0]
-                                                                        : ""
-                                                                }
-                                                            />
-                                                        </div>
-                                                        <div className="flex flex-col gap-4 w-full">
-                                                            <Input
-                                                                label="Nominee Phone Number"
-                                                                value={group.nominee_phone_number}
-                                                            />
-                                                            <Input
-                                                                label="Nominee Relationship"
-                                                                value={group.nominee_relationship}
-                                                            />
-                                                            <Input label="Bank Name" value={group.bank_name} />
-                                                        </div>
-                                                        <div className="flex flex-col gap-4 w-full">
-                                                            <Input label="Bank Branch Name" value={group.bank_branch_name} />
-                                                            <Input label="Bank Account Number" value={group.bank_account_number} />
-                                                            <Input label="Bank IFSC Code" value={group.bank_IFSC_code} />
-                                                        </div>
-                                                    </div>
-                                                )} */}
-                      {/* </div> */}
-
-                      <div>
-                        <h3 className="text-lg font-medium mb-4">
-                          Enrolled Groups
-                        </h3>
-                        {/* Changed conditional to check TableAuctions directly, as it's the formatted data */}
-                        {TableAuctions &&
-                        TableAuctions.length > 0 &&
-                        !isLoading ? (
-                          <div className="mt-5">
-                            <DataTable
-                              data={filterOption(
-                                TableAuctions, // Use TableAuctions for display
-                                searchText
-                              )}
-                              columns={Auctioncolumns}
-                              exportedFileName={`CustomerReport-${
-                                TableAuctions.length > 0
-                                  ? TableAuctions[0].date +
-                                    " to " +
-                                    TableAuctions[TableAuctions.length - 1].date
-                                  : "empty"
-                              }.csv`}
-                            />
-                            {/* yes you can */}
-                            {filteredBorrowerData.length > 0 && (
-                              <div className="mt-10">
-                                <h3 className="text-lg font-medium mb-4">
-                                  Loan Details
-                                </h3>
-                                <DataTable
-                                  data={filteredBorrowerData}
-                                  columns={loanColumns}
-                                  exportedFileName={`CustomerReport.csv`}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <CircularLoader isLoading={isLoading} />
-                        )}
-
-                        {!isLoading && TableAuctions.length === 0 && (
-                          <div className="p-40 w-full flex justify-center items-center">
-                            No Enrolled Group Data Found
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex gap-4 mt-5">
-                        <div className="flex flex-col flex-1">
-                          <label className="mb-1 text-sm font-medium text-gray-700">
-                            Total Amount to be Paid
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="-"
-                            value={TotalToBepaid || ""}
-                            readOnly
-                            className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-                          />
-                        </div>
-                        <div className="flex flex-col flex-1">
-                          <label className="mb-1 text-sm font-medium text-gray-700">
-                            Total Profit
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="-"
-                            value={Totalprofit || ""}
-                            readOnly
-                            className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-                          />
-                        </div>
-                        <div className="flex flex-col flex-1">
-                          <label className="mb-1 text-sm font-medium text-gray-700">
-                            Total Net To be Paid
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="-"
-                            value={NetTotalprofit || ""}
-                            readOnly
-                            className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-                          />
-                        </div>
-                        <div className="flex flex-col flex-1">
-                          <label className="mb-1 text-sm font-medium text-gray-700">
-                            Total Amount Paid
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="-"
-                            value={Totalpaid || ""}
-                            readOnly
-                            className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-                          />
-                        </div>
-                        <div className="flex flex-col flex-1">
-                          <label className="mb-1 text-sm font-medium text-gray-700">
-                            Total Balance
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="-"
-                            value={
-                              NetTotalprofit && Totalpaid
-                                ? NetTotalprofit - Totalpaid
-                                : ""
-                            }
-                            readOnly
-                            className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </>
-              </Card>
-            )}
-
-            {activeTab === "basicReport" && (
-              <Card className="shadow-sm border border-gray-200 rounded-lg p-6">
-                <>
-                  <div>
-                    <div className="flex gap-4">
-                      <div className="flex flex-col flex-1">
-                        <label className="mb-1 text-sm font-medium text-gray-700">
-                          Groups and Tickets
-                        </label>
+                {/* Day Book */}
+                <TabPane tab="Day Book" key="daybook">
+                  <div className="space-y-6">
+                    {/* Select + Summary */}
+                    <div className="flex flex-col md:flex-row gap-6">
+                      <div className="flex-1">
+                        <label className="mb-1 text-sm font-medium text-gray-700">Groups and Tickets</label>
                         <select
-                          value={
-                            EnrollGroupId.groupId
-                              ? `${EnrollGroupId.groupId}|${EnrollGroupId.ticket}`
-                              : ""
-                          }
+                          value={EnrollGroupId.groupId ? `${EnrollGroupId.groupId}|${EnrollGroupId.ticket}` : ""}
                           onChange={handleEnrollGroup}
-                          className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
+                          className="border border-gray-300 rounded-lg px-4 py-2 shadow-sm outline-none w-full max-w-md"
                         >
                           <option value="">Select Group | Ticket</option>
-                          {filteredAuction.map((group) => {
-                            if (group?.enrollment?.group) {
-                              return (
-                                <option
-                                  key={group.enrollment.group._id}
-                                  value={`${group.enrollment.group._id}|${group.enrollment.tickets}`}
-                                >
-                                  {group.enrollment.group.group_name} |{" "}
-                                  {group.enrollment.tickets}
-                                </option>
-                              );
-                            }
-                            return null;
-                          })}
+                          {filteredAuction.map((group) =>
+                            group?.enrollment?.group ? (
+                              <option
+                                key={group.enrollment.group._id}
+                                value={`${group.enrollment.group._id}|${group.enrollment.tickets}`}
+                              >
+                                {group.enrollment.group.group_name} | {group.enrollment.tickets}
+                              </option>
+                            ) : null
+                          )}
                           {loanCustomers.map((loan) => (
                             <option key={loan._id} value={`Loan|${loan._id}`}>
                               {`${loan.loan_id} | ₹${loan.loan_amount}`}
                             </option>
                           ))}
-                          {registrationFee.amount > 0 && (
-                            <div className="mt-6 p-4 border rounded bg-gray-100 w-fit text-gray-800 shadow">
-                              <p className="text-sm font-semibold">
-                                Registration Fee Info
-                              </p>
-                              <p>
-                                <strong>Amount:</strong> ₹
-                                {registrationFee.amount}
-                              </p>
-                              <p>
-                                <strong>Date:</strong>{" "}
-                                {registrationFee.createdAt
-                                  ? new Date(
-                                      registrationFee.createdAt
-                                    ).toLocaleDateString("en-GB")
-                                  : "N/A"}
-                              </p>
-                            </div>
-                          )}
                         </select>
                       </div>
-                      <div className="mt-6 flex justify-center gap-8 flex-wrap">
-                        <input
-                          type="text"
-                          value={`Registration Fee: ₹${
-                            registrationAmount || 0
-                          }`}
-                          readOnly
-                          className="px-4 py-2 border rounded font-semibold w-60 text-center bg-green-100 text-green-800 border-green-400"
-                        />
 
-                        <input
-                          type="text"
-                          value={`Payment Balance: ₹${finalPaymentBalance}`}
-                          readOnly
-                          className="px-4 py-2 border rounded font-semibold w-60 text-center bg-blue-100 text-blue-800 border-blue-400"
-                        />
-
-                        <input
-                          type="text"
-                          value={`Total: ₹${
-                            Number(finalPaymentBalance) +
-                            Number(registrationAmount || 0)
-                          }`}
-                          readOnly
-                          className="px-4 py-2 border rounded font-semibold w-60 text-center bg-purple-100 text-purple-800 border-purple-400"
-                        />
+                      {/* Summary Cards */}
+                      <div className="flex flex-wrap gap-4 justify-center items-center">
+                        <div className="px-4 py-2 rounded-lg bg-green-100 text-green-800 border border-green-300 font-semibold shadow-sm">
+                          Registration Fee: ₹{registrationAmount || 0}
+                        </div>
+                        <div className="px-4 py-2 rounded-lg bg-blue-100 text-blue-800 border border-blue-300 font-semibold shadow-sm">
+                          Payment Balance: ₹{finalPaymentBalance}
+                        </div>
+                        <div className="px-4 py-2 rounded-lg bg-purple-100 text-purple-800 border border-purple-300 font-semibold shadow-sm">
+                          Total: ₹{Number(finalPaymentBalance) + Number(registrationAmount || 0)}
+                        </div>
                       </div>
                     </div>
 
-                    {(TableEnrolls && TableEnrolls.length > 0) ||
-                    (borrowersData.length > 0 && !basicLoading) ? (
-                      <div className="mt-10">
-                        <DataTable
-                          printHeaderKeys={[
-                            "Customer Name",
-                            "Customer Id",
-                            "Phone Number",
-                            "Ticket Number",
-                            "Group Name",
-                            "Start Date",
-                            "End Date",
-                          ]}
-                          printHeaderValues={[
-                            group.full_name,
-                            group.customer_id,
-                            group.phone_number,
-                            EnrollGroupId.ticket,
-                            groupDetails.group_name,
-                            new Date(
-                              groupDetails.start_date
-                            ).toLocaleDateString("en-GB"),
-                            new Date(groupDetails.end_date).toLocaleDateString(
-                              "en-GB"
-                            ),
-                          ]}
-                          data={
-                            EnrollGroupId.groupId === "Loan"
-                              ? borrowersData
-                              : TableEnrolls
-                          }
-                          columns={
-                            EnrollGroupId.groupId === "Loan"
-                              ? BasicLoanColumns
-                              : Basiccolumns
-                          }
-                        />
-                      </div>
+                    {/* DataTable */}
+                    {(TableEnrolls?.length > 0 || (borrowersData.length > 0 && !basicLoading)) ? (
+                      <DataTable
+                        printHeaderKeys={["Customer Name", "Customer Id", "Phone Number", "Ticket Number", "Group Name", "Start Date", "End Date"]}
+                        printHeaderValues={[
+                          group?.full_name,
+                          group?.customer_id,
+                          group?.phone_number,
+                          EnrollGroupId.ticket,
+                          groupDetails?.group_name,
+                          groupDetails?.start_date ? new Date(groupDetails.start_date).toLocaleDateString("en-GB") : "",
+                          groupDetails?.end_date ? new Date(groupDetails.end_date).toLocaleDateString("en-GB") : "",
+                        ]}
+                        data={EnrollGroupId.groupId === "Loan" ? borrowersData : TableEnrolls}
+                        columns={EnrollGroupId.groupId === "Loan" ? BasicLoanColumns : Basiccolumns}
+                      />
                     ) : (
                       <CircularLoader isLoading={basicLoading} />
                     )}
                   </div>
-                </>
-              </Card>
-            )}
+                </TabPane>
+              </Tabs>
+            </Card>
 
-            {activeTab === "disbursement" && (
-              <Card className="shadow-sm border border-gray-200 rounded-lg p-6">
-                <div className="flex flex-col flex-1">
-                  <label className="mb-1 text-sm  text-gray-700 font-bold">
-                    Disbursement
-                  </label>
-
-                  {disbursementLoading ? (
-                    <CircularLoader />
-                  ) : filteredDisbursement?.length > 0 ? (
-                    <div className="mt-10">
-                      <DataTable
-                        data={filteredDisbursement}
-                        columns={DisbursementColumns}
-                      />
-                    </div>
-                  ) : (
-                    <div className="p-40  w-full flex justify-center items-center ">
-                      No Disbursement Data Found
-                    </div>
-                  )}
-                </div>
-              </Card>
-            )}
-
-            {/* {activeTab === "groupDetails" && (
-                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
-                                <Card className="bg-green-50 border border-green-200 text-center">
-                                    <p className="text-sm text-gray-600">Total To be Paid</p>
-                                    <h3 className="text-lg font-bold text-green-700">₹{TotalToBepaid || 0}</h3>
-                                </Card>
-
-                                <Card className="bg-blue-50 border border-blue-200 text-center">
-                                    <p className="text-sm text-gray-600">Total Profit</p>
-                                    <h3 className="text-lg font-bold text-blue-700">₹{Totalprofit || 0}</h3>
-                                </Card>
-
-                                <Card className="bg-purple-50 border border-purple-200 text-center">
-                                    <p className="text-sm text-gray-600">Net To be Paid</p>
-                                    <h3 className="text-lg font-bold text-purple-700">₹{NetTotalprofit || 0}</h3>
-                                </Card>
-
-                                <Card className="bg-indigo-50 border border-indigo-200 text-center">
-                                    <p className="text-sm text-gray-600">Amount Paid</p>
-                                    <h3 className="text-lg font-bold text-indigo-700">₹{Totalpaid || 0}</h3>
-                                </Card>
-
-                                <Card className="bg-red-50 border border-red-200 text-center">
-                                    <p className="text-sm text-gray-600">Balance</p>
-                                    <h3 className="text-lg font-bold text-red-700">₹{NetTotalprofit && Totalpaid ? NetTotalprofit - Totalpaid : 0}</h3>
-                                </Card>
-                            </div>
-                        )} */}
           </div>
         </div>
       </div>
     </>
   );
+
+
+
 };
 
 export default CustomerView;

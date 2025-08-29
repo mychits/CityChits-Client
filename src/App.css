@@ -1,3 +1,7 @@
+html, body {
+  font-family: "Times New Roman", Times, serif !important;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -10,11 +14,12 @@
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
-
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -41,3 +46,35 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Custom Tabs Styling (like IDFC FD page) */
+.custom-tabs .ant-tabs-nav {
+  margin: 0 !important;
+  border-bottom: 2px solid #f0f0f0;
+  display: flex;
+  justify-content: center;
+}
+
+.custom-tabs .ant-tabs-tab {
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px 24px;
+  margin: 0 16px;
+  color: #555 !important;
+  transition: all 0.3s ease;
+}
+
+.custom-tabs .ant-tabs-tab:hover {
+  color: #7b1fa2 !important; /* Purple hover */
+}
+
+.custom-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #7b1fa2 !important; /* Purple active */
+}
+
+.custom-tabs .ant-tabs-ink-bar {
+  height: 3px;
+  background: #7b1fa2 !important;
+  border-radius: 2px;
+}
+
