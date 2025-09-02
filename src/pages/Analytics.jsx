@@ -1,284 +1,598 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useMemo, useState } from "react";
 import Sidebar from "../components/layouts/Sidebar";
 import Navbar from "../components/layouts/Navbar";
 import api from "../instance/TokenInstance";
+import CustomAlert from "../components/alerts/CustomAlert";
+
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
   Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
   Legend,
-} from "recharts";
+} from "chart.js";
+import { Line, Bar, Doughnut } from "react-chartjs-2";
 
-const COLORS = ["#4F46E5", "#22C55E", "#F97316", "#EF4444"];
+import { fieldSize } from "../data/fieldSize";
 
-// Number formatting helpers
-const formatNumber = (num) =>
-  Number.isFinite(num) ? num.toLocaleString("en-IN") : "0";
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend);
 
-const formatCurrency = (num) =>
-  Number.isFinite(num) ? `₹${Math.round(num).toLocaleString("en-IN")}` : "₹0";
+// ---------- Helpers ----------
+const formatINR = (n) =>
+  `₹${Number(n || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+const formatNum = (n) => Number(n || 0).toLocaleString("en-IN");
+const fmtDate = (d) => (d ? new Date(d).toISOString().split("T")[0] : "-");
 
-const formatShortCurrency = (num) => {
-  if (!Number.isFinite(num) || num <= 0) return "₹0";
-  if (num >= 10000000) return `₹${(num / 10000000).toFixed(1)}Cr`;
-  if (num >= 100000) return `₹${(num / 100000).toFixed(1)}L`;
-  if (num >= 1000) return `₹${(num / 1000).toFixed(0)}k`;
-  return `₹${num}`;
+const startOfMonth = (d) => new Date(d.getFullYear(), d.getMonth(), 1);
+const endOfMonth = (d) => new Date(d.getFullYear(), d.getMonth() + 1, 0);
+const addMonths = (date, m) => {
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + m);
+  return d;
 };
 
-const Analytics = () => {
+const GlobalSearchChangeHandler = (e) => {
+  setSearchText(e.target.value);
+};
+
+export default function Analytics() {
   const [loading, setLoading] = useState(true);
-  const [summary, setSummary] = useState({
-    customers: 0,
-    agents: 0,
-    groups: 0,
-    enrollments: 0,
-    staffs: 0,
-    employees: 0,
-    totalCollection: 0,
-    monthlyCollection: 0,
-    yearlyTotal: 0,
-    monthlyAverage: 0,
+  const [error, setError] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [alertConfig, setAlertConfig] = useState({
+    visibility: false,
+    message: "Something went wrong!",
+    type: "info",
   });
-  const [monthlyData, setMonthlyData] = useState([]);
-  const [dueCollectedData, setDueCollectedData] = useState([]);
 
+  // KPIs
+  const [kpis, setKpis] = useState({
+    totalCollection: 0,
+    thisPeriodCollection: 0,
+    usersCount: 0,
+    groupsCount: 0,
+    agentsCount: 0,
+    employeesCount: 0,
+    enrollmentsCount: 0,
+  });
+
+  // Raw payments
+  const [payments, setPayments] = useState([]);
+  const [recent, setRecent] = useState([]);
+
+  // Date range
+  const today = new Date();
+  const defaultFrom = fmtDate(startOfMonth(addMonths(today, -11)));
+  const defaultTo = fmtDate(today);
+  const [fromDate, setFromDate] = useState(defaultFrom);
+  const [toDate, setToDate] = useState(defaultTo);
+
+  // Aggregations
+  const monthlyAggregation = useMemo(() => {
+    const end = new Date(toDate);
+    const labels = [];
+    for (let i = 11; i >= 0; i--) {
+      const d = addMonths(end, -i);
+      labels.push(`${d.toLocaleString("en-US", { month: "short" })} ${d.getFullYear()}`);
+    }
+    const sums = new Array(labels.length).fill(0);
+    payments.forEach((p) => {
+      if (!p?.pay_date) return;
+      const dt = new Date(p.pay_date);
+      const monthsDiff =
+        (end.getFullYear() - dt.getFullYear()) * 12 + (end.getMonth() - dt.getMonth());
+      const idx = labels.length - 1 - monthsDiff;
+      if (idx >= 0 && idx < labels.length) sums[idx] += Number(p.amount || 0);
+    });
+    return { labels, sums };
+  }, [payments, toDate]);
+
+  const revenueSplit = useMemo(() => {
+    const map = {};
+    payments.forEach((p) => {
+      const key = (p?.pay_type || "Other").toString();
+      map[key] = (map[key] || 0) + Number(p?.amount || 0);
+    });
+    const labels = Object.keys(map);
+    const values = labels.map((k) => map[k]);
+    return { labels, values };
+  }, [payments]);
+
+  const topGroups = useMemo(() => {
+    const map = {};
+    payments.forEach((p) => {
+      const gname = p?.group_id?.group_name || "Unknown Group";
+      map[gname] = (map[gname] || 0) + Number(p?.amount || 0);
+    });
+    return Object.entries(map)
+      .map(([name, amt]) => ({ name, amt }))
+      .sort((a, b) => b.amt - a.amt)
+      .slice(0, 7);
+  }, [payments]);
+
+  const topAgents = useMemo(() => {
+    const map = {};
+    payments.forEach((p) => {
+      const agentName =
+        p?.agent?.full_name ||
+        p?.agent_id?.full_name ||
+        p?.collect_by?.full_name ||
+        p?.collected_by?.full_name ||
+        "Unknown Agent";
+      map[agentName] = (map[agentName] || 0) + Number(p?.amount || 0);
+    });
+    return Object.entries(map)
+      .map(([name, amt]) => ({ name, amt }))
+      .sort((a, b) => b.amt - a.amt)
+      .slice(0, 7);
+  }, [payments]);
+
+  // Chart Options
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: "#1f2937",
+        titleColor: "#fff",
+        bodyColor: "#fff",
+        borderColor: "#374151",
+        borderWidth: 1,
+        cornerRadius: 6,
+        padding: 10,
+      },
+    },
+    maintainAspectRatio: false,
+  };
+
+  const lineData = {
+    labels: monthlyAggregation.labels,
+    datasets: [
+      {
+        label: "Monthly Collection",
+        data: monthlyAggregation.sums,
+        borderColor: "#4f46e5",
+        backgroundColor: "rgba(79, 70, 229, 0.1)",
+        tension: 0.3,
+        fill: true,
+        pointBackgroundColor: "#4f46e5",
+        pointBorderColor: "#fff",
+        pointBorderWidth: 2,
+        pointHoverRadius: 7,
+      },
+    ],
+  };
+
+  const groupsBarData = {
+    labels: topGroups.map((g) => g.name),
+    datasets: [
+      {
+        label: "Collections",
+        data: topGroups.map((g) => Math.round(g.amt)),
+        backgroundColor: "#06b6d4",
+        borderRadius: 6,
+      },
+    ],
+  };
+
+  const agentsBarData = {
+    labels: topAgents.map((a) => a.name),
+    datasets: [
+      {
+        label: "Collections",
+        data: topAgents.map((a) => Math.round(a.amt)),
+        backgroundColor: "#f59e0b",
+        borderRadius: 6,
+      },
+    ],
+  };
+
+  const doughnutData = {
+    labels: revenueSplit.labels.length ? revenueSplit.labels : ["No Data"],
+    datasets: [
+      {
+        data: revenueSplit.values.length ? revenueSplit.values : [1],
+        backgroundColor: [
+          "#3b82f6",
+          "#10b981",
+          "#f59e0b",
+          "#ef4444",
+          "#06b6d4",
+          "#8b5cf6",
+          "#ec4899",
+        ],
+        borderWidth: 2,
+        borderColor: "#fff",
+      },
+    ],
+  };
+
+  // Fetch data
   useEffect(() => {
-    const fetchAnalytics = async () => {
+    let cancelled = false;
+    (async () => {
       try {
-        const [
-          usersRes,
-          agentsRes,
-          groupsRes,
-          staffsRes,
-          enrollmentsRes,
-          employeesRes,
-          totalPaymentsRes,
-          monthlyPaymentsRes,
-        ] = await Promise.all([
-          api.get("/user/get-user"),
-          api.get("/agent/get"),
-          api.get("/group/get-group-admin"),
-          api.get("/agent/get-agent"),
-          api.get("/enroll/get-enroll"),
-          api.get("/agent/get-employee"),
-          api.get("/payment/get-total-payment-amount"),
-          api.get("/payment/get-current-month-payment", {
-            params: {
-              from_date: new Date(
-                new Date().getFullYear(),
-                new Date().getMonth(),
-                1
-              )
-                .toISOString()
-                .split("T")[0],
-              to_date: new Date(
-                new Date().getFullYear(),
-                new Date().getMonth() + 1,
-                0
-              )
-                .toISOString()
-                .split("T")[0],
-            },
-          }),
-        ]);
+        setLoading(true);
+        setError("");
 
-        // Counts
-        const customersCount = usersRes.data?.length || 0;
-        const agentsCount = agentsRes.data?.agent?.length || 0;
-        const groupsCount = groupsRes.data?.length || 0;
-        const staffsCount = staffsRes.data?.length || 0;
-        const enrollmentsCount = enrollmentsRes.data?.length || 0;
-        const employeesCount = employeesRes.data?.employee?.length || 0;
-
-        const totalCollection =
-          Number(totalPaymentsRes?.data?.totalAmount) || 0;
-        const monthlyCollection =
-          Number(monthlyPaymentsRes?.data?.monthlyPayment) || 0;
-
-        // Monthly collections (last 12 months)
-        const today = new Date();
-        const monthPromises = [];
-
-        for (let i = 11; i >= 0; i--) {
-          const from_date = new Date(today.getFullYear(), today.getMonth() - i, 1)
-            .toISOString()
-            .split("T")[0];
-          const to_date = new Date(
-            today.getFullYear(),
-            today.getMonth() - i + 1,
-            0
-          )
-            .toISOString()
-            .split("T")[0];
-
-          monthPromises.push(
+        const [usersRes, groupsRes, agentsRes, employeesRes, enrollRes, totalCollRes, currentMonthRes, paymentsByDatesRes, lastNTransRes] =
+          await Promise.allSettled([
+            api.get("/user/get-user").catch(() => ({ data: [] })),
+            api.get("/group/get-group-admin").catch(() => ({ data: [] })),
+            api.get("/agent/get").catch(() => ({ data: [] })),
+            api.get("/agent/get-employee").catch(() => ({ data: [] })),
+            api.get("/enroll/get-enroll").catch(() => ({ data: [] })),
+            api.get("/payment/get-total-payment-amount").catch(() => ({ data: {} })),
+            api.get("/payment/get-current-month-payment", {
+              params: { from_date: fromDate, to_date: toDate },
+            }).catch(() => ({ data: {} })),
             api.get("/payment/get-payments-by-dates", {
-              params: { from_date, to_date },
-            })
-          );
-        }
+              params: { from_date: fromDate, to_date: toDate },
+            }).catch(() => ({ data: [] })),
+            api.get("/payment/get-last-n-transaction", { params: { limit: 10 } }).catch(() => ({ data: [] })),
+          ]);
 
-        const monthlyResults = await Promise.all(monthPromises);
+        if (cancelled) return;
 
-        const monthlyDataFormatted = monthlyResults.map((res, idx) => {
-          const date = new Date(today.getFullYear(), today.getMonth() - 11 + idx, 1);
-          const monthName = date.toLocaleString("default", { month: "short" });
+        const unwrap = (res) => (res?.status === "fulfilled" ? res.value : res.reason);
 
-          const total = Array.isArray(res.data)
-            ? res.data.reduce((acc, p) => acc + (p.amount || 0), 0)
-            : Number(res.data?.totalAmount) || 0;
+        const users = unwrap(usersRes)?.data || [];
+        const groups = unwrap(groupsRes)?.data || [];
+        const agents = unwrap(agentsRes)?.data || [];
+        const employees = unwrap(employeesRes)?.data || [];
+        const enrolls = unwrap(enrollRes)?.data || [];
+        const totalColl = unwrap(totalCollRes)?.data || {};
+        const currentMonth = unwrap(currentMonthRes)?.data || {};
+        const paymentsRange = unwrap(paymentsByDatesRes)?.data || [];
+        const lastN = unwrap(lastNTransRes)?.data || [];
 
-          return { month: monthName, collection: Math.round(total) || 0 };
+        setKpis({
+          totalCollection: totalColl?.totalAmount || 0,
+          thisPeriodCollection: currentMonth?.monthlyPayment || 0,
+          usersCount: Array.isArray(users) ? users.length : 0,
+          groupsCount: Array.isArray(groups) ? groups.length : 0,
+          agentsCount: Array.isArray(agents?.agent || agents) ? (agents.agent?.length || agents.length) : 0,
+          employeesCount: Array.isArray(employees?.employee || employees) ? (employees.employee?.length || employees.length) : 0,
+          enrollmentsCount: Array.isArray(enrolls) ? enrolls.length : 0,
         });
 
-        setMonthlyData(monthlyDataFormatted);
+        const paymentList = Array.isArray(paymentsRange) && paymentsRange.length > 0 ? paymentsRange : lastN;
 
-        const yearlyTotal = monthlyDataFormatted.reduce(
-          (acc, m) => acc + (m.collection || 0),
-          0
+        const normalized = (paymentList || []).map((p) => ({
+          ...p,
+          amount: Number(p?.amount || 0),
+          pay_date: p?.pay_date || p?.date || null,
+        }));
+
+        const recentSorted = [...normalized]
+          .filter((p) => p.pay_date)
+          .sort((a, b) => new Date(b.pay_date) - new Date(a.pay_date))
+          .slice(0, 10);
+
+        setRecent(
+          recentSorted.map((p, idx) => ({
+            id: idx + 1,
+            date: p?.pay_date ? p.pay_date.split("T")[0] : "-",
+            name: p?.user_id?.full_name || p?.name || "-",
+            group: p?.group_id?.group_name || "-",
+            ticket: p?.ticket || "-",
+            receipt: p?.receipt_no || "-",
+            mode: p?.pay_type || "-",
+            amount: p.amount || 0,
+          }))
         );
-        const monthlyAverage =
-          yearlyTotal > 0 ? Math.round(yearlyTotal / 12) : 0;
 
-        setSummary({
-          customers: customersCount,
-          agents: agentsCount,
-          groups: groupsCount,
-          enrollments: enrollmentsCount,
-          staffs: staffsCount,
-          employees: employeesCount,
-          totalCollection,
-          monthlyCollection,
-          yearlyTotal,
-          monthlyAverage,
-        });
-
-        // Example: due vs collected (dummy fallback)
-        setDueCollectedData([
-          { name: "Collected", value: monthlyCollection || 0 },
-          { name: "Due", value: Math.max(yearlyTotal - monthlyCollection, 0) },
-        ]);
-      } catch (error) {
-        console.error("Error fetching analytics:", error);
+        setPayments(normalized);
+      } catch (err) {
+        console.error("Analytics fetch error:", err);
+        setError("Failed to load analytics. Please try again later.");
       } finally {
         setLoading(false);
       }
-    };
+    })();
 
-    fetchAnalytics();
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [fromDate, toDate]);
+
+  const downloadCSV = () => {
+    const header = ["#", "Date", "Name", "Group", "Ticket", "Receipt", "Mode", "Amount"];
+    const rows = recent.map((r) => [r.id, r.date, r.name, r.group, r.ticket, r.receipt, r.mode, r.amount]);
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [header, ...rows]
+        .map((e) => e.map(String).map((s) => `"${s.replace(/"/g, '""')}"`).join(","))
+        .join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `payments_${fmtDate(new Date())}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen text-xl font-semibold">
-        Loading Analytics...
-      </div>
+      <>
+        <div>
+          <CustomAlert
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+          />
+          <div className="flex mt-20">
+            <Sidebar
+              navSearchBarVisibility={true}
+              onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            />
+            <div className="flex-grow p-7">
+              <Navbar />
+              <div className="animate-pulse space-y-6">
+                <div className="h-8 bg-gray-200 rounded w-48"></div>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="h-24 bg-gray-200 rounded-xl"></div>
+                  ))}
+                </div>
+                <div className="h-64 bg-gray-200 rounded-xl"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="flex bg-gray-100 mt-20">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Navbar />
+    <>
+      <div>
+        <CustomAlert
+          type={alertConfig.type}
+          isVisible={alertConfig.visibility}
+          message={alertConfig.message}
+        />
 
-        <div className="p-6">
-          <h1 className="text-3xl font-bold text-gray-800 mb-6">
-            Analytics <span className="text-custom-violet">Dashboard</span>
-          </h1>
+        <div className="flex mt-20">
+          {/* Sidebar */}
+          <Sidebar
+            navSearchBarVisibility={true}
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+          />
 
-          {/* Line chart at the top */}
-          <div className="bg-white p-6 rounded-xl shadow mb-10">
-            <h2 className="text-lg font-semibold mb-4">
-              Monthly Collection Trend (Last 12 Months)
-            </h2>
-            <ResponsiveContainer width="100%" height={400}>
-              <LineChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis tickFormatter={formatShortCurrency} />
-                <Tooltip
-                  formatter={(value) => formatCurrency(value)}
-                  labelFormatter={(label) => `Month: ${label}`}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="collection"
-                  stroke="#4F46E5"
-                  strokeWidth={3}
-                  dot={{ r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+          {/* Main Content */}
+          <div className="flex-grow p-7">
+            <Navbar />
 
-          {/* Stats cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-            {[
-              { label: "Customers", value: summary.customers, isCurrency: false },
-              { label: "Agents", value: summary.agents, isCurrency: false },
-              { label: "Employees", value: summary.employees, isCurrency: false },
-              { label: "Groups", value: summary.groups, isCurrency: false },
-              { label: "Enrollments", value: summary.enrollments, isCurrency: false },
-              { label: "Total Collection", value: summary.totalCollection, isCurrency: true },
-              { label: "Monthly Collection", value: summary.monthlyCollection, isCurrency: true },
-              { label: "Yearly Collection", value: summary.yearlyTotal, isCurrency: true },
-              { label: "Monthly Avg", value: summary.monthlyAverage, isCurrency: true },
-            ].map((item, idx) => (
-              <div
-                key={idx}
-                className="bg-white p-5 rounded-xl shadow hover:shadow-lg transition"
-              >
-                <h2 className="text-lg font-semibold text-gray-700">
-                  {item.label}
-                </h2>
-                <p className="text-2xl font-bold text-indigo-600 mt-2">
-                  {item.isCurrency
-                    ? formatCurrency(item.value)
-                    : formatNumber(item.value)}
-                </p>
-              </div>
-            ))}
-          </div>
+            <main className="space-y-6 max-w-full">
+              {/* Header */}
+              <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Analytics Dashboard</h1>
+                </div>
 
-          {/* Pie chart */}
-          <div className="bg-white p-6 rounded-xl shadow">
-            <h2 className="text-lg font-semibold mb-4">Due vs Collected</h2>
-            <ResponsiveContainer width="100%" height={350}>
-              <PieChart>
-                <Pie
-                  data={dueCollectedData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={120}
-                  label
-                >
-                  {dueCollectedData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
+                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                  <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border">
+                    <label className="text-sm text-gray-600">From</label>
+                    <input
+                      type="date"
+                      className="px-2 py-1 text-sm border-none outline-none"
+                      value={fromDate}
+                      onChange={(e) => setFromDate(e.target.value)}
                     />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(val) => formatCurrency(val)} />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border">
+                    <label className="text-sm text-gray-600">To</label>
+                    <input
+                      type="date"
+                      className="px-2 py-1 text-sm border-none outline-none"
+                      value={toDate}
+                      onChange={(e) => setToDate(e.target.value)}
+                    />
+                  </div>
+                  <button
+                    onClick={downloadCSV}
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-sm font-medium flex items-center justify-center gap-2 min-w-max"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export CSV
+                  </button>
+                </div>
+              </header>
+
+              {error && (
+                <div className="rounded-lg bg-red-50 border border-red-200 text-red-700 p-4 text-sm">
+                  <strong>Error:</strong> {error}
+                </div>
+              )}
+
+              {/* KPI Cards */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <Kpi title="Total Collection" value={formatINR(kpis.totalCollection)} accent="indigo" />
+                <Kpi title="This Period" value={formatINR(kpis.thisPeriodCollection)} accent="emerald" />
+                <Kpi title="Users" value={formatNum(kpis.usersCount)} accent="blue" />
+                <Kpi title="Groups" value={formatNum(kpis.groupsCount)} accent="violet" />
+                <Kpi title="Agents" value={formatNum(kpis.agentsCount)} accent="cyan" />
+                <Kpi title="Enrollments" value={formatNum(kpis.enrollmentsCount)} accent="amber" />
+              </div>
+
+              {/* Charts */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <section className="bg-white rounded-2xl shadow-lg p-5 col-span-2 hover:shadow-xl transition-shadow duration-300">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-1">Monthly Collection Trend</h3>
+                  <p className="text-sm text-gray-500 mb-4">Last 12 months of revenue</p>
+                  <div className="h-64">
+                    <Line data={lineData} options={chartOptions} />
+                  </div>
+                </section>
+
+                <section className="bg-white rounded-2xl shadow-lg p-5 hover:shadow-xl transition-shadow duration-300">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-1">Payment Mode Split</h3>
+                  <p className="text-sm text-gray-500 mb-4">Distribution by payment method</p>
+                  <div className="flex items-center justify-center h-64">
+                    <div className="w-40">
+                      <Doughnut
+                        data={doughnutData}
+                        options={{ ...chartOptions, plugins: { legend: { display: false } } }}
+                      />
+                    </div>
+                    <div className="ml-4 space-y-2 text-sm flex-1">
+                      {doughnutData.labels.map((label, i) => (
+                        <div key={label} className="flex items-center gap-2">
+                          <div
+                            className="w-3 h-3 rounded-full"
+                            style={{ backgroundColor: doughnutData.datasets[0].backgroundColor[i % 7] }}
+                          ></div>
+                          <span className="capitalize text-gray-700">{label}</span>
+                          <span className="ml-auto font-medium">{formatINR(doughnutData.datasets[0].data[i])}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+
+                <section className="bg-white rounded-2xl shadow-lg p-5 lg:col-span-3 hover:shadow-xl transition-shadow duration-300">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-1">Top Groups & Agents</h3>
+                  <p className="text-sm text-gray-500 mb-5">Top 7 contributors by collection amount</p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-medium text-gray-700 mb-3">Top Groups</h4>
+                      <div className="h-60">
+                        <Bar
+                          data={groupsBarData}
+                          options={{
+                            ...chartOptions,
+                            indexAxis: "y",
+                            scales: {
+                              y: { beginAtZero: true, ticks: { color: "#4b5563", autoSkip: false }, grid: { display: false } },
+                              x: {
+                                ticks: { color: "#4b5563", callback: (value) => `₹${(value / 1e5).toFixed(0)}L` },
+                                grid: { color: "#f3f4f6" },
+                                title: { display: true, text: "Collection (in INR)", color: "#6b7280", font: { size: 10 } },
+                              },
+                            },
+                            plugins: {
+                              tooltip: { callbacks: { label: (context) => `Amount: ${formatINR(context.raw)}` } },
+                            },
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="font-medium text-gray-700 mb-3">Top Agents</h4>
+                      <div className="h-60">
+                        <Bar
+                          data={agentsBarData}
+                          options={{
+                            ...chartOptions,
+                            indexAxis: "y",
+                            scales: {
+                              y: { beginAtZero: true, ticks: { color: "#4b5563", autoSkip: false }, grid: { display: false } },
+                              x: {
+                                ticks: { color: "#4b5563", callback: (value) => `₹${(value / 1e5).toFixed(0)}L` },
+                                grid: { color: "#f3f4f6" },
+                                title: { display: true, text: "Collection (in INR)", color: "#6b7280", font: { size: 10 } },
+                              },
+                            },
+                            plugins: {
+                              tooltip: { callbacks: { label: (context) => `Amount: ${formatINR(context.raw)}` } },
+                            },
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              {/* Recent Transactions */}
+              <section className="bg-white rounded-2xl shadow-lg p-5 hover:shadow-xl transition-shadow duration-300">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                  <h3 className="text-lg font-semibold text-gray-800">Recent Payments</h3>
+                  <span className="text-sm text-gray-500">
+                    {recent.length} records · Updated: {fmtDate(new Date())}
+                  </span>
+                </div>
+
+                <div className="overflow-x-auto rounded-lg border border-gray-200">
+                  <table className="min-w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50 text-gray-700 uppercase text-xs tracking-wide">
+                        <th className="py-3 px-4 text-left rounded-l-lg">#</th>
+                        <th className="py-3 px-4 text-left">Date</th>
+                        <th className="py-3 px-4 text-left">Name</th>
+                        <th className="py-3 px-4 text-left">Group</th>
+                        <th className="py-3 px-4 text-left">Ticket</th>
+                        <th className="py-3 px-4 text-left">Receipt</th>
+                        <th className="py-3 px-4 text-left">Mode</th>
+                        <th className="py-3 px-4 text-right rounded-r-lg">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {recent.length === 0 ? (
+                        <tr>
+                          <td colSpan="8" className="py-10 text-center text-gray-500">No recent payments found</td>
+                        </tr>
+                      ) : (
+                        recent.map((r) => (
+                          <tr key={r.id} className="hover:bg-gray-50 transition-colors duration-150">
+                            <td className="py-3 px-4 text-gray-600">{r.id}</td>
+                            <td className="py-3 px-4 text-gray-700">{r.date}</td>
+                            <td className="py-3 px-4 font-medium text-gray-800 truncate max-w-xs">{r.name}</td>
+                            <td className="py-3 px-4 text-gray-600">{r.group}</td>
+                            <td className="py-3 px-4 text-gray-600">{r.ticket}</td>
+                            <td className="py-3 px-4 text-gray-600">{r.receipt}</td>
+                            <td className=" text-gray-600 uppercase text-xs bg-gray-100 rounded-full px-2 py-1 w-fit">
+                              {r.mode}
+                            </td>
+                            <td className="py-3 px-4 text-right font-semibold text-gray-800">{formatINR(r.amount)}</td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <div className="text-right text-xs text-gray-400">Data is refreshed in real-time from secure endpoints</div>
+            </main>
           </div>
         </div>
       </div>
+    </>
+  );
+}
+
+// KPI Component
+function Kpi({ title, value, accent = "indigo" }) {
+  const accentClasses = {
+    indigo: "from-indigo-50 to-indigo-100 border-indigo-200 text-indigo-700",
+    emerald: "from-emerald-50 to-emerald-100 border-emerald-200 text-emerald-700",
+    blue: "from-blue-50 to-blue-100 border-blue-200 text-blue-700",
+    violet: "from-violet-50 to-violet-100 border-violet-200 text-violet-700",
+    cyan: "from-cyan-50 to-cyan-100 border-cyan-200 text-cyan-700",
+    amber: "from-amber-50 to-amber-100 border-amber-200 text-amber-700",
+  };
+
+  const cls = accentClasses[accent] || accentClasses.indigo;
+
+  return (
+    <div className={`rounded-2xl border bg-gradient-to-br ${cls} p-5 shadow-sm hover:shadow-md transition-shadow duration-200`}>
+      <div className="flex items-center gap-2">
+        <p className="text-sm font-medium text-gray-700">{title}</p>
+      </div>
+      <p className="text-xl font-bold mt-2 text-gray-800">{value}</p>
     </div>
   );
-};
-
-export default Analytics;
+}

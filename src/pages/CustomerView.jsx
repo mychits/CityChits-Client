@@ -19,11 +19,8 @@ import { Modal } from "antd";
 import { Tabs } from "antd";
 const { TabPane } = Tabs;
 import { Button, message } from "antd";
-
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
-
-
 import {
   FiUser,
   FiPhone,
@@ -31,6 +28,11 @@ import {
   FiCalendar,
   FiCheckCircle,
   FiXCircle,
+  FiMapPin,
+  FiCreditCard,
+  FiFileText,
+  FiUsers,
+  FiDollarSign
 } from "react-icons/fi";
 
 const CustomerView = () => {
@@ -42,7 +44,7 @@ const CustomerView = () => {
   const [TableAuctions, setTableAuctions] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(userId ? userId : "");
   const [group, setGroup] = useState([]);
-  const [commission, setCommission] = useState(""); 0.
+  const [commission, setCommission] = useState("");
   const [TableEnrolls, setTableEnrolls] = useState([]);
   const [TableEnrollsDate, setTableEnrollsDate] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -53,21 +55,15 @@ const CustomerView = () => {
     return today.toISOString().split("T")[0];
   });
   const [lastPayments, setLastPayments] = useState([]);
-
   const [selectedDayBookGroup, setSelectedDayBookGroup] = useState(null);
-
-
-
   const [lastPayment, setLastPayment] = useState({ date: null, amount: 0 });
   const [isLoadingPayment, setIsLoadingPayment] = useState(false);
-
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [selectedGroupDetails, setSelectedGroupDetails] = useState(null);
-
+  const [hoveredTab, setHoveredTab] = useState(null);
   const GlobalSearchChangeHandler = (e) => {
     setSearchText(e.target.value);
   };
-
   const [toDate, setToDate] = useState(() => {
     const today = new Date();
     return today.toISOString().split("T")[0];
@@ -82,17 +78,13 @@ const CustomerView = () => {
     groupId: "",
     ticket: "",
   });
-
   const [userEnrollments, setUserEnrollments] = useState([]);
-
   const [registrationFee, setRegistrationFee] = useState({
     amount: 0,
     createdAt: null,
   });
-
   const [enrollmentDate, setEnrollmentDate] = useState(null);
   const [prizedStatus, setPrizedStatus] = useState("Unprized");
-
   const [visibleRows, setVisibleRows] = useState({
     row1: false,
     row2: false,
@@ -104,30 +96,14 @@ const CustomerView = () => {
     row8: false,
     row9: false,
   });
-
-  const Input = ({ label, value }) => (
-    <div className="flex flex-col flex-1">
-      <label className="mb-1 text-sm font-medium text-gray-700">{label}</label>
-      <input
-        type="text"
-        placeholder={label}
-        value={value || ""}
-        readOnly
-        className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full"
-      />
-    </div>
-  );
-
   const handleGroupClick = (auction) => {
     setSelectedGroupDetails(auction);
     setIsGroupModalOpen(true);
   };
-
   const handleCloseModal = () => {
     setIsGroupModalOpen(false);
     setSelectedGroupDetails(null);
   };
-
   const formatEnrollDate = (iso) => {
     if (!iso) return "—";
     const d = new Date(iso);
@@ -137,29 +113,27 @@ const CustomerView = () => {
       year: "numeric",
     });
   };
-
-  const InfoBox = ({ label, value }) => {
-    return (
-      <div className="flex flex-col">
-        <span className="text-lg font-semibold text-gray-400  mb-2">
+const InfoBox = ({ label, value, icon }) => {
+  return (
+    <div className="flex flex-wrap gap-2 max-w-[calc(10*250px)]">
+      {/* Repeat this block up to or more than 10 times */}
+      <div className="flex flex-col w-[250px]">
+        <span className="text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
+          {icon && <span className="text-blue-600">{icon}</span>}
           {label}
         </span>
-
-        <div className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-base font-medium text-gray-900 shadow-sm">
+        <div className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-base font-medium text-gray-800 shadow-sm">
           {value || "—"}
         </div>
       </div>
-    );
-  };
-
+    </div>
+  );
+};
   const [selectedFile, setSelectedFile] = useState(null);
-
   const handleUploadPhoto = async () => {
     if (!selectedFile) return;
-
     const formData = new FormData();
     formData.append("profilephoto", selectedFile);
-
     try {
       const res = await fetch(
         `${process.env.REACT_APP_API_URL}/user/update-user/${group._id}`,
@@ -168,67 +142,53 @@ const CustomerView = () => {
           body: formData,
         }
       );
-
       if (!res.ok) throw new Error("Upload failed");
       const data = await res.json();
-
       message.success("Profile photo updated successfully!");
-
       if (data?.profilephoto) {
-        group.profilephoto = data.profilephoto;
+        setGroup((prev) => ({ ...prev, profilephoto: data.profilephoto }));
       }
     } catch (err) {
       console.error(err);
       message.error("Failed to upload photo");
     }
   };
-  useEffect(() => {
-    const fetchLastTransactions = async (event) => {
-      event.preventDefault();
-      setOpenAntDDrawer(true);
-      if (formData.user_id && formData.payment_group_tickets) {
-        try {
-          setShowLoader(true);
-          const response = await api.get("payment/get-last-n-transaction", {
-            params: {
-              user_id: formData.user_id,
-              payment_group_tickets: paymentGroupTickets,
-              limit: 1,
-            },
-          });
-          if (response?.data) {
-            setLastPayments(response.data);
-          } else {
-            setLastPayments([]);
-          }
-        } catch (error) {
-          setLastPayments([]);
-        } finally {
-          setShowLoader(false);
-        }
-      }
-    };
-    fetchLastTransactions();
-  }, []);
-
-  const StatBox = ({ label, value }) => (
-    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
-      <p className="text-xs text-gray-500">{label}</p>
-      <h3 className="text-lg font-semibold text-gray-900">{value}</h3>
+  const StatBox = ({ label, value, icon, trend, isPositive }) => (
+    <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2 text-gray-600">
+          {icon}
+          <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">{label}</span>
+        </div>
+        {trend && (
+          <span className={`text-xs font-medium ${isPositive ? "text-green-600" : "text-red-600"}`}>
+            {isPositive ? "↑" : "↓"} {trend}
+          </span>
+        )}
+      </div>
+      <div className="flex items-center justify-between">
+        <h3 className="text-2xl font-bold text-gray-800">{value}</h3>
+        {label === "Balance" && (
+          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+            Number(value.replace(/[^\d.-]/g, '')) >= 0 
+              ? "bg-green-100 text-green-800" 
+              : "bg-red-100 text-red-800"
+          }`}>
+            {Number(value.replace(/[^\d.-]/g, '')) >= 0 ? "Healthy" : "Overdue"}
+          </span>
+        )}
+      </div>
     </div>
   );
-
   const [TotalToBepaid, setTotalToBePaid] = useState("");
   const [Totalpaid, setTotalPaid] = useState("");
   const [Totalprofit, setTotalProfit] = useState("");
-
   const [NetTotalprofit, setNetTotalProfit] = useState("");
   const [selectedAuctionGroupId, setSelectedAuctionGroupId] = useState(
     userId ? userId : ""
   );
   const [filteredAuction, setFilteredAuction] = useState([]);
   const [groupInfo, setGroupInfo] = useState({});
-
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
     return today.toISOString().split("T")[0];
@@ -240,7 +200,7 @@ const CustomerView = () => {
   const [payments, setPayments] = useState([]);
   const [availableTickets, setAvailableTickets] = useState([]);
   const [screenLoading, setScreenLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("groupDetails");
+  const [activeTab, setActiveTab] = useState(""); 
   const [searchText, setSearchText] = useState("");
   const [groupDetails, setGroupDetails] = useState(" ");
   const [loanCustomers, setLoanCustomers] = useState([]);
@@ -258,7 +218,6 @@ const CustomerView = () => {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
-
   const [formData, setFormData] = useState({
     group_id: "",
     user_id: "",
@@ -269,7 +228,6 @@ const CustomerView = () => {
     pay_type: "cash",
     transaction_id: "",
   });
-
   const BasicLoanColumns = [
     { key: "id", header: "SL. NO" },
     { key: "pay_date", header: "Payment Date" },
@@ -290,15 +248,12 @@ const CustomerView = () => {
     { key: "disbursed_by", header: "Disbursed By" },
     { key: "balance", header: "Balance" },
   ];
-
   useEffect(() => {
     const fetchAllEnrollments = async () => {
       setIsLoading(true);
       try {
-
         const response = await api.get(`/enroll/get-by-user-id/${userId}`);
         if (response.data && response.data.length > 0) {
-
           const enrollmentsWithStatus = await Promise.all(
             response.data.map(async (enrollment) => {
               let prizedStatus = "Unprized";
@@ -313,10 +268,7 @@ const CustomerView = () => {
                   prizedStatus = "Prized";
                 }
               } catch (error) {
-                console.error(
-                  "Error fetching auction details for a group:",
-                  error
-                );
+                console.error("Error fetching auction details for a group:", error);
               }
               return {
                 ...enrollment,
@@ -337,19 +289,14 @@ const CustomerView = () => {
         setIsLoading(false);
       }
     };
-
     if (userId) {
       fetchAllEnrollments();
     }
   }, [userId]);
-
   useEffect(() => {
     if (userId) {
       setIsLoadingPayment(true);
-
-      fetch(
-        `/api/payments?customerId=${userId}&_sort=date&_order=desc&_limit=1`
-      )
+      fetch(`/api/payments?customerId=${userId}&_sort=date&_order=desc&_limit=1`)
         .then((res) => res.json())
         .then((data) => {
           setLastPayments(data);
@@ -358,11 +305,9 @@ const CustomerView = () => {
         .catch(() => setIsLoadingPayment(false));
     }
   }, [userId]);
-
   useEffect(() => {
     if (!userId) return;
     let cancelled = false;
-
     (async () => {
       setIsLoadingPayment(true);
       try {
@@ -373,7 +318,6 @@ const CustomerView = () => {
             limit: 1,
           },
         });
-
         if (!cancelled) {
           if (Array.isArray(data) && data.length > 0) {
             const p = data[0];
@@ -392,12 +336,10 @@ const CustomerView = () => {
         if (!cancelled) setIsLoadingPayment(false);
       }
     })();
-
     return () => {
       cancelled = true;
     };
   }, [userId]);
-
   useEffect(() => {
     const fetchRegistrationFee = async () => {
       if (
@@ -415,7 +357,6 @@ const CustomerView = () => {
           setRegistrationDate(null);
           setBasicLoading(true);
           setIsLoading(true);
-
           const response = await api.get(
             "/enroll/get-user-registration-fee-report",
             {
@@ -426,12 +367,9 @@ const CustomerView = () => {
               },
             }
           );
-
           const { payments = [], registrationFees = [] } = response.data || {};
-
           setGroupPaid(payments[0]?.groupPaidAmount || 0);
           setGroupToBePaid(payments[0]?.totalToBePaidAmount || 0);
-
           let balance = 0;
           const formattedData = payments.map((payment, index) => {
             balance += Number(payment.amount || 0);
@@ -446,7 +384,6 @@ const CustomerView = () => {
               balance,
             };
           });
-
           let totalRegAmount = 0;
           registrationFees.forEach((regFee, idx) => {
             formattedData.push({
@@ -460,22 +397,16 @@ const CustomerView = () => {
               type: regFee.pay_for || "Reg Fee",
               balance: "-",
             });
-
             totalRegAmount += Number(regFee.amount || 0);
           });
-
           setRegistrationAmount(totalRegAmount);
-
           if (registrationFees.length > 0) {
             setRegistrationDate(
               registrationFees[0]?.createdAt
-                ? new Date(registrationFees[0].createdAt).toLocaleDateString(
-                  "en-GB"
-                )
+                ? new Date(registrationFees[0].createdAt).toLocaleDateString("en-GB")
                 : null
             );
           }
-
           if (formattedData.length > 0) {
             formattedData.push({
               id: "",
@@ -490,7 +421,6 @@ const CustomerView = () => {
           } else {
             setFinalPaymentBalance(0);
           }
-
           setTableEnrolls(formattedData);
         } catch (error) {
           console.error("Error fetching registration fee and payments:", error);
@@ -511,27 +441,21 @@ const CustomerView = () => {
         setRegistrationDate(null);
       }
     };
-
     fetchRegistrationFee();
   }, [activeTab, selectedGroup, EnrollGroupId.groupId, EnrollGroupId.ticket]);
-
   useEffect(() => {
     const fetchLastPayment = async () => {
       if (!userId) return;
       setIsLoadingPayment(true);
       try {
-
         const response = await api.get("/user/get-daily-payments");
         const rawData = response.data;
         let latestPayment = { date: null, amount: null };
-
-
         for (const user of rawData) {
           if (user?._id === userId && user?.data) {
             for (const item of user.data) {
               const pay = item.payments;
               if (pay?.latestPaymentDate && pay?.latestPaymentAmount) {
-
                 latestPayment = {
                   date: pay.latestPaymentDate,
                   amount: pay.latestPaymentAmount,
@@ -548,20 +472,16 @@ const CustomerView = () => {
         setIsLoadingPayment(false);
       }
     };
-
     fetchLastPayment();
   }, [userId]);
-
   useEffect(() => {
     const fetchAllLoanPaymentsbyId = async () => {
       setBorrowersData([]);
       setBasicLoading(true);
-
       try {
         const response = await api.get(
           `/loan-payment/get-all-loan-payments/${EnrollGroupId.ticket}`
         );
-
         if (response.data && response.data.length > 0) {
           let balance = 0;
           const formattedData = response.data.map((loanPayment, index) => {
@@ -590,22 +510,19 @@ const CustomerView = () => {
           setBorrowersData([]);
         }
       } catch (error) {
-        console.error("Error fetching loan payment data:", error);
+        console.error("Error fetching loan payment ", error);
         setBorrowersData([]);
       } finally {
         setBasicLoading(false);
       }
     };
-
     if (EnrollGroupId.groupId === "Loan") fetchAllLoanPaymentsbyId();
   }, [EnrollGroupId.ticket]);
-
   useEffect(() => {
     if (selectedGroup) {
       const fetchGroupDetails = async () => {
         setDetailLoading(true);
         try {
-
           const response = await api.get(
             `/enroll/get-by-id-enroll/${selectedGroup}`
           );
@@ -627,7 +544,6 @@ const CustomerView = () => {
           const auctionResponse = await api.get(
             `/auction/get-auction-report-by-group/${selectedGroup}`
           );
-
           const isPrized = auctionResponse.data.some(
             (auction) => auction.winner === userId
           );
@@ -641,7 +557,6 @@ const CustomerView = () => {
       fetchAuctionDetails();
     }
   }, [selectedGroup, userId]);
-
   useEffect(() => {
     const fetchGroupById = async () => {
       try {
@@ -656,10 +571,8 @@ const CustomerView = () => {
     };
     if (EnrollGroupId.groupId !== "Loan") fetchGroupById();
   }, [EnrollGroupId?.ticket]);
-
   useEffect(() => {
     setScreenLoading(true);
-
     const fetchGroups = async () => {
       setDetailLoading(true);
       try {
@@ -668,14 +581,13 @@ const CustomerView = () => {
         setScreenLoading(false);
         setDetailLoading(false);
       } catch (error) {
-        console.error("Error fetching group data:", error);
+        console.error("Error fetching group ", error);
       } finally {
         setDetailLoading(false);
       }
     };
     fetchGroups();
   }, []);
-
   useEffect(() => {
     const fetchBorrower = async () => {
       try {
@@ -694,7 +606,6 @@ const CustomerView = () => {
           setFilteredBorrowerData(filteredBorrowerData);
         }
         setLoanCustomers(response.data);
-
         if (response.status >= 400) throw new Error("Failed to send message");
       } catch (err) {
         console.log("failed to fetch loan customers", err.message);
@@ -705,32 +616,28 @@ const CustomerView = () => {
     setBorrowerId("No");
     fetchBorrower();
   }, [selectedGroup]);
-
   useEffect(() => {
     const fetchGroups = async () => {
       try {
         const response = await api.get(`/user/get-user-by-id/${selectedGroup}`);
         setGroup(response.data);
       } catch (error) {
-        console.error("Error fetching group data:", error);
+        console.error("Error fetching group ", error);
       }
     };
     fetchGroups();
   }, [selectedGroup]);
-
   useEffect(() => {
     const fetchGroups = async () => {
       try {
         const response = await api.get("/user/get-user");
         setFilteredUsers(response.data);
       } catch (error) {
-        console.error("Error fetching group data:", error);
+        console.error("Error fetching group ", error);
       }
     };
     fetchGroups();
   }, []);
-
-
   useEffect(() => {
     const fetchDisbursement = async () => {
       try {
@@ -743,11 +650,9 @@ const CustomerView = () => {
             },
           }
         );
-
         if (response.data) {
           const formattedData = response.data.map((payment, index) => {
             let balance = 0;
-
             balance += Number(payment.amount);
             return {
               _id: payment._id,
@@ -763,7 +668,6 @@ const CustomerView = () => {
               balance,
             };
           });
-
           setFilteredDisbursement(formattedData);
         } else {
           setFilteredDisbursement([]);
@@ -777,7 +681,6 @@ const CustomerView = () => {
     };
     if (selectedGroup) fetchDisbursement();
   }, [selectedGroup]);
-
   const handleGroupPayment = async (groupId) => {
     setSelectedAuctionGroupId(groupId);
     setSelectedGroup(groupId);
@@ -790,7 +693,6 @@ const CustomerView = () => {
   }, []);
   const handleEnrollGroup = (event) => {
     const value = event.target.value;
-
     if (value) {
       const [groupId, ticket] = value.split("|");
       setEnrollGroupId({ groupId, ticket });
@@ -798,7 +700,6 @@ const CustomerView = () => {
       setEnrollGroupId({ groupId: "", ticket: "" });
     }
   };
-
   useEffect(() => {
     const fetchPayments = async () => {
       try {
@@ -810,7 +711,6 @@ const CustomerView = () => {
             pay_type: selectedPaymentMode,
           },
         });
-
         if (response.data && response.data.length > 0) {
           setFilteredAuction(response);
           const paymentData = response.data;
@@ -833,12 +733,11 @@ const CustomerView = () => {
           setFilteredAuction([]);
         }
       } catch (error) {
-        console.error("Error fetching payment data:", error);
+        console.error("Error fetching payment ", error);
         setFilteredAuction([]);
         setPayments(0);
       }
     };
-
     fetchPayments();
   }, [
     selectedAuctionGroupId,
@@ -862,7 +761,6 @@ const CustomerView = () => {
     { key: "amount", header: "Amount" },
     { key: "mode", header: "Payment Mode" },
   ];
-
   const handleGroupAuctionChange = async (groupId) => {
     setFilteredAuction([]);
     if (groupId) {
@@ -870,10 +768,8 @@ const CustomerView = () => {
         const response = await api.post(
           `/enroll/get-user-refer-report/${groupId}`
         );
-
         if (response.data && response.data.length > 0) {
           setFilteredAuction(response.data);
-
           const formattedData = response.data
             .map((group, index) => {
               const groupName = group?.enrollment?.group?.group_name || "";
@@ -887,11 +783,9 @@ const CustomerView = () => {
               const totalPayable = group?.payable?.totalPayable || 0;
               const firstDividentHead =
                 group?.firstAuction?.firstDividentHead || 0;
-
               if (!group?.enrollment?.group) {
                 return null;
               }
-
               return {
                 id: index + 1,
                 group_id: group?.enrollment?.group?._id,
@@ -901,8 +795,8 @@ const CustomerView = () => {
                 group_value: group?.enrollment?.group?.group_value || 0,
                 date: group?.enrollment?.createdAt
                   ? new Date(group.enrollment.createdAt).toLocaleDateString(
-                    "en-GB"
-                  )
+                      "en-GB"
+                    )
                   : "N/A",
                 status: group?.enrollment?.status || "Active",
                 totalBePaid:
@@ -918,37 +812,32 @@ const CustomerView = () => {
                 balance:
                   groupType === "double"
                     ? groupInstall * auctionCount +
-                    groupInstall -
-                    totalPaidAmount
+                      groupInstall -
+                      totalPaidAmount
                     : totalPayable +
-                    groupInstall +
-                    firstDividentHead -
-                    totalPaidAmount,
+                      groupInstall +
+                      firstDividentHead -
+                      totalPaidAmount,
                 referred_type: group?.enrollment?.referred_type || "N/A",
                 referrer_name: group?.enrollment?.referrer_name || "N/A",
               };
             })
             .filter((item) => item !== null);
-
           setTableAuctions(formattedData);
           setCommission(0);
-
           const totalToBePaidAmount = formattedData.reduce((sum, group) => {
             return sum + (group?.totalBePaid || 0);
           }, 0);
           setTotalToBePaid(totalToBePaidAmount);
-
           const totalNetToBePaidAmount = formattedData.reduce((sum, group) => {
             return sum + (group?.toBePaidAmount || 0);
           }, 0);
           setNetTotalProfit(totalNetToBePaidAmount);
-
           const totalPaidAmount = response.data.reduce(
             (sum, group) => sum + (group?.payments?.totalPaidAmount || 0),
             0
           );
           setTotalPaid(totalPaidAmount);
-
           const totalProfit = response.data.reduce(
             (sum, group) => sum + (group?.profit?.totalProfit || 0),
             0
@@ -959,7 +848,7 @@ const CustomerView = () => {
           setCommission(0);
         }
       } catch (error) {
-        console.error("Error fetching enrollment data:", error);
+        console.error("Error fetching enrollment ", error);
         setFilteredAuction([]);
         setCommission(0);
       }
@@ -985,32 +874,25 @@ const CustomerView = () => {
     { key: "paidAmount", header: "Amount Paid" },
     { key: "balance", header: "Balance" },
   ];
-
   const formatPayDate = (dateString) => {
     const date = new Date(dateString);
     return date.toISOString().split("T")[0];
   };
-
   useEffect(() => {
     const fetchEnroll = async () => {
       setTableEnrolls([]);
       setBasicLoading(true);
-
       try {
         setIsLoading(true);
         const response = await api.get(
           `/enroll/get-user-payment?group_id=${EnrollGroupId.groupId}&ticket=${EnrollGroupId.ticket}&user_id=${selectedGroup}`
         );
-
         if (response.data && response.data.length > 0) {
           setFilteredUsers(response.data);
-
           const Paid = response.data;
           setGroupPaid(Paid[0].groupPaidAmount);
-
           const toBePaid = response.data;
           setGroupToBePaid(toBePaid[0].totalToBePaidAmount);
-
           let balance = 0;
           const formattedData = response.data.map((group, index) => {
             balance += Number(group.amount);
@@ -1034,14 +916,13 @@ const CustomerView = () => {
             type: "",
             balance,
           });
-
           setTableEnrolls(formattedData);
         } else {
           setFilteredUsers([]);
           setTableEnrolls([]);
         }
       } catch (error) {
-        console.error("Error fetching enrollment data:", error);
+        console.error("Error fetching enrollment ", error);
         setFilteredUsers([]);
         setTableEnrolls([]);
       } finally {
@@ -1051,7 +932,6 @@ const CustomerView = () => {
     };
     if (EnrollGroupId.groupId !== "Loan") fetchEnroll();
   }, [selectedGroup, EnrollGroupId.groupId, EnrollGroupId.ticket]);
-
   const Basiccolumns = [
     { key: "id", header: "SL. NO" },
     { key: "date", header: "Date" },
@@ -1061,7 +941,6 @@ const CustomerView = () => {
     { key: "type", header: "Payment Type" },
     { key: "balance", header: "Balance" },
   ];
-
   const formatDate = (dateString) => {
     const parts = dateString.split("-");
     if (parts.length === 3) {
@@ -1071,7 +950,6 @@ const CustomerView = () => {
   };
   const formattedFromDate = formatDate(fromDate);
   const formattedToDate = formatDate(toDate);
-
   useEffect(() => {
     const fetchEnroll = async () => {
       try {
@@ -1080,13 +958,10 @@ const CustomerView = () => {
         );
         if (response.data && response.data.length > 0) {
           setFilteredUsers(response.data);
-
           const Paid = response.data;
           setGroupPaidDate(Paid[0].groupPaidAmount || 0);
-
           const toBePaid = response.data;
           setGroupToBePaidDate(toBePaid[0].totalToBePaidAmount);
-
           const totalAmount = response.data.reduce(
             (sum, group) => sum + parseInt(group.amount),
             0
@@ -1111,14 +986,13 @@ const CustomerView = () => {
           setTotalAmount(0);
         }
       } catch (error) {
-        console.error("Error fetching enrollment data:", error);
+        console.error("Error fetching enrollment ", error);
         setFilteredUsers([]);
         setTotalAmount(0);
       }
     };
     fetchEnroll();
   }, [selectedGroup, formattedFromDate, formattedToDate]);
-
   const Datecolumns = [
     { key: "id", header: "SL. NO" },
     { key: "name", header: "Customer Name" },
@@ -1128,7 +1002,6 @@ const CustomerView = () => {
     { key: "amount_paid", header: "Amount Paid" },
     { key: "amount_balance", header: "Amount Balance" },
   ];
-
   useEffect(() => {
     if (groupInfo && formData.bid_amount) {
       const commission = (groupInfo.group_value * 5) / 100 || 0;
@@ -1150,7 +1023,6 @@ const CustomerView = () => {
       }));
     }
   }, [groupInfo, formData.bid_amount]);
-
   useEffect(() => {
     if (selectedGroup) {
       api
@@ -1166,512 +1038,58 @@ const CustomerView = () => {
     }
   }, [selectedGroup]);
 
-  if (screenLoading)
-    return (
-      <div className="w-screen m-24">
-        <CircularLoader color="text-green-600" />
+  // Helper functions to check if tab has data
+  const hasDetailsData = () =>
+    group.full_name ||
+    group.customer_id ||
+    group.phone_number ||
+    group.email ||
+    group.gender ||
+    group.dateofbirth ||
+    group.marital_status ||
+    TableAuctions.some((a) => a.referred_type !== "N/A" || a.referrer_name !== "N/A");
+
+  const hasAddressData = () =>
+    group.address ||
+    group.pincode ||
+    group.district ||
+    group.state ||
+    group.nationality;
+
+  const hasBankData = () =>
+    group.bank_name ||
+    group.bank_branch_name ||
+    group.bank_account_number ||
+    group.bank_IFSC_code;
+
+  const hasDocsData = () => group.adhaar_no || group.pan_no;
+
+  const hasGroupsData = () => TableAuctions.length > 0;
+
+  // Fixed Tooltip Component - Now clearly visible above content
+const TabTooltip = ({ children, visible }) => (
+  <div 
+    className={`absolute left-0 -top-1 w-[calc(10*250px)] bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden transition-all duration-300 ease-in-out ${
+      visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
+    }`}
+    style={{ transformOrigin: 'top' }}
+  >
+    <div className="p-3 border-b border-gray-100 bg-gray-50">
+      <span className="text-sm font-semibold text-gray-700">Preview</span>
+    </div>
+    
+    <div className="p-4">
+      {/* Wrap children like InfoBoxes */}
+      <div className="flex flex-wrap gap-4 max-w-[calc(10*250px)]">
+        {children}
       </div>
-    );
+    </div>
 
-  //   return (
-  //     <>
-  //       <div className="w-screen min-h-screen mt-20  bg-gray-100">
-  //         <div className="flex mt-20">
-  //           <Sidebar
-  //             navSearchBarVisibility={true}
-  //             onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-  //           />
+    {/* Downward-pointing arrow */}
+    <div className="absolute top-full left-6 w-3 h-3 bg-white border-l border-b border-gray-200 rotate-45 transform -translate-x-1"></div>
+  </div>
+);
 
-  //           <div className="flex-grow p-8 space-y-6">
-  //        <Card className="shadow-lg border border-gray-200 rounded-2xl p-8 bg-white">
-  //   <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-
-
-  //     <div className="col-span-1 flex flex-col items-center lg:items-start space-y-6">
-
-  //       <div className="relative w-44 h-44 rounded-lg  overflow-hidden border-4 border-gray-200 shadow bg-gray-50 flex items-center justify-center">
-  //         <img
-  //           src={
-  //             selectedFile
-  //               ? URL.createObjectURL(selectedFile)
-  //               : group.profilephoto ||
-  //                 "https://cdn-icons-png.flaticon.com/512/847/847969.png"
-  //           }
-  //           alt="Profile"
-  //           className="w-full h-full object-cover"
-  //         />
-  //         {selectedFile && (
-  //           <button
-  //             onClick={() => setSelectedFile(null)}
-  //             className="absolute top-2 right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1 shadow hover:bg-red-600 transition"
-  //           >
-  //             ✕
-  //           </button>
-  //         )}
-  //       </div>
-
-
-  //       <h2 className="mt-3 text-xl font-bold text-gray-800 text-center lg:text-left">
-  //         {group.full_name || "Unnamed"}
-  //       </h2>
-
-
-  //       <div className="w-full space-y-2">
-  //         <input
-  //           type="file"
-  //           accept="image/*"
-  //           onChange={(e) => setSelectedFile(e.target.files[0])}
-  //           className="text-sm"
-  //         />
-  //         <div className="flex gap-3">
-  //           <Button
-  //             type="primary"
-  //             size="small"
-  //             disabled={!selectedFile}
-  //             onClick={handleUploadPhoto}
-  //           >
-  //             Upload
-  //           </Button>
-  //           {selectedFile && (
-  //             <Button danger size="small" onClick={() => setSelectedFile(null)}>
-  //               Cancel
-  //             </Button>
-  //           )}
-  //         </div>
-  //       </div>
-
-
-  //       <div className="bg-gray-50 rounded-lg shadow-sm p-5 w-full space-y-3">
-  //         <h3 className="text-md font-semibold text-gray-800 border-b pb-2">
-  //           Customer Info
-  //         </h3>
-  //         <div className="space-y-1 text-sm text-gray-700">
-  //           <p className="flex justify-between">
-  //             <span className="font-medium">Customer ID:</span>
-  //             <span>{group.customer_id || "—"}</span>
-  //           </p>
-  //           <p className="flex justify-between">
-  //             <span className="font-medium">Phone:</span>
-  //             <span>{group.phone_number || "—"}</span>
-  //           </p>
-  //           <p className="flex justify-between">
-  //             <span className="font-medium">Email:</span>
-  //             <span>{group.email || "—"}</span>
-  //           </p>
-  //         </div>
-  //       </div>
-  //     </div>
-
-
-  //     <div className="col-span-3 grid grid-cols-2 lg:grid-cols-3 gap-4">
-
-  //   <div className="bg-violet-50 rounded-lg shadow-sm p-3 h-20 flex flex-col justify-center items-center">
-  //     <p className="text-xs text-gray-600">Total Groups</p>
-  //     <h3 className="text-lg font-bold text-violet-700">
-  //       {TableAuctions?.length || 0}
-  //     </h3>
-  //   </div>
-
-  //   <div className="bg-green-50 rounded-lg shadow-sm p-3 h-20 flex flex-col justify-center items-center">
-  //     <p className="text-xs text-gray-600">Total Balance</p>
-  //     <h3 className="text-lg font-bold text-green-700">
-  //       {NetTotalprofit && Totalpaid ? NetTotalprofit - Totalpaid : 0}
-  //     </h3>
-  //   </div>
-
-  //   <div className="bg-purple-50 rounded-lg shadow-sm p-3 h-20 flex flex-col justify-center items-center">
-  //     <p className="text-xs text-gray-600">Net To be Paid</p>
-  //     <h3 className="text-lg font-bold text-purple-700">
-  //       ₹ {Number(NetTotalprofit || 0).toLocaleString("en-IN")}
-  //     </h3>
-  //   </div>
-
-  //   <div className="bg-blue-50 rounded-lg shadow-sm p-3 h-20 flex flex-col justify-center items-center">
-  //     <p className="text-xs text-gray-600">Total Profit</p>
-  //     <h3 className="text-lg font-bold text-blue-700">{Totalprofit || 0}</h3>
-  //   </div>
-
-  //   <div className="bg-orange-50 rounded-lg shadow-sm p-3 h-20 flex flex-col justify-center items-center">
-  //     <p className="text-xs text-gray-600">Total Paid</p>
-  //     <h3 className="text-lg font-bold text-orange-700">{Totalpaid || 0}</h3>
-  //   </div>
-
-  //   <div className="bg-teal-50 rounded-lg shadow-sm p-3 h-20 flex flex-col justify-center items-center">
-  //     <p className="text-xs text-gray-600">Latest Payment</p>
-  //     {isLoadingPayment ? (
-  //       <CircularLoader color="text-green-600" />
-  //     ) : (
-  //       <h3 className="text-lg font-bold text-green-700">
-  //         ₹ {Number(lastPayment?.amount || 0).toLocaleString("en-IN")}
-  //       </h3>
-  //     )}
-  //   </div>
-
-  //   <div className="bg-indigo-50 rounded-lg shadow-sm p-3 h-20 flex flex-col justify-center items-center">
-  //     <p className="text-xs text-gray-600">Latest Disbursement</p>
-  //     {detailsLoading ? (
-  //       <CircularLoader color="text-blue-600" />
-  //     ) : (
-  //       <h3 className="text-lg font-bold text-indigo-700">
-  //         ₹ {Number(groupPaid || 0).toLocaleString("en-IN")}
-  //       </h3>
-  //     )}
-  //   </div>
-
-  // </div>
-
-  //   </div>
-  // </Card>
-
-  //             <Card className="shadow-lg border border-gray-200 text-2xl rounded-xl p-6 bg-white mt-6">
-  //               <Tabs defaultActiveKey="1" type="card" className="custom-tabs">
-
-
-
-
-  //                 <TabPane tab="Details" key="2">
-  //                   <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-  //                     <InfoBox label="Full Name" value={group.full_name} />
-  //                     <InfoBox label="Customer ID" value={group.customer_id} />
-  //                     <InfoBox label="Phone Number" value={group.phone_number} />
-  //                     <InfoBox label="Email" value={group.email} />
-  //                     <InfoBox label="Gender" value={group.gender} />
-  //                     <InfoBox label="Date of Birth" value={group.dateofbirth} />
-  //                     <InfoBox
-  //                       label="Marital Status"
-  //                       value={group.marital_status}
-  //                     />
-
-  //                     <InfoBox
-  //                       label="Referred Types"
-  //                       value={[
-  //                         ...new Set(
-  //                           TableAuctions.map(
-  //                             (item) => item.referred_type || "N/A"
-  //                           )
-  //                         ),
-  //                       ].join(", ")}
-  //                     />
-  //                     <InfoBox
-  //                       label="Referred By"
-  //                       value={[
-  //                         ...new Set(
-  //                           TableAuctions.map(
-  //                             (item) => item.referrer_name || "N/A"
-  //                           )
-  //                         ),
-  //                       ].join(", ")}
-  //                     />
-  //                   </div>
-  //                 </TabPane>
-
-
-  //                 <TabPane tab="Address" key="3">
-  //                   <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-  //                     <InfoBox label="Address" value={group.address} />
-  //                     <InfoBox label="Pincode" value={group.pincode} />
-  //                     <InfoBox label="District" value={group.district} />
-  //                     <InfoBox label="State" value={group.state} />
-  //                     <InfoBox label="Nationality" value={group.nationality} />
-  //                   </div>
-  //                 </TabPane>
-
-  //                 <TabPane tab="Groups" key="6">
-  //                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-  //                     {TableAuctions && TableAuctions.length > 0 ? (
-  //                       TableAuctions.map((auction, idx) => (
-  //                         <div
-  //                           key={idx}
-  //                           onClick={() => handleGroupClick(auction)} 
-  //                           className="cursor-pointer border border-gray-300 rounded-lg p-4 shadow-sm bg-gray-50 hover:shadow-md transition"
-  //                         >
-  //                           <div className="flex justify-between items-start mb-2">
-  //                             <h3 className="text-base font-semibold text-gray-800">
-  //                               {auction.group_name}
-  //                             </h3>
-  //                             <Tag
-  //                               color={
-  //                                 auction.prized_status === "Prized" || auction.isPrized
-  //                                   ? "green"
-  //                                   : "red"
-  //                               }
-  //                               className="text-xs font-medium"
-  //                             >
-  //                               {auction.prized_status === "Prized" || auction.isPrized
-  //                                 ? "Prized"
-  //                                 : "Unprized"}
-  //                             </Tag>
-  //                           </div>
-  //                           <p className="text-sm text-gray-600">
-  //                             Ticket: <span className="font-medium">{auction.ticket}</span>
-  //                           </p>
-  //                           <p className="text-sm text-gray-600">
-  //                             Balance:{" "}
-  //                             <span className="font-medium">
-  //                               ₹ {Number(auction.balance || 0).toLocaleString("en-IN")}
-  //                             </span>
-  //                           </p>
-  //                           <p className="text-xs text-gray-400 mt-2 italic">
-  //                             Click for details →
-  //                           </p>
-  //                         </div>
-  //                       ))
-  //                     ) : (
-  //                       <p className="text-gray-500">No groups found for this customer.</p>
-  //                     )}
-  //                   </div>
-
-
-  //                   <Modal
-  //                     title={null}
-  //                     open={isGroupModalOpen}
-  //                     onCancel={handleCloseModal}
-  //                     footer={null}
-  //                     width={900}
-  //                     className="rounded-xl overflow-hidden"
-  //                   >
-  //                     {selectedGroupDetails ? (
-  //                       <div className="space-y-6">
-
-
-  //                         <div className="border-b pb-4">
-  //                           <h2 className="text-xl font-bold text-gray-800 mb-1">
-  //                             {selectedGroupDetails.group_name}
-  //                           </h2>
-  //                           <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-  //                             <span>
-  //                               Ticket: <strong>{selectedGroupDetails.ticket}</strong>
-  //                             </span>
-  //                             <span>
-  //                               Type: <strong>{selectedGroupDetails.group_type}</strong>
-  //                             </span>
-  //                             <span>
-  //                               Value: <strong>₹ {selectedGroupDetails.group_value}</strong>
-  //                             </span>
-  //                             <span>
-  //                               Status:{" "}
-  //                               <Tag
-  //                                 color={
-  //                                   selectedGroupDetails.prized_status === "Prized" ||
-  //                                     selectedGroupDetails.isPrized
-  //                                     ? "green"
-  //                                     : "red"
-  //                                 }
-  //                               >
-  //                                 {selectedGroupDetails.prized_status === "Prized"
-  //                                   ? "Prized"
-  //                                   : "Unprized"}
-  //                               </Tag>
-  //                             </span>
-  //                           </div>
-  //                         </div>
-
-
-  //                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-  //                           <div className="bg-violet-50 p-4 rounded-lg text-center shadow-sm">
-  //                             <p className="text-xs text-gray-500">To Be Paid</p>
-  //                             <p className="text-lg font-semibold text-violet-700">
-  //                               ₹ {selectedGroupDetails.totalBePaid || 0}
-  //                             </p>
-  //                           </div>
-  //                           <div className="bg-green-50 p-4 rounded-lg text-center shadow-sm">
-  //                             <p className="text-xs text-gray-500">Net To Be Paid</p>
-  //                             <p className="text-lg font-semibold text-green-700">
-  //                               ₹ {selectedGroupDetails.toBePaidAmount || 0}
-  //                             </p>
-  //                           </div>
-  //                           <div className="bg-blue-50 p-4 rounded-lg text-center shadow-sm">
-  //                             <p className="text-xs text-gray-500">Paid</p>
-  //                             <p className="text-lg font-semibold text-blue-700">
-  //                               ₹ {selectedGroupDetails.paidAmount || 0}
-  //                             </p>
-  //                           </div>
-  //                           <div className="bg-orange-50 p-4 rounded-lg text-center shadow-sm">
-  //                             <p className="text-xs text-gray-500">Balance</p>
-  //                             <p className="text-lg font-semibold text-orange-700">
-  //                               ₹ {selectedGroupDetails.balance || 0}
-  //                             </p>
-  //                           </div>
-  //                           <div className="bg-indigo-50 p-4 rounded-lg text-center shadow-sm">
-  //                             <p className="text-xs text-gray-500">Profit</p>
-  //                             <p className="text-lg font-semibold text-indigo-700">
-  //                               ₹ {selectedGroupDetails.profit || 0}
-  //                             </p>
-  //                           </div>
-  //                         </div>
-
-
-  //                         <div className="flex justify-end">
-  //                           <Button
-  //                             type="primary"
-  //                             onClick={() => {
-
-  //                               const worksheet = XLSX.utils.json_to_sheet([selectedGroupDetails]);
-  //                               const workbook = XLSX.utils.book_new();
-  //                               XLSX.utils.book_append_sheet(workbook, worksheet, "Group Report");
-
-
-  //                               const excelBuffer = XLSX.write(workbook, {
-  //                                 bookType: "xlsx",
-  //                                 type: "array",
-  //                               });
-  //                               const data = new Blob([excelBuffer], {
-  //                                 type: "application/octet-stream",
-  //                               });
-  //                               saveAs(data, `${selectedGroupDetails.group_name}-report.xlsx`);
-  //                             }}
-  //                           >
-  //                             Export to Excel
-  //                           </Button>
-  //                         </div>
-  //                       </div>
-  //                     ) : (
-  //                       <p>No data</p>
-  //                     )}
-  //                   </Modal>
-  //                 </TabPane>
-
-  //                 <TabPane tab="Bank Info" key="4">
-  //                   <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-  //                     <InfoBox label="Bank Name" value={group.bank_name} />
-  //                     <InfoBox
-  //                       label="Branch Name"
-  //                       value={group.bank_branch_name}
-  //                     />
-  //                     <InfoBox
-  //                       label="Account Number"
-  //                       value={group.bank_account_number}
-  //                     />
-  //                     <InfoBox label="IFSC Code" value={group.bank_IFSC_code} />
-  //                   </div>
-  //                 </TabPane>
-
-  //                 <TabPane tab="Documents" key="5">
-  //                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-  //                     <InfoBox label="Aadhaar Number" value={group.adhaar_no} />
-  //                     <InfoBox label="PAN Number" value={group.pan_no} />
-  //                   </div>
-  //                 </TabPane>
-
-  //                 <TabPane tab="Day Book" key="7">
-  //                   <div>
-  //                     <div className="flex gap-4">
-  //                       <div className="flex flex-col flex-1">
-  //                         <label className="mb-1 text-sm font-medium text-gray-700">
-  //                           Groups and Tickets
-  //                         </label>
-  //                         <select
-  //                           value={
-  //                             EnrollGroupId.groupId
-  //                               ? `${EnrollGroupId.groupId}|${EnrollGroupId.ticket}`
-  //                               : ""
-  //                           }
-  //                           onChange={handleEnrollGroup}  // 👈 uses your existing handler
-  //                           className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
-  //                         >
-  //                           <option value="">Select Group | Ticket</option>
-  //                           {filteredAuction.map((group) => {
-  //                             if (group?.enrollment?.group) {
-  //                               return (
-  //                                 <option
-  //                                   key={group.enrollment.group._id}
-  //                                   value={`${group.enrollment.group._id}|${group.enrollment.tickets}`}
-  //                                 >
-  //                                   {group.enrollment.group.group_name} |{" "}
-  //                                   {group.enrollment.tickets}
-  //                                 </option>
-  //                               );
-  //                             }
-  //                             return null;
-  //                           })}
-  //                           {loanCustomers.map((loan) => (
-  //                             <option key={loan._id} value={`Loan|${loan._id}`}>
-  //                               {`${loan.loan_id} | ₹${loan.loan_amount}`}
-  //                             </option>
-  //                           ))}
-  //                         </select>
-  //                       </div>
-
-  //                       {/* Summary */}
-  //                       <div className="mt-6 flex justify-center gap-8 flex-wrap">
-  //                         <input
-  //                           type="text"
-  //                           value={`Registration Fee: ₹${registrationAmount || 0}`}
-  //                           readOnly
-  //                           className="px-4 py-2 border rounded font-semibold w-60 text-center bg-green-100 text-green-800 border-green-400"
-  //                         />
-
-  //                         <input
-  //                           type="text"
-  //                           value={`Payment Balance: ₹${finalPaymentBalance}`}
-  //                           readOnly
-  //                           className="px-4 py-2 border rounded font-semibold w-60 text-center bg-blue-100 text-blue-800 border-blue-400"
-  //                         />
-
-  //                         <input
-  //                           type="text"
-  //                           value={`Total: ₹${Number(finalPaymentBalance) + Number(registrationAmount || 0)
-  //                             }`}
-  //                           readOnly
-  //                           className="px-4 py-2 border rounded font-semibold w-60 text-center bg-purple-100 text-purple-800 border-purple-400"
-  //                         />
-  //                       </div>
-  //                     </div>
-
-  //                     {/* Table */}
-  //                     {(TableEnrolls && TableEnrolls.length > 0) ||
-  //                       (borrowersData.length > 0 && !basicLoading) ? (
-  //                       <div className="mt-10">
-  //                         <DataTable
-  //                           printHeaderKeys={[
-  //                             "Customer Name",
-  //                             "Customer Id",
-  //                             "Phone Number",
-  //                             "Ticket Number",
-  //                             "Group Name",
-  //                             "Start Date",
-  //                             "End Date",
-  //                           ]}
-  //                           printHeaderValues={[
-  //                             group?.full_name,
-  //                             group?.customer_id,
-  //                             group?.phone_number,
-  //                             EnrollGroupId.ticket,
-  //                             groupDetails?.group_name,
-  //                             groupDetails?.start_date
-  //                               ? new Date(groupDetails.start_date).toLocaleDateString("en-GB")
-  //                               : "",
-  //                             groupDetails?.end_date
-  //                               ? new Date(groupDetails.end_date).toLocaleDateString("en-GB")
-  //                               : "",
-  //                           ]}
-  //                           data={
-  //                             EnrollGroupId.groupId === "Loan"
-  //                               ? borrowersData
-  //                               : TableEnrolls
-  //                           }
-  //                           columns={
-  //                             EnrollGroupId.groupId === "Loan"
-  //                               ? BasicLoanColumns
-  //                               : Basiccolumns
-  //                           }
-  //                         />
-  //                       </div>
-  //                     ) : (
-  //                       <CircularLoader isLoading={basicLoading} />
-  //                     )}
-  //                   </div>
-  //                 </TabPane>
-
-  //               </Tabs>
-  //             </Card>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </>
-  //   );
-
-  // ---- paste this in place of your existing return(...) in CustomerView.jsx ----
   if (screenLoading)
     return (
       <div className="w-screen m-24">
@@ -1680,300 +1098,662 @@ const CustomerView = () => {
     );
 
   return (
-    <>
-      <div className="w-screen min-h-screen mt-20 bg-gray-100">
-        <div className="flex mt-20">
-          {/* Sidebar (keeps your search handler) */}
-          <Sidebar
-            navSearchBarVisibility={true}
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-          />
-
-          <div className="flex-grow p-8 space-y-6">
-            {/* HERO CARD: Profile + Quick Stats (IDFC-style hero) */}
-            <Card className="shadow-xl border border-gray-200 rounded-2xl p-10 bg-white">
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
-
-                {/* Left: Profile + Name + Customer Info */}
-                <div className="col-span-1 flex flex-col items-center lg:items-start space-y-8">
-
-                  {/* Profile */}
-                  <div className="relative w-40 h-40 rounded-2xl overflow-hidden border-4 border-gray-100 shadow-md bg-gray-50 flex items-center justify-center">
-                    <img
-                      src={
-                        selectedFile
-                          ? URL.createObjectURL(selectedFile)
-                          : group.profilephoto || "https://cdn-icons-png.flaticon.com/512/847/847969.png"
-                      }
-                      alt="Profile"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-
-                  {/* Name + Info */}
-                  <div className="space-y-2 text-center lg:text-left">
-                    <h2 className="text-2xl font-bold text-gray-800">
-                      {group.full_name || "Unnamed"}
-                    </h2>
-                    <p className="text-sm text-gray-600">
-                      <span className="font-semibold">Customer ID:</span> {group.customer_id || "—"}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      <span className="font-semibold">Phone:</span> {group.phone_number || "—"}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      <span className="font-semibold">Email:</span> {group.email || "—"}
-                    </p>
-                  </div>
+<>
+  <div className="w-screen min-h-screen mt-20 bg-gray-50">
+    <div className="flex mt-20">
+      <Sidebar
+        navSearchBarVisibility={true}
+        onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+      />
+      <div className="flex-grow p-8 space-y-6">
+        {/* Customer Profile Header */}
+        <div className="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden">
+          <div className="bg-gray-200 px-6 py-4">
+            <h1 className="text-2xl font-bold ">Customer Profile</h1>
+            <p className="  mt-1">View and manage customer information</p>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              {/* Profile Section */}
+              <div className="lg:col-span-1 flex flex-col items-center">
+                <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-blue-100 shadow-md bg-gray-50">
+                  <img
+                    src={
+                      selectedFile
+                        ? URL.createObjectURL(selectedFile)
+                        : group.profilephoto || "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+                    }
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-
-                {/* Right: Stats Grid */}
-                <div className="col-span-3 grid grid-cols-2 md:grid-cols-3 gap-6">
-
-                  {/* Total Groups */}
-                  <div className="bg-gradient-to-br from-violet-50 to-violet-100 rounded-xl shadow p-5 flex flex-col items-center justify-center">
-                    <p className="text-sm text-gray-600">Total Groups</p>
-                    <h3 className="text-2xl font-bold text-violet-700">
-                      {TableAuctions?.length || 0}
-                    </h3>
-                  </div>
-
-                  {/* Total Balance */}
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow p-5 flex flex-col items-center justify-center">
-                    <p className="text-sm text-gray-600">Total Balance</p>
-                    <h3 className="text-2xl font-bold text-green-700">
-                      ₹ {(NetTotalprofit && Totalpaid) ? Number(NetTotalprofit - Totalpaid).toLocaleString("en-IN") : 0}
-                    </h3>
-                  </div>
-
-                  {/* Net To be Paid */}
-                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl shadow p-5 flex flex-col items-center justify-center">
-                    <p className="text-sm text-gray-600">Net To be Paid</p>
-                    <h3 className="text-2xl font-bold text-purple-700">
-                      ₹ {Number(NetTotalprofit || 0).toLocaleString("en-IN")}
-                    </h3>
-                  </div>
-
-                  {/* Total Profit */}
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow p-5 flex flex-col items-center justify-center">
-                    <p className="text-sm text-gray-600">Total Profit</p>
-                    <h3 className="text-2xl font-bold text-blue-700">
-                      ₹ {Number(Totalprofit || 0).toLocaleString("en-IN")}
-                    </h3>
-                  </div>
-
-                  {/* Total Paid */}
-                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl shadow p-5 flex flex-col items-center justify-center">
-                    <p className="text-sm text-gray-600">Total Paid</p>
-                    <h3 className="text-2xl font-bold text-orange-700">
-                      ₹ {Number(Totalpaid || 0).toLocaleString("en-IN")}
-                    </h3>
-                  </div>
-
-                  {/* Latest Payment */}
-                  <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl shadow p-5 flex flex-col items-center justify-center">
-                    <p className="text-sm text-gray-600">Latest Payment</p>
-                    {isLoadingPayment ? (
-                      <CircularLoader color="text-green-600" />
-                    ) : (
-                      <h3 className="text-2xl font-bold text-teal-700">
-                        ₹ {Number(lastPayment?.amount || 0).toLocaleString("en-IN")}
-                      </h3>
-                    )}
-                  </div>
-
-                  {/* Latest Disbursement */}
-                  <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl shadow p-5 flex flex-col items-center justify-center md:col-span-3 lg:col-span-1">
-                    <p className="text-sm text-gray-600">Latest Disbursement</p>
-                    {detailsLoading ? (
-                      <CircularLoader color="text-blue-600" />
-                    ) : (
-                      <h3 className="text-2xl font-bold text-indigo-700">
-                        ₹ {Number(groupPaid || 0).toLocaleString("en-IN")}
-                      </h3>
-                    )}
-                  </div>
+                <h2 className="mt-4 text-xl font-bold text-gray-800 text-center">
+                  {group.full_name || "Unnamed"}
+                </h2>
+                <p className="text-sm text-gray-600 text-center">
+                  <span className="font-bold">ID:</span> {group.customer_id || "—"}
+                </p>
+                <div className="mt-3 flex justify-center space-x-4 text-sm text-gray-500">
+                  <span className="flex items-center gap-1">
+                    <FiPhone size={16} /> {group.phone_number || "—"}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <FiMail size={16} /> {group.email || "—"}
+                  </span>
                 </div>
               </div>
-            </Card>
-
-
-            {/* DETAILS & GROUPS: Tabbed area */}
-            <Card className="shadow-xl border border-gray-200 rounded-2xl p-8 bg-white">
-              <Tabs
-                defaultActiveKey="groupDetails"
-                type="card"
-                className="custom-tabs text-base font-medium"
-                onChange={handleTabChange}
-              >
-                {/* Details Tab */}
-                <TabPane tab="Details" key="groupDetails">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <InfoBox label="Full Name" value={group.full_name} />
-                    <InfoBox label="Customer ID" value={group.customer_id} />
-                    <InfoBox label="Phone Number" value={group.phone_number} />
-                    <InfoBox label="Email" value={group.email} />
-                    <InfoBox label="Gender" value={group.gender} />
-                    <InfoBox label="Date of Birth" value={group.dateofbirth} />
-                    <InfoBox label="Marital Status" value={group.marital_status} />
+              {/* Stats Grid */}
+              <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  {
+                    label: "TOTAL GROUPS",
+                    value: TableAuctions?.length || 0,
+                    icon: <FiUsers className="text-blue-700" />,
+                   
+                    isPositive: true
+                  },
+                  {
+                    label: "NET TO BE PAID",
+                    value: `₹ ${(NetTotalprofit || 0).toLocaleString("en-IN")}`,
+                    icon: <FiDollarSign className="text-blue-700" />,
+                    
+                    isPositive: false
+                  },
+                  {
+                    label: "TOTAL PAID",
+                    value: `₹ ${(Totalpaid || 0).toLocaleString("en-IN")}`,
+                    icon: <FiDollarSign className="text-blue-700" />,
+                    
+                    isPositive: true
+                  },
+                  {
+                    label: "TOTAL PROFIT",
+                    value: `₹ ${(Totalprofit || 0).toLocaleString("en-IN")}`,
+                    icon: <FiDollarSign className="text-blue-700" />,
+                    
+                    isPositive: true
+                  },
+                  {
+                    label: "BALANCE",
+                    value: `₹ ${(NetTotalprofit && Totalpaid) ? Number(NetTotalprofit - Totalpaid).toLocaleString("en-IN") : 0}`,
+                    icon: <FiDollarSign className="text-blue-700" />
+                  },
+                  {
+                    label: "LATEST PAYMENT",
+                    value: isLoadingPayment ? <CircularLoader color="text-blue-600" size="sm" /> : `₹ ${Number(lastPayment?.amount || 0).toLocaleString("en-IN")}`,
+                    icon: <FiDollarSign className="text-blue-700" />
+                  },
+                  {
+                    label: "LATEST DISBURSEMENT",
+                    value: detailsLoading ? <CircularLoader color="text-blue-600" size="sm" /> : `₹ ${Number(groupPaid || 0).toLocaleString("en-IN")}`,
+                    icon: <FiDollarSign className="text-blue-700" />
+                  },
+                  {
+                    label: "ENROLLMENT DATE",
+                    value: enrollmentDate ? new Date(enrollmentDate).toLocaleDateString("en-GB") : "—",
+                    icon: <FiCalendar className="text-blue-700" />
+                  },
+                ].map((stat, idx) => (
+                  <StatBox
+                    key={idx}
+                    label={stat.label}
+                    value={stat.value}
+                    icon={stat.icon}
+                    trend={stat.trend}
+                    isPositive={stat.isPositive}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+        ---
+        {/* Tabs Section */}
+        <div className="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden">
+          <div className="border-b border-gray-200 px-6 py-4 relative">
+            <div className="flex flex-wrap gap-2">
+              {/* Details Tab with Hover Preview */}
+              <div className="relative">
+                <button
+                  className={`px-5 py-2.5  rounded-lg font-medium transition-all duration-200 ${
+                    activeTab === "groupDetails"
+                      ? "bg-custom-violet text-white shadow"
+                      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setActiveTab("groupDetails")}
+                  onMouseEnter={() => {
+                    if (hasDetailsData()) {
+                      // setHoveredTab('details');
+                    }
+                  }}
+                  onMouseLeave={() => setHoveredTab(null)}
+                >
+                  Details
+                </button>
+                {hoveredTab === 'details' && (
+                  <TabTooltip visible>
+                    <InfoBox
+                      label="Full Name"
+                     
+                      value={group.full_name}
+                      icon={<FiUser />}
+                    />
+                    <InfoBox
+                      label="Customer ID"
+                      value={group.customer_id}
+                      icon={<FiCreditCard />}
+                    />
+                    <InfoBox
+                      label="Phone Number"
+                      value={group.phone_number}
+                      icon={<FiPhone />}
+                    />
+                    <InfoBox
+                      label="Email"
+                      value={group.email}
+                      icon={<FiMail />}
+                    />
+                    <InfoBox
+                      label="Gender"
+                      value={group.gender}
+                      icon={<FiUsers />}
+                    />
+                    <InfoBox
+                      label="Date of Birth"
+                      value={group.dateofbirth}
+                      icon={<FiCalendar />}
+                    />
+                    <InfoBox
+                      label="Marital Status"
+                      value={group.marital_status}
+                      icon={<FiUsers />}
+                    />
                     <InfoBox
                       label="Referred Types"
                       value={[...new Set(TableAuctions.map((item) => item.referred_type || "N/A"))].join(", ")}
+                      icon={<FiUsers />}
                     />
                     <InfoBox
                       label="Referred By"
                       value={[...new Set(TableAuctions.map((item) => item.referrer_name || "N/A"))].join(", ")}
+                      icon={<FiUsers />}
                     />
-                  </div>
-                </TabPane>
-
-                {/* Address Tab */}
-                <TabPane tab="Address" key="address">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <InfoBox label="Address" value={group.address} />
-                    <InfoBox label="Pincode" value={group.pincode} />
-                    <InfoBox label="District" value={group.district} />
-                    <InfoBox label="State" value={group.state} />
-                    <InfoBox label="Nationality" value={group.nationality} />
-                  </div>
-                </TabPane>
-
-                {/* Groups Tab */}
-                <TabPane tab="Groups" key="groups">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {TableAuctions?.length > 0 ? (
-                      TableAuctions.map((auction, idx) => (
-                        <div
-                          key={idx}
-                          onClick={() => handleGroupClick(auction)}
-                          className="cursor-pointer border border-gray-200 rounded-xl p-5 shadow-sm bg-gradient-to-br from-gray-50 to-white hover:shadow-md transition"
+                  </TabTooltip>
+                )}
+              </div>
+              {/* Address Tab with Hover Preview */}
+              <div className="relative">
+                <button
+                  className={`px-5 py-2.5  rounded-lg font-medium transition-all duration-200  ${
+                    activeTab === "address"
+                      ? "bg-custom-violet text-white shadow"
+                      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setActiveTab("address")}
+                  onMouseEnter={() => {
+                    if (hasAddressData()) {
+                      // setHoveredTab('address');
+                    }
+                  }}
+                  onMouseLeave={() => setHoveredTab(null)}
+                >
+                  Address
+                </button>
+                {hoveredTab === 'address' && (
+                  <TabTooltip visible>
+                    <InfoBox
+                      label="Address"
+                      value={group.address}
+                      icon={<FiMapPin />}
+                    />
+                    <InfoBox
+                      label="Pincode"
+                      value={group.pincode}
+                      icon={<FiMapPin />}
+                    />
+                    <InfoBox
+                      label="District"
+                      value={group.district}
+                      icon={<FiMapPin />}
+                    />
+                    <InfoBox
+                      label="State"
+                      value={group.state}
+                      icon={<FiMapPin />}
+                    />
+                    <InfoBox
+                      label="Nationality"
+                      value={group.nationality}
+                      icon={<FiMapPin />}
+                    />
+                  </TabTooltip>
+                )}
+              </div>
+              {/* Bank Info Tab with Hover Preview */}
+              <div className="relative">
+                <button
+                  className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
+                    activeTab === "bank"
+                      ? "bg-custom-violet text-white shadow"
+                      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setActiveTab("bank")}
+                  onMouseEnter={() => {
+                    if (hasBankData()) {
+                      // setHoveredTab('bank');
+                    }
+                  }}
+                  onMouseLeave={() => setHoveredTab(null)}
+                >
+                  Bank Info
+                </button>
+                {hoveredTab === 'bank' && (
+                  <TabTooltip visible>
+                    <InfoBox
+                      label="Bank Name"
+                      value={group.bank_name}
+                      icon={<FiCreditCard />}
+                    />
+                    <InfoBox
+                      label="Branch Name"
+                      value={group.bank_branch_name}
+                      icon={<FiCreditCard />}
+                    />
+                    <InfoBox
+                      label="Account Number"
+                      value={group.bank_account_number}
+                      icon={<FiCreditCard />}
+                    />
+                    <InfoBox
+                      label="IFSC Code"
+                      value={group.bank_IFSC_code}
+                      icon={<FiCreditCard />}
+                    />
+                  </TabTooltip>
+                )}
+              </div>
+              {/* Documents Tab with Hover Preview */}
+              <div className="relative">
+                <button
+                  className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
+                    activeTab === "docs"
+                      ? "bg-custom-violet text-white shadow"
+                      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setActiveTab("docs")}
+                  onMouseEnter={() => {
+                    if (hasDocsData()) {
+                      // setHoveredTab('docs');
+                    }
+                  }}
+                  onMouseLeave={() => setHoveredTab(null)}
+                >
+                  Documents
+                </button>
+                {hoveredTab === 'docs' && (
+                  <TabTooltip visible>
+                    <InfoBox
+                      label="Aadhaar Number"
+                      value={group.adhaar_no}
+                      icon={<FiFileText />}
+                    />
+                    <InfoBox
+                      label="PAN Number"
+                      value={group.pan_no}
+                      icon={<FiFileText />}
+                    />
+                  </TabTooltip>
+                )}
+              </div>
+              {/* Groups Tab */}
+              <button
+                className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
+                  activeTab === "groups"
+                    ? "bg-custom-violet text-white shadow"
+                    : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                }`}
+                onClick={() => setActiveTab("groups")}
+                onMouseEnter={() => {
+                  if (hasGroupsData()) {
+                    // setHoveredTab('groups');
+                  }
+                }}
+                onMouseLeave={() => setHoveredTab(null)}
+              >
+                Groups
+              </button>
+              {/* Day Book Tab */}
+              <button
+                className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
+                  activeTab === "daybook"
+                    ? "bg-custom-violet text-white shadow"
+                    : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                }`}
+                onClick={() => setActiveTab("daybook")}
+                onMouseEnter={() => {
+                  // setHoveredTab("daybook");
+                }}
+                onMouseLeave={() => setHoveredTab(null)}
+              >
+                Ledger
+              </button>
+            </div>
+          </div>
+          <div className="p-6 pt-8">
+            {/* Details Tab Content */}
+            {activeTab === "groupDetails" && (
+              <div className="flex flex-wrap gap-2">
+                <InfoBox
+                  label="Full Name"
+                  value={group.full_name}
+                  icon={<FiUser />}
+                />
+                <InfoBox
+                  label="Customer ID"
+                  value={group.customer_id}
+                  icon={<FiCreditCard />}
+                />
+                <InfoBox
+                  label="Phone Number"
+                  value={group.phone_number}
+                  icon={<FiPhone />}
+                />
+                <InfoBox
+                  label="Email"
+                  value={group.email}
+                  icon={<FiMail />}
+                />
+                <InfoBox
+                  label="Gender"
+                  value={group.gender}
+                  icon={<FiUsers />}
+                />
+                <InfoBox
+                  label="Date of Birth"
+                  value={group.dateofbirth}
+                  icon={<FiCalendar />}
+                />
+                <InfoBox
+                  label="Marital Status"
+                  value={group.marital_status}
+                  icon={<FiUsers />}
+                />
+                <InfoBox
+                  label="Referred Types"
+                  value={[...new Set(TableAuctions.map((item) => item.referred_type || "N/A"))].join(", ")}
+                  icon={<FiUsers />}
+                />
+                <InfoBox
+                  label="Referred By"
+                  value={[...new Set(TableAuctions.map((item) => item.referrer_name || "N/A"))].join(", ")}
+                  icon={<FiUsers />}
+                />
+              </div>
+            )}
+            {/* Address Tab Content */}
+            {activeTab === "address" && (
+              <div className="flex flex-wrap gap-2">
+                <InfoBox
+                  label="Address"
+                  value={group.address}
+                  icon={<FiMapPin />}
+                />
+                <InfoBox
+                  label="Pincode"
+                  value={group.pincode}
+                  icon={<FiMapPin />}
+                />
+                <InfoBox
+                  label="District"
+                  value={group.district}
+                  icon={<FiMapPin />}
+                />
+                <InfoBox
+                  label="State"
+                  value={group.state}
+                  icon={<FiMapPin />}
+                />
+                <InfoBox
+                  label="Nationality"
+                  value={group.nationality}
+                  icon={<FiMapPin />}
+                />
+              </div>
+            )}
+            {/* Bank Info Tab Content */}
+            {activeTab === "bank" && (
+              <div className="flex flex-wrap gap-2">
+                <InfoBox
+                  label="Bank Name"
+                  value={group.bank_name}
+                  icon={<FiCreditCard />}
+                />
+                <InfoBox
+                  label="Branch Name"
+                  value={group.bank_branch_name}
+                  icon={<FiCreditCard />}
+                />
+                <InfoBox
+                  label="Account Number"
+                  value={group.bank_account_number}
+                  icon={<FiCreditCard />}
+                />
+                <InfoBox
+                  label="IFSC Code"
+                  value={group.bank_IFSC_code}
+                  icon={<FiCreditCard />}
+                />
+              </div>
+            )}
+            {/* Documents Tab Content */}
+            {activeTab === "docs" && (
+              <div className="flex flex-wrap gap-2">
+                <InfoBox
+                  label="Aadhaar Number"
+                  value={group.adhaar_no}
+                  icon={<FiFileText />}
+                />
+                <InfoBox
+                  label="PAN Number"
+                  value={group.pan_no}
+                  icon={<FiFileText />}
+                />
+              </div>
+            )}
+            {/* Groups Tab Content */}
+            {activeTab === "groups" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                {TableAuctions?.length > 0 ? (
+                  TableAuctions.map((auction, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => handleGroupClick(auction)}
+                      className="cursor-pointer border border-gray-200 rounded-lg p-4 flex-wrap  w-[400px] shadow-sm hover:shadow-md transition-all duration-200 bg-white hover:bg-blue-50"
+                    >
+                      <div className="flex justify-between  items-center mb-2">
+                        <h3 className="font-semibold text-gray-800 truncate">{auction.group_name}</h3>
+                        <Tag
+                          color={auction.prized_status === "Prized" || auction.isPrized ? "green" : "red"}
+                          className="text-xs font-medium"
                         >
-                          <div className="flex justify-between items-center mb-3">
-                            <h3 className="text-base font-semibold text-gray-800">
-                              {auction.group_name}
-                            </h3>
-                            <Tag
-                              color={auction.prized_status === "Prized" || auction.isPrized ? "green" : "red"}
-                              className="text-xs font-medium"
-                            >
-                              {auction.prized_status === "Prized" || auction.isPrized ? "Prized" : "Unprized"}
-                            </Tag>
-                          </div>
-                          <p className="text-sm text-gray-600">
-                            Ticket: <span className="font-medium">{auction.ticket}</span>
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Balance:{" "}
-                            <span className="font-medium">
-                              ₹ {Number(auction.balance || 0).toLocaleString("en-IN")}
-                            </span>
-                          </p>
-                          <p className="text-xs text-gray-400 mt-2 italic">
-                            Click for details →
-                          </p>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-gray-500">No groups found for this customer.</p>
-                    )}
-                  </div>
-                </TabPane>
-
-                {/* Bank Info */}
-                <TabPane tab="Bank Info" key="bank">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <InfoBox label="Bank Name" value={group.bank_name} />
-                    <InfoBox label="Branch Name" value={group.bank_branch_name} />
-                    <InfoBox label="Account Number" value={group.bank_account_number} />
-                    <InfoBox label="IFSC Code" value={group.bank_IFSC_code} />
-                  </div>
-                </TabPane>
-
-                {/* Documents */}
-                <TabPane tab="Documents" key="docs">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InfoBox label="Aadhaar Number" value={group.adhaar_no} />
-                    <InfoBox label="PAN Number" value={group.pan_no} />
-                  </div>
-                </TabPane>
-
-                {/* Day Book */}
-                <TabPane tab="Day Book" key="daybook">
-                  <div className="space-y-6">
-                    {/* Select + Summary */}
-                    <div className="flex flex-col md:flex-row gap-6">
-                      <div className="flex-1">
-                        <label className="mb-1 text-sm font-medium text-gray-700">Groups and Tickets</label>
-                        <select
-                          value={EnrollGroupId.groupId ? `${EnrollGroupId.groupId}|${EnrollGroupId.ticket}` : ""}
-                          onChange={handleEnrollGroup}
-                          className="border border-gray-300 rounded-lg px-4 py-2 shadow-sm outline-none w-full max-w-md"
-                        >
-                          <option value="">Select Group | Ticket</option>
-                          {filteredAuction.map((group) =>
-                            group?.enrollment?.group ? (
-                              <option
-                                key={group.enrollment.group._id}
-                                value={`${group.enrollment.group._id}|${group.enrollment.tickets}`}
-                              >
-                                {group.enrollment.group.group_name} | {group.enrollment.tickets}
-                              </option>
-                            ) : null
-                          )}
-                          {loanCustomers.map((loan) => (
-                            <option key={loan._id} value={`Loan|${loan._id}`}>
-                              {`${loan.loan_id} | ₹${loan.loan_amount}`}
-                            </option>
-                          ))}
-                        </select>
+                          {auction.prized_status === "Prized" || auction.isPrized ? "Prized" : "Unprized"}
+                        </Tag>
                       </div>
-
-                      {/* Summary Cards */}
-                      <div className="flex flex-wrap gap-4 justify-center items-center">
-                        <div className="px-4 py-2 rounded-lg bg-green-100 text-green-800 border border-green-300 font-semibold shadow-sm">
-                          Registration Fee: ₹{registrationAmount || 0}
-                        </div>
-                        <div className="px-4 py-2 rounded-lg bg-blue-100 text-blue-800 border border-blue-300 font-semibold shadow-sm">
-                          Payment Balance: ₹{finalPaymentBalance}
-                        </div>
-                        <div className="px-4 py-2 rounded-lg bg-purple-100 text-purple-800 border border-purple-300 font-semibold shadow-sm">
-                          Total: ₹{Number(finalPaymentBalance) + Number(registrationAmount || 0)}
-                        </div>
+                      <p className="text-sm text-gray-600">Ticket: <span className="font-medium">{auction.ticket}</span></p>
+                      <div className="mt-2 flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Balance:</span>
+                        <span className="text-lg font-bold text-gray-800">₹{Number(auction.balance || 0).toLocaleString("en-IN")}</span>
+                      </div>
+                      <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          style={{ width: `${Math.min(100, (auction.paidAmount / auction.toBePaidAmount) * 100)}%` }}
+                          className={`h-2 rounded-full ${auction.prized_status === "Prized" || auction.isPrized ? "bg-green-500" : "bg-blue-500"}`}
+                        ></div>
                       </div>
                     </div>
-
-                    {/* DataTable */}
-                    {(TableEnrolls?.length > 0 || (borrowersData.length > 0 && !basicLoading)) ? (
-                      <DataTable
-                        printHeaderKeys={["Customer Name", "Customer Id", "Phone Number", "Ticket Number", "Group Name", "Start Date", "End Date"]}
-                        printHeaderValues={[
-                          group?.full_name,
-                          group?.customer_id,
-                          group?.phone_number,
-                          EnrollGroupId.ticket,
-                          groupDetails?.group_name,
-                          groupDetails?.start_date ? new Date(groupDetails.start_date).toLocaleDateString("en-GB") : "",
-                          groupDetails?.end_date ? new Date(groupDetails.end_date).toLocaleDateString("en-GB") : "",
-                        ]}
-                        data={EnrollGroupId.groupId === "Loan" ? borrowersData : TableEnrolls}
-                        columns={EnrollGroupId.groupId === "Loan" ? BasicLoanColumns : Basiccolumns}
-                      />
-                    ) : (
-                      <CircularLoader isLoading={basicLoading} />
-                    )}
+                  ))
+                ) : (
+                  <p className="text-gray-500 col-span-full">No groups found.</p>
+                )}
+              </div>
+            )}
+            {/* Day Book Tab Content */}
+            {activeTab === "daybook" && (
+              <div className="space-y-6">
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex-1">
+                    <label className="mb-1 text-sm font-medium text-gray-700 flex items-center gap-2">
+                      <FiUsers className="text-blue-600" />
+                      Group & Ticket
+                    </label>
+                    <select
+                      value={EnrollGroupId.groupId ? `${EnrollGroupId.groupId}|${EnrollGroupId.ticket}` : ""}
+                      onChange={handleEnrollGroup}
+                      className="w-1/5 border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    >
+                      <option value="">Select Group | Ticket</option>
+                      {filteredAuction.map((group) =>
+                        group?.enrollment?.group ? (
+                          <option
+                            key={group.enrollment.group._id}
+                            value={`${group.enrollment.group._id}|${group.enrollment.tickets}`}
+                          >
+                            {group.enrollment.group.group_name} | {group.enrollment.tickets}
+                          </option>
+                        ) : null
+                      )}
+                      {loanCustomers.map((loan) => (
+                        <option key={loan._id} value={`Loan|${loan._id}`}>
+                          {`${loan.loan_id} | ₹${loan.loan_amount}`}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                </TabPane>
-              </Tabs>
-            </Card>
-
+                  <div className="flex flex-wrap gap-2 justify-center items-center">
+                    <div className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-800 text-sm font-medium flex items-center gap-2">
+                      <FiFileText className="text-blue-600" />
+                      Reg Fee: ₹{registrationAmount || 0}
+                    </div>
+                    <div className="px-3 py-1.5 rounded-lg bg-green-50 text-green-800 text-sm font-medium flex items-center gap-2">
+                      <FiDollarSign className="text-green-600" />
+                      Balance: ₹{finalPaymentBalance}
+                    </div>
+                    <div className="px-3 py-1.5 rounded-lg bg-amber-50 text-amber-800 text-sm font-medium flex items-center gap-2">
+                      <FiDollarSign className="text-amber-600" />
+                      Total: ₹{Number(finalPaymentBalance) + Number(registrationAmount || 0)}
+                    </div>
+                  </div>
+                </div>
+                {(TableEnrolls?.length > 0 || (borrowersData.length > 0 && !basicLoading)) ? (
+                  <DataTable
+                    printHeaderKeys={["Customer Name", "Customer Id", "Phone Number", "Ticket Number", "Group Name", "Start Date", "End Date"]}
+                    printHeaderValues={[
+                      group?.full_name,
+                      group?.customer_id,
+                      group?.phone_number,
+                      EnrollGroupId.ticket,
+                      groupDetails?.group_name,
+                      groupDetails?.start_date ? new Date(groupDetails.start_date).toLocaleDateString("en-GB") : "",
+                      groupDetails?.end_date ? new Date(groupDetails.end_date).toLocaleDateString("en-GB") : "",
+                    ]}
+                    data={EnrollGroupId.groupId === "Loan" ? borrowersData : TableEnrolls}
+                    columns={EnrollGroupId.groupId === "Loan" ? BasicLoanColumns : Basiccolumns}
+                  />
+                ) : (
+                  <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600 mb-4">
+                      <FiDollarSign size={24} />
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900">No transactions found</h3>
+                    <p className="text-gray-500 mt-1">This customer has no payment history</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
-    </>
+    </div>
+    {/* Group Modal */}
+    {isGroupModalOpen && selectedGroupDetails && (
+      <Modal
+        title={
+          <div className="flex items-center gap-2">
+            <FiUsers className="text-blue-600" />
+            <span className="text-blue-900 font-bold">Group Details</span>
+          </div>
+        }
+        open={isGroupModalOpen}
+        onCancel={handleCloseModal}
+        footer={null}
+        width={600}
+        className="blue-modal"
+      >
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <p className="text-sm text-gray-500">Group Name</p>
+              <p className="font-medium text-lg text-gray-800">{selectedGroupDetails.group_name}</p>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <p className="text-sm text-gray-500">Ticket Number</p>
+              <p className="font-medium text-lg text-gray-800">{selectedGroupDetails.ticket}</p>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <p className="text-sm text-gray-500">Status</p>
+              <div className="mt-1">
+                {selectedGroupDetails.prized_status === "Prized" || selectedGroupDetails.isPrized ? (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    <FiCheckCircle className="mr-1.5 h-4 w-4" />
+                    Prized
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                    <FiXCircle className="mr-1.5 h-4 w-4" />
+                    Unprized
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <p className="text-sm text-gray-500">Enrollment Date</p>
+              <p className="font-medium text-lg text-gray-800">{selectedGroupDetails.date}</p>
+            </div>
+          </div>
+          <div className="bg-gray-50 p-6 rounded-xl">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <FiDollarSign className="text-blue-600" />
+              Financial Summary
+            </h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center py-1.5">
+                <span className="text-gray-600">Total Amount to Pay</span>
+                <span className="font-semibold text-gray-800">₹{Number(selectedGroupDetails.totalBePaid || 0).toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between items-center py-1.5">
+                <span className="text-gray-600">Amount Paid</span>
+                <span className="font-semibold text-gray-800">₹{Number(selectedGroupDetails.paidAmount || 0).toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between items-center py-1.5 border-t border-gray-200 pt-2.5 mt-1.5">
+                <span className="font-medium">Balance</span>
+                <span className={`font-bold ${Number(selectedGroupDetails.balance || 0) > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                  ₹{Number(selectedGroupDetails.balance || 0).toLocaleString()}
+                </span>
+              </div>
+            </div>
+            <div className="mt-4 w-full bg-gray-200 rounded-full h-2">
+              <div
+                style={{ width: `${Math.min(100, (selectedGroupDetails.paidAmount / selectedGroupDetails.totalBePaid) * 100)}%` }}
+                className="h-2 rounded-full bg-blue-600"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </Modal>
+    )}
+  </div>
+</>
   );
-
-
-
 };
 
 export default CustomerView;
