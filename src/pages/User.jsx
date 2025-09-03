@@ -28,6 +28,7 @@ const User = () => {
   const [files, setFiles] = useState({});
   const [districts, setDistricts] = useState([]);
   const [reloadTrigger, setReloadTrigger] = useState(0);
+    const [collectionExecutive, setCollectionExecutive] = useState([]);
   const [alertConfig, setAlertConfig] = useState({
     visibility: false,
     message: "Something went wrong!",
@@ -46,6 +47,7 @@ const User = () => {
     pan_no: "",
     track_source: "admin_panel",
     collection_area: "",
+    collection_executive: "",
   });
 
   const [updateFormData, setUpdateFormData] = useState({
@@ -84,6 +86,7 @@ const User = () => {
     bank_account_number: "",
     bank_IFSC_code: "",
     selected_plan: "",
+    collection_executive: "",
   });
 
   const [searchText, setSearchText] = useState("");
@@ -106,6 +109,32 @@ const User = () => {
     };
     fetchCollectionArea();
   }, [reloadTrigger]);
+
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        const response = await api.get("/agent/get-agent");
+        setCollectionExecutive(response.data);
+      } catch (err) {
+        console.error("Failed to fetch employee", err);
+      }
+    };
+    fetchAgents();
+  }, []);
+
+  useEffect(() => {
+    const fetchDistricts = async () => {
+      try {
+        const response = await api.get("/user/district");
+        setDistricts(response.data?.data?.districts);
+      } catch (error) {
+        console.error("Error fetching districts:", error);
+      }
+    };
+
+    fetchDistricts();
+  }, [reloadTrigger]);
+
 
   // useEffect(() => {
   //   const fetchDistricts = async () => {
@@ -138,7 +167,7 @@ const User = () => {
           collection_area: group?.collection_area?.route_name,
           approval_status:
             group?.approval_status === "true" ? (
-              <div className="inline-block px-3 py-1 text-sm font-medium text- bg-custom-violet rounded-full shadow-sm">
+              <div className="inline-block px-3 py-1 text-sm font-medium text- bg-green-200 rounded-full shadow-sm">
                 Approved
               </div>
             ) : group?.approval_status === "false" ? (
@@ -377,8 +406,11 @@ const User = () => {
           pincode: "",
           adhaar_no: "",
           pan_no: "",
-
+           collection_executive: "",
+          collection_area: "",
           track_source: "admin-panel",
+
+         
         });
       } catch (error) {
         console.error("Error adding user:", error);
@@ -470,6 +502,7 @@ const User = () => {
         district: response?.data?.district,
         state: response?.data?.state,
         collection_area: response?.data?.collection_area?._id || "",
+        collection_executive: response?.data?.collection_executive?._id || "",
         alternate_number: response?.data?.alternate_number,
         referral_name: response?.data?.referral_name,
         nominee_name: response?.data?.nominee_name,
@@ -883,6 +916,38 @@ const User = () => {
                 </Select>
               </div>
 
+ <div className="w-1/2">
+                <label
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="area"
+                >
+                  Collection Executive
+                </label>
+                <Select
+                  className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                  placeholder="Select Or Search Collection Area"
+                  popupMatchSelectWidth={false}
+                  name="collection_executive"
+                  showSearch
+                  filterOption={(input, option) =>
+                    option.children
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  value={formData?.collection_executive || undefined}
+                  onChange={(value) =>
+                    handleAntDSelect("collection_executive", value)
+                  }
+                >
+                  {collectionExecutive.map((collection) => (
+                    <Select.Option key={collection._id} value={collection._id}>
+                      {`${collection.name} | ${collection.phone_number}`}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
@@ -1156,6 +1221,38 @@ const User = () => {
                     ))}
                   </Select>
                 </div>
+
+                <div className="w-1/2">
+                <label
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="area"
+                >
+                  Collection Executive
+                </label>
+                <Select
+                  className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                  placeholder="Select Or Search Collection Executive"
+                  popupMatchSelectWidth={false}
+                  name="collection_executive"
+                  showSearch
+                  filterOption={(input, option) =>
+                    option.children
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  value={updateFormData?.collection_executive || undefined}
+                  onChange={(value) =>
+                    handleAntInputDSelect("collection_executive", value)
+                  }
+                >
+                  {collectionExecutive.map((collection) => (
+                    <Select.Option key={collection._id} value={collection._id}>
+                      {`${collection.name} | ${collection.phone_number}`}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
               </div>
 
               <div className="flex flex-row justify-between space-x-4">

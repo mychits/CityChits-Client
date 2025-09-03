@@ -21,6 +21,7 @@ const { TabPane } = Tabs;
 import { Button, message } from "antd";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import { BsCurrencyRupee } from "react-icons/bs";
 import {
   FiUser,
   FiPhone,
@@ -32,7 +33,8 @@ import {
   FiCreditCard,
   FiFileText,
   FiUsers,
-  FiDollarSign
+  FiDollarSign,
+
 } from "react-icons/fi";
 
 const CustomerView = () => {
@@ -113,22 +115,22 @@ const CustomerView = () => {
       year: "numeric",
     });
   };
-const InfoBox = ({ label, value, icon }) => {
-  return (
-    <div className="flex flex-wrap gap-2 max-w-[calc(10*250px)]">
-      {/* Repeat this block up to or more than 10 times */}
-      <div className="flex flex-col w-[250px]">
-        <span className="text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
-          {icon && <span className="text-blue-600">{icon}</span>}
-          {label}
-        </span>
-        <div className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-base font-medium text-gray-800 shadow-sm">
-          {value || "—"}
+  const InfoBox = ({ label, value, icon }) => {
+    return (
+      <div className="flex flex-wrap gap-2 max-w-[calc(10*250px)]">
+        {/* Repeat this block up to or more than 10 times */}
+        <div className="flex flex-col w-[250px]">
+          <span className="text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
+            {icon && <span className="text-blue-600">{icon}</span>}
+            {label}
+          </span>
+          <div className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-base font-medium text-gray-800 shadow-sm">
+            {value || "—"}
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
   const [selectedFile, setSelectedFile] = useState(null);
   const handleUploadPhoto = async () => {
     if (!selectedFile) return;
@@ -169,11 +171,10 @@ const InfoBox = ({ label, value, icon }) => {
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-bold text-gray-800">{value}</h3>
         {label === "Balance" && (
-          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-            Number(value.replace(/[^\d.-]/g, '')) >= 0 
-              ? "bg-green-100 text-green-800" 
-              : "bg-red-100 text-red-800"
-          }`}>
+          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${Number(value.replace(/[^\d.-]/g, '')) >= 0
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800"
+            }`}>
             {Number(value.replace(/[^\d.-]/g, '')) >= 0 ? "Healthy" : "Overdue"}
           </span>
         )}
@@ -200,7 +201,7 @@ const InfoBox = ({ label, value, icon }) => {
   const [payments, setPayments] = useState([]);
   const [availableTickets, setAvailableTickets] = useState([]);
   const [screenLoading, setScreenLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState(""); 
+  const [activeTab, setActiveTab] = useState("");
   const [searchText, setSearchText] = useState("");
   const [groupDetails, setGroupDetails] = useState(" ");
   const [loanCustomers, setLoanCustomers] = useState([]);
@@ -795,8 +796,8 @@ const InfoBox = ({ label, value, icon }) => {
                 group_value: group?.enrollment?.group?.group_value || 0,
                 date: group?.enrollment?.createdAt
                   ? new Date(group.enrollment.createdAt).toLocaleDateString(
-                      "en-GB"
-                    )
+                    "en-GB"
+                  )
                   : "N/A",
                 status: group?.enrollment?.status || "Active",
                 totalBePaid:
@@ -812,12 +813,12 @@ const InfoBox = ({ label, value, icon }) => {
                 balance:
                   groupType === "double"
                     ? groupInstall * auctionCount +
-                      groupInstall -
-                      totalPaidAmount
+                    groupInstall -
+                    totalPaidAmount
                     : totalPayable +
-                      groupInstall +
-                      firstDividentHead -
-                      totalPaidAmount,
+                    groupInstall +
+                    firstDividentHead -
+                    totalPaidAmount,
                 referred_type: group?.enrollment?.referred_type || "N/A",
                 referrer_name: group?.enrollment?.referrer_name || "N/A",
               };
@@ -1067,28 +1068,27 @@ const InfoBox = ({ label, value, icon }) => {
   const hasGroupsData = () => TableAuctions.length > 0;
 
   // Fixed Tooltip Component - Now clearly visible above content
-const TabTooltip = ({ children, visible }) => (
-  <div 
-    className={`absolute left-0 -top-1 w-[calc(10*250px)] bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden transition-all duration-300 ease-in-out ${
-      visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
-    }`}
-    style={{ transformOrigin: 'top' }}
-  >
-    <div className="p-3 border-b border-gray-100 bg-gray-50">
-      <span className="text-sm font-semibold text-gray-700">Preview</span>
-    </div>
-    
-    <div className="p-4">
-      {/* Wrap children like InfoBoxes */}
-      <div className="flex flex-wrap gap-4 max-w-[calc(10*250px)]">
-        {children}
+  const TabTooltip = ({ children, visible }) => (
+    <div
+      className={`absolute left-0 -top-1 w-[calc(10*250px)] bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden transition-all duration-300 ease-in-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
+        }`}
+      style={{ transformOrigin: 'top' }}
+    >
+      <div className="p-3 border-b border-gray-100 bg-gray-50">
+        <span className="text-sm font-semibold text-gray-700">Preview</span>
       </div>
-    </div>
 
-    {/* Downward-pointing arrow */}
-    <div className="absolute top-full left-6 w-3 h-3 bg-white border-l border-b border-gray-200 rotate-45 transform -translate-x-1"></div>
-  </div>
-);
+      <div className="p-4">
+        {/* Wrap children like InfoBoxes */}
+        <div className="flex flex-wrap gap-4 max-w-[calc(10*250px)]">
+          {children}
+        </div>
+      </div>
+
+      {/* Downward-pointing arrow */}
+      <div className="absolute top-full left-6 w-3 h-3 bg-white border-l border-b border-gray-200 rotate-45 transform -translate-x-1"></div>
+    </div>
+  );
 
   if (screenLoading)
     return (
@@ -1098,143 +1098,356 @@ const TabTooltip = ({ children, visible }) => (
     );
 
   return (
-<>
-  <div className="w-screen min-h-screen mt-20 bg-gray-50">
-    <div className="flex mt-20">
-      <Sidebar
-        navSearchBarVisibility={true}
-        onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-      />
-      <div className="flex-grow p-8 space-y-6">
-        {/* Customer Profile Header */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden">
-          <div className="bg-gray-200 px-6 py-4">
-            <h1 className="text-2xl font-bold ">Customer Profile</h1>
-            <p className="  mt-1">View and manage customer information</p>
-          </div>
-          <div className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              {/* Profile Section */}
-              <div className="lg:col-span-1 flex flex-col items-center">
-                <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-blue-100 shadow-md bg-gray-50">
-                  <img
-                    src={
-                      selectedFile
-                        ? URL.createObjectURL(selectedFile)
-                        : group.profilephoto || "https://cdn-icons-png.flaticon.com/512/847/847969.png"
-                    }
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h2 className="mt-4 text-xl font-bold text-gray-800 text-center">
-                  {group.full_name || "Unnamed"}
-                </h2>
-                <p className="text-sm text-gray-600 text-center">
-                  <span className="font-bold">ID:</span> {group.customer_id || "—"}
-                </p>
-                <div className="mt-3 flex justify-center space-x-4 text-sm text-gray-500">
-                  <span className="flex items-center gap-1">
-                    <FiPhone size={16} /> {group.phone_number || "—"}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <FiMail size={16} /> {group.email || "—"}
-                  </span>
-                </div>
+
+    <>
+      <div className="w-screen min-h-screen mt-20 bg-gray-50">
+        <div className="flex mt-20">
+          <Sidebar
+            navSearchBarVisibility={true}
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+          />
+          <div className="flex-grow p-8 space-y-6">
+
+            <div className="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden">
+              <div className="bg-white px-6 py-4">
+                <h1 className="text-2xl text-custom-violet font-bold ">Customer Profile</h1>
+
               </div>
-              {/* Stats Grid */}
-              <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {[
-                  {
-                    label: "TOTAL GROUPS",
-                    value: TableAuctions?.length || 0,
-                    icon: <FiUsers className="text-blue-700" />,
-                   
-                    isPositive: true
-                  },
-                  {
-                    label: "NET TO BE PAID",
-                    value: `₹ ${(NetTotalprofit || 0).toLocaleString("en-IN")}`,
-                    icon: <FiDollarSign className="text-blue-700" />,
-                    
-                    isPositive: false
-                  },
-                  {
-                    label: "TOTAL PAID",
-                    value: `₹ ${(Totalpaid || 0).toLocaleString("en-IN")}`,
-                    icon: <FiDollarSign className="text-blue-700" />,
-                    
-                    isPositive: true
-                  },
-                  {
-                    label: "TOTAL PROFIT",
-                    value: `₹ ${(Totalprofit || 0).toLocaleString("en-IN")}`,
-                    icon: <FiDollarSign className="text-blue-700" />,
-                    
-                    isPositive: true
-                  },
-                  {
-                    label: "BALANCE",
-                    value: `₹ ${(NetTotalprofit && Totalpaid) ? Number(NetTotalprofit - Totalpaid).toLocaleString("en-IN") : 0}`,
-                    icon: <FiDollarSign className="text-blue-700" />
-                  },
-                  {
-                    label: "LATEST PAYMENT",
-                    value: isLoadingPayment ? <CircularLoader color="text-blue-600" size="sm" /> : `₹ ${Number(lastPayment?.amount || 0).toLocaleString("en-IN")}`,
-                    icon: <FiDollarSign className="text-blue-700" />
-                  },
-                  {
-                    label: "LATEST DISBURSEMENT",
-                    value: detailsLoading ? <CircularLoader color="text-blue-600" size="sm" /> : `₹ ${Number(groupPaid || 0).toLocaleString("en-IN")}`,
-                    icon: <FiDollarSign className="text-blue-700" />
-                  },
-                  {
-                    label: "ENROLLMENT DATE",
-                    value: enrollmentDate ? new Date(enrollmentDate).toLocaleDateString("en-GB") : "—",
-                    icon: <FiCalendar className="text-blue-700" />
-                  },
-                ].map((stat, idx) => (
-                  <StatBox
-                    key={idx}
-                    label={stat.label}
-                    value={stat.value}
-                    icon={stat.icon}
-                    trend={stat.trend}
-                    isPositive={stat.isPositive}
-                  />
-                ))}
+              <div className="p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+                  <div className="lg:col-span-1 flex flex-col items-center">
+                    <div className="relative w-36 h-36  rounded-full overflow-hidden border-4 border-blue-100 shadow-md bg-gray-50">
+                      <img
+                        src={
+                          selectedFile
+                            ? URL.createObjectURL(selectedFile)
+                            : group.profilephoto || "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+                        }
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <h2 className="mt-4 text-xl font-bold text-gray-800 text-center">
+                      {group.full_name || "Unnamed"}
+                    </h2>
+                    <p className="text-sm pt-3 text-gray-600 text-center">
+                      <span className="font-bold">ID:</span> {group.customer_id || "—"}
+                    </p>
+                    <div className="mt-3 flex justify-center space-x-4 text-sm text-gray-500">
+                      <span className="flex items-center gap-1">
+                        <FiPhone size={16} /> {group.phone_number || "—"}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <FiMail size={16} /> {group.email || "—"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+                    {[
+                      {
+                        label: "TOTAL GROUPS",
+                        value: TableAuctions?.length || 0,
+                        icon: <FiUsers className="text-violet-600" />,
+                      },
+                      {
+                        label: "NET TO BE PAID",
+                        value: ` ${(NetTotalprofit || 0).toLocaleString("en-IN")}`,
+                        icon: <BsCurrencyRupee className="text-violet-600" />,
+                      },
+                      {
+                        label: "TOTAL PAID",
+                        value: ` ${(Totalpaid || 0).toLocaleString("en-IN")}`,
+                        icon: <BsCurrencyRupee className="text-violet-600" />,
+                      },
+                      {
+                        label: "TOTAL PROFIT",
+                        value: ` ${(Totalprofit || 0).toLocaleString("en-IN")}`,
+                        icon: <BsCurrencyRupee className="text-violet-600" />,
+                      },
+                      {
+                        label: "BALANCE",
+                        value: ` ${(NetTotalprofit && Totalpaid) ? Number(NetTotalprofit - Totalpaid).toLocaleString("en-IN") : 0}`,
+                        icon: <BsCurrencyRupee className="text-violet-600" />,
+                      },
+                      {
+                        label: "LATEST PAYMENT",
+                        value: isLoadingPayment
+                          ? <CircularLoader color="text-violet-600" size="sm" />
+                          : ` ${Number(lastPayment?.amount || 0).toLocaleString("en-IN")}`,
+                        icon: <BsCurrencyRupee className="text-violet-600" />,
+                      },
+                      {
+                        label: "LATEST DISBURSEMENT",
+                        value: detailsLoading
+                          ? <CircularLoader color="text-violet-600" size="sm" />
+                          : ` ${Number(groupPaid || 0).toLocaleString("en-IN")}`,
+                        icon: <BsCurrencyRupee className="text-violet-600" />,
+                      },
+
+                    ].map((stat, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-gradient-to-br from-violet-50 to-white rounded-xl shadow-md p-5 flex flex-col gap-3 border border-violet-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                      >
+                        {/* Header */}
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold text-violet-700 tracking-wide uppercase">
+                            {stat.label}
+                          </span>
+                          <div className="bg-violet-100 p-2 rounded-lg shadow-sm">
+                            {stat.icon}
+                          </div>
+                        </div>
+
+                        {/* Value */}
+                        <div
+                          className="text-lg font-bold text-gray-900 break-words whitespace-pre-wrap w-full"
+                          style={{ wordBreak: "break-word" }}
+                        >
+                          {stat.value}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        ---
-        {/* Tabs Section */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden">
-          <div className="border-b border-gray-200 px-6 py-4 relative">
-            <div className="flex flex-wrap gap-2">
-              {/* Details Tab with Hover Preview */}
-              <div className="relative">
-                <button
-                  className={`px-5 py-2.5  rounded-lg font-medium transition-all duration-200 ${
-                    activeTab === "groupDetails"
+
+            {/* Tabs Section */}
+            <div className="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden">
+              <div className="border-b border-gray-200 px-6 py-4 relative">
+                <div className="flex flex-wrap gap-2">
+                  {/* Details Tab with Hover Preview */}
+                  <div className="relative">
+                    <button
+                      className={`px-5 py-2.5  rounded-lg font-medium transition-all duration-200 ${activeTab === "groupDetails"
+                        ? "bg-custom-violet text-white shadow"
+                        : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                        }`}
+                      onClick={() => setActiveTab("groupDetails")}
+                      onMouseEnter={() => {
+                        if (hasDetailsData()) {
+                          // setHoveredTab('details');
+                        }
+                      }}
+                      onMouseLeave={() => setHoveredTab(null)}
+                    >
+                      Details
+                    </button>
+                    {hoveredTab === 'details' && (
+                      <TabTooltip visible>
+                        <InfoBox
+                          label="Full Name"
+
+                          value={group.full_name}
+                          icon={<FiUser />}
+                        />
+                        <InfoBox
+                          label="Customer ID"
+                          value={group.customer_id}
+                          icon={<FiCreditCard />}
+                        />
+                        <InfoBox
+                          label="Phone Number"
+                          value={group.phone_number}
+                          icon={<FiPhone />}
+                        />
+                        <InfoBox
+                          label="Email"
+                          value={group.email}
+                          icon={<FiMail />}
+                        />
+                        <InfoBox
+                          label="Gender"
+                          value={group.gender}
+                          icon={<FiUsers />}
+                        />
+                        <InfoBox
+                          label="Date of Birth"
+                          value={group.dateofbirth}
+                          icon={<FiCalendar />}
+                        />
+                        <InfoBox
+                          label="Marital Status"
+                          value={group.marital_status}
+                          icon={<FiUsers />}
+                        />
+                        <InfoBox
+                          label="Referred Types"
+                          value={[...new Set(TableAuctions.map((item) => item.referred_type || "N/A"))].join(", ")}
+                          icon={<FiUsers />}
+                        />
+                        <InfoBox
+                          label="Referred By"
+                          value={[...new Set(TableAuctions.map((item) => item.referrer_name || "N/A"))].join(", ")}
+                          icon={<FiUsers />}
+                        />
+                      </TabTooltip>
+                    )}
+                  </div>
+                  {/* Address Tab with Hover Preview */}
+                  <div className="relative">
+                    <button
+                      className={`px-5 py-2.5  rounded-lg font-medium transition-all duration-200  ${activeTab === "address"
+                        ? "bg-custom-violet text-white shadow"
+                        : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                        }`}
+                      onClick={() => setActiveTab("address")}
+                      onMouseEnter={() => {
+                        if (hasAddressData()) {
+                          // setHoveredTab('address');
+                        }
+                      }}
+                      onMouseLeave={() => setHoveredTab(null)}
+                    >
+                      Address
+                    </button>
+                    {hoveredTab === 'address' && (
+                      <TabTooltip visible>
+                        <InfoBox
+                          label="Address"
+                          value={group.address}
+                          icon={<FiMapPin />}
+                        />
+                      
+                        <InfoBox
+                          label="Pincode"
+                          value={group.pincode}
+                          icon={<FiMapPin />}
+                        />
+                        <InfoBox
+                          label="District"
+                          value={group.district}
+                          icon={<FiMapPin />}
+                        />
+                        <InfoBox
+                          label="State"
+                          value={group.state}
+                          icon={<FiMapPin />}
+                        />
+                        <InfoBox
+                          label="Nationality"
+                          value={group.nationality}
+                          icon={<FiMapPin />}
+                        />
+                      </TabTooltip>
+                    )}
+                  </div>
+                  {/* Bank Info Tab with Hover Preview */}
+                  <div className="relative">
+                    <button
+                      className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${activeTab === "bank"
+                        ? "bg-custom-violet text-white shadow"
+                        : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                        }`}
+                      onClick={() => setActiveTab("bank")}
+                      onMouseEnter={() => {
+                        if (hasBankData()) {
+                          // setHoveredTab('bank');
+                        }
+                      }}
+                      onMouseLeave={() => setHoveredTab(null)}
+                    >
+                      Bank Info
+                    </button>
+                    {hoveredTab === 'bank' && (
+                      <TabTooltip visible>
+                        <InfoBox
+                          label="Bank Name"
+                          value={group.bank_name}
+                          icon={<FiCreditCard />}
+                        />
+                        <InfoBox
+                          label="Branch Name"
+                          value={group.bank_branch_name}
+                          icon={<FiCreditCard />}
+                        />
+                        <InfoBox
+                          label="Account Number"
+                          value={group.bank_account_number}
+                          icon={<FiCreditCard />}
+                        />
+                        <InfoBox
+                          label="IFSC Code"
+                          value={group.bank_IFSC_code}
+                          icon={<FiCreditCard />}
+                        />
+                      </TabTooltip>
+                    )}
+                  </div>
+                  {/* Documents Tab with Hover Preview */}
+                  <div className="relative">
+                    <button
+                      className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${activeTab === "docs"
+                        ? "bg-custom-violet text-white shadow"
+                        : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                        }`}
+                      onClick={() => setActiveTab("docs")}
+                      onMouseEnter={() => {
+                        if (hasDocsData()) {
+                          // setHoveredTab('docs');
+                        }
+                      }}
+                      onMouseLeave={() => setHoveredTab(null)}
+                    >
+                      Documents
+                    </button>
+                    {hoveredTab === 'docs' && (
+                      <TabTooltip visible>
+                        <InfoBox
+                          label="Aadhaar Number"
+                          value={group.adhaar_no}
+                          icon={<FiFileText />}
+                        />
+                        <InfoBox
+                          label="PAN Number"
+                          value={group.pan_no}
+                          icon={<FiFileText />}
+                        />
+                      </TabTooltip>
+                    )}
+                  </div>
+                  {/* Groups Tab */}
+                  <button
+                    className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${activeTab === "groups"
                       ? "bg-custom-violet text-white shadow"
                       : "bg-gray-50 text-gray-700 hover:bg-gray-100"
-                  }`}
-                  onClick={() => setActiveTab("groupDetails")}
-                  onMouseEnter={() => {
-                    if (hasDetailsData()) {
-                      // setHoveredTab('details');
-                    }
-                  }}
-                  onMouseLeave={() => setHoveredTab(null)}
-                >
-                  Details
-                </button>
-                {hoveredTab === 'details' && (
-                  <TabTooltip visible>
+                      }`}
+                    onClick={() => setActiveTab("groups")}
+                    onMouseEnter={() => {
+                      if (hasGroupsData()) {
+                        // setHoveredTab('groups');
+                      }
+                    }}
+                    onMouseLeave={() => setHoveredTab(null)}
+                  >
+                    Groups
+                  </button>
+                  {/* Day Book Tab */}
+                  <button
+                    className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${activeTab === "daybook"
+                      ? "bg-custom-violet text-white shadow"
+                      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                      }`}
+                    onClick={() => setActiveTab("daybook")}
+                    onMouseEnter={() => {
+                      // setHoveredTab("daybook");
+                    }}
+                    onMouseLeave={() => setHoveredTab(null)}
+                  >
+                    Ledger
+                  </button>
+                </div>
+              </div>
+              <div className="p-6 pt-8">
+                {/* Details Tab Content */}
+                {activeTab === "groupDetails" && (
+                  <div className="flex flex-wrap gap-2">
                     <InfoBox
                       label="Full Name"
-                     
                       value={group.full_name}
                       icon={<FiUser />}
                     />
@@ -1278,32 +1491,19 @@ const TabTooltip = ({ children, visible }) => (
                       value={[...new Set(TableAuctions.map((item) => item.referrer_name || "N/A"))].join(", ")}
                       icon={<FiUsers />}
                     />
-                  </TabTooltip>
+                  </div>
                 )}
-              </div>
-              {/* Address Tab with Hover Preview */}
-              <div className="relative">
-                <button
-                  className={`px-5 py-2.5  rounded-lg font-medium transition-all duration-200  ${
-                    activeTab === "address"
-                      ? "bg-custom-violet text-white shadow"
-                      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
-                  }`}
-                  onClick={() => setActiveTab("address")}
-                  onMouseEnter={() => {
-                    if (hasAddressData()) {
-                      // setHoveredTab('address');
-                    }
-                  }}
-                  onMouseLeave={() => setHoveredTab(null)}
-                >
-                  Address
-                </button>
-                {hoveredTab === 'address' && (
-                  <TabTooltip visible>
+                
+                {activeTab === "address" && (
+                  <div className="flex flex-wrap gap-2">
                     <InfoBox
-                      label="Address"
+                      label="Address line 1"
                       value={group.address}
+                      icon={<FiMapPin />}
+                    />
+                    <InfoBox
+                      label="Address line 2"
+                      value={""}
                       icon={<FiMapPin />}
                     />
                     <InfoBox
@@ -1326,29 +1526,11 @@ const TabTooltip = ({ children, visible }) => (
                       value={group.nationality}
                       icon={<FiMapPin />}
                     />
-                  </TabTooltip>
+                  </div>
                 )}
-              </div>
-              {/* Bank Info Tab with Hover Preview */}
-              <div className="relative">
-                <button
-                  className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
-                    activeTab === "bank"
-                      ? "bg-custom-violet text-white shadow"
-                      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
-                  }`}
-                  onClick={() => setActiveTab("bank")}
-                  onMouseEnter={() => {
-                    if (hasBankData()) {
-                      // setHoveredTab('bank');
-                    }
-                  }}
-                  onMouseLeave={() => setHoveredTab(null)}
-                >
-                  Bank Info
-                </button>
-                {hoveredTab === 'bank' && (
-                  <TabTooltip visible>
+                {/* Bank Info Tab Content */}
+                {activeTab === "bank" && (
+                  <div className="flex flex-wrap gap-2">
                     <InfoBox
                       label="Bank Name"
                       value={group.bank_name}
@@ -1369,29 +1551,11 @@ const TabTooltip = ({ children, visible }) => (
                       value={group.bank_IFSC_code}
                       icon={<FiCreditCard />}
                     />
-                  </TabTooltip>
+                  </div>
                 )}
-              </div>
-              {/* Documents Tab with Hover Preview */}
-              <div className="relative">
-                <button
-                  className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
-                    activeTab === "docs"
-                      ? "bg-custom-violet text-white shadow"
-                      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
-                  }`}
-                  onClick={() => setActiveTab("docs")}
-                  onMouseEnter={() => {
-                    if (hasDocsData()) {
-                      // setHoveredTab('docs');
-                    }
-                  }}
-                  onMouseLeave={() => setHoveredTab(null)}
-                >
-                  Documents
-                </button>
-                {hoveredTab === 'docs' && (
-                  <TabTooltip visible>
+                {/* Documents Tab Content */}
+                {activeTab === "docs" && (
+                  <div className="flex flex-wrap gap-2">
                     <InfoBox
                       label="Aadhaar Number"
                       value={group.adhaar_no}
@@ -1402,357 +1566,222 @@ const TabTooltip = ({ children, visible }) => (
                       value={group.pan_no}
                       icon={<FiFileText />}
                     />
-                  </TabTooltip>
+                  </div>
+                )}
+                {/* Groups Tab Content */}
+                {activeTab === "groups" && (
+                  <div className="flex flex-wrap gap-2">
+                    {TableAuctions?.length > 0 ? (
+                      TableAuctions.map((auction, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => handleGroupClick(auction)}
+                          className="cursor-pointer border border-gray-200 rounded-lg p-4 w-[400px] shadow-sm hover:shadow-md transition-all duration-200 bg-white hover:bg-violet-50"
+                        >
+                          <div className="flex justify-between items-center mb-2">
+                            <h3 className="font-semibold text-gray-800 truncate">
+                              {auction.group_name}
+                            </h3>
+                            <Tag
+                              color={
+                                auction.prized_status === "Prized" || auction.isPrized
+                                  ? "green"
+                                  : "red"
+                              }
+                              className="text-xs font-medium"
+                            >
+                              {auction.prized_status === "Prized" || auction.isPrized
+                                ? "Prized"
+                                : "Unprized"}
+                            </Tag>
+                          </div>
+                          <p className="text-sm text-gray-600">
+                            Ticket: <span className="font-medium">{auction.ticket}</span>
+                          </p>
+                          <div className="mt-2 flex justify-between items-center">
+                            <span className="text-sm text-gray-600">Balance:</span>
+                            <span className="text-lg font-bold text-gray-800">
+                              ₹{Number(auction.balance || 0).toLocaleString("en-IN")}
+                            </span>
+                          </div>
+                          <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              style={{
+                                width: `${Math.min(
+                                  100,
+                                  (auction.paidAmount / auction.toBePaidAmount) * 100
+                                )}%`,
+                              }}
+                              className={`h-2 rounded-full ${auction.prized_status === "Prized" || auction.isPrized
+                                ? "bg-green-500"
+                                : "bg-violet-500"
+                                }`}
+                            ></div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-gray-500 w-full">No groups found.</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Day Book Tab Content */}
+                {activeTab === "daybook" && (
+                  <div className="space-y-6">
+                    <div className="flex flex-col md:flex-row gap-4">
+                      <div className="flex-1">
+                        <label className="mb-1 text-sm font-medium text-gray-700 flex items-center gap-2">
+                          <FiUsers className="text-blue-600" />
+                          Group & Ticket
+                        </label>
+                        <select
+                          value={EnrollGroupId.groupId ? `${EnrollGroupId.groupId}|${EnrollGroupId.ticket}` : ""}
+                          onChange={handleEnrollGroup}
+                          className="w-1/5 border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                        >
+                          <option value="">Select Group | Ticket</option>
+                          {filteredAuction.map((group) =>
+                            group?.enrollment?.group ? (
+                              <option
+                                key={group.enrollment.group._id}
+                                value={`${group.enrollment.group._id}|${group.enrollment.tickets}`}
+                              >
+                                {group.enrollment.group.group_name} | {group.enrollment.tickets}
+                              </option>
+                            ) : null
+                          )}
+                          {loanCustomers.map((loan) => (
+                            <option key={loan._id} value={`Loan|${loan._id}`}>
+                              {`${loan.loan_id} | ₹${loan.loan_amount}`}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="flex flex-wrap gap-2 justify-center items-center">
+                        <div className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-800 text-sm font-medium flex items-center gap-2">
+                          <FiFileText className="text-blue-600" />
+                          Reg Fee: ₹{registrationAmount || 0}
+                        </div>
+                        <div className="px-3 py-1.5 rounded-lg bg-green-50 text-green-800 text-sm font-medium flex items-center gap-2">
+                          <FiDollarSign className="text-green-600" />
+                          Balance: ₹{finalPaymentBalance}
+                        </div>
+                        <div className="px-3 py-1.5 rounded-lg bg-amber-50 text-amber-800 text-sm font-medium flex items-center gap-2">
+                          <FiDollarSign className="text-amber-600" />
+                          Total: ₹{Number(finalPaymentBalance) + Number(registrationAmount || 0)}
+                        </div>
+                      </div>
+                    </div>
+                    {(TableEnrolls?.length > 0 || (borrowersData.length > 0 && !basicLoading)) ? (
+                      <DataTable
+                        printHeaderKeys={["Customer Name", "Customer Id", "Phone Number", "Ticket Number", "Group Name", "Start Date", "End Date"]}
+                        printHeaderValues={[
+                          group?.full_name,
+                          group?.customer_id,
+                          group?.phone_number,
+                          EnrollGroupId.ticket,
+                          groupDetails?.group_name,
+                          groupDetails?.start_date ? new Date(groupDetails.start_date).toLocaleDateString("en-GB") : "",
+                          groupDetails?.end_date ? new Date(groupDetails.end_date).toLocaleDateString("en-GB") : "",
+                        ]}
+                        data={EnrollGroupId.groupId === "Loan" ? borrowersData : TableEnrolls}
+                        columns={EnrollGroupId.groupId === "Loan" ? BasicLoanColumns : Basiccolumns}
+                      />
+                    ) : (
+                      <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600 mb-4">
+                          <FiDollarSign size={24} />
+                        </div>
+                        <h3 className="text-lg font-medium text-gray-900">No transactions found</h3>
+                        <p className="text-gray-500 mt-1">This customer has no payment history</p>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
-              {/* Groups Tab */}
-              <button
-                className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
-                  activeTab === "groups"
-                    ? "bg-custom-violet text-white shadow"
-                    : "bg-gray-50 text-gray-700 hover:bg-gray-100"
-                }`}
-                onClick={() => setActiveTab("groups")}
-                onMouseEnter={() => {
-                  if (hasGroupsData()) {
-                    // setHoveredTab('groups');
-                  }
-                }}
-                onMouseLeave={() => setHoveredTab(null)}
-              >
-                Groups
-              </button>
-              {/* Day Book Tab */}
-              <button
-                className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
-                  activeTab === "daybook"
-                    ? "bg-custom-violet text-white shadow"
-                    : "bg-gray-50 text-gray-700 hover:bg-gray-100"
-                }`}
-                onClick={() => setActiveTab("daybook")}
-                onMouseEnter={() => {
-                  // setHoveredTab("daybook");
-                }}
-                onMouseLeave={() => setHoveredTab(null)}
-              >
-                Ledger
-              </button>
             </div>
           </div>
-          <div className="p-6 pt-8">
-            {/* Details Tab Content */}
-            {activeTab === "groupDetails" && (
-              <div className="flex flex-wrap gap-2">
-                <InfoBox
-                  label="Full Name"
-                  value={group.full_name}
-                  icon={<FiUser />}
-                />
-                <InfoBox
-                  label="Customer ID"
-                  value={group.customer_id}
-                  icon={<FiCreditCard />}
-                />
-                <InfoBox
-                  label="Phone Number"
-                  value={group.phone_number}
-                  icon={<FiPhone />}
-                />
-                <InfoBox
-                  label="Email"
-                  value={group.email}
-                  icon={<FiMail />}
-                />
-                <InfoBox
-                  label="Gender"
-                  value={group.gender}
-                  icon={<FiUsers />}
-                />
-                <InfoBox
-                  label="Date of Birth"
-                  value={group.dateofbirth}
-                  icon={<FiCalendar />}
-                />
-                <InfoBox
-                  label="Marital Status"
-                  value={group.marital_status}
-                  icon={<FiUsers />}
-                />
-                <InfoBox
-                  label="Referred Types"
-                  value={[...new Set(TableAuctions.map((item) => item.referred_type || "N/A"))].join(", ")}
-                  icon={<FiUsers />}
-                />
-                <InfoBox
-                  label="Referred By"
-                  value={[...new Set(TableAuctions.map((item) => item.referrer_name || "N/A"))].join(", ")}
-                  icon={<FiUsers />}
-                />
+        </div>
+        {/* Group Modal */}
+        {isGroupModalOpen && selectedGroupDetails && (
+          <Modal
+            title={
+              <div className="flex items-center gap-2">
+                <FiUsers className="text-blue-600" />
+                <span className="text-blue-900 font-bold">Group Details</span>
               </div>
-            )}
-            {/* Address Tab Content */}
-            {activeTab === "address" && (
-              <div className="flex flex-wrap gap-2">
-                <InfoBox
-                  label="Address"
-                  value={group.address}
-                  icon={<FiMapPin />}
-                />
-                <InfoBox
-                  label="Pincode"
-                  value={group.pincode}
-                  icon={<FiMapPin />}
-                />
-                <InfoBox
-                  label="District"
-                  value={group.district}
-                  icon={<FiMapPin />}
-                />
-                <InfoBox
-                  label="State"
-                  value={group.state}
-                  icon={<FiMapPin />}
-                />
-                <InfoBox
-                  label="Nationality"
-                  value={group.nationality}
-                  icon={<FiMapPin />}
-                />
-              </div>
-            )}
-            {/* Bank Info Tab Content */}
-            {activeTab === "bank" && (
-              <div className="flex flex-wrap gap-2">
-                <InfoBox
-                  label="Bank Name"
-                  value={group.bank_name}
-                  icon={<FiCreditCard />}
-                />
-                <InfoBox
-                  label="Branch Name"
-                  value={group.bank_branch_name}
-                  icon={<FiCreditCard />}
-                />
-                <InfoBox
-                  label="Account Number"
-                  value={group.bank_account_number}
-                  icon={<FiCreditCard />}
-                />
-                <InfoBox
-                  label="IFSC Code"
-                  value={group.bank_IFSC_code}
-                  icon={<FiCreditCard />}
-                />
-              </div>
-            )}
-            {/* Documents Tab Content */}
-            {activeTab === "docs" && (
-              <div className="flex flex-wrap gap-2">
-                <InfoBox
-                  label="Aadhaar Number"
-                  value={group.adhaar_no}
-                  icon={<FiFileText />}
-                />
-                <InfoBox
-                  label="PAN Number"
-                  value={group.pan_no}
-                  icon={<FiFileText />}
-                />
-              </div>
-            )}
-            {/* Groups Tab Content */}
-            {activeTab === "groups" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                {TableAuctions?.length > 0 ? (
-                  TableAuctions.map((auction, idx) => (
-                    <div
-                      key={idx}
-                      onClick={() => handleGroupClick(auction)}
-                      className="cursor-pointer border border-gray-200 rounded-lg p-4 flex-wrap  w-[400px] shadow-sm hover:shadow-md transition-all duration-200 bg-white hover:bg-blue-50"
-                    >
-                      <div className="flex justify-between  items-center mb-2">
-                        <h3 className="font-semibold text-gray-800 truncate">{auction.group_name}</h3>
-                        <Tag
-                          color={auction.prized_status === "Prized" || auction.isPrized ? "green" : "red"}
-                          className="text-xs font-medium"
-                        >
-                          {auction.prized_status === "Prized" || auction.isPrized ? "Prized" : "Unprized"}
-                        </Tag>
-                      </div>
-                      <p className="text-sm text-gray-600">Ticket: <span className="font-medium">{auction.ticket}</span></p>
-                      <div className="mt-2 flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Balance:</span>
-                        <span className="text-lg font-bold text-gray-800">₹{Number(auction.balance || 0).toLocaleString("en-IN")}</span>
-                      </div>
-                      <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          style={{ width: `${Math.min(100, (auction.paidAmount / auction.toBePaidAmount) * 100)}%` }}
-                          className={`h-2 rounded-full ${auction.prized_status === "Prized" || auction.isPrized ? "bg-green-500" : "bg-blue-500"}`}
-                        ></div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-500 col-span-full">No groups found.</p>
-                )}
-              </div>
-            )}
-            {/* Day Book Tab Content */}
-            {activeTab === "daybook" && (
-              <div className="space-y-6">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1">
-                    <label className="mb-1 text-sm font-medium text-gray-700 flex items-center gap-2">
-                      <FiUsers className="text-blue-600" />
-                      Group & Ticket
-                    </label>
-                    <select
-                      value={EnrollGroupId.groupId ? `${EnrollGroupId.groupId}|${EnrollGroupId.ticket}` : ""}
-                      onChange={handleEnrollGroup}
-                      className="w-1/5 border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    >
-                      <option value="">Select Group | Ticket</option>
-                      {filteredAuction.map((group) =>
-                        group?.enrollment?.group ? (
-                          <option
-                            key={group.enrollment.group._id}
-                            value={`${group.enrollment.group._id}|${group.enrollment.tickets}`}
-                          >
-                            {group.enrollment.group.group_name} | {group.enrollment.tickets}
-                          </option>
-                        ) : null
-                      )}
-                      {loanCustomers.map((loan) => (
-                        <option key={loan._id} value={`Loan|${loan._id}`}>
-                          {`${loan.loan_id} | ₹${loan.loan_amount}`}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex flex-wrap gap-2 justify-center items-center">
-                    <div className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-800 text-sm font-medium flex items-center gap-2">
-                      <FiFileText className="text-blue-600" />
-                      Reg Fee: ₹{registrationAmount || 0}
-                    </div>
-                    <div className="px-3 py-1.5 rounded-lg bg-green-50 text-green-800 text-sm font-medium flex items-center gap-2">
-                      <FiDollarSign className="text-green-600" />
-                      Balance: ₹{finalPaymentBalance}
-                    </div>
-                    <div className="px-3 py-1.5 rounded-lg bg-amber-50 text-amber-800 text-sm font-medium flex items-center gap-2">
-                      <FiDollarSign className="text-amber-600" />
-                      Total: ₹{Number(finalPaymentBalance) + Number(registrationAmount || 0)}
-                    </div>
+            }
+            open={isGroupModalOpen}
+            onCancel={handleCloseModal}
+            footer={null}
+            width={600}
+            className="blue-modal"
+          >
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-500">Group Name</p>
+                  <p className="font-medium text-lg text-gray-800">{selectedGroupDetails.group_name}</p>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-500">Ticket Number</p>
+                  <p className="font-medium text-lg text-gray-800">{selectedGroupDetails.ticket}</p>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-500">Status</p>
+                  <div className="mt-1">
+                    {selectedGroupDetails.prized_status === "Prized" || selectedGroupDetails.isPrized ? (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                        <FiCheckCircle className="mr-1.5 h-4 w-4" />
+                        Prized
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                        <FiXCircle className="mr-1.5 h-4 w-4" />
+                        Unprized
+                      </span>
+                    )}
                   </div>
                 </div>
-                {(TableEnrolls?.length > 0 || (borrowersData.length > 0 && !basicLoading)) ? (
-                  <DataTable
-                    printHeaderKeys={["Customer Name", "Customer Id", "Phone Number", "Ticket Number", "Group Name", "Start Date", "End Date"]}
-                    printHeaderValues={[
-                      group?.full_name,
-                      group?.customer_id,
-                      group?.phone_number,
-                      EnrollGroupId.ticket,
-                      groupDetails?.group_name,
-                      groupDetails?.start_date ? new Date(groupDetails.start_date).toLocaleDateString("en-GB") : "",
-                      groupDetails?.end_date ? new Date(groupDetails.end_date).toLocaleDateString("en-GB") : "",
-                    ]}
-                    data={EnrollGroupId.groupId === "Loan" ? borrowersData : TableEnrolls}
-                    columns={EnrollGroupId.groupId === "Loan" ? BasicLoanColumns : Basiccolumns}
-                  />
-                ) : (
-                  <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600 mb-4">
-                      <FiDollarSign size={24} />
-                    </div>
-                    <h3 className="text-lg font-medium text-gray-900">No transactions found</h3>
-                    <p className="text-gray-500 mt-1">This customer has no payment history</p>
+                {/* <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-500">Enrollment Date</p>
+                  <p className="font-medium text-lg text-gray-800">{selectedGroupDetails.date}</p>
+                </div> */}
+              </div>
+              <div className="bg-gray-50 p-6 rounded-xl">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                  <FiDollarSign className="text-blue-600" />
+                  Financial Summary
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center py-1.5">
+                    <span className="text-gray-600">Total Amount to Pay</span>
+                    <span className="font-semibold text-gray-800">₹{Number(selectedGroupDetails.totalBePaid || 0).toLocaleString()}</span>
                   </div>
-                )}
+                  <div className="flex justify-between items-center py-1.5">
+                    <span className="text-gray-600">Amount Paid</span>
+                    <span className="font-semibold text-gray-800">₹{Number(selectedGroupDetails.paidAmount || 0).toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-1.5 border-t border-gray-200 pt-2.5 mt-1.5">
+                    <span className="font-medium">Balance</span>
+                    <span className={`font-bold ${Number(selectedGroupDetails.balance || 0) > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      ₹{Number(selectedGroupDetails.balance || 0).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-4 w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    style={{ width: `${Math.min(100, (selectedGroupDetails.paidAmount / selectedGroupDetails.totalBePaid) * 100)}%` }}
+                    className="h-2 rounded-full bg-violet-600"
+                  ></div>
+                </div>
               </div>
-            )}
-          </div>
-        </div>
+            </div>
+          </Modal>
+        )}
       </div>
-    </div>
-    {/* Group Modal */}
-    {isGroupModalOpen && selectedGroupDetails && (
-      <Modal
-        title={
-          <div className="flex items-center gap-2">
-            <FiUsers className="text-blue-600" />
-            <span className="text-blue-900 font-bold">Group Details</span>
-          </div>
-        }
-        open={isGroupModalOpen}
-        onCancel={handleCloseModal}
-        footer={null}
-        width={600}
-        className="blue-modal"
-      >
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-500">Group Name</p>
-              <p className="font-medium text-lg text-gray-800">{selectedGroupDetails.group_name}</p>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-500">Ticket Number</p>
-              <p className="font-medium text-lg text-gray-800">{selectedGroupDetails.ticket}</p>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-500">Status</p>
-              <div className="mt-1">
-                {selectedGroupDetails.prized_status === "Prized" || selectedGroupDetails.isPrized ? (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                    <FiCheckCircle className="mr-1.5 h-4 w-4" />
-                    Prized
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                    <FiXCircle className="mr-1.5 h-4 w-4" />
-                    Unprized
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-500">Enrollment Date</p>
-              <p className="font-medium text-lg text-gray-800">{selectedGroupDetails.date}</p>
-            </div>
-          </div>
-          <div className="bg-gray-50 p-6 rounded-xl">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <FiDollarSign className="text-blue-600" />
-              Financial Summary
-            </h3>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center py-1.5">
-                <span className="text-gray-600">Total Amount to Pay</span>
-                <span className="font-semibold text-gray-800">₹{Number(selectedGroupDetails.totalBePaid || 0).toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between items-center py-1.5">
-                <span className="text-gray-600">Amount Paid</span>
-                <span className="font-semibold text-gray-800">₹{Number(selectedGroupDetails.paidAmount || 0).toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between items-center py-1.5 border-t border-gray-200 pt-2.5 mt-1.5">
-                <span className="font-medium">Balance</span>
-                <span className={`font-bold ${Number(selectedGroupDetails.balance || 0) > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                  ₹{Number(selectedGroupDetails.balance || 0).toLocaleString()}
-                </span>
-              </div>
-            </div>
-            <div className="mt-4 w-full bg-gray-200 rounded-full h-2">
-              <div
-                style={{ width: `${Math.min(100, (selectedGroupDetails.paidAmount / selectedGroupDetails.totalBePaid) * 100)}%` }}
-                className="h-2 rounded-full bg-blue-600"
-              ></div>
-            </div>
-          </div>
-        </div>
-      </Modal>
-    )}
-  </div>
-</>
+    </>
   );
 };
 
