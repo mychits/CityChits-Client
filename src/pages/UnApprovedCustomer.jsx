@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import Sidebar from "../components/layouts/Sidebar";
 import Modal from "../components/modals/Modal";
 import api from "../instance/TokenInstance";
-import DataTable from "../components/layouts/Datatable";
 import { Input, Select, Dropdown } from "antd";
 import { IoMdMore } from "react-icons/io";
 import Navbar from "../components/layouts/Navbar";
@@ -15,7 +14,7 @@ import { fieldSize } from "../data/fieldSize";
 
 const UnApprovedCustomer = () => {
   const [users, setUsers] = useState([]);
-  const [TableUsers, setTableUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false);
@@ -26,7 +25,6 @@ const UnApprovedCustomer = () => {
   const [selectedGroup, setSelectedGroup] = useState({});
   const [groups, setGroups] = useState([]);
   const [areas, setAreas] = useState([]);
-  const [files, setFiles] = useState({});
   const [districts, setDistricts] = useState([]);
   const [reloadTrigger, setReloadTrigger] = useState(0);
   const [alertConfig, setAlertConfig] = useState({
@@ -35,8 +33,6 @@ const UnApprovedCustomer = () => {
     type: "info",
   });
   const [errors, setErrors] = useState({});
-
-
   const [updateFormData, setUpdateFormData] = useState({
     full_name: "",
     email: "",
@@ -75,10 +71,19 @@ const UnApprovedCustomer = () => {
     selected_plan: "",
   });
 
-  const [searchText, setSearchText] = useState("");
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(9);
+
+  // Calculate pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+
   const GlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
-    setSearchText(value);
+    setSearchTerm(value);
   };
 
   useEffect(() => {
@@ -87,7 +92,6 @@ const UnApprovedCustomer = () => {
         const response = await api.get(
           "/collection-area-request/get-collection-area-data"
         );
-
         setAreas(response.data);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -105,7 +109,6 @@ const UnApprovedCustomer = () => {
         console.error("Error fetching districts:", error);
       }
     };
-
     fetchDistricts();
   }, [reloadTrigger]);
 
@@ -115,111 +118,29 @@ const UnApprovedCustomer = () => {
         setIsLoading(true);
         const response = await api.get("/user/approval-status/false");
         setUsers(response.data);
-        const formattedData = response.data.map((group, index) => ({
-          _id: group._id,
-          id: index + 1,
-          name: group.full_name,
-          phone_number: group.phone_number,
-           createdAt: group.createdAt?.split("T")[0],
-          address: group.address,
-          pincode: group.pincode,
-          customer_id: group.customer_id,
-          collection_area: group.collection_area?.route_name,
-          approval_status:
-            group.approval_status === "true" ? (
-              <div className="inline-block px-3 py-1 text-sm font-medium text-green-800 bg-red-100 rounded-full shadow-sm">Approved</div>
-            ) : group.approval_status === "false" ? (
-              <div className="inline-block px-3 py-1 text-sm font-medium text-red-800 bg-red-100 rounded-full shadow-sm">
-                Pending
-              </div>
-            ) : (
-              <div className="inline-block px-3 py-1 text-sm font-medium text-green-800 bg-red-100 rounded-full shadow-sm" >Approved</div>
-            ),
-          action: (
-            <div className="flex justify-center gap-2">
-              <Dropdown
-                trigger={["click"]}
-                menu={{
-                  items: [
-                    {
-                      key: "1",
-                      label: (
-                        <div
-                          className="text-green-600"
-                          onClick={() => handleUpdateModalOpen(group?._id)}
-                        >
-                          Edit
-                        </div>
-                      ),
-                    },
-                    {
-                      key: "2",
-                      label: (
-                        <div
-                          className="text-red-600"
-                          onClick={() => handleDeleteModalOpen(group?._id)}
-                        >
-                          Delete
-                        </div>
-                      ),
-                    },
-                    {
-                      key: "3",
-                      label: (
-                        <div
-                          onClick={() =>
-                            handleEnrollmentRequestPrint(group?._id)
-                          }
-                          className=" text-blue-600 "
-                        >
-                          Print
-                        </div>
-                      ),
-                    },
-                    {
-                      key: "4",
-                      label: (
-                        <div
-                          className={`cursor-pointer ${group?.approval_status !== "true"
-                              ? "text-green-600"
-                              : "text-red-600"
-                            }`}
-                          onClick={() =>
-                            handleCustomerStatus(
-                              group?._id,
-                              group?.approval_status !== "true"
-                                ? "true"
-                                : "false"
-                            )
-                          }
-                        >
-                          {group?.approval_status !== "true"
-                            ? "Approve Customer"
-                            : "Un Approve Customer"}
-                        </div>
-                      ),
-                    },
-                  ],
-                }}
-                placement="bottomLeft"
-              >
-                <IoMdMore className="text-bold" />
-              </Dropdown>
-            </div>
-          ),
+        
+        // Format users data
+        const formattedData = response.data.map((user) => ({
+          ...user,
+          id: user._id,
+          name: user.full_name,
+          phone_number: user.phone_number,
+          createdAt: user.createdAt?.split("T")[0],
+          address: user.address,
+          pincode: user.pincode,
+          customer_id: user.customer_id,
+          collection_area: user.collection_area?.route_name,
+          approval_status: user.approval_status === "true" ? "Approved" : "Pending",
         }));
-        let fData = formattedData.map((ele) => {
-          if (
-            ele?.address &&
-            typeof ele.address === "string" &&
-            ele?.address?.includes(",")
-          )
-            ele.address = ele.address.replaceAll(",", " ");
-          return ele;
-        });
-        if (!fData) setTableUsers(formattedData);
-        if (!fData) setTableUsers(formattedData);
-        setTableUsers(fData);
+        
+        // Filter users based on search term
+        const filtered = formattedData.filter((user) =>
+          user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.phone_number.toString().includes(searchTerm)
+        );
+        
+        setFilteredUsers(filtered);
+        setCurrentPage(1); // Reset to first page when search changes
       } catch (error) {
         console.error("Error fetching user data:", error.message);
       } finally {
@@ -227,7 +148,7 @@ const UnApprovedCustomer = () => {
       }
     };
     fetchUsers();
-  }, [reloadTrigger]);
+  }, [reloadTrigger, searchTerm]);
 
   useEffect(() => {
     const fetchGroupData = async () => {
@@ -246,7 +167,6 @@ const UnApprovedCustomer = () => {
       ...prevData,
       [field]: value,
     }));
-
     setErrors((prevErrors) => ({
       ...prevErrors,
       [field]: "",
@@ -258,7 +178,6 @@ const UnApprovedCustomer = () => {
       ...prevData,
       [field]: value,
     }));
-
     setErrors({ ...errors, [field]: "" });
   };
 
@@ -293,46 +212,47 @@ const UnApprovedCustomer = () => {
       adhaar: /^\d{12}$/,
       pan: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
     };
-
+    
     if (!data.full_name.trim()) {
       newErrors.full_name = "Full Name is required";
     }
-
+    
     if (data.email && !regex.email.test(data.email)) {
       newErrors.email = "Invalid email format";
     }
-
+    
     if (!data.phone_number) {
       newErrors.phone_number = "Phone number is required";
     } else if (!regex.phone.test(data.phone_number)) {
-      newErrors.phone_number = "Invalid  phone number";
+      newErrors.phone_number = "Invalid phone number";
     }
-
+    
     if (!data.password) {
       newErrors.password = "Password is required";
     }
-
+    
     if (!data.pincode) {
       newErrors.pincode = "Pincode is required";
     } else if (!regex.pincode.test(data.pincode)) {
       newErrors.pincode = "Invalid pincode (6 digits required)";
     }
-
+    
     if (!data.adhaar_no) {
       newErrors.adhaar_no = "Aadhar number is required";
     } else if (!regex.adhaar.test(data.adhaar_no)) {
       newErrors.adhaar_no = "Invalid Aadhar number (12 digits required)";
     }
+    
     if (data.pan_no && !regex.pan.test(data.pan_no.toUpperCase())) {
       newErrors.pan_no = "Invalid PAN format (e.g., ABCDE1234F)";
     }
-
+    
     if (!data.address.trim()) {
       newErrors.address = "Address is required";
     } else if (data.address.trim().length < 3) {
       newErrors.address = "Address should be at least 3 characters";
     }
-
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -347,14 +267,12 @@ const UnApprovedCustomer = () => {
             "Content-Type": "application/json",
           },
         });
-
         setReloadTrigger((prev) => prev + 1);
         setAlertConfig({
           type: "success",
           message: "User Added Successfully",
           visibility: true,
         });
-
         setShowModal(false);
         setErrors({});
         setFormData({
@@ -366,12 +284,10 @@ const UnApprovedCustomer = () => {
           pincode: "",
           adhaar_no: "",
           pan_no: "",
-
           track_source: "admin-panel",
         });
       } catch (error) {
         console.error("Error adding user:", error);
-
         if (
           error.response &&
           error.response.data &&
@@ -383,7 +299,6 @@ const UnApprovedCustomer = () => {
             phone_number: "Phone number already exists",
           }));
         }
-
         if (
           error.response &&
           error.response.data &&
@@ -404,23 +319,6 @@ const UnApprovedCustomer = () => {
       }
     }
   };
-
-  const columns = [
-    { key: "id", header: "SL. NO" },
-    { key: "approval_status", header: "Approval Status" },
-    { key: "customer_id", header: "Customer Id" },
-    { key: "name", header: "Customer Name" },
-    { key: "phone_number", header: "Customer Phone Number" },
-    {key: "createdAt", header: "Joining Date"},
-    { key: "address", header: "Customer Address" },
-    { key: "pincode", header: "Customer Pincode" },
-    { key: "collection_area", header: "Area" },
-    { key: "action", header: "Action" },
-  ];
-
-  const filteredUsers = users.filter((user) =>
-    user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const handleDeleteModalOpen = async (userId) => {
     try {
@@ -497,7 +395,6 @@ const UnApprovedCustomer = () => {
     if (currentUser) {
       try {
         await api.delete(`/user/delete-user/${currentUser._id}`);
-
         setAlertConfig({
           visibility: true,
           message: "User deleted successfully",
@@ -511,10 +408,10 @@ const UnApprovedCustomer = () => {
       }
     }
   };
+
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     const file = files[0];
-
     if (file) {
       setUpdateFormData((prevState) => ({
         ...prevState,
@@ -532,7 +429,6 @@ const UnApprovedCustomer = () => {
       const response = await api.put(`/user/update-user/${id}`, {
         approval_status: currentStatus,
       });
-
       if (response.status === 200) {
         setReloadTrigger((prev) => prev + 1);
         setAlertConfig({
@@ -552,13 +448,10 @@ const UnApprovedCustomer = () => {
     }
   };
 
-
   const handleUpdate = async (e) => {
     e.preventDefault();
-
     try {
       const fmData = new FormData();
-
       Object.entries(updateFormData).forEach(([key, value]) => {
         if (key === "selected_plan" && selectedGroup?._id) {
           fmData.append("selected_plan", selectedGroup._id);
@@ -566,11 +459,9 @@ const UnApprovedCustomer = () => {
           fmData.append(key, value);
         }
       });
-
       await api.put(`/user/update-user/${currentUpdateUser?._id}`, fmData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
       setShowModalUpdate(false);
       setReloadTrigger((prev) => prev + 1);
       setAlertConfig({
@@ -581,7 +472,6 @@ const UnApprovedCustomer = () => {
       setErrors({});
     } catch (error) {
       console.error("Error updating user:", error);
-      //new code
       if (
         error.response &&
         error.response.data &&
@@ -614,6 +504,225 @@ const UnApprovedCustomer = () => {
     }
   };
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Approved':
+        return 'bg-green-100 text-green-800';
+      case 'Pending':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  // Simple Pagination Component (inline)
+  const SimplePagination = ({ currentPage, totalPages, onPageChange }) => {
+    if (totalPages <= 1) return null;
+    
+    const pages = [];
+    const maxPagesToShow = 5;
+    
+    // Always show first page
+    pages.push(1);
+    
+    // Show ellipsis and middle pages if needed
+    if (totalPages > maxPagesToShow) {
+      if (currentPage > 3) {
+        pages.push('...');
+      }
+      
+      // Add pages around current page
+      const startPage = Math.max(2, currentPage - 1);
+      const endPage = Math.min(totalPages - 1, currentPage + 1);
+      
+      for (let i = startPage; i <= endPage; i++) {
+        if (i !== 1 && i !== totalPages) {
+          pages.push(i);
+        }
+      }
+      
+      if (currentPage < totalPages - 2) {
+        pages.push('...');
+      }
+      
+      // Always show last page
+      if (totalPages > 1) {
+        pages.push(totalPages);
+      }
+    } else {
+      // Show all pages if total pages is small
+      for (let i = 2; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    }
+    
+    return (
+      <div className="flex items-center justify-center space-x-2 mt-6">
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Previous
+        </button>
+        
+        {pages.map((page, index) => (
+          <button
+            key={index}
+            onClick={() => typeof page === 'number' && onPageChange(page)}
+            className={`px-3 py-2 text-sm font-medium rounded-lg ${
+              page === currentPage
+                ? 'bg-purple-600 text-white'
+                : typeof page === 'number'
+                ? 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
+                : 'bg-white text-gray-500 border border-gray-300 cursor-default'
+            }`}
+            disabled={typeof page !== 'number'}
+          >
+            {page}
+          </button>
+        ))}
+        
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Next
+        </button>
+      </div>
+    );
+  };
+
+  const renderCustomerCard = (customer) => (
+    <div key={customer.id} className="bg-red-50 border border-red-300 rounded-lg p-4 mb-4 hover:shadow-md transition-shadow duration-300">
+      <div className="flex justify-between items-start">
+        <h3 className="font-bold text-lg">{customer.name}</h3>
+        <Dropdown 
+          trigger={['click']} 
+          menu={{
+            items: [
+              {
+                key: "1",
+                label: (
+                  <div
+                    className="text-green-600 cursor-pointer"
+                    onClick={() => handleUpdateModalOpen(customer._id)}
+                  >
+                    Edit
+                  </div>
+                ),
+              },
+              {
+                key: "2",
+                label: (
+                  <div
+                    className="text-red-600 cursor-pointer"
+                    onClick={() => handleDeleteModalOpen(customer._id)}
+                  >
+                    Delete
+                  </div>
+                ),
+              },
+              {
+                key: "3",
+                label: (
+                  <div
+                    onClick={() => handleEnrollmentRequestPrint(customer._id)}
+                    className="text-blue-600 cursor-pointer"
+                  >
+                    Print
+                  </div>
+                ),
+              },
+              {
+                key: "4",
+                label: (
+                  <div
+                    className={`cursor-pointer ${customer.approval_status !== "Approved"
+                      ? "text-green-600"
+                      : "text-red-600"
+                    }`}
+                    onClick={() =>
+                      handleCustomerStatus(
+                        customer._id,
+                        customer.approval_status !== "Approved"
+                          ? "Approved"
+                          : "Pending"
+                      )
+                    }
+                  >
+                    {customer.approval_status !== "Approved"
+                      ? "Approve Customer"
+                      : "Un Approve Customer"}
+                  </div>
+                ),
+              },
+            ],
+          }}
+          placement="bottomRight"
+        >
+          <IoMdMore className="text-purple-700" />
+        </Dropdown>
+      </div>
+      
+      <div className="mt-3 grid grid-cols-3 gap-4">
+        <div>
+          <p className="text-sm text-gray-500">Phone</p>
+          <p className="font-medium">{customer.phone_number}</p>
+        </div>
+        <div>
+          <p className="text-sm text-gray-500">ID</p>
+          <p className="font-medium">{customer.customer_id}</p>
+        </div>
+        <div>
+          <p className="text-sm text-gray-500">Status</p>
+          <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(customer.approval_status)}`}>
+            {customer.approval_status}
+          </span>
+        </div>
+      </div>
+      
+      <div className="mt-4 flex items-center text-sm text-gray-600">
+        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        <span>Joined: {customer.createdAt}</span>
+      </div>
+      
+      {customer.address && (
+        <div className="mt-2 flex items-center text-sm text-gray-600">
+          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.707 12.707l-3.95 3.95a2 2 0 11-2.828-2.828l3.95-3.95-3.95-3.95a2 2 0 012.828-2.828l3.95 3.95 3.95-3.95a2 2 0 112.828 2.828l-3.95 3.95 3.95 3.95a2 2 0 01-2.828 2.828z"></path>
+          </svg>
+          <span>{customer.address}</span>
+        </div>
+      )}
+      
+      {customer.collection_area && (
+        <div className="mt-2 flex items-center text-sm text-gray-600">
+          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"></path>
+          </svg>
+          <span>Area: {customer.collection_area}</span>
+        </div>
+      )}
+      
+      <div className="mt-4 text-center">
+        <button 
+          onClick={() => handleUpdateModalOpen(customer._id)}
+          className="text-purple-600 hover:text-purple-800 text-sm font-medium"
+        >
+          Show More
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <>
       <div>
@@ -627,35 +736,40 @@ const UnApprovedCustomer = () => {
         />
         <div className="flex mt-20">
           <Sidebar navSearchBarVisibility={true} onGlobalSearchChangeHandler={GlobalSearchChangeHandler} />
-
-          <div className="flex-grow p-7 ">
-
-            {TableUsers?.length > 0 && !isLoading ? (
-              <DataTable
-                catcher="_id"
-                updateHandler={handleUpdateModalOpen}
-                data={filterOption(TableUsers, searchText)}
-                columns={columns}
-                exportedFileName={`Customers-${TableUsers.length > 0
-                    ? TableUsers[0].name +
-                    " to " +
-                    TableUsers[TableUsers.length - 1].name
-                    : "empty"
-                  }.csv`}
-
-                iconName="Unverified_Customers"
-
-              />
+          <div className="flex-grow p-7">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-gray-800"> Unverified Customers</h1>
+              {/* <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                + Add Customer
+              </button> */}
+            </div>
+            
+            {isLoading ? (
+              <CircularLoader isLoading={isLoading} failure={false} data="Customer Data" />
             ) : (
-              <CircularLoader
-                isLoading={isLoading}
-                failure={TableUsers.length <= 0}
-                data="Customer Data"
-              />
+              <>
+                <div className="mb-4 text-sm text-gray-600">
+                  Showing {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredUsers.length)} of {filteredUsers.length} customers
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {currentItems.map(renderCustomerCard)}
+                </div>
+                
+                {filteredUsers.length > itemsPerPage && (
+                  <div className="mt-8">
+                    <SimplePagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
-
+        
         <Modal
           isVisible={showModalUpdate}
           onClose={() => setShowModalUpdate(false)}
@@ -673,7 +787,6 @@ const UnApprovedCustomer = () => {
                   >
                     Title
                   </label>
-
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Title"
@@ -696,7 +809,6 @@ const UnApprovedCustomer = () => {
                     ))}
                   </Select>
                 </div>
-
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
@@ -721,7 +833,6 @@ const UnApprovedCustomer = () => {
                   )}
                 </div>
               </div>
-
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
@@ -768,7 +879,6 @@ const UnApprovedCustomer = () => {
                   )}
                 </div>
               </div>
-
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
@@ -815,7 +925,6 @@ const UnApprovedCustomer = () => {
                   )}
                 </div>
               </div>
-
               <div>
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
@@ -837,7 +946,6 @@ const UnApprovedCustomer = () => {
                   <p className="mt-2 text-sm text-red-600">{errors.address}</p>
                 )}
               </div>
-
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
@@ -862,7 +970,6 @@ const UnApprovedCustomer = () => {
                     </p>
                   )}
                 </div>
-
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
@@ -889,7 +996,6 @@ const UnApprovedCustomer = () => {
                   >
                     Collection Area
                   </label>
-
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Or Search Collection Area"
@@ -918,7 +1024,6 @@ const UnApprovedCustomer = () => {
                   </Select>
                 </div>
               </div>
-
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
@@ -943,7 +1048,6 @@ const UnApprovedCustomer = () => {
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                 </div>
-
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
@@ -951,18 +1055,6 @@ const UnApprovedCustomer = () => {
                   >
                     Gender
                   </label>
-                  {/* <select
-                    name="gender"
-                    value={updateFormData?.gender || ""}
-                    onChange={handleInputChange}
-                    id="gender"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                  </select> */}
-
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Gender"
@@ -993,17 +1085,6 @@ const UnApprovedCustomer = () => {
                   >
                     Marital Status
                   </label>
-                  {/* <select
-                    name="marital_status"
-                    value={updateFormData?.marital_status || ""}
-                    onChange={handleInputChange}
-                    id="marital-status"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
-                  >
-                    <option value="">Select Marital Status</option>
-                    <option value="Married">Married</option>
-                    <option value="Unmarried">Unmarried</option>
-                  </select> */}
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Marital Status"
@@ -1029,7 +1110,6 @@ const UnApprovedCustomer = () => {
                     )}
                   </Select>
                 </div>
-
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
@@ -1056,7 +1136,6 @@ const UnApprovedCustomer = () => {
                   >
                     Nationality
                   </label>
-
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Nationality"
@@ -1080,7 +1159,6 @@ const UnApprovedCustomer = () => {
                     ))}
                   </Select>
                 </div>
-
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
@@ -1099,7 +1177,6 @@ const UnApprovedCustomer = () => {
                   />
                 </div>
               </div>
-
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
@@ -1118,7 +1195,6 @@ const UnApprovedCustomer = () => {
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                 </div>
-
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
@@ -1137,7 +1213,6 @@ const UnApprovedCustomer = () => {
                   />
                 </div>
               </div>
-
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
@@ -1146,7 +1221,6 @@ const UnApprovedCustomer = () => {
                   >
                     State
                   </label>
-
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select State"
@@ -1167,7 +1241,6 @@ const UnApprovedCustomer = () => {
                     ))}
                   </Select>
                 </div>
-
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
@@ -1175,35 +1248,6 @@ const UnApprovedCustomer = () => {
                   >
                     District
                   </label>
-
-                  {/* {updateFormData?.state === "Karnataka" ?
-                  
-                  (
-                    <Select
-                      className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
-                      placeholder="Select District"
-                      showSearch
-                      name="district"
-                      filterOption={(input, option) =>
-                        option.children
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      value={updateFormData?.district || undefined}
-                      onChange={(value) =>
-                        handleAntInputDSelect("district", value)
-                      }
-                    >
-                      <Select.Option value="">Select District</Select.Option>
-                      {districts.map((district, index) => (
-                        <Select.Option key={index} value={district}>
-                          {district}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  ) :
-                  
-                  ( */}
                   <Input
                     type="text"
                     name="district"
@@ -1212,10 +1256,8 @@ const UnApprovedCustomer = () => {
                     placeholder="Enter District"
                     className="w-full p-2 h-14 border rounded-md sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
                   />
-                  {/* )} */}
                 </div>
               </div>
-
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
@@ -1234,7 +1276,6 @@ const UnApprovedCustomer = () => {
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                 </div>
-
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
@@ -1267,7 +1308,6 @@ const UnApprovedCustomer = () => {
                   >
                     Nominee Relationship
                   </label>
-
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Nominee Relationship"
@@ -1298,7 +1338,6 @@ const UnApprovedCustomer = () => {
                     ))}
                   </Select>
                 </div>
-
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
@@ -1317,7 +1356,6 @@ const UnApprovedCustomer = () => {
                   />
                 </div>
               </div>
-
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
@@ -1336,7 +1374,6 @@ const UnApprovedCustomer = () => {
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                 </div>
-
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
@@ -1373,7 +1410,6 @@ const UnApprovedCustomer = () => {
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                 </div>
-
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
@@ -1392,7 +1428,6 @@ const UnApprovedCustomer = () => {
                   />
                 </div>
               </div>
-
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
@@ -1405,6 +1440,7 @@ const UnApprovedCustomer = () => {
             </form>
           </div>
         </Modal>
+        
         <Modal
           isVisible={showModalDelete}
           onClose={() => {

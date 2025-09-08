@@ -7,11 +7,12 @@ import Modal from "../components/modals/Modal";
 import DataTable from "../components/layouts/Datatable";
 import CustomAlert from "../components/alerts/CustomAlert";
 import { FaWhatsappSquare } from "react-icons/fa";
-import { Select, Dropdown, notification } from "antd";
+import { Select, Dropdown, notification, Pagination } from "antd";
 import { IoMdMore } from "react-icons/io";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
+
 const Enroll = () => {
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
@@ -64,13 +65,18 @@ const Enroll = () => {
     referred_lead: "",
     chit_asking_month: "",
   });
-
   const [searchText, setSearchText] = useState("");
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(9); // Default 9 items per page to match 3x3 grid
 
   const onGlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
+    setCurrentPage(1); // Reset to first page when searching
   };
+
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
@@ -81,11 +87,11 @@ const Enroll = () => {
       setAdmin("");
     }
   }, []);
+
   useEffect(() => {
     const fetchGroups = async () => {
       try {
         const response = await api.get("/group/get-group-admin");
-
         setGroups(response.data);
       } catch (error) {
         console.error("Error fetching group data:", error);
@@ -113,9 +119,7 @@ const Enroll = () => {
               phone_number: group?.user_id?.phone_number,
               group_name: group?.group_id?.group_name,
               payment_type: group?.payment_type,
-              enrollment_date: group?.createdAt
-                ? group?.createdAt?.split("T")[0]
-                : "",
+              enrollment_date: group?.createdAt ? group?.createdAt?.split("T")[0] : "",
               chit_asking_month: group?.chit_asking_month,
               referred_type: group?.referred_type,
               referred_by:
@@ -146,8 +150,8 @@ const Enroll = () => {
                           ),
                         },
                         {
-                          key:"2",
-                           label: (
+                          key: "2",
+                          label: (
                             <div
                               className="text-red-600"
                               onClick={() => handleDeleteModalOpen(group._id)}
@@ -192,6 +196,7 @@ const Enroll = () => {
     };
     fetchUsers();
   }, []);
+
   useEffect(() => {
     const fetchAgents = async () => {
       try {
@@ -203,6 +208,7 @@ const Enroll = () => {
     };
     fetchAgents();
   }, []);
+
   useEffect(() => {
     const fetchLeads = async () => {
       try {
@@ -220,7 +226,6 @@ const Enroll = () => {
       ...prevData,
       [field]: value,
     }));
-
     setErrors((prevErrors) => ({
       ...prevErrors,
       [field]: "",
@@ -235,17 +240,18 @@ const Enroll = () => {
       }
     }
   };
+
   const handleAntInputDSelect = (field, value) => {
     setUpdateFormData((prevData) => ({
       ...prevData,
       [field]: value,
     }));
-
     setErrors({ ...errors, [field]: "" });
   };
+
   const handleGroupChange = async (groupId) => {
     setSelectedGroup(groupId);
-
+    setCurrentPage(1); // Reset to first page when changing group
     if (groupId) {
       let url;
       if (groupId === "today") {
@@ -301,9 +307,9 @@ const Enroll = () => {
                             </div>
                           ),
                         },
-                         {
-                          key:"2",
-                           label: (
+                        {
+                          key: "2",
+                          label: (
                             <div
                               className="text-red-600"
                               onClick={() => handleDeleteModalOpen(group._id)}
@@ -312,7 +318,6 @@ const Enroll = () => {
                             </div>
                           ),
                         }
-                        
                       ],
                     }}
                     placement="bottomLeft"
@@ -339,33 +344,44 @@ const Enroll = () => {
     }
   };
 
-  const columns = [
-    { key: "id", header: "SL. NO" },
-    { key: "name", header: "Customer Name" },
-    { key: "phone_number", header: "Customer Phone Number" },
-  ];
-  if (allEnrollUrl) {
-    columns.push({ key: "group_name", header: "Enrolled Group" });
-  }
-  columns.push(
-    { key: "ticket", header: "Ticket Number" },
-    { key: "referred_type", header: "Referred Type" },
-    { key: "payment_type", header: "Payment Type" },
-    { key: "enrollment_date", header: "Enrollment Date" },
-    { key: "chit_asking_month", header: "Chit Asking Month" },
-    { key: "referred_by", header: "Referred By" },
-    { key: "action", header: "Action" }
-  );
+  // Get current items for pagination
+  const getCurrentItems = () => {
+    const filteredData = searchText 
+      ? TableEnrolls.filter(item => 
+          item.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+          item.phone_number?.includes(searchText) ||
+          item.group_name?.toLowerCase().includes(searchText.toLowerCase())
+        )
+      : TableEnrolls;
+    
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    return filteredData.slice(indexOfFirstItem, indexOfLastItem);
+  };
+
+  // Change page
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    // Scroll to top of content when changing pages
+    const contentElement = document.querySelector('.flex-grow');
+    if (contentElement) {
+      contentElement.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Change items per page
+  const handleItemsPerPageChange = (value) => {
+    setItemsPerPage(value);
+    setCurrentPage(1); // Reset to first page
+  };
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
-
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-
     if (name === "group_id") {
       try {
         const response = await api.post(`/enroll/get-next-tickets/${value}`);
@@ -376,6 +392,7 @@ const Enroll = () => {
       }
     }
   };
+
   const validate = (type) => {
     const newErrors = {};
     const data = type === "addEnrollment" ? formData : updateFormData;
@@ -386,7 +403,6 @@ const Enroll = () => {
     if (!data.user_id) {
       newErrors.user_id = "Please select a customer";
     }
-
     if (availableTicketsAdd.length > 0) {
       if (
         !data[noOfTickets] ||
@@ -400,7 +416,6 @@ const Enroll = () => {
         ] = `Maximum ${availableTicketsAdd.length} tickets allowed`;
       }
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -436,7 +451,6 @@ const Enroll = () => {
           chit_asking_month: Number(chit_asking_month),
           tickets: ticketNumber,
         }));
-
       try {
         for (const ticketEntry of ticketEntries) {
           console.log("ticket");
@@ -446,7 +460,6 @@ const Enroll = () => {
             },
           });
         }
-
         setShowModal(false);
         setFormData({
           group_id: "",
@@ -517,7 +530,6 @@ const Enroll = () => {
           deleted_by:admin,
           deleted_at:new Date()
         });
-
         setShowModalDelete(false);
         setCurrentGroup(null);
         setAlertConfig({
@@ -539,7 +551,6 @@ const Enroll = () => {
         updateFormData
       );
       setShowModalUpdate(false);
-
       setAlertConfig({
         visibility: true,
         message: "Enrollment Updated Successfully",
@@ -574,19 +585,16 @@ const Enroll = () => {
       referred_lead,
       referred_type,
     } = formData;
-
     if (!user_id || !group_id) {
       notification.warning({
         message: "Please select both Group and Customer before verifying.",
       });
       return;
     }
-
     try {
       const response = await api.get(`/enroll/get-enroll-check`, {
         params: { user_id, group_id },
       });
-
       const selectedUser = users.find((u) => u._id === user_id);
       const selectedGroup = groups.find((g) => g._id === group_id);
       const selectedAgent = agents.find((a) => a._id === agent);
@@ -596,7 +604,6 @@ const Enroll = () => {
       const selectedReferredLead = leads?.find?.(
         (l) => l._id === referred_lead
       );
-
       if (response?.data) {
         const agentName =
           typeof response.data.agent === "object"
@@ -610,24 +617,21 @@ const Enroll = () => {
           typeof response.data.referred_lead === "object"
             ? response.data.referred_lead?.lead_name
             : null;
-
         const referredInfoParts = [];
-
         if (agentName)
           referredInfoParts.push(
             ` Already referred by Agent Name: ${agentName}`
           );
         if (referredCustomerName)
           referredInfoParts.push(
-            `👤 Already referred by Customer Name: ${referredCustomerName}`
+            `ðŸ‘¤ Already referred by Customer Name: ${referredCustomerName}`
           );
         if (referredLeadName)
           referredInfoParts.push(
-            `🧲 Already referred by Lead Name: ${referredLeadName}`
+            `ðŸ§² Already referred by Lead Name: ${referredLeadName}`
           );
         if (referredInfoParts.length === 0)
           referredInfoParts.push("Enrollment exists with no referral info.");
-
         setFormData((prev) => ({
           ...prev,
           no_of_tickets: response?.data?.no_of_tickets ?? prev.no_of_tickets,
@@ -648,7 +652,6 @@ const Enroll = () => {
           chit_asking_month:
             response?.data?.chit_asking_month ?? prev.chit_asking_month,
         }));
-
         let selectedBy = "Unknown";
         if (referred_type === "Agent")
           selectedBy = selectedAgent?.name || "Unknown Agent";
@@ -657,10 +660,8 @@ const Enroll = () => {
             selectedReferredCustomer?.full_name || "Unknown Customer";
         else if (referred_type === "Leads")
           selectedBy = selectedReferredLead?.lead_name || "Unknown Lead";
-
         setIsExistingEnrollment(true);
         setEnrollmentStep("continue");
-
         notification.warning({
           message: (
             <span
@@ -700,7 +701,6 @@ const Enroll = () => {
         setIsExistingEnrollment(false);
         setIsVerified(true);
         setEnrollmentStep("continue");
-
         notification.success({
           message: `Eligible for Enrollment`,
           description: `User "${selectedUser?.full_name}" can be enrolled in "${selectedGroup?.group_name}".`,
@@ -718,7 +718,6 @@ const Enroll = () => {
 
   const handleMultiStep = async (e) => {
     e.preventDefault();
-
     if (enrollmentStep === "verify") {
       await handleVerify();
     } else if (enrollmentStep === "continue") {
@@ -726,6 +725,89 @@ const Enroll = () => {
     } else if (enrollmentStep === "submit") {
       handleSubmit(e);
     }
+  };
+
+  // Card-based layout for displaying enrollments
+  const renderEnrollmentCards = () => {
+    const currentItems = getCurrentItems();
+    
+    if (TableEnrolls.length === 0 && isDataTableLoading) {
+      return (
+        <div className="flex justify-center items-center h-64">
+          <CircularLoader isLoading={isDataTableLoading} failure={false} data="Enrollment Data" />
+        </div>
+      );
+    }
+
+    if (currentItems.length === 0 && !isDataTableLoading) {
+      return (
+        <div className="flex justify-center items-center h-64 text-gray-500 col-span-3">
+          No enrollments found.
+        </div>
+      );
+    }
+
+    return currentItems.map((enrollment, index) => (
+      <div
+        key={enrollment._id}
+        className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-300 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <div className="flex justify-between items-start mb-3">
+          <h3 className="font-semibold text-purple-800">{enrollment.group_name}</h3>
+          <button
+            className="text-gray-500 hover:text-gray-700"
+            onClick={() => handleDeleteModalOpen(enrollment._id)}
+          >
+            <IoMdMore />
+          </button>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+          <div className="text-center">
+            <p className="text-purple-700 font-medium">₹{enrollment.ticket}</p>
+            <p className="text-gray-600">Ticket</p>
+          </div>
+          <div className="text-center">
+            <p className="text-purple-700 font-medium">{enrollment.name}</p>
+            <p className="text-gray-600">Customer</p>
+          </div>
+          <div className="text-center">
+            <p className="text-purple-700 font-medium">{enrollment.phone_number}</p>
+            <p className="text-gray-600">Phone</p>
+          </div>
+        </div>
+
+        <div className="mt-4 pt-3 border-t border-purple-200">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+            <div>
+              <p className="text-purple-700 font-medium">{enrollment.payment_type}</p>
+              <p className="text-gray-600">Payment Type</p>
+            </div>
+            <div>
+              <p className="text-purple-700 font-medium">{enrollment.referred_type}</p>
+              <p className="text-gray-600">Referred Type</p>
+            </div>
+            <div>
+              <p className="text-purple-700 font-medium">{enrollment.enrollment_date}</p>
+              <p className="text-gray-600">Date</p>
+            </div>
+            <div>
+              <p className="text-purple-700 font-medium">{enrollment.chit_asking_month}</p>
+              <p className="text-gray-600">Month</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 flex justify-end">
+          <button
+            className="text-purple-700 hover:text-purple-900"
+            onClick={() => handleUpdateModalOpen(enrollment._id)}
+          >
+            Edit
+          </button>
+        </div>
+      </div>
+    ));
   };
 
   return (
@@ -748,7 +830,7 @@ const Enroll = () => {
               <div className="mb-2">
                 <label>Search or Select Group</label>
               </div>
-              <div className="flex  justify-between items-center w-full">
+              <div className="flex justify-between items-center w-full">
                 <Select
                   showSearch
                   popupMatchSelectWidth={false}
@@ -761,11 +843,9 @@ const Enroll = () => {
                   }
                   placeholder="Search or Select Group"
                   onChange={handleGroupChange}
-                  className="border  h-14 w-full max-w-md"
+                  className="border h-14 w-full max-w-md"
                 >
-                  <Select.Option key={"$1"} value={"today"}>
-                    Today's Enrollment
-                  </Select.Option>
+                  <Select.Option key={"$1"} value={"today"}>Today's Enrollment</Select.Option>
                   {groups.map((group) => (
                     <Select.Option key={group._id} value={group._id}>
                       {group.group_name}
@@ -780,28 +860,52 @@ const Enroll = () => {
                 </button>
               </div>
             </div>
-            {TableEnrolls?.length > 0 ? (
-              <DataTable
-                updateHandler={handleUpdateModalOpen}
-                data={filterOption(TableEnrolls, searchText)}
-                columns={columns}
-                exportedFileName={`Enrollments-${
-                  TableEnrolls.length > 0
-                    ? TableEnrolls[0].name +
-                      " to " +
-                      TableEnrolls[TableEnrolls.length - 1].name
-                    : "empty"
-                }.csv`}
-              />
-            ) : (
-              <CircularLoader
-                isLoading={isDataTableLoading}
-                failure={TableEnrolls?.length <= 0 && selectedGroup}
-                data={"Enrollment Data"}
-              />
+
+            {/* Grid layout for cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {renderEnrollmentCards()}
+            </div>
+
+            {/* Pagination Controls */}
+            {TableEnrolls.length > 0 && (
+              <div className="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div className="flex items-center">
+                  <span className="text-sm text-gray-700 mr-2">Items per page:</span>
+                  <Select
+                    value={itemsPerPage}
+                    onChange={handleItemsPerPageChange}
+                    className="w-20"
+                  >
+                    <Select.Option value={6}>6</Select.Option>
+                    <Select.Option value={9}>9</Select.Option>
+                    <Select.Option value={12}>12</Select.Option>
+                    <Select.Option value={18}>18</Select.Option>
+                    <Select.Option value={24}>24</Select.Option>
+                  </Select>
+                </div>
+                
+                <Pagination
+                  current={currentPage}
+                  pageSize={itemsPerPage}
+                  total={searchText 
+                    ? TableEnrolls.filter(item => 
+                        item.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+                        item.phone_number?.includes(searchText) ||
+                        item.group_name?.toLowerCase().includes(searchText.toLowerCase())
+                      ).length
+                    : TableEnrolls.length}
+                  onChange={handlePageChange}
+                  showSizeChanger={false}
+                  showQuickJumper
+                  showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+                  className="pagination"
+                />
+              </div>
             )}
           </div>
         </div>
+
+        {/* Modals remain unchanged */}
         <Modal
           isVisible={showModal}
           onClose={() => {
@@ -853,7 +957,6 @@ const Enroll = () => {
                 >
                   Customer <span className="text-red-500 ">*</span>
                 </label>
-
                 <Select
                   className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   placeholder="Select Or Search Customer"
@@ -876,7 +979,6 @@ const Enroll = () => {
                     </Select.Option>
                   ))}
                 </Select>
-
                 {errors.user_id && (
                   <p className="mt-1 text-sm text-red-600">{errors.user_id}</p>
                 )}
@@ -907,7 +1009,6 @@ const Enroll = () => {
                   ))}
                 </Select>
               </div>
-
               <div className="w-full">
                 <label className="block mb-2 text-sm font-medium text-gray-900">
                   Chit Asking Month
@@ -921,7 +1022,6 @@ const Enroll = () => {
                   className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                 />
               </div>
-
               <div className="w-full">
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
@@ -941,20 +1041,13 @@ const Enroll = () => {
                   value={formData?.referred_type || undefined}
                   onChange={(value) => handleAntDSelect("referred_type", value)}
                 >
-                  {[
-                    "Self Joining",
-                    "Customer",
-                    "Employee",
-                    "Leads",
-                    "Others",
-                  ].map((refType) => (
+                  {["Self Joining", "Customer", "Employee", "Leads", "Others"].map((refType) => (
                     <Select.Option key={refType} value={refType}>
                       {refType}
                     </Select.Option>
                   ))}
                 </Select>
               </div>
-
               {formData.referred_type === "Customer" && (
                 <div className="w-full">
                   <label
@@ -964,7 +1057,6 @@ const Enroll = () => {
                     Select Referred Customer{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
-
                   <Select
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     placeholder="Select Or Search Referred Customer"
@@ -1000,7 +1092,6 @@ const Enroll = () => {
                     Select Referred Leads{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
-
                   <Select
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     placeholder="Select Or Search Referred Leads"
@@ -1035,7 +1126,6 @@ const Enroll = () => {
                     Select Referred Employee{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
-
                   <Select
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     placeholder="Select Or Search Referred Employee"
@@ -1043,8 +1133,7 @@ const Enroll = () => {
                     showSearch
                     name="agent"
                     filterOption={(input, option) => {
-                      if (!option || !option.children) return false; // Ensure option and children exist
-
+                      if (!option || !option.children) return false;
                       return option.children
                         .toString()
                         .toLowerCase()
@@ -1086,7 +1175,6 @@ const Enroll = () => {
                     max={availableTicketsAdd.length}
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
-
                   {errors.no_of_tickets && (
                     <p className="mt-1 text-sm text-red-600">
                       {errors.no_of_tickets}
@@ -1099,7 +1187,6 @@ const Enroll = () => {
               ) : (
                 <p className="text-center text-red-600"></p>
               )}
-
               <div className="flex flex-col items-center p-4 max-w-full bg-white rounded-lg shadow-sm space-y-4">
                 <div className="flex items-center space-x-3">
                   <FaWhatsappSquare color="green" className="w-10 h-10" />
@@ -1107,7 +1194,6 @@ const Enroll = () => {
                     WhatsApp
                   </h2>
                 </div>
-
                 <div className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -1148,6 +1234,7 @@ const Enroll = () => {
             </form>
           </div>
         </Modal>
+
         <Modal
           isVisible={showModalUpdate}
           onClose={() => {
@@ -1184,7 +1271,6 @@ const Enroll = () => {
                   ))}
                 </select>
               </div>
-
               <div className="w-full">
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
@@ -1253,7 +1339,6 @@ const Enroll = () => {
                   className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                 />
               </div>
-
               <div className="w-full">
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
@@ -1275,20 +1360,13 @@ const Enroll = () => {
                     handleAntInputDSelect("referred_type", value)
                   }
                 >
-                  {[
-                    "Self Joining",
-                    "Customer",
-                    "Employee",
-                    "Leads",
-                    "Others",
-                  ].map((refType) => (
+                  {["Self Joining", "Customer", "Employee", "Leads", "Others"].map((refType) => (
                     <Select.Option key={refType} value={refType}>
                       {refType}
                     </Select.Option>
                   ))}
                 </Select>
               </div>
-
               {updateFormData.referred_type === "Customer" && (
                 <div className="w-full">
                   <label
@@ -1298,7 +1376,6 @@ const Enroll = () => {
                     Select Referred Customer{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
-
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Or Search Referred Customer"
@@ -1333,7 +1410,6 @@ const Enroll = () => {
                     Select Referred Leads{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
-
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Or Search Referred Lead"
@@ -1368,7 +1444,6 @@ const Enroll = () => {
                     Select Referred Employee{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
-
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Or Search Referred Employee"
@@ -1418,7 +1493,6 @@ const Enroll = () => {
                     ))}
                 </select>
               </div>
-
               <button
                 type="submit"
                 className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
@@ -1428,6 +1502,7 @@ const Enroll = () => {
             </form>
           </div>
         </Modal>
+
         <Modal
           isVisible={showModalDelete}
           onClose={() => {
