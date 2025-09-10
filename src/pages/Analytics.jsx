@@ -169,6 +169,17 @@ export default function Analytics() {
     ],
   };
 
+const parseINRString = (val) => {
+  if (val === null || val === undefined) return 0;
+  if (typeof val === 'number') return val;
+  if (typeof val === 'string') {
+    const cleaned = val.replace(/,/g, ''); 
+    const num = parseFloat(cleaned);
+    return isNaN(num) ? 0 : num;
+  }
+  return 0;
+};
+
   const groupsBarData = {
     labels: topGroups.map((g) => g.name),
     datasets: [
@@ -252,15 +263,15 @@ export default function Analytics() {
         const paymentsRange = unwrap(paymentsByDatesRes)?.data || [];
         const lastN = unwrap(lastNTransRes)?.data || [];
 
-        setKpis({
-          totalCollection: totalColl?.totalAmount || 0,
-          thisPeriodCollection: currentMonth?.monthlyPayment || 0,
-          usersCount: Array.isArray(users) ? users.length : 0,
-          groupsCount: Array.isArray(groups) ? groups.length : 0,
-          agentsCount: Array.isArray(agents?.agent || agents) ? (agents.agent?.length || agents.length) : 0,
-          employeesCount: Array.isArray(employees?.employee || employees) ? (employees.employee?.length || employees.length) : 0,
-          enrollmentsCount: Array.isArray(enrolls) ? enrolls.length : 0,
-        });
+    setKpis({
+  totalCollection: parseINRString(totalColl?.totalAmount),
+  thisPeriodCollection: parseINRString(currentMonth?.monthlyPayment),
+  usersCount: Array.isArray(users) ? users.length : 0,
+  groupsCount: Array.isArray(groups) ? groups.length : 0,
+  agentsCount: Array.isArray(agents?.agent || agents) ? (agents.agent?.length || agents.length) : 0,
+  employeesCount: Array.isArray(employees?.employee || employees) ? (employees.employee?.length || employees.length) : 0,
+  enrollmentsCount: Array.isArray(enrolls) ? enrolls.length : 0,
+});
 
         const paymentList = Array.isArray(paymentsRange) && paymentsRange.length > 0 ? paymentsRange : lastN;
 

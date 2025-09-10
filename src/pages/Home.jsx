@@ -204,7 +204,7 @@ const Home = () => {
     {
       icon: MdOutlinePayments,
       title: "Total Revenue",
-    value: ` ${paymentsValue}`,
+      value: ` ${paymentsValue}`,
       subtitle: "All-time earnings",
       color: "from-emerald-500 to-emerald-600",
       iconBg: "bg-emerald-100",
@@ -215,7 +215,7 @@ const Home = () => {
     {
       icon: SlCalender,
       title: "Monthly Revenue",
-       value: ` ${paymentsPerMonthValue}`,
+      value: ` ${paymentsPerMonthValue}`,
       subtitle: "Current billing cycle",
       color: "from-sky-500 to-sky-600",
       iconBg: "bg-sky-100",
@@ -250,13 +250,19 @@ const Home = () => {
             </p>
           </header>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 auto-rows-fr">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10 auto-rows-fr">
             {cardData.map((card) => (
               <div
                 key={card.key}
                 className="transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
               >
-                <div className={`relative rounded-2xl p-1 bg-gradient-to-r ${card.color} shadow-lg`}>
+                <div
+                  className={`relative rounded-3xl p-1 
+    bg-white border border-violet-200 
+    shadow-2xl transition-all duration-300 ease-out
+    hover:shadow-2xl hover:scale-[1.02] hover:border-violet-700 hover:ring-8 hover:ring-violet-500/20
+    cursor-pointer`}
+                >
                   <div className="bg-white rounded-2xl overflow-hidden h-full">
                     <div className="p-4">
                       <div className="flex items-start justify-between">
@@ -276,7 +282,8 @@ const Home = () => {
                       </p>
 
                       <div className="mt-2">
-                        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600">
+                        {/* Removed gradient — now solid color */}
+                        <span className="text-xl font-bold text-gray-900">
                           {card.value}
                         </span>
                       </div>
