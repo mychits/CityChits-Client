@@ -68,39 +68,66 @@ const sidebarMenu = [
 		activeColor: "custom-blue",
 	},
 	{
-		id: "$4",
-		title: "Customers ",
-		icon: IoIosPersonAdd,
-		link: "/user",
-		activeColor: "custom-yellow",
-	},
-	{
-		id: "&*&",
-		title: "Unverified Customer",
-		icon: MdCancel,
-		link: "/un-approved-customer",
-	},
-	{
-		id: "$5",
-		title: "Enrollments ",
-		icon: FaPeopleArrows,
-		link: "/enrollment",
-		activeColor: "primary",
-	},
+  id: "$4-main",
+  title: "Customers",
+  icon: IoIosPersonAdd,
+  activeColor: "custom-yellow",
+  submenu: true,
+  submenuItems: [
+    {
+      id: "$4",
+      title: "All Customers",
+      icon: IoIosPersonAdd,
+      link: "/user",
+    },
+    {
+      id: "&*&",
+      title: "Unverified Customers",
+      icon: MdCancel,
+      link: "/un-approved-customer",
+    },
+  ],
+},
 
-	  {
-    id: "$83",
-    title: "Mobile Enrollments ",
-    icon: FaMobileAlt,
-    link: "/mobile-app-enroll",
-  },
+	
+{
+  id: "$5-main",
+  title: "Enrollments",
+  icon: FaPeopleArrows,
+  activeColor: "primary",
+  submenu: true,
+  submenuItems: [
+    {
+      id: "$5",
+      title: "All Enrollments",
+      icon: FaPeopleArrows,
+      link: "/enrollment",
+    },
+    {
+      id: "$83",
+      title: "Mobile Enrollments",
+      icon: FaMobileAlt,
+      link: "/mobile-app-enroll",
+    },
+  ],
+},
 
-	{
-		id: "$67",
-		title: "Guarantor ",
-		icon: FaHandshake,
-		link: "/guarantor",
-	},
+{
+  id: "$legal-main",
+  title: "Legals",
+  icon: FaUserLock, 
+  activeColor: "primary",
+  submenu: true,
+  submenuItems: [
+    {
+      id: "$67",
+      title: "Guarantor",
+      icon: FaHandshake,
+      link: "/guarantor",
+    },
+  ],
+},
+
 	{
 		id: ids.seven,
 		title: "Staff",
@@ -141,18 +168,29 @@ const sidebarMenu = [
 		activeColor: "primary",
 	},
 
-	{
-		id: "$8",
-		title: "Loans",
-		icon: GiTakeMyMoney ,
-		link: "/loan",
-	},
-	{
-		id: "$9",
-		title: "Pigme",
-		icon: PiCalculatorBold,
-		link: "/pigme",
-	},
+
+{
+  id: "$services-main",
+  title: "Other Services",
+  icon: GiTakeMyMoney, 
+  activeColor: "primary",
+  submenu: true,
+  submenuItems: [
+    {
+      id: "$8",
+      title: "Loans",
+      icon: GiTakeMyMoney,
+      link: "/loan",
+    },
+    {
+      id: "$9",
+      title: "Pigme",
+      icon: PiCalculatorBold,
+      link: "/pigme",
+    },
+  ],
+},
+
 
 	{
 		id: "$8",

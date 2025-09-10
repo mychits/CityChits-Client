@@ -15,6 +15,13 @@ import { TiSpanner } from "react-icons/ti";
 import { MdOutlineGroups, MdAppSettingsAlt } from "react-icons/md";
 import { ImHappy } from "react-icons/im";
 import { FaPersonMilitaryPointing } from "react-icons/fa6";
+import { LuTarget } from "react-icons/lu";
+import { TbTargetArrow } from "react-icons/tb";
+import { BsFileBarGraph } from "react-icons/bs";
+import { TbGraph } from "react-icons/tb";
+import { TbGraphFilled } from "react-icons/tb";
+import { MdAccountBalanceWallet } from "react-icons/md";
+import { RiMoneyRupeeCircleFill } from "react-icons/ri";
 
 const settingMenu = [
   { id: 1, title: "Dashboard", icon: RiDashboardFill, link: "/dashboard" },
@@ -55,7 +62,51 @@ const settingMenu = [
   },
   { id: 4, title: "Designations", icon: IoPeopleOutline, link: "/designation" },
   { id: 5, title: "Administrative Privileges", icon: RiAdminLine, link: "/administrative-privileges" },
-  { id: 6, title: "Agent Target", icon: GoGraph, link: "/target" },
+  {  id:6 ,
+    title: "Target Management",
+    icon: LuTarget,
+    submenu: true,
+
+    submenuItems: [
+      { id:"6-1",
+        title: "Target",
+        icon: TbTargetArrow,
+        link: "/target",
+      },
+      { id:"6-2",
+        title: "Reports",
+        icon: BsFileBarGraph ,
+        submenu: true,
+        submenuItems: [
+          { id:"6-2-1",
+            title: "Commission Report",
+            icon: TbGraph ,
+            link: "/target-commission",
+          },
+          { id:"6-2-2",
+            title: "Incentive Report",
+            icon: TbGraphFilled  ,
+            link: "/target-incentive",
+          },
+        ],
+      },
+      { id:"6-3",
+        title: "Accounts",
+        icon: MdAccountBalanceWallet,
+        submenu: true,
+        submenuItems: [
+          { id:"6-3-1",
+            title: "PayOut Menu",
+            icon: RiMoneyRupeeCircleFill,
+            link:"/target-payout-menu"
+          
+
+          
+          },
+        ],
+      },
+    ],
+  },
   { id: 7, title: "Profile", icon: CgProfile, link: "/profile" },
   { id: 8, title: "Help & Support", icon: IoIosHelpCircle, link: "/help" },
 ];

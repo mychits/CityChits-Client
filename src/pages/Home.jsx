@@ -154,6 +154,8 @@ const Home = () => {
       color: "from-indigo-500 to-indigo-600",
       iconBg: "bg-indigo-100",
       iconColor: "text-indigo-600",
+      borderColor: "border-indigo-600",
+      ringColor: "ring-indigo-500/20",
       redirect: "/group",
       key: "1",
     },
@@ -165,6 +167,8 @@ const Home = () => {
       color: "from-amber-500 to-amber-600",
       iconBg: "bg-amber-100",
       iconColor: "text-amber-600",
+      borderColor: "border-amber-600",
+      ringColor: "ring-amber-500/20",
       redirect: "/user",
       key: "2",
     },
@@ -176,6 +180,8 @@ const Home = () => {
       color: "from-pink-500 to-pink-600",
       iconBg: "bg-pink-100",
       iconColor: "text-pink-600",
+      borderColor: "border-pink-600",
+      ringColor: "ring-pink-500/20",
       redirect: "/staff",
       key: "4",
     },
@@ -187,6 +193,8 @@ const Home = () => {
       color: "from-purple-500 to-purple-600",
       iconBg: "bg-purple-100",
       iconColor: "text-purple-600",
+      borderColor: "border-purple-600",
+      ringColor: "ring-purple-500/20",
       redirect: "/agent",
       key: "3",
     },
@@ -198,6 +206,8 @@ const Home = () => {
       color: "from-orange-500 to-orange-600",
       iconBg: "bg-orange-100",
       iconColor: "text-orange-600",
+      borderColor: "border-orange-600",
+      ringColor: "ring-orange-500/20",
       redirect: "/employee",
       key: "5",
     },
@@ -209,6 +219,8 @@ const Home = () => {
       color: "from-emerald-500 to-emerald-600",
       iconBg: "bg-emerald-100",
       iconColor: "text-emerald-600",
+      borderColor: "border-emerald-600",
+      ringColor: "ring-emerald-500/20",
       redirect: "/payment",
       key: "6",
     },
@@ -220,6 +232,8 @@ const Home = () => {
       color: "from-sky-500 to-sky-600",
       iconBg: "bg-sky-100",
       iconColor: "text-sky-600",
+      borderColor: "border-sky-600",
+      ringColor: "ring-sky-500/20",
       redirect: "/payment",
       key: "7",
     }
@@ -249,7 +263,6 @@ const Home = () => {
               Monitor key business indicators and make data-driven decisions.
             </p>
           </header>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10 auto-rows-fr">
             {cardData.map((card) => (
               <div
@@ -258,10 +271,11 @@ const Home = () => {
               >
                 <div
                   className={`relative rounded-3xl p-1 
-    bg-white border border-violet-200 
-    shadow-2xl transition-all duration-300 ease-out
-    hover:shadow-2xl hover:scale-[1.02] hover:border-violet-700 hover:ring-8 hover:ring-violet-500/20
-    cursor-pointer`}
+          bg-white border ${card.borderColor}
+           transition-all duration-300 ease-out
+          hover:shadow-2xl hover:scale-[1.07] hover:${card.borderColor}
+          hover:${card.ringColor}
+          cursor-pointer`}
                 >
                   <div className="bg-white rounded-2xl overflow-hidden h-full">
                     <div className="p-4">
@@ -277,12 +291,9 @@ const Home = () => {
                       <h3 className="text-sm font-semibold text-gray-800 mb-1">
                         {card.title}
                       </h3>
-                      <p className="text-xs text-gray-500 mb-2">
-                        {card.subtitle}
-                      </p>
+                      <p className="text-xs text-gray-500 mb-2">{card.subtitle}</p>
 
                       <div className="mt-2">
-                        {/* Removed gradient — now solid color */}
                         <span className="text-xl font-bold text-gray-900">
                           {card.value}
                         </span>
@@ -318,6 +329,7 @@ const Home = () => {
               </div>
             ))}
           </div>
+
 
           {cardData.length === 0 && (
             <div className="col-span-full flex flex-col items-center justify-center py-6 rounded-2xl bg-white shadow-lg">

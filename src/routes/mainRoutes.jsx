@@ -83,6 +83,11 @@ import PaymentLinkMenu from "../pages/PaymentLinkMenu";
 import ChitBulkPaymentLink from "../pages/BulkChitPaymentLink";
 import Analytics from "../pages/Analytics";
 
+import TargetIncentiveReport from "../pages/TargetIncentive";
+import TargetPayOutSalary from "../pages/TargetPayoutSalary";
+import TargetPayOutCommissionIncentive from "../pages/TargetPayOutCommissionIncentive";
+import TargetCommission from "../pages/TargetCommission";
+import TargetPayOutMenu from "../pages/TargetPayOutMenu";
 
 import Register from "../pages/Register";
 import IndividualChitPaymentLink from "../pages/IndividualChitPaymentLink";
@@ -241,6 +246,29 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+
+    {
+    path: "/target-commission",
+    element: <TargetCommission />,
+  },
+  {
+    path: "/target-commission-incentive",
+    element: <TargetPayOutCommissionIncentive />,
+  },
+  {
+    path: "/target-payout-menu",
+    element: <TargetPayOutMenu />,
+  },
+  {
+    path: "/target-payout-salary",
+    element: <TargetPayOutSalary />,
+  },
+  {
+    path: "/target-incentive",
+    element: <TargetIncentiveReport />,
+  },
+
+  
   {
     path: "/enrollment-request-form",
     element: <EnrollmentRequestForm />,
