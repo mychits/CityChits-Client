@@ -1,9 +1,9 @@
 import { Fragment, useState } from "react";
-import { BsArrowLeftShort, BsChevronDown } from "react-icons/bs";
+import { BsArrowLeftShort } from "react-icons/bs";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import sidebarMenu from "../../data/sidebarMenu";
 import Navbar from "./Navbar";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 const Sidebar = ({
   navSearchBarVisibility = false,
@@ -14,6 +14,7 @@ const Sidebar = ({
   const [showArrowLeft, setShowArrowLeft] = useState(false);
   const [submenuOpenIndex, setSubmenuOpenIndex] = useState(null);
   const [nestedSubmenuOpenIndex, setNestedSubmenuOpenIndex] = useState({});
+  const location = useLocation();
 
   const toggleSubMenu = (index) => {
     setSubmenuOpenIndex(submenuOpenIndex === index ? null : index);
@@ -58,6 +59,7 @@ const Sidebar = ({
                 <Fragment key={menu.id}>
                   <NavLink
                     to={menu.link || "#"}
+                    end
                     onClick={(e) => {
                       if (menu.submenu) {
                         e.preventDefault();
@@ -66,8 +68,8 @@ const Sidebar = ({
                     }}
                     className={({ isActive }) =>
                       `flex items-center gap-x-4 p-3 rounded-xl shadow-sm transition-all duration-200 ${
-                        isActive
-                          ? "bg-custom-violet text-white"
+                        isActive && !menu.submenu
+                          ? "bg-violet-500 text-white"
                           : "bg-white text-gray-700 hover:bg-purple-100"
                       } ${menu.spacing ? "mt-6" : ""}`
                     }
@@ -99,19 +101,22 @@ const Sidebar = ({
 
                         return (
                           <Fragment key={submenuItem.id}>
-                            <a
-                              href={submenuItem.link || "#"}
-                              rel="noopener noreferrer"
-                              target={
-                                submenuItem.newTab ? "_blank" : "_self"
-                              }
+                            <NavLink
+                              to={submenuItem.link || "#"}
+                              end
                               onClick={(e) => {
                                 if (submenuItem.submenu) {
                                   e.preventDefault();
                                   toggleNestedSubMenu(index, subIndex);
                                 }
                               }}
-                              className=" p-2 pl-5 rounded-lg bg-white shadow-sm text-sm text-gray-600 hover:bg-purple-100 transition-all duration-200 flex items-center"
+                              className={({ isActive }) =>
+                                `p-2 pl-5 rounded-lg shadow-sm text-sm flex items-center transition-all duration-200 ${
+                                  isActive
+                                    ? "bg-custom-violet text-white"
+                                    : "bg-white text-gray-600 hover:bg-purple-100"
+                                }`
+                              }
                             >
                               {submenuItem.icon && (
                                 <span className="mr-2">{submenuItem.icon}</span>
@@ -123,18 +128,22 @@ const Sidebar = ({
                                 ) : (
                                   <AiOutlinePlus className="ml-auto" />
                                 ))}
-                            </a>
+                            </NavLink>
 
                             {submenuItem.submenu && isNestedOpen && (
                               <ul className="ml-6 mt-1 space-y-1">
                                 {submenuItem.submenuItems.map((subSubItem) => (
-                                  <a
+                                  <NavLink
                                     key={subSubItem.id}
-                                    href={subSubItem.link}
-                                    target={
-                                      subSubItem.newTab ? "_blank" : "_self"
+                                    to={subSubItem.link}
+                                    end
+                                    className={({ isActive }) =>
+                                      `p-2 pl-6 rounded-lg shadow-sm text-sm flex items-center transition-all duration-200 ${
+                                        isActive
+                                          ? "bg-custom-violet text-white"
+                                          : "bg-white text-gray-600 hover:bg-purple-100"
+                                      }`
                                     }
-                                    className=" p-2 pl-6 rounded-lg bg-white shadow-sm text-sm text-gray-600 hover:bg-purple-100 transition-all duration-200 flex items-center"
                                   >
                                     {subSubItem.icon && (
                                       <span className="mr-2">
@@ -142,10 +151,10 @@ const Sidebar = ({
                                       </span>
                                     )}
                                     {subSubItem.title}
-                                  </a>
+                                  </NavLink>
                                 ))}
                               </ul>
-                            )} 
+                            )}
                           </Fragment>
                         );
                       })}

@@ -1,17 +1,15 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import GlobalSearchBar from "../search/GlobalSearchBar";
-import { MdKeyboardArrowDown } from "react-icons/md";
-import hotkeys from "../../data/hotKeys";
-import { MdOutlineArrowCircleLeft } from "react-icons/md";
+import { MdKeyboardArrowDown, MdOutlineArrowCircleLeft } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { IoMdMore } from "react-icons/io";
+import hotkeys from "../../data/hotKeys";
 import mychitsHead from "../../assets/images/mychits_head.svg";
 
 const Navbar = ({
-  onGlobalSearchChangeHandler = () => {},
+  onGlobalSearchChangeHandler = () => { },
   visibility = false,
-  isOpened = false,
 }) => {
   const navigate = useNavigate();
   const [showHotKeys, setShowHotKeys] = useState(false);
@@ -24,98 +22,127 @@ const Navbar = ({
   };
 
   return (
-    <nav
-      className={`w-screen h-auto fixed top-0 left-0 z-10 bg-primary-variant flex`}
-    >
-     
-      <div className="p-[16px] pl-3 flex border-r-8 border-primary mr-2">
-        <img
-          src={mychitsHead}
-          alt=""
-          className={`cursor-pointer duration-500 ${isOpened && "rotate-[360deg]"}`}
-        />
-        <h1
-          className={`font-bold text-[#3A3481] flex justify-center m-2 items-center origin-center transition-all duration-300 select-none ${
-            isOpened ? "text-3xl mr-14" : "text-[0px] mr-0"
-          }`}
+    <nav className="w-full fixed top-0 left-0 z-50">
+      {/* Main Navbar Container */}
+      <div className="flex items-center justify-between bg-violet-900 shadow-xl backdrop-blur-md bg-opacity-95 px-8 py-3">
+
+        {/* Logo Section */}
+        <button
+          onClick={() => navigate("/")}
+          className="flex items-center space-x-4 text-white transition-transform duration-300 hover:scale-105"
         >
-          MyChits
-        </h1>
-      </div>
-
-     
-      <div
-        className={`w-full min-h-[88px] bg-gradient-to-r bg-custom-violet transition-all duration-300 rounded-md grid sm:grid-cols-12 justify-center items-center`}
-      >
-        <MdOutlineArrowCircleLeft
-          className={`text-white hover:text-white active:animate-ping col-span-1 ml-4`}
-          onClick={() => {
-            navigate(-1);
-          }}
-          size={63}
-        />
-        <div className="col-span-1"></div>
-        <div className="col-span-6 flex">
-          <GlobalSearchBar
-            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-            visibility={visibility}
+          <img
+            src={mychitsHead}
+            alt="MyChits Logo"
+            className="h-12 w-auto transition-transform duration-300"
           />
-          <MdKeyboardArrowDown
-            size={63}
-            color="white"
-            className={`active:bg-primary-variant active:rounded-full active:bg-opacity-10 ${
-              showHotKeys && "rotate-180"
-            }`}
-            onClick={() => setShowHotKeys(!showHotKeys)}
-          />
-        </div>
+          <span className="font-extrabold text-2xl tracking-wide">
+            MyChits
+          </span>
+        </button>
 
-        <div className="sm:col-span-2"></div>
-        <CgProfile
-          size={63}
-          color="white"
-          className="sm:col-span-1 active:bg-primary-variant rounded-full active:bg-opacity-10"
-        />
+        {/* Center Section */}
+        <div className="flex items-center space-x-8 flex-1 justify-center">
+          {/* Back Button */}
+          <button
+            onClick={() => navigate(-1)}
+            className="p-3 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 text-white transition-all duration-300 hover:scale-105 active:scale-95 shadow-md"
+            aria-label="Go Back"
+          >
+            <MdOutlineArrowCircleLeft size={28} />
+          </button>
 
-        
-        <div className="relative sm:col-span-1">
-          <IoMdMore
-            size={63}
-            color="white"
-            className="cursor-pointer active:bg-primary-variant active:rounded-full active:bg-opacity-10"
-            onClick={() => setShowMenu(!showMenu)}
-          />
-          {showMenu && (
-            <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-md z-20">
-              <button
-                onClick={handleLogout}
-                className="block w-full text-left px-4 py-2  text-xl text-gray-700 bg-violet-300 hover:bg-primary hover:text-white rounded-md"
-              >
-                Logout
-              </button>
+          {/* Search + Hotkeys */}
+          <div className="flex items-center bg-white bg-opacity-20 backdrop-blur-md rounded-full px-6 py-3 w-full max-w-5xl">
+            <div className="flex-1">
+              <GlobalSearchBar
+                onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+                visibility={visibility}
+              />
             </div>
-          )}
+            <button
+              onClick={() => setShowHotKeys(!showHotKeys)}
+              className={`ml-3 p-3 rounded-full text-white transition-transform duration-300 hover:scale-110 active:scale-95 ${showHotKeys ? "rotate-180" : ""
+                }`}
+              aria-label="Toggle Hotkeys"
+            >
+              <MdKeyboardArrowDown size={24} />
+            </button>
+          </div>
+        </div>
+
+        {/* Profile & More Options */}
+        <div className="flex items-center space-x-4">
+          <button
+            className="p-3 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 text-white transition-all duration-300 hover:scale-105 active:scale-95 shadow-md"
+            aria-label="Profile"
+          >
+            <CgProfile size={24} />
+          </button>
+
+          <div className="relative">
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="p-3 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 text-white transition-all duration-300 hover:scale-105 active:scale-95 shadow-md"
+              aria-label="More Options"
+            >
+              <IoMdMore size={24} />
+            </button>
+
+            {showMenu && (
+              <div className="absolute right-0 mt-4 w-56 bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-100 animate-fadeIn z-50">
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-left px-6 py-4 text-xl font-medium text-gray-800 hover:bg-gradient-to-r hover:from-violet-700 hover:to-purple-700 hover:text-white transition-colors duration-300"
+                >
+                  🚪 Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Hotkeys Menu */}
+      {/* Hotkeys Panel */}
       {showHotKeys && (
-        <div className={`h-auto rounded-md bg-primary-variant px-6 py-2`}>
-          {hotkeys.map(({ key, title, path }) => (
-            <NavLink
-              key={key}
-              to={path}
-              className={({ isActive }) =>
-                `${
-                  isActive ? "bg-primary bg-opacity-40" : "bg-white"
-                } text-center rounded-sm p-6 text-primary font-semibold shadow-[0_2px_2px_gray]`
-              }
-            >
-              {title}
-            </NavLink>
-          ))}
+        <div className="bg-violet-600 bg-opacity-40 backdrop-blur-md  border-4 border-violet-400 px-10 py-7 mt-3 mx-8 rounded-2xl shadow-2xl animate-slideDown"
+
+        >
+          <h3 className="text-white font-bold text-xl mb-6 text-center">
+            Quick Actions
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            {hotkeys.map(({ key, title, path }) => (
+              <NavLink
+                key={key}
+                to={path}
+                className={({ isActive }) =>
+                  `bg-custom-violet text-center py-4 px-5 rounded-lg font-semibold shadow-md transition-all duration-300 transform hover:scale-105 active:scale-95 ${isActive
+                    ? "bg-custom-violet text-indigo-700 font-bold shadow-lg"
+                    : "bg-violet-600  text-white hover:bg-opacity-30"
+                  }`
+                }
+              >
+                {title}
+              </NavLink>
+            ))}
+          </div>
         </div>
       )}
+
+      {/* Animations */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-15px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.25s ease-out; }
+        .animate-slideDown { animation: slideDown 0.35s ease-out; }
+      `}</style>
     </nav>
   );
 };

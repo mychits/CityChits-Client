@@ -66,7 +66,12 @@ const Enroll = () => {
     chit_asking_month: "",
   });
   const [searchText, setSearchText] = useState("");
-  
+
+  // NEW: State for Filters
+  const [paymentTypeFilter, setPaymentTypeFilter] = useState("");
+  const [referredTypeFilter, setReferredTypeFilter] = useState("");
+  const [chitMonthFilter, setChitMonthFilter] = useState("");
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(9); // Default 9 items per page to match 3x3 grid
@@ -108,9 +113,9 @@ const Enroll = () => {
         setTableEnrolls([]);
         setIsDataTableLoading(true);
         const response = await api.get(url);
-        if (response.data && response.data.length > 0) {
-          setFilteredUsers(response.data);
-          const formattedData = response.data.map((group, index) => {
+        if (response?.data && response?.data?.length > 0) {
+          setFilteredUsers(response?.data);
+          const formattedData = response?.data.map((group, index) => {
             if (!group?.group_id || !group?.user_id) return {};
             return {
               _id: group?._id,
@@ -127,11 +132,11 @@ const Enroll = () => {
                   ? `${group.agent.name} | ${group.agent.phone_number}`
                   : group?.referred_customer?.full_name &&
                     group?.referred_customer?.phone_number
-                  ? `${group.referred_customer.full_name} | ${group?.referred_customer?.phone_number}`
-                  : group?.referred_lead?.lead_name &&
-                    group?.referred_lead?.agent_number
-                  ? `${group.referred_lead.lead_name} | ${group.referred_lead.agent_number}`
-                  : "N/A",
+                    ? `${group.referred_customer.full_name} | ${group?.referred_customer?.phone_number}`
+                    : group?.referred_lead?.lead_name &&
+                      group?.referred_lead?.agent_number
+                      ? `${group.referred_lead.lead_name} | ${group.referred_lead.agent_number}`
+                      : "N/A",
               ticket: group.tickets,
               action: (
                 <div className="flex justify-center items-center gap-2">
@@ -285,11 +290,11 @@ const Enroll = () => {
                   ? `${group.agent.name} | ${group.agent.phone_number}`
                   : group?.referred_customer?.full_name &&
                     group?.referred_customer?.phone_number
-                  ? `${group.referred_customer.full_name} | ${group?.referred_customer?.phone_number}`
-                  : group?.referred_lead?.lead_name &&
-                    group?.referred_lead?.agent_number
-                  ? `${group.referred_lead.lead_name} | ${group.referred_lead.agent_number}`
-                  : "N/A",
+                    ? `${group.referred_customer.full_name} | ${group?.referred_customer?.phone_number}`
+                    : group?.referred_lead?.lead_name &&
+                      group?.referred_lead?.agent_number
+                      ? `${group.referred_lead.lead_name} | ${group.referred_lead.agent_number}`
+                      : "N/A",
               ticket: group.tickets,
               action: (
                 <div className="flex justify-center items-center gap-2">
@@ -346,14 +351,31 @@ const Enroll = () => {
 
   // Get current items for pagination
   const getCurrentItems = () => {
-    const filteredData = searchText 
-      ? TableEnrolls.filter(item => 
-          item.name?.toLowerCase().includes(searchText.toLowerCase()) ||
-          item.phone_number?.includes(searchText) ||
-          item.group_name?.toLowerCase().includes(searchText.toLowerCase())
-        )
-      : TableEnrolls;
-    
+    let filteredData = [...TableEnrolls]; // Start with all data
+
+    // Apply Search Filter
+    if (searchText) {
+      filteredData = filteredData.filter(item =>
+        item.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.phone_number?.includes(searchText) ||
+        item.group_name?.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+
+    // Apply New Filters
+    if (paymentTypeFilter) {
+      filteredData = filteredData.filter(item => item.payment_type === paymentTypeFilter);
+    }
+
+    if (referredTypeFilter) {
+      filteredData = filteredData.filter(item => item.referred_type === referredTypeFilter);
+    }
+
+    if (chitMonthFilter) {
+      filteredData = filteredData.filter(item => item.chit_asking_month?.toString() === chitMonthFilter);
+    }
+
+    // Apply Pagination
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     return filteredData.slice(indexOfFirstItem, indexOfLastItem);
@@ -526,9 +548,9 @@ const Enroll = () => {
   const handleDeleteGroup = async () => {
     if (currentGroup) {
       try {
-        await api.delete(`/enroll/delete-enroll/${currentGroup._id}`,{
-          deleted_by:admin,
-          deleted_at:new Date()
+        await api.delete(`/enroll/delete-enroll/${currentGroup._id}`, {
+          deleted_by: admin,
+          deleted_at: new Date()
         });
         setShowModalDelete(false);
         setCurrentGroup(null);
@@ -645,10 +667,10 @@ const Enroll = () => {
             (response.data?.agent
               ? "Agent"
               : response.data?.referred_customer
-              ? "Customer"
-              : response.data?.referred_lead
-              ? "Leads"
-              : ""),
+                ? "Customer"
+                : response.data?.referred_lead
+                  ? "Leads"
+                  : ""),
           chit_asking_month:
             response?.data?.chit_asking_month ?? prev.chit_asking_month,
         }));
@@ -727,10 +749,9 @@ const Enroll = () => {
     }
   };
 
-  // Card-based layout for displaying enrollments
+
   const renderEnrollmentCards = () => {
     const currentItems = getCurrentItems();
-    
     if (TableEnrolls.length === 0 && isDataTableLoading) {
       return (
         <div className="flex justify-center items-center h-64">
@@ -738,7 +759,6 @@ const Enroll = () => {
         </div>
       );
     }
-
     if (currentItems.length === 0 && !isDataTableLoading) {
       return (
         <div className="flex justify-center items-center h-64 text-gray-500 col-span-3">
@@ -746,11 +766,10 @@ const Enroll = () => {
         </div>
       );
     }
-
     return currentItems.map((enrollment, index) => (
       <div
         key={enrollment._id}
-        className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-300 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200"
+        className="bg-gradient-to-br from-purple-50 to-purple-100 border border-custom-violet rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200"
       >
         <div className="flex justify-between items-start mb-3">
           <h3 className="font-semibold text-purple-800">{enrollment.group_name}</h3>
@@ -761,10 +780,9 @@ const Enroll = () => {
             <IoMdMore />
           </button>
         </div>
-        
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
           <div className="text-center">
-            <p className="text-purple-700 font-medium">₹{enrollment.ticket}</p>
+            <p className="text-purple-700 font-medium">{enrollment.ticket}</p>
             <p className="text-gray-600">Ticket</p>
           </div>
           <div className="text-center">
@@ -776,7 +794,6 @@ const Enroll = () => {
             <p className="text-gray-600">Phone</p>
           </div>
         </div>
-
         <div className="mt-4 pt-3 border-t border-purple-200">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             <div>
@@ -797,7 +814,6 @@ const Enroll = () => {
             </div>
           </div>
         </div>
-
         <div className="mt-4 flex justify-end">
           <button
             className="text-purple-700 hover:text-purple-900"
@@ -852,21 +868,84 @@ const Enroll = () => {
                     </Select.Option>
                   ))}
                 </Select>
+
+
                 <button
                   onClick={() => setShowModal(true)}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                  className="ml-4 bg-custom-violet text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
                 >
                   + Add Enrollment
                 </button>
               </div>
             </div>
 
-            {/* Grid layout for cards */}
+            {/* --- START: NEW FILTER SECTION --- */}
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg border">
+              <h3 className="text-lg font-medium mb-4">Filters</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Payment Type Filter */}
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-gray-700">Payment Type</label>
+                  <Select
+                    placeholder="All Types"
+                    allowClear
+                    onChange={(value) => {
+                      setPaymentTypeFilter(value || "");
+                    }}
+                    className="w-full"
+                  >
+                    {["Daily", "Weekly", "Monthly"].map((type) => (
+                      <Select.Option key={type} value={type}>
+                        {type}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+
+                {/* Referred Type Filter */}
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-gray-700">Referred Type</label>
+                  <Select
+                    placeholder="All Types"
+                    allowClear
+                    onChange={(value) => {
+                      setReferredTypeFilter(value || "");
+                    }}
+                    className="w-full"
+                  >
+                    {["Self Joining", "Customer", "Employee", "Leads", "Others"].map((type) => (
+                      <Select.Option key={type} value={type}>
+                        {type}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+
+
+
+                {/* Clear Filters Button */}
+                <div className="flex items-end">
+                  <button
+                    onClick={() => {
+                      setPaymentTypeFilter("");
+                      setReferredTypeFilter("");
+                      setChitMonthFilter("");
+                    }}
+                    className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md w-full"
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+              </div>
+            </div>
+
+
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {renderEnrollmentCards()}
             </div>
 
-            {/* Pagination Controls */}
+
             {TableEnrolls.length > 0 && (
               <div className="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div className="flex items-center">
@@ -883,16 +962,15 @@ const Enroll = () => {
                     <Select.Option value={24}>24</Select.Option>
                   </Select>
                 </div>
-                
                 <Pagination
                   current={currentPage}
                   pageSize={itemsPerPage}
-                  total={searchText 
-                    ? TableEnrolls.filter(item => 
-                        item.name?.toLowerCase().includes(searchText.toLowerCase()) ||
-                        item.phone_number?.includes(searchText) ||
-                        item.group_name?.toLowerCase().includes(searchText.toLowerCase())
-                      ).length
+                  total={searchText
+                    ? TableEnrolls.filter(item =>
+                      item.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+                      item.phone_number?.includes(searchText) ||
+                      item.group_name?.toLowerCase().includes(searchText.toLowerCase())
+                    ).length
                     : TableEnrolls.length}
                   onChange={handlePageChange}
                   showSizeChanger={false}
@@ -904,7 +982,6 @@ const Enroll = () => {
             )}
           </div>
         </div>
-
         {/* Modals remain unchanged */}
         <Modal
           isVisible={showModal}
@@ -1009,7 +1086,7 @@ const Enroll = () => {
                   ))}
                 </Select>
               </div>
-              <div className="w-full">
+              {/* <div className="w-full">
                 <label className="block mb-2 text-sm font-medium text-gray-900">
                   Chit Asking Month
                 </label>
@@ -1021,7 +1098,7 @@ const Enroll = () => {
                   placeholder="Enter month number (e.g., 1 for Jan)"
                   className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                 />
-              </div>
+              </div> */}
               <div className="w-full">
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
@@ -1212,29 +1289,27 @@ const Enroll = () => {
                       (!isVerified || availableTicketsAdd.length === 0))
                   }
                   onClick={handleMultiStep}
-                  className={`w-1/4 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center ${
-                    loading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : enrollmentStep === "verify"
+                  className={`w-1/4 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center ${loading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : enrollmentStep === "verify"
                       ? "bg-gray-600 hover:bg-gray-700"
                       : enrollmentStep === "continue"
-                      ? "bg-green-600 hover:bg-green-700"
-                      : "bg-blue-700 hover:bg-blue-800"
-                  }`}
+                        ? "bg-green-600 hover:bg-green-700"
+                        : "bg-blue-700 hover:bg-blue-800"
+                    }`}
                 >
                   {loading
                     ? "Processing..."
                     : enrollmentStep === "verify"
-                    ? "Verify"
-                    : enrollmentStep === "continue"
-                    ? "Continue"
-                    : "Submit"}
+                      ? "Verify"
+                      : enrollmentStep === "continue"
+                        ? "Continue"
+                        : "Submit"}
                 </button>
               </div>
             </form>
           </div>
         </Modal>
-
         <Modal
           isVisible={showModalUpdate}
           onClose={() => {
@@ -1502,7 +1577,6 @@ const Enroll = () => {
             </form>
           </div>
         </Modal>
-
         <Modal
           isVisible={showModalDelete}
           onClose={() => {
