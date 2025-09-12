@@ -44,7 +44,7 @@ const HardTransfer = () => {
   const fetchTransfers = async () => {
     try {
       setIsDataTableLoading(true);
-      const res = await api.get("/enroll/transfer/get-all/");
+      const res = await api.get("/enroll/transfer/get-all/Hard");
       console.log(res.data,"response data")
       const formattedData = (res.data || []).map((transfer, index) => {
         const fromGroupName = (
@@ -304,6 +304,8 @@ const HardTransfer = () => {
             <DataTable
               data={filterOption(transferData, searchText)}
               columns={columns}
+              exportedPdfName="Hard Amount Transfer"
+              exportedFileName="Hard Amount Transfer.csv"
             />
           ) : (
             <CircularLoader

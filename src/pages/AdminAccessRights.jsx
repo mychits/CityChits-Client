@@ -79,6 +79,7 @@ const AdminAccessRights = () => {
       add_payment: "",
       view_payment: "",
       edit_payment: "",
+      edit_limited_payment: "",
       delete_payment: "",
       view_reports: "",
       view_daybook: "",
@@ -135,6 +136,7 @@ const AdminAccessRights = () => {
       add_payment: "",
       view_payment: "",
       edit_payment: "",
+      edit_limited_payment: "",
       delete_payment: "",
       view_reports: "",
       view_daybook: "",
@@ -297,6 +299,7 @@ const AdminAccessRights = () => {
             add_payment: "",
             view_payment: "",
             edit_payment: "",
+            edit_limited_payment: "",
             delete_payment: "",
             view_reports: "",
             view_daybook: "",
@@ -543,6 +546,9 @@ const AdminAccessRights = () => {
           edit_payment:
             response.data?.access_permissions?.edit_payment === "true" ||
             response.data?.access_permission?.edit_payment === true,
+          edit_limited_payment:
+            response.data?.access_permissions?.edit_limited_payment === "true" ||
+            response.data?.access_permission?.edit_limited_payment === true,
           delete_payment:
             response.data?.access_permissions?.delete_payment === "true" ||
             response.data?.access_permission?.delete_payment === true,
@@ -709,13 +715,8 @@ const AdminAccessRights = () => {
                 updateHandler={handleUpdateModalOpen}
                 data={filterOption(TableAgents, searchText)}
                 columns={columns}
-                exportedFileName={`Employees-${
-                  TableAgents.length > 0
-                    ? TableAgents[0].name +
-                      " to " +
-                      TableAgents[TableAgents.length - 1].name
-                    : "empty"
-                }.csv`}
+                exportedPdfName={`Admin Access Rights-${new Date().toISOString()?.split("T")[0]}`}
+                exportedFileName={`Admin Access Rights Employees.csv`}
               />
             ) : (
               <CircularLoader
@@ -1736,6 +1737,32 @@ const AdminAccessRights = () => {
                         access_permissions: {
                           ...formData.access_permissions,
                           edit_payment: e.target.checked,
+                        },
+                      })
+                    }
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  <span className="ml-3 text-sm text-gray-600">
+                    {formData.access_permissions.edit_payment ? "Yes" : "No"}
+                  </span>
+                </label>
+              </div>
+
+              <div className="flex items-center justify-between mt-4">
+                <span className="text-sm font-medium text-gray-900">
+                  Edit Limited Payment
+                </span>
+                <label className="inline-flex relative items-center cursor-pointer">
+                  <Input
+                    type="checkbox"
+                    checked={formData.access_permissions.edit_limited_payment}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        access_permissions: {
+                          ...formData.access_permissions,
+                          edit_limited_payment: e.target.checked,
                         },
                       })
                     }
@@ -3170,6 +3197,33 @@ const AdminAccessRights = () => {
                   <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                   <span className="ml-3 text-sm text-gray-600">
                     {updateFormData.access_permissions.edit_payment
+                      ? "Yes"
+                      : "No"}
+                  </span>
+                </label>
+              </div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-900">
+                  Edit Limited Payment
+                </span>
+                <label className="inline-flex relative items-center cursor-pointer">
+                  <Input
+                    type="checkbox"
+                    checked={updateFormData.access_permissions.edit_limited_payment}
+                    onChange={(e) =>
+                      setUpdateFormData({
+                        ...updateFormData,
+                        access_permissions: {
+                          ...updateFormData.access_permissions,
+                          edit_limited_payment: e.target.checked,
+                        },
+                      })
+                    }
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  <span className="ml-3 text-sm text-gray-600">
+                    {updateFormData.access_permissions.edit_limited_payment
                       ? "Yes"
                       : "No"}
                   </span>

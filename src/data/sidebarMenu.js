@@ -275,7 +275,7 @@ const sidebarMenu = [
 				submenuItems: [
 					{
 						id: ids.sixteen,
-						title: "Filter Groups",
+						title: "Mobile Access Groups",
 						icon: FaFilter,
 						link: "/filter-groups",
 					},

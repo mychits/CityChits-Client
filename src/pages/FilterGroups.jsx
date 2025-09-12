@@ -23,6 +23,14 @@ const FilterGroups = () => {
   const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [reloadTrigger, setReloadTrigger] = useState(0);
+ 
+
+
+
+
+  const [updatingGroups, setUpdatingGroups] = useState(new Set());
+
+  const [filterGroup, setFilterGroup] = useState("");
   const onGlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
@@ -44,10 +52,11 @@ const FilterGroups = () => {
     end_date: "",
     minimum_bid: "",
     maximum_bid: "",
-    commission: 1,
+    commission: 5,
     incentives: "",
     reg_fee: "",
     filter_group: "",
+    createdAt: "",
   });
   const [errors, setErrors] = useState({});
   const [updateFormData, setUpdateFormData] = useState({
@@ -70,6 +79,8 @@ const FilterGroups = () => {
   const groupOptions = [
     { value: "New Groups", label: "New Groups" },
     { value: "Ongoing Groups", label: "Ongoing Groups" },
+    { value: "Upcoming Groups", label: "Upcoming Groups" },
+    { value: "Vacant Groups", label: "Vacant Groups" },
   ];
 
   const groupType = [{value: "divident", label: "Divident Group"},
@@ -116,9 +127,28 @@ const FilterGroups = () => {
       try {
         setIsLoading(true);
         const response = await api.get("/group/get-group-admin");
+        const allGroups = response.data;
         setGroups(response.data);
-        const formattedData = response.data.map((group, index) => ({
+        const filteredGroups = filterGroup
+          ? allGroups.filter((group) => group?.filter_group === filterGroup)
+          : allGroups;
+        const formattedData = filteredGroups.map((group, index) => ({
           _id: group?._id,
+          checkBox: (
+            <div className="flex justify-center gap-2">
+              <div className="border border-red-400 text-white px-4 py-2 rounded-md shadow hover:border-red-700 transition duration-200">
+                <input
+                  type="checkbox"
+                  checked={group.mobile_access}
+                  onChange={() =>
+                    handleMobileAccessChange(group._id, !group.mobile_access)
+                  }
+                  disabled={updatingGroups.has(group._id)}
+                  className="form-checkbox h-4 w-4 text-red-600 focus:ring-0 focus:ring-offset-0 focus:outline-none checked:bg-red-600 border-gray-300 rounded"
+                />
+              </div>
+            </div>
+          ),
           id: index + 1,
           name: group?.group_name,
           type:
@@ -129,7 +159,7 @@ const FilterGroups = () => {
           installment: group?.group_install,
           members: group?.group_members,
           filter_group: group?.filter_group,
-          date: group?.createdAt,
+          date: group?.createdAt?.split("T")[0],
           action: (
             <div className="flex justify-center gap-2">
               {/* <button
@@ -193,7 +223,7 @@ const FilterGroups = () => {
       }
     };
     fetchGroups();
-  }, [reloadTrigger]);
+  }, [updatingGroups, reloadTrigger, filterGroup]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -307,6 +337,44 @@ const FilterGroups = () => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+    const handleMobileAccessChange = async (groupId, newValue) => {
+    setUpdatingGroups((prev) => new Set([...prev, groupId]));
+
+    try {
+      setGroups((prev) =>
+        prev.map((group) =>
+          group._id === groupId ? { ...group, mobile_access: newValue } : group
+        )
+      );
+
+      await api.patch(`/group/update-mobile-access/${groupId}`, {
+        mobile_access: newValue,
+      });
+
+      const response = await api.get("/group/get-group-admin");
+      setGroups(response.data);
+    } catch (error) {
+      setGroups((prev) =>
+        prev.map((group) =>
+          group._id === groupId ? { ...group, mobile_access: !newValue } : group
+        )
+      );
+      console.error("Error updating mobile access:", error);
+      setAlertConfig({
+        message: "Failed to update mobile access",
+        type: "error",
+
+        visibility: true,
+      });
+    } finally {
+      setUpdatingGroups((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(groupId);
+        return newSet;
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -453,9 +521,11 @@ const FilterGroups = () => {
   };
 
   const columns = [
+    { key: "checkBox", header: "Mobile Access" },
     { key: "id", header: "SL. NO" },
     { key: "name", header: "Group Name" },
     { key: "type", header: "Group Type" },
+    {key: "date", header: "Created On"},
     { key: "value", header: "Group Value" },
     { key: "installment", header: "Group Installment" },
     { key: "members", header: "Group Members" },
@@ -482,9 +552,35 @@ const FilterGroups = () => {
           <Sidebar />
 
           <div className="flex-grow p-7">
+            <h1 className="text-2xl text-center font-semibold">Filter Groups</h1>
+             <div className="mb-10">
+              <label className="font-bold text-xl mb-2">Search or Filter Group</label>
+              <div className="flex justify-between items-center w-full mt-6">
+              <Select
+                placeholder="Filter by Group"
+                value={filterGroup}
+                popupMatchSelectWidth={false}
+                      showSearch
+                      className="w-full  h-14 max-w-md"
+                      filterOption={(input, option) =>
+                        option?.label
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                onChange={(value) => setFilterGroup(value)}
+                options={[
+                  { value: "", label: "All Groups" }, 
+                  ...groupOptions, 
+                ]}
+              />
+              </div>
+            </div>
             <div className="mt-6 mb-8">
+              
               <div className="flex justify-between items-center w-full">
-                <h1 className="text-2xl font-semibold">Filter Groups</h1>
+                <h1 className="text-2xl content-center font-semibold"></h1>
+             
                 <button
                   onClick={() => {
                     setShowModal(true);
@@ -503,13 +599,8 @@ const FilterGroups = () => {
                 updateHandler={handleUpdateModalOpen}
                 data={filterOption(TableGroups, searchText)}
                 columns={columns}
-                exportedFileName={`Groups-${
-                  TableGroups.length > 0
-                    ? TableGroups[0].date.split("T")[0] +
-                      " to " +
-                      TableGroups[TableGroups.length - 1].date.split("T")[0]
-                    : "empty"
-                }.csv`}
+                exportedPdfName={`Filter Groups`}
+                exportedFileName={`Filter Groups.csv`}
               />
             ) : (
               <CircularLoader
@@ -910,19 +1001,7 @@ const FilterGroups = () => {
                 >
                   Filter Groups <span className="text-red-500 ">*</span>
                 </label>
-                {/* <select
-                  name="filter_group"
-                  id="filter"
-                  value={updateFormData.filter_group}
-                  onChange={handleInputChange}
-                  required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
-                >
-                  <option value="">Select Filter Groups</option>
-                  <option value="AllGroups">All Groups</option>
-                  <option value="NewGroups">New Groups</option>
-                  <option value="OngoingGroups">Ongoing Groups</option>
-                </select> */}
+              
                 <Select
                   className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                   placeholder="Select Filter Groups"

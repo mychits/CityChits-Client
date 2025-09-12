@@ -550,7 +550,7 @@ const BecomeAgent = () => {
                     value={formData.agent_id_proof_type}
                     onChange={handleChange}
                     id="text"
-                    placeholder="Enter Pincode"
+                    placeholder="Enter ID Type"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
@@ -622,7 +622,7 @@ const BecomeAgent = () => {
                     value={formData.agent_bank_account_ifsc_code}
                     onChange={handleChange}
                     id="text"
-                    placeholder="Enter Bank Account Number"
+                    placeholder="Enter Bank IFSC Code"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
@@ -646,7 +646,7 @@ const BecomeAgent = () => {
                     value={formData.agent_experience}
                     onChange={handleChange}
                     id="text"
-                    placeholder="Enter Bank Account Number"
+                    placeholder="Enter  Experience"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />

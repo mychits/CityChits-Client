@@ -6,9 +6,8 @@ import { CiEdit } from "react-icons/ci";
 import Modal from "../components/modals/Modal";
 import axios from "axios";
 import api from "../instance/TokenInstance";
-import filterOption from "../helpers/filterOption";
 import DataTable from "../components/layouts/Datatable";
-import CustomAlert from "../components/alerts/CustomAlert";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import Navbar from "../components/layouts/Navbar";
 import { IoMdMore } from "react-icons/io";
 import { Input, Select, Dropdown, Tooltip } from "antd";
@@ -37,7 +36,7 @@ const Lead = () => {
   const whatsappEnable = true;
   const [leadShowModal, setLeadShowModal] = useState(false);
   const [selectedLeadData, setSelectedLeadData] = useState(null);
-  const GlobalSearchChangeHandler = (e) => {
+  const onGlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
@@ -87,7 +86,7 @@ const Lead = () => {
     fetchGroups();
   }, [reloadTrigger]);
 
-      const handleAssignTask = (leadId, leadTypeName) => {
+    const handleAssignTask = (leadId, leadTypeName) => {
   navigate("/task", { state: { leadId , leadTypeName } }); //  pass leadId
 }
 
@@ -106,15 +105,14 @@ const Lead = () => {
           lead_needs: group?.lead_needs,
           group_id: group?.group_id?.group_name,
           date: group?.createdAt.split("T")[0],
-          lead_type:
-            group.lead_type === "agent" ? "employee" : group?.lead_type,
+          lead_type: group.lead_type,
           note: group?.note,
           lead_type_name:
-            group.lead_type === "customer"
-              ? group?.lead_customer?.full_name
-              : group.lead_type === "agent"
-                ? group?.lead_agent?.name
-                : "",
+  group.lead_type === "customer"
+    ? group?.lead_customer?.full_name
+    : group.lead_type === "agent" || group.lead_type === "employee"
+      ? group?.lead_agent?.name
+      : "",
           action: (
             <div className="flex justify-center gap-2">
               <Dropdown
@@ -135,7 +133,7 @@ const Lead = () => {
                     {
                       key: "2",
                       label: (
-
+                       
                         <Tooltip title="Lead to Customer">
                           <div
                             className="text-purple-900 cursor-pointer font-bold"
@@ -148,7 +146,7 @@ const Lead = () => {
                         </Tooltip>
                       ),
                     },
-                    {
+                     {
                       key: "3",
                       label: (
                         <div
@@ -247,7 +245,7 @@ const Lead = () => {
     }));
   };
 
-  const handleSoftRemove = async (leadId) => {
+   const handleSoftRemove = async (leadId) => {
     try {
       await api.put(`/lead/soft-delete-lead/${leadId}`);
       setReloadTrigger((prev) => prev + 1);
@@ -310,7 +308,7 @@ const Lead = () => {
     if (data.lead_type === "agent" && !data.lead_agent) {
       newErrors.lead_agent = "Agent selection is required";
     }
-      if (data.lead_type === "employee" && !data.lead_agent) {
+     if (data.lead_type === "employee" && !data.lead_agent) {
       newErrors.lead_agent = "Agent selection is required";
     }
     if (!data.lead_needs.toString()) {
@@ -433,10 +431,10 @@ const Lead = () => {
   };
 
   const regex = {
-    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,      // Validates email format
-    pincode: /^\d{6}$/,                       // Validates 6 digits for pincode
-    adhaar: /^\d{12}$/                        // Validates 12 digits for Aadhar number
-  };
+  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,      // Validates email format
+  pincode: /^\d{6}$/,                       // Validates 6 digits for pincode
+  adhaar: /^\d{12}$/                        // Validates 12 digits for Aadhar number
+};
 
   const validateConvertToCustomer = (data) => {
     const newErrors = {};
@@ -463,9 +461,9 @@ const Lead = () => {
       newErrors.adhaar_no = "Invalid Aadhar number (12 digits required)";
     }
 
-    if (data.pan_no && data.pan_no.trim().length !== 10) {
-      newErrors.pan_no = "Invalid PAN format (e.g., ABCDE1234F)";
-    }
+   if (data.pan_no && data.pan_no.trim().length !== 10) {
+  newErrors.pan_no = "Invalid PAN format (e.g., ABCDE1234F)";
+}
 
     if (!data.address || data.address.trim().length < 3) {
       newErrors.address = "Address should be at least 3 characters";
@@ -520,7 +518,7 @@ const Lead = () => {
     { key: "action", header: "Action" },
   ];
 
-  const handleConvertCustomerSubmit = async (e) => {
+   const handleConvertCustomerSubmit = async (e) => {
     e.preventDefault();
 
     const valid = validateConvertToCustomer(formData);
@@ -574,9 +572,9 @@ const Lead = () => {
       setFormData({
         full_name: data?.lead_name || "",
         phone_number: data?.lead_phone || "",
-        lead_profession: data?.lead_profession || "", // ✅ Ensure added
-        group_id: data?.group_id?._id || "", // ✅ Ensure added
-        lead_type: data?.lead_type || "", // ✅ Ensure added
+        lead_profession: data?.lead_profession || "", //  Ensure added
+        group_id: data?.group_id?._id || "", //  Ensure added
+        lead_type: data?.lead_type || "", //  Ensure added
         lead_agent: data?.lead_agent?._id || "",
         email: "",
         password: "",
@@ -606,38 +604,107 @@ const Lead = () => {
   return (
     <>
       <div>
-        <CustomAlert
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-        />
         <div className="flex mt-20">
-          <Sidebar navSearchBarVisibility={true} onGlobalSearchChangeHandler={GlobalSearchChangeHandler} />
+          <Navbar
+            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
+          <Sidebar />
 
+          <div className="flex-grow p-7">
+            <div className="mt-6 mb-8 ">
+              <div className="flex justify-between items-center w-full ">
+                <h1 className="text-2xl font-semibold ">Leads</h1>
+                <button
+                  onClick={() => {
+                    setShowModal(true);
+                    setErrors({});
+                  }}
+                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                >
+                  + Add Lead
+                </button>
+              </div>
+            </div>
 
+            {TableGroups.length > 0 && !isLoading ? (
+              <DataTable
+                updateHandler={handleUpdateModalOpen}
+                data={TableGroups.filter((item) =>
+                  Object.values(item).some((value) =>
+                    String(value)
+                      .toLowerCase()
+                      .includes(searchText.toLowerCase())
+                  )
+                )}
+                columns={columns}
+                exportedPdfName="Lead"
+                exportedFileName={`Leads.csv`}
+              />
+            ) : (
+              <CircularLoader />
+            )}
 
-          <div className="flex-grow p-7 w-8 ">
-            <DataTable
-              catcher="_id"
-              updateHandler={handleUpdateModalOpen}
-              data={filterOption(TableGroups, searchText)}
-              columns={columns}
-              selectionColor="custom-violet"
-                  exportedFileName={`Leads-${TableGroups.length > 0
-                  ? TableGroups[0].date +
-                  " to " +
-                  TableGroups[TableGroups.length - 1].date
-                  : "empty"
-                  }.csv`}
-              onClickHandler={() => {
-                setShowModal(true);
-                setErrors({});
-              }}
-              iconName="Leads"
-              clickableIconName="Add Lead"
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+              {/* {filteredGroups.length === 0 ? (
+                <div className="flex justify-center items-center h-64">
+                  <p className="text-gray-500 text-lg">No groups added yet</p>
+                </div>
+              ) : (
+                filteredGroups.map((group) => (
+                  <div
+                    key={group.id}
+                    className="bg-white border border-gray-300 rounded-xl p-6 shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-xl"
+                  >
+                    <div className="flex flex-col items-center">
+                      <h2 className="text-xl font-bold mb-3 text-gray-700 text-center">
+                        {group.group_name}
+                      </h2>
+                      <p className="">{group.group_type.charAt(0).toUpperCase() + group.group_type.slice(1)} Group</p>
+                      <div className="flex gap-16 py-3">
+                        <p className="text-gray-500 mb-2 text-center">
+                          <span className="font-medium text-gray-700 text-lg">
+                            {group.group_members}
+                          </span>
+                          <br />
+                          <span className="font-bold text-sm">Members</span>
+                        </p>
+                        <p className="text-gray-500 mb-4 text-center">
+                          <span className="font-medium text-gray-700 text-lg">
+                            ₹{group.group_install}
+                          </span>
+                          <br />
+                          <span className="font-bold text-sm">Installment</span>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => handleUpdateModalOpen(group._id)}
+                        className="border border-green-400 text-white px-4 py-2 rounded-md shadow hover:border-green-700 transition duration-200"
+                      >
+                        <CiEdit color="green" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteModalOpen(group._id)}
+                        className="border border-red-400 text-white px-4 py-2 rounded-md shadow hover:border-red-700 transition duration-200"
+                      >
+                        <MdDelete color="red" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )} */}
+            </div>
           </div>
-
         </div>
         <Modal
           isVisible={showModal}
@@ -704,7 +771,7 @@ const Lead = () => {
                     Lead Work/Profession{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
-
+                 
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Lead Work/Profession "
@@ -782,20 +849,7 @@ const Lead = () => {
                 >
                   Lead Source Type <span className="text-red-500 ">*</span>
                 </label>
-                {/* <select
-                  name="lead_type"
-                  id="category"
-                  value={formData.lead_type}
-                  onChange={handleChange}
-                  required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
-                >
-                  <option value="">Select Lead Source Type</option>
-                  <option value="social">Social Media</option>
-                  <option value="customer">Customer</option>
-                  <option value="agent">Employee</option>
-                  <option value="walkin">Walkin</option>
-                </select> */}
+           
                 <Select
                   className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                   placeholder="Select Lead Source Type "
@@ -835,21 +889,7 @@ const Lead = () => {
                     >
                       Customers
                     </label>
-                    {/* <select
-                      name="lead_customer"
-                      id="category"
-                      value={formData.lead_customer}
-                      onChange={handleChange}
-                      required
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
-                    >
-                      <option value="">Select Customer</option>
-                      {users.map((user) => (
-                        <option key={user?._id} value={user?._id}>
-                          {user?.full_name}
-                        </option>
-                      ))}
-                    </select> */}
+                  
                     <Select
                       className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                       placeholder="Select Or Search Customer"
@@ -881,47 +921,7 @@ const Lead = () => {
                   </div>
                 </>
               )}
-               {formData.lead_type === "employee" && (
-                <>
-                  <div className="w-full">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="category"
-                    >
-                      Employee
-                    </label>
-                   
-                    <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
-                      placeholder="Select Or Search Employee"
-                      popupMatchSelectWidth={false}
-                      showSearch
-                      name="lead_agent"
-                      filterOption={(input, option) =>
-                        option.children
-                          .toString()
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      value={formData?.lead_agent || undefined}
-                      onChange={(value) =>
-                        handleAntDSelect("lead_agent", value)
-                      }
-                    >
-                      {employees.map((emp) => (
-                        <Select.Option key={emp._id} value={emp._id}>
-                          {emp.name}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                    {errors.lead_agent && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.lead_agent}
-                      </p>
-                    )}
-                  </div>
-                </>
-              )}
+
               {formData.lead_type === "agent" && (
                 <>
                   <div className="w-full">
@@ -931,21 +931,7 @@ const Lead = () => {
                     >
                       Agent
                     </label>
-                    {/* <select
-                      name="lead_agent"
-                      id="category"
-                      value={formData.lead_agent}
-                      onChange={handleChange}
-                      required
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
-                    >
-                      <option value="">Select Agent</option>
-                      {agents.map((agent) => (
-                        <option key={agent._id} value={agent._id}>
-                          {agent.name}
-                        </option>
-                      ))}
-                    </select> */}
+                  
                     <Select
                       className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                       placeholder="Select Or Search Agent"
@@ -977,7 +963,7 @@ const Lead = () => {
                   </div>
                 </>
               )}
-              {/* {formData.lead_type === "employee" && (
+              {formData.lead_type === "employee" && (
                 <>
                   <div className="w-full">
                     <label
@@ -1017,7 +1003,7 @@ const Lead = () => {
                     )}
                   </div>
                 </>
-              )} */}
+              )}
               <div className="w-full">
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
@@ -1178,7 +1164,7 @@ const Lead = () => {
                     Lead Work/Profession{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
-
+                 
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Lead Work/Profession "
@@ -1357,47 +1343,6 @@ const Lead = () => {
                   </div>
                 </>
               )}{" "}
-                 {updateFormData.lead_type === "employee" && (
-                <>
-                  <div className="w-full">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="category"
-                    >
-                      Employee
-                    </label>
-                  
-                    <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
-                      placeholder="Select Or Search Employee"
-                      popupMatchSelectWidth={false}
-                      showSearch
-                      name="lead_agent"
-                      filterOption={(input, option) =>
-                        option.children
-                          .toString()
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      value={updateFormData?.lead_agent || undefined}
-                      onChange={(value) =>
-                        handleAntInputDSelect("lead_agent", value)
-                      }
-                    >
-                      {employees.map((emp) => (
-                        <Select.Option key={emp._id} value={emp._id}>
-                          {emp.name}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                    {errors.lead_agent && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.lead_agent}
-                      </p>
-                    )}
-                  </div>
-                </>
-              )}
               {updateFormData.lead_type === "agent" && (
                 <>
                   <div className="w-full">
@@ -1452,7 +1397,7 @@ const Lead = () => {
                   </div>
                 </>
               )}
-              {/* {updateFormData.lead_type === "employee" && (
+              {updateFormData.lead_type === "employee" && (
                 <>
                   <div className="w-full">
                     <label
@@ -1492,7 +1437,7 @@ const Lead = () => {
                     )}
                   </div>
                 </>
-              )} */}
+              )}
               <label
                 className="block mb-2 text-sm font-medium text-gray-900"
                 htmlFor="date"
@@ -1626,7 +1571,7 @@ const Lead = () => {
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
-
+               
                 </div>
               </div>
               <div className="flex flex-row justify-between space-x-4">

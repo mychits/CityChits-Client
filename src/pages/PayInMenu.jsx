@@ -4,7 +4,6 @@ import { HiCurrencyRupee } from "react-icons/hi2";
 import { Banknote, Briefcase, TicketCheck, MoreHorizontal } from "lucide-react";
 import { Link } from "react-router-dom";
 import { CiLink } from "react-icons/ci";
-
 const PayInMenu = () => {
   const payInMenuDivs = [
     {
@@ -19,8 +18,8 @@ const PayInMenu = () => {
       icon: <HiCurrencyRupee size={28} className="text-yellow-600" />,
        href:"/pay-in-menu/payment"
     },
-
-     {
+     
+    {
       id: "#3",
       title: "Payment Links",
       icon: <CiLink  size={28} className="text-green-600" />,

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Sidebar from "../components/layouts/Sidebar";
 import api from "../instance/TokenInstance";
-import { Modal } from "antd";
+import { Button, Drawer, Modal } from "antd";
 import { Dropdown } from "antd";
 import DataTable from "../components/layouts/Datatable";
 import CustomAlert from "../components/alerts/CustomAlert";
@@ -12,6 +12,7 @@ import { Select } from "antd";
 import { IoMdMore } from "react-icons/io";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
+import { Space } from "lucide-react";
 
 const GeneralPaymentOut = () => {
   const [groups, setGroups] = useState([]);
@@ -418,7 +419,7 @@ const GeneralPaymentOut = () => {
     { key: "status", header: "Status" },
     { key: "action", header: "Action" },
   ];
-
+const selectednewGroup = groups.find(g => g._id === selectedAuctionGroupId);
   return (
     <>
       <div className="flex mt-20">
@@ -476,13 +477,16 @@ const GeneralPaymentOut = () => {
                   updateHandler={handleUpdateModalOpen}
                   data={filterOption(TableAuctions, searchText)}
                   columns={columns}
-                  exportedFileName={`Auctions ${
-                    TableAuctions.length > 1
-                      ? TableAuctions[1].date +
-                        " to " +
-                        TableAuctions[TableAuctions.length - 1].date
-                      : "empty"
-                  }.csv`}
+                  exportedPdfName="General Payment Out"
+                  printHeaderKeys={[
+                    "Group Name",
+                    "Balance"
+                  ]}
+                  printHeaderValues={[
+                    selectednewGroup?.group_name,
+                    double.amount
+                  ]}
+                  exportedFileName={`General Payment Out.csv`}
                 />
               ) : (
                 <CircularLoader
@@ -497,12 +501,13 @@ const GeneralPaymentOut = () => {
           </div>
         </div>
 
-        <Modal
+        <Drawer
+         title="Chit Payment Out"
           open={showPaymentModal}
-          title="Payment Out"
+       
           okText="Submit"
-          onCancel={() => setShowPaymentModal(false)}
-          onOk={handleSubmit}
+          onClose={() => setShowPaymentModal(false)}
+          
         >
           {paymentDetails ? (
             <form className="space-y-4">
@@ -513,7 +518,7 @@ const GeneralPaymentOut = () => {
                 <input
                   value={paymentDetails.customerName}
                   readOnly
-                  className="border bg-gray-200 rounded w-full p-2 cursor-not-allowed"
+                  className="border bg-gray-100 rounded w-full p-2 cursor-not-allowed"
                 />
               </div>
               <div>
@@ -521,7 +526,7 @@ const GeneralPaymentOut = () => {
                 <input
                   value={paymentDetails.groupName}
                   readOnly
-                  className="border bg-gray-200 rounded w-full p-2 cursor-not-allowed"
+                  className="border bg-gray-100 rounded w-full p-2 cursor-not-allowed"
                 />
               </div>
               <div>
@@ -530,7 +535,7 @@ const GeneralPaymentOut = () => {
                   name="ticket"
                   value={formData.ticket}
                   readOnly
-                  className="bg-gray-200 border rounded w-full p-2 cursor-not-allowed"
+                  className="bg-gray-100 border rounded w-full p-2 cursor-not-allowed"
                 />
               </div>
               <div>
@@ -544,7 +549,7 @@ const GeneralPaymentOut = () => {
                       winAmount: e.target.value,
                     }))
                   }
-                  className="border bg-gray-200 rounded w-full p-2 cursor-not-allowed"
+                  className="border bg-gray-100 rounded w-full p-2 cursor-not-allowed"
                   readOnly
                 />
               </div>
@@ -556,7 +561,7 @@ const GeneralPaymentOut = () => {
                   name="disbursement_type"
                   value={formData.disbursement_type}
                   readOnly
-                  className="bg-gray-200 border rounded w-full p-2 cursor-not-allowed"
+                  className="bg-gray-100 border rounded w-full p-2 cursor-not-allowed"
                 />
               </div>
               <div>
@@ -624,11 +629,17 @@ const GeneralPaymentOut = () => {
                   rows={2}
                 />
               </div>
+              <div className="flex justify-between">
+            <Button  onClick={() => setShowPaymentModal(false)}>Cancel</Button>
+            <Button onClick={handleSubmit} type="primary">
+              Submit
+            </Button>
+          </div>
             </form>
           ) : (
             <p>Loading payment details…</p>
           )}
-        </Modal>
+        </Drawer>
 
         <Modal
           open={showModalUpdate}

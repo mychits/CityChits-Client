@@ -11,7 +11,7 @@ import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
 import dayjs from "dayjs";
 
-const Enroll = () => {
+const BulkChitPaymentLink = () => {
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
   const [TableEnrolls, setTableEnrolls] = useState([]);
@@ -312,37 +312,24 @@ const Enroll = () => {
     }
   };
 
-  const handleSelectAll = (e) => {
-    const isChecked = e.target.checked;
-    if (isChecked) {
-      const allIds = TableEnrolls.map((enroll) => enroll._id);
-      setSelectedEnrollments(allIds);
-    } else {
-      setSelectedEnrollments([]);
-    }
-    setSelectAll(isChecked);
-  };
+ 
 
-  const handleEnrollmentSelect = (enrollmentId, e) => {
-    const isChecked = e.target.checked;
+const handleSelectAll = (e) => {
+  if (e.target.checked) {
+    const allIds = TableEnrolls.map((enroll) => enroll._id);
+    setSelectedEnrollments(allIds);
+  } else {
+    setSelectedEnrollments([]);
+  }
+};
 
-    setSelectedEnrollments((prev) => {
-      let newSelected;
-      if (isChecked) {
-        newSelected = [...prev, enrollmentId];
-      } else {
-        newSelected = prev.filter((id) => id !== enrollmentId);
-      }
-
-      // Update selectAll based on current visible rows
-      const visibleIds = TableEnrolls.map((enroll) => enroll._id);
-      const allSelected =
-        visibleIds.length > 0 && visibleIds.every((id) => newSelected.includes(id));
-      setSelectAll(allSelected);
-
-      return newSelected;
-    });
-  };
+const handleEnrollmentSelect = (id) => {
+  setSelectedEnrollments((prev) =>
+    prev.includes(id)
+      ? prev.filter((en) => en !== id)
+      : [...prev, id]
+  );
+};
 
   const handleViewDetails = async (enrollmentId) => {
     try {
@@ -486,17 +473,27 @@ const Enroll = () => {
   // Columns configuration
   const columns = [
     {
-      key: "select",
-      header: (
-        <input
-          ref={selectAllCheckboxRef}
-          type="checkbox"
-          checked={selectAll && TableEnrolls.length > 0}
-          onChange={handleSelectAll}
-          className="form-checkbox h-4 w-4 text-blue-600"
-        />
-      ),
-    },
+  key: "select",
+  header: (
+    <input
+      ref={selectAllCheckboxRef}
+      type="checkbox"
+      checked={selectedEnrollments.length === TableEnrolls.length && TableEnrolls.length > 0}
+      onChange={handleSelectAll}
+      className="form-checkbox h-4 w-4 text-blue-600"
+    />
+  ),
+  render: (row) => (
+    <div className={selectedEnrollments.includes(row._id) ? "bg-blue-100" : ""}>
+      <input
+        type="checkbox"
+        checked={selectedEnrollments.includes(row._id)}
+        onChange={() => handleEnrollmentSelect(row._id)}
+        className="form-checkbox h-4 w-4 text-blue-600"
+      />
+    </div>
+  ),
+},
     { key: "id", header: "SL. NO" },
     { key: "name", header: "Customer Name" },
     { key: "phone_number", header: "Customer Phone Number" },
@@ -538,7 +535,7 @@ const Enroll = () => {
           )}
 
           <div className="flex-grow p-7">
-            <h1 className="text-2xl font-semibold">Enrollments</h1>
+            <h1 className="text-2xl font-semibold">Bulk Payment Link</h1>
             <div className="mt-6 mb-8">
               <div className="mb-2">
                 <label>Search or Select Group</label>
@@ -710,4 +707,4 @@ const Enroll = () => {
   );
 };
 
-export default Enroll;
+export default BulkChitPaymentLink;

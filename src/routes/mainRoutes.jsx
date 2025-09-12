@@ -91,6 +91,9 @@ import TargetPayOutMenu from "../pages/TargetPayOutMenu";
 
 import Register from "../pages/Register";
 import IndividualChitPaymentLink from "../pages/IndividualChitPaymentLink";
+import IndividualRegistrationChitPaymentLink from "../pages/IndividualRegistrationChitPaymentLink";
+
+import DueReport from "../pages/DueReport";
 
 const mainRoutes = createBrowserRouter([
   {
@@ -185,6 +188,17 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+
+   {
+    path: "/pay-in-menu/payment-link-menu/registration-chit-payment",
+    element: (
+      <ProtectedRoute>
+        <IndividualRegistrationChitPaymentLink />
+      </ProtectedRoute>
+    ),
+  },
+
+  
   {
     path: "/pay-in-menu/payment-link-menu/chit-bulk-payment",
     element: (
@@ -555,6 +569,11 @@ const mainRoutes = createBrowserRouter([
       { path: "commission-report", element: <CommissionReport /> },
       { path: "enrollment-report", element: <EnrollmentReport /> },
       { path: "payment-summary", element: <PaymentSummary /> },
+
+        {
+        path: "due-report",
+        element: <DueReport />,
+      },
 
       { path: "customer-view", element: <CustomerView /> },
 

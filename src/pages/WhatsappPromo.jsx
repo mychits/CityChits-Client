@@ -46,8 +46,8 @@ const WhatsappPromo = () => {
   const [selectedGroupName, setSelectedGroupName] = useState("");
   const [allLeads, setAllLeads] = useState([]);
   const [allEnrolls, setAllEnrolls] = useState([]);
-  const [selectedLabel, setSelectedLabel] = useState("Today");
-  
+  const [selectedLabel, setSelectedLabel] = useState("All");
+
   // Effect to update the header title based on selectedReferrerType
   useEffect(() => {
     const typeMap = {
@@ -82,54 +82,50 @@ const WhatsappPromo = () => {
     fetchLeads();
   }, []);
 
- const handleSelectFilter = (value) => {
-  setSelectedLabel(value);
+  const handleSelectFilter = (value) => {
+    setSelectedLabel(value);
 
-  const today = new Date();
-  const formatDate = (date) => date.toLocaleDateString("en-CA");
+    const today = new Date();
+    const formatDate = (date) => date.toLocaleDateString("en-CA");
 
-  if (value === "Today") {
-    const formatted = formatDate(today);
-    setSelectedFromDate(formatted);
-    setSelectedToDate(formatted);
-
-  } else if (value === "Yesterday") {
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    const formatted = formatDate(yesterday);
-    setSelectedFromDate(formatted);
-    setSelectedToDate(formatted);
-
-  } else if (value === "ThisMonth") {
-    const start = new Date(today.getFullYear(), today.getMonth(), 1);
-    const end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-    setSelectedFromDate(formatDate(start));
-    setSelectedToDate(formatDate(end));
-
-  } else if (value === "LastMonth") {
-    const start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-    const end = new Date(today.getFullYear(), today.getMonth(), 0);
-    setSelectedFromDate(formatDate(start));
-    setSelectedToDate(formatDate(end));
-
-  } else if (value === "ThisYear") {
-    const start = new Date(today.getFullYear(), 0, 1);
-    const end = new Date(today.getFullYear(), 11, 31);
-    setSelectedFromDate(formatDate(start));
-    setSelectedToDate(formatDate(end));
-
-  } else if (value === "All") {
-    const start = new Date(2000, 0, 1);
-    const end = today;
-    setSelectedFromDate(formatDate(start));
-    setSelectedToDate(formatDate(end));
-
-  } else if (value === "Custom") {
-    // ✅ Do NOT override dates. Allow user to select manually.
-    // Just keep the currently selectedFromDate / selectedToDate
-  }
-};
-
+    if (value === "Today") {
+      const formatted = formatDate(today);
+      setSelectedFromDate(formatted);
+      setSelectedToDate(formatted);
+    } else if (value === "Yesterday") {
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const formatted = formatDate(yesterday);
+      setSelectedFromDate(formatted);
+      setSelectedToDate(formatted);
+    } else if (value === "ThisMonth") {
+      const start = new Date(today.getFullYear(), today.getMonth(), 1);
+      const end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      setSelectedFromDate(formatDate(start));
+      setSelectedToDate(formatDate(end));
+    } else if (value === "LastMonth") {
+      const start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+      const end = new Date(today.getFullYear(), today.getMonth(), 0);
+      setSelectedFromDate(formatDate(start));
+      setSelectedToDate(formatDate(end));
+    } else if (value === "ThisYear") {
+      const start = new Date(today.getFullYear(), 0, 1);
+      const end = new Date(today.getFullYear(), 11, 31);
+      setSelectedFromDate(formatDate(start));
+      setSelectedToDate(formatDate(end));
+    } else if (value === "All") {
+      const start = new Date(2000, 0, 1);
+      const end = today;
+      setSelectedFromDate(formatDate(start));
+      setSelectedToDate(formatDate(end));
+    } else if (value === "Custom") {
+      //  Do NOT override dates. Allow user to select manually.
+      // Just keep the currently selectedFromDate / selectedToDate
+    }
+  };
+  useEffect(() => {
+    handleSelectFilter("All");
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -180,7 +176,7 @@ const WhatsappPromo = () => {
           //   Array.isArray(res.data) ? res.data : res.data.users || []
           // );
           try {
-            // ✅ Fetch Agents
+            //  Fetch Agents
             const agentRes = await api.get("/agent/get");
             const allAgents = Array.isArray(agentRes.data)
               ? agentRes.data
@@ -189,13 +185,13 @@ const WhatsappPromo = () => {
               (a) => a.agent_type === "agent"
             );
 
-            // ✅ Fetch Employees
+            //  Fetch Employees
             const empRes = await api.get("/agent/get-employee");
             const employees = Array.isArray(empRes.data.employee)
               ? empRes.data.employee
               : [];
 
-            // ✅ Combine Agents + Employees
+            //  Combine Agents + Employees
             setAgentList([...filteredAgents, ...employees]);
           } catch (error) {
             console.error("Error fetching agents and employees:", error);
@@ -289,7 +285,7 @@ const WhatsappPromo = () => {
         visibility: true,
       });
 
-      // ✅ Reset selection after sending
+      //  Reset selection after sending
       const updatedSelection = { ...selectUser };
       whatsappData.forEach((entry) => {
         updatedSelection[entry.info.userId] = false;
@@ -306,134 +302,130 @@ const WhatsappPromo = () => {
     }
   };
 
-
   const filteredData = useMemo(() => {
-  // ✅ Use selectedFromDate and selectedToDate
-  const from = selectedFromDate
-    ? moment(selectedFromDate, "YYYY-MM-DD").startOf("day")
-    : null;
+    //  Use selectedFromDate and selectedToDate
+    const from = selectedFromDate
+      ? moment(selectedFromDate, "YYYY-MM-DD").startOf("day")
+      : null;
 
-  const to = selectedToDate
-    ? moment(selectedToDate, "YYYY-MM-DD").endOf("day")
-    : null;
+    const to = selectedToDate
+      ? moment(selectedToDate, "YYYY-MM-DD").endOf("day")
+      : null;
 
-  const filterFn = (item) => {
-    const created = item?.createdAt ? moment(item.createdAt) : null;
+    const filterFn = (item) => {
+      const created = item?.createdAt ? moment(item.createdAt) : null;
 
-    // ✅ Only apply date range if label is not "All"
-    const isWithinDateRange =
-      (!from || (created && created.isSameOrAfter(from))) &&
-      (!to || (created && created.isSameOrBefore(to)));
+      //  Only apply date range if label is not "All"
+      const isWithinDateRange =
+        (!from || (created && created.isSameOrAfter(from))) &&
+        (!to || (created && created.isSameOrBefore(to)));
 
-    const normalizedName = selectedReferrerName.trim().toLowerCase();
+      const normalizedName = selectedReferrerName.trim().toLowerCase();
 
-    if (selectedReferrerType === "lead") {
-       if (
-    !item?.lead_customer?.full_name &&
-    !item?.group_id?.group_name &&
-    !item?.lead_customer?.phone_number
-  ) {
-    return false;
-  }
-      const leadTypeName =
-        item.lead_type === "customer"
-          ? item?.lead_customer?.full_name
-          : item.lead_type === "agent"
-          ? item?.lead_agent?.name
-          : "";
+      if (selectedReferrerType === "lead") {
+        if (
+          !item?.lead_customer?.full_name &&
+          !item?.group_id?.group_name &&
+          !item?.lead_customer?.phone_number
+        ) {
+          return false;
+        }
+        const leadTypeName =
+          item.lead_type === "customer"
+            ? item?.lead_customer?.full_name
+            : item.lead_type === "agent"
+            ? item?.lead_agent?.name
+            : "";
 
-      const nameMatches =
-        !normalizedName ||
-        (leadTypeName || "").toLowerCase().includes(normalizedName);
+        const nameMatches =
+          !normalizedName ||
+          (leadTypeName || "").toLowerCase().includes(normalizedName);
+
+        const matchesGroup =
+          !selectedGroupName ||
+          (item?.group_id?.group_name || "").toLowerCase() ===
+            selectedGroupName.toLowerCase();
+
+        return isWithinDateRange && nameMatches && matchesGroup;
+      }
+
+      const agentName = item?.agent?.name?.toLowerCase();
+      const agentType = item?.agent?.agent_type;
+
+      const matchesAgent =
+        selectedReferrerType === "agent" &&
+        agentType === "agent" &&
+        agentName?.includes(normalizedName);
+
+      const matchesEmployee =
+        selectedReferrerType === "employee" &&
+        agentType === "employee" &&
+        agentName?.includes(normalizedName);
+
+      const matchesCustomer =
+        selectedReferrerType === "customer" &&
+        item?.agent?.name?.toLowerCase().includes(normalizedName);
+
+      const typeMatch =
+        selectedReferrerType === "" ||
+        matchesAgent ||
+        matchesEmployee ||
+        matchesCustomer;
 
       const matchesGroup =
         !selectedGroupName ||
         (item?.group_id?.group_name || "").toLowerCase() ===
           selectedGroupName.toLowerCase();
 
-      return isWithinDateRange && nameMatches && matchesGroup;
-    }
+      return typeMatch && isWithinDateRange && matchesGroup;
+    };
 
-    const agentName = item?.agent?.name?.toLowerCase();
-    const agentType = item?.agent?.agent_type;
-
-    const matchesAgent =
-      selectedReferrerType === "agent" &&
-      agentType === "agent" &&
-      agentName?.includes(normalizedName);
-
-    const matchesEmployee =
-      selectedReferrerType === "employee" &&
-      agentType === "employee" &&
-      agentName?.includes(normalizedName);
-
-    const matchesCustomer =
-      selectedReferrerType === "customer" &&
-      item?.agent?.name?.toLowerCase().includes(normalizedName);
-
-    const typeMatch =
-      selectedReferrerType === "" ||
-      matchesAgent ||
-      matchesEmployee ||
-      matchesCustomer;
-
-    const matchesGroup =
-      !selectedGroupName ||
-      (item?.group_id?.group_name || "").toLowerCase() ===
-        selectedGroupName.toLowerCase();
-
-    return typeMatch && isWithinDateRange && matchesGroup;
-  };
-
-  return selectedReferrerType === "lead"
-    ? allLeads.filter(filterFn)
-    : allEnrolls.filter(filterFn);
-}, [
-  allLeads,
-  allEnrolls,
-  selectedReferrerName,
-  selectedReferrerType,
-  selectedFromDate,   // ✅ FIXED
-  selectedToDate,     // ✅ FIXED
-  selectedGroupName,
-]);
-
+    return selectedReferrerType === "lead"
+      ? allLeads.filter(filterFn)
+      : allEnrolls.filter(filterFn);
+  }, [
+    allLeads,
+    allEnrolls,
+    selectedReferrerName,
+    selectedReferrerType,
+    selectedFromDate, //  FIXED
+    selectedToDate, //  FIXED
+    selectedGroupName,
+  ]);
 
   useEffect(() => {
-    const formatted = filteredData.filter((item) => {
-      const fullName =
-        selectedReferrerType === "lead"
-          ? item?.lead_name
-          : item?.user_id?.full_name;
-      const phoneNumber =
-        selectedReferrerType === "lead"
-          ? item?.lead_phone
-          : item?.user_id?.phone_number;
-      const groupName = item?.group_id?.group_name;
+    const formatted = filteredData
+      .filter((item) => {
+        const fullName =
+          selectedReferrerType === "lead"
+            ? item?.lead_name
+            : item?.user_id?.full_name;
+        const phoneNumber =
+          selectedReferrerType === "lead"
+            ? item?.lead_phone
+            : item?.user_id?.phone_number;
+        const groupName = item?.group_id?.group_name;
 
-      return fullName && phoneNumber && groupName; // keep only valid rows
-    }).
-    
-    
-    
-    map((item, index) => ({
-      _id: item._id,
-      id: index + 1,
-      full_name:
-        selectedReferrerType === "lead"
-          ? item?.lead_name || "NA"
-          : item?.user_id?.full_name || "NA",
-      phone_number:
-        selectedReferrerType === "lead"
-          ? item?.lead_phone || "NA"
-          : item?.user_id?.phone_number || "NA",
-      group_name: item?.group_id?.group_name || "NA",
-      group_id: item?.group_id?._id || "NA",
-      createdAt: item?.createdAt ? new Date(item.createdAt) : null,
-      enrollment_date: item?.createdAt
-        ? new Date(item.createdAt).toISOString().split("T")[0]
-        : "NA",
-    }));
+        return fullName && phoneNumber && groupName; // keep only valid rows
+      })
+      .map((item, index) => ({
+        _id: item._id,
+        id: index + 1,
+        full_name:
+          selectedReferrerType === "lead"
+            ? item?.lead_name || "NA"
+            : item?.user_id?.full_name || "NA",
+        phone_number:
+          selectedReferrerType === "lead"
+            ? item?.lead_phone || "NA"
+            : item?.user_id?.phone_number || "NA",
+        group_name: item?.group_id?.group_name || "NA",
+        group_id: item?.group_id?._id || "NA",
+        createdAt: item?.createdAt ? new Date(item.createdAt) : null,
+        enrollment_date: item?.createdAt
+          ? new Date(item.createdAt).toISOString().split("T")[0]
+          : "NA",
+      }));
 
     const newSelection = {};
     formatted.forEach((u) => (newSelection[u._id] = false));
@@ -494,7 +486,6 @@ const WhatsappPromo = () => {
       }
     });
   };
-
 
   const handleSelectAll = (checked) => {
     const newSelection = {};
@@ -643,7 +634,7 @@ const WhatsappPromo = () => {
                     {selectedReferrerType && (
                       <div className="flex flex-col space-y-2 mb-5">
                         <label className="font-medium">
-                          Select {userType} Name 
+                          Select {userType} Name
                         </label>
                         <select
                           className="border p-2 px-8 rounded text-sm min-w-[200px]"
@@ -713,29 +704,31 @@ const WhatsappPromo = () => {
                       </select>
                     </div>
 
-                  {selectedLabel === "Custom" && (
-  <>
-    <div className="flex flex-col space-y-2 mb-5">
-      <label className="font-medium">From Date</label>
-      <input
-        type="date"
-        className="border p-2 rounded text-sm"
-        value={selectedFromDate}
-        onChange={(e) => setSelectedFromDate(e.target.value)}
-      />
-    </div>
+                    {selectedLabel === "Custom" && (
+                      <>
+                        <div className="flex flex-col space-y-2 mb-5">
+                          <label className="font-medium">From Date</label>
+                          <input
+                            type="date"
+                            className="border p-2 rounded text-sm"
+                            value={selectedFromDate}
+                            onChange={(e) =>
+                              setSelectedFromDate(e.target.value)
+                            }
+                          />
+                        </div>
 
-    <div className="flex flex-col space-y-2 mb-5">
-      <label className="font-medium">To Date</label>
-      <input
-        type="date"
-        className="border p-2 rounded text-sm"
-        value={selectedToDate}
-        onChange={(e) => setSelectedToDate(e.target.value)}
-      />
-    </div>
-  </>
-)}
+                        <div className="flex flex-col space-y-2 mb-5">
+                          <label className="font-medium">To Date</label>
+                          <input
+                            type="date"
+                            className="border p-2 rounded text-sm"
+                            value={selectedToDate}
+                            onChange={(e) => setSelectedToDate(e.target.value)}
+                          />
+                        </div>
+                      </>
+                    )}
 
                     {/* Select Group */}
                     <div className="flex flex-col space-y-2 mb-5">
@@ -790,16 +783,25 @@ const WhatsappPromo = () => {
             </div>
             {filteredUsers.length > 0 && !isLoading ? (
               <DataTable
-                isExportEnabled={false}
+                isExportEnabled={true}
                 data={filteredUsers}
                 columns={columns}
-                exportedFileName={`whatsapp-${
-                  filteredUsers.length > 0
-                    ? filteredUsers[0].full_name +
-                      " to " +
-                      filteredUsers[filteredUsers.length - 1].full_name
-                    : "empty"
-                }.csv`}
+                exportedPdfName="Whatsapp Promo"
+                printHeaderKeys={[
+                  "Referrer Name",
+                  "Date Filter",
+                  "To Date",
+                  "Group Name",
+                  "From Date",
+                ]}
+                printHeaderValues={[
+                  selectedReferrerName || "All",
+                  selectedLabel || "All",
+                  selectedToDate || "NA",
+                  selectedGroupName || "All",
+                  selectedFromDate || "NA",
+                ]}
+                exportedFileName={`whatsapp Promo.csv`}
               />
             ) : (
               <CircularLoader

@@ -84,6 +84,9 @@ import { LiaCalculatorSolid } from "react-icons/lia";
 import { GiMoneyStack } from "react-icons/gi";
 import { TbReportSearch } from "react-icons/tb";
 import { MdOutlinePayment } from "react-icons/md";
+
+import { MdOutlinePending } from "react-icons/md";
+
  const GlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
@@ -125,6 +128,11 @@ const subMenus = [
     title: "PayOut Report",
     link: "/reports/payout",
     Icon: MdOutlinePayment ,
+  },
+   {
+    title: "Due Report",
+    link: "/reports/due-report",
+    Icon: MdOutlinePending  ,
   },
   {
     title: "Auction Report",

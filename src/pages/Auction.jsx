@@ -78,7 +78,6 @@ const Auction = () => {
         const response = await api.get(
           `/double/get-double/${selectedAuctionGroupId}`
         );
-        console.log(response.data);
         setDouble(response.data);
       } catch (error) {
         console.error("Error fetching group data:", error);
@@ -143,6 +142,7 @@ const Auction = () => {
   const handleChangeUser = (e) => {
     const { name, value } = e.target;
     const [user_id, ticket] = value.split("-");
+    
     setFormData((prevData) => ({
       ...prevData,
       user_id,
@@ -157,7 +157,7 @@ const Auction = () => {
     if (groupId) {
       try {
         const response = await api.get(
-          `/enroll/get-group-enroll-auction/${groupId}`
+          `/enroll/get-group-enroll-auction-all/${groupId}`
         );
         if (response.data && response.data.length > 0) {
           setFilteredUsers(response.data);
@@ -198,16 +198,11 @@ const Auction = () => {
     handleGroupAuctionChange(groupId);
   };
 
-  const formatPayDate = (dateString) => {
-    const date = new Date(dateString);
-    const options = { day: "numeric", month: "short", year: "numeric" };
-    return date.toLocaleDateString("en-US", options).replace(",", " ");
-  };
   const prevDate = (dateString) => {
     const date = new Date(dateString);
     date.setDate(date.getDate() - 10);
-    const options = { day: "numeric", month: "short", year: "numeric" };
-    return date.toLocaleDateString("en-US", options).replace(",", " ");
+
+    return date.toISOString()?.split("T")[0];
   };
   const handleGroupAuctionChange = async (groupId) => {
     setSelectedAuctionGroup(groupId);
@@ -221,7 +216,7 @@ const Auction = () => {
           const formattedData = [
             {
               id: 1,
-              date: prevDate(response?.data[0]?.auction_date),
+              auction_date: prevDate(response?.data[0]?.auction_date),
               name: "Commencement",
               phone_number: "Commencement",
               ticket: "Commencement",
@@ -232,13 +227,12 @@ const Auction = () => {
             ...response.data.map((group, index) => ({
               _id: group._id,
               id: index + 2,
-              date: formatPayDate(group.auction_date),
+              auction_date: group.auction_date,
               name: group.user_id?.full_name,
               phone_number: group.user_id?.phone_number,
               ticket: group.ticket,
               bid_amount: parseInt(group.divident) + parseInt(group.commission),
               amount: group.win_amount,
-
               status: !group?.isPrized
                 ? "Un Prized"
                 : group?.isPrized === "true"
@@ -304,7 +298,7 @@ const Auction = () => {
 
   const columns = [
     { key: "id", header: "SL. NO" },
-    { key: "date", header: "Auction Date" },
+    { key: "auction_date", header: "Auction Date" },
     { key: "name", header: "Customer Name" },
     { key: "phone_number", header: "Customer Phone Number" },
     { key: "ticket", header: "Ticket" },
@@ -600,10 +594,10 @@ const Auction = () => {
                       (user) =>
                         user?.user_id?._id && (
                           <option
-                            key={`${user.user_id._id}-${user.tickets}`}
-                            value={`${user.user_id._id}-${user.tickets}`}
+                            key={`${user.user_id?._id}-${user.tickets}`}
+                            value={`${user.user_id?._id}-${user.tickets}`}
                           >
-                            {user.user_id.full_name} | {user.tickets}
+                            {user.user_id?.full_name} | {user.tickets}
                           </option>
                         )
                     )}
@@ -669,7 +663,7 @@ const Auction = () => {
                       value={formData.win_amount}
                       id="win_amount"
                       placeholder=""
-                     readOnly
+                      readOnly
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>

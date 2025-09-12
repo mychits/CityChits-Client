@@ -8,7 +8,7 @@ import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import { useMemo } from "react";
 
-const AllUserReport = () => {
+const DueReport = () => {
   const [searchText, setSearchText] = useState("");
   const [screenLoading, setScreenLoading] = useState(true);
   const [auctionTableData, setAuctionTableData] = useState([]);
@@ -46,44 +46,81 @@ const AllUserReport = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setScreenLoading(true);
         const reportResponse = await api.get("/user/all-customers-report");
         const usersList = [];
-        let count = 0;
+        const tempActive = {};
 
-        reportResponse.data.forEach((usrData) => {
+        let count = 1;
+        reportResponse.data?.forEach((usrData, index) => {
           if (usrData?.data) {
             usrData.data.forEach((data) => {
               if (data?.enrollment?.group) {
                 const groupInstall = parseInt(
                   data.enrollment.group.group_install
                 );
+                const groupId = data.enrollment.group._id;
                 const groupType = data.enrollment.group.group_type;
-                const firstInstallment =
-                  data.enrollment?.group?.monthly_installment;
                 const totalPaidAmount = data.payments.totalPaidAmount;
                 const auctionCount = parseInt(data?.auction?.auctionCount);
                 const totalPayable = data.payable.totalPayable;
                 const totalProfit = data.profit.totalProfit;
-                const firstDividentHead = data.firstAuction.firstDividentHead;
-                count++;
+                const firstDividentHead = data.firstAuction.firstDividentHead;  
                 const id = data?.enrollment?._id;
+                const userPhone = usrData.phone_number;
+                const paymentsTicket = data.payments.ticket;
+
+                const groupName = data.enrollment.group.group_name;
+
+                const totalToBePaid =
+                  groupType === "double"
+                    ? groupInstall * auctionCount + groupInstall
+                    : totalPayable + groupInstall + totalProfit;
+                const amountToBePaid =
+                  groupType === "double"
+                    ? groupInstall * auctionCount + groupInstall
+                    : totalPayable + groupInstall + totalProfit;
+                const balance =
+                  groupType === "double"
+                    ? groupInstall * auctionCount +
+                      groupInstall -
+                      totalPaidAmount
+                    : totalPayable +
+                      groupInstall +
+                      firstDividentHead -
+                      totalPaidAmount;
+
+                if (balance <= 0) return;
+
+                const userName = usrData.userName;
+                tempActive[id] = {
+                  info: {
+                    status: false,
+                    balance,
+                  },
+                };
+
                 const tempUsr = {
-                  sl_no: count,
                   _id: id,
-                  userName: usrData.userName,
-                  firstInstallment,
-                  userPhone: usrData.phone_number,
+                  sl_no: count,
+                  userName,
+                  userPhone,
                   customerId: usrData.customer_id,
-                  collectionArea: usrData.collection_area || "N/A",
-                  collectionExecutive: usrData.collection_executive || "N/A",
                   amountPaid: totalPaidAmount,
-                  paymentsTicket: data.payments.ticket,
+                  paymentsTicket,
+                  amountToBePaid,
+                  groupName,
                   groupValue: data?.enrollment?.group?.group_value,
-                  groupName: data.enrollment.group.group_name,
-                  profit: totalProfit,
+                  enrollmentDate: data?.enrollment?.createdAt
+                    ? data.enrollment.createdAt.split("T")[0]
+                    : "",
+                  payment_type: data?.enrollment?.payment_type,
+                  totalToBePaid: totalToBePaid,
                   relationshipManager:
                     data?.enrollment?.relationship_manager?.name || "N/A",
-
+                  collectionExecutive: usrData.collection_executive || "N/A",
+                  collectionArea: usrData.collection_area || "N/A",
+                  referred_type: data?.enrollment?.referred_type,
                   reffered_by: data?.enrollment?.agent
                     ? data.enrollment.agent
                     : data?.enrollment?.reffered_customer
@@ -91,29 +128,11 @@ const AllUserReport = () => {
                     : data?.enrollment?.reffered_lead
                     ? data.enrollment.reffered_lead
                     : "N/A",
-                  payment_type: data?.enrollment?.payment_type,
-                  referred_type: data?.enrollment?.referred_type,
-                  enrollmentDate: data?.enrollment?.createdAt
-                    ? data.enrollment.createdAt.split("T")[0]
-                    : "",
-                  totalToBePaid:
-                    groupType === "double"
-                      ? groupInstall * auctionCount + groupInstall
-                      : totalPayable + groupInstall + totalProfit,
-                  toBePaidAmount:
-                    groupType === "double"
-                      ? groupInstall * auctionCount + groupInstall
-                      : totalPayable + groupInstall + firstDividentHead,
-                  balance:
-                    groupType === "double"
-                      ? groupInstall * auctionCount +
-                        groupInstall -
-                        totalPaidAmount
-                      : totalPayable +
-                        groupInstall +
-                        firstDividentHead -
-                        totalPaidAmount,
+                  balance,
+
                   status: data.isPrized === "true" ? "Prized" : "Un Prized",
+                  groupId: groupId,
+                  userId: usrData?._id,
                   statusDiv:
                     data.isPrized === "true" ? (
                       <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-3 py-1 rounded-full shadow-sm border border-green-300">
@@ -125,17 +144,17 @@ const AllUserReport = () => {
                       </div>
                     ),
                 };
-
                 usersList.push(tempUsr);
+                count++;
               }
             });
           }
         });
 
         SetUsersData(usersList);
-        setScreenLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
         setScreenLoading(false);
       }
     };
@@ -176,53 +195,44 @@ const AllUserReport = () => {
 
   const Auctioncolumns = [
     { key: "sl_no", header: "SL. NO" },
-    { key: "customerId", header: "Customer Id" },
     { key: "userName", header: "Customer Name" },
     { key: "userPhone", header: "Phone Number" },
+    { key: "customerId", header: "Customer Id" },
     { key: "groupName", header: "Group Name" },
     { key: "groupValue", header: "Group Value" },
-    { key: "paymentsTicket", header: "Ticket" },
     { key: "enrollmentDate", header: "Enrollment Date" },
-
     { key: "referred_type", header: "Referred Type" },
+
     { key: "reffered_by", header: "Referred By" },
-    { key: "relationshipManager", header: "Relationship Manager" },
     { key: "payment_type", header: "Payment Type" },
-    { key: "amountPaid", header: "Amount Paid" },
-    {
-      key: "firstInstallment",
-      header: "First Installment",
-    },
+    { key: "paymentsTicket", header: "Ticket" },
     { key: "totalToBePaid", header: "Amount to be Paid" },
-    { key: "balance", header: "Balance" },
-    { key: "collectionArea", header: "Collection Area" },
+    { key: "relationshipManager", header: "Relationship Manager" },
     { key: "collectionExecutive", header: "Collection Executive" },
+    { key: "collectionArea", header: "Collection Area" },
+    { key: "amountPaid", header: "Amount Paid" },
+    { key: "balance", header: "Due Amount" },
     { key: "statusDiv", header: "Status" },
   ];
   const ExcelColumns = [
     { key: "sl_no", header: "SL. NO" },
-    { key: "customerId", header: "Customer Id" },
     { key: "userName", header: "Customer Name" },
     { key: "userPhone", header: "Phone Number" },
+    { key: "customerId", header: "Customer Id" },
     { key: "groupName", header: "Group Name" },
     { key: "groupValue", header: "Group Value" },
-    { key: "paymentsTicket", header: "Ticket" },
     { key: "enrollmentDate", header: "Enrollment Date" },
-
     { key: "referred_type", header: "Referred Type" },
     { key: "reffered_by", header: "Referred By" },
-    { key: "relationshipManager", header: "Relationship Manager" },
-    { key: "amountPaid", header: "Amount Paid" },
     { key: "payment_type", header: "Payment Type" },
+    { key: "paymentsTicket", header: "Ticket" },
     { key: "totalToBePaid", header: "Amount to be Paid" },
-
-    {
-      key: "firstInstallment",
-      header: "First Installment",
-    },
+    { key: "profit", header: "Profit" },
+    { key: "relationshipManager", header: "Relationship Manager" },
     { key: "collectionExecutive", header: "Collection Executive" },
     { key: "collectionArea", header: "Collection Area" },
-    { key: "balance", header: "Balance" },
+    { key: "amountPaid", header: "Amount Paid" },
+    { key: "balance", header: "Due Amount" },
     { key: "status", header: "Status" },
   ];
   const filteredTableData = filterOption(
@@ -267,9 +277,7 @@ const AllUserReport = () => {
           </div>
         ) : (
           <div className="flex-grow p-7">
-            <h1 className="text-2xl font-bold text-center">
-              Reports - All Customer
-            </h1>
+            <h1 className="text-2xl font-bold text-center">Reports - Due</h1>
 
             <div className="mt-6 mb-8">
               <div className="mt-6 mb-8">
@@ -320,32 +328,11 @@ const AllUserReport = () => {
                     </div>
                   </div>
 
-                  {/* <DataTable
-                    data={filterOption(
-                      usersData.filter((u) => {
-                        const matchGroup = groupFilter
-                          ? u.groupName === groupFilter
-                          : true;
-                        const enrollmentDate = new Date(u.enrollmentDate);
-                        const matchFromDate = fromDate
-                          ? enrollmentDate >= new Date(fromDate)
-                          : true;
-                        const matchToDate = toDate
-                          ? enrollmentDate <= new Date(toDate)
-                          : true;
-                        return matchGroup && matchFromDate && matchToDate;
-                      }),
-                      searchText
-                    )}
-                    columns={Auctioncolumns}
-                   
-                    exportedFileName={`CustomerReport.csv`}
-                  /> */}
                   <DataTable
                     data={filteredTableData}
                     columns={Auctioncolumns}
                     exportCols={ExcelColumns}
-                    exportedPdfName={`All Customer Report`}
+                    exportedPdfName={"Due Report"}
                     printHeaderKeys={[
                       "From Date",
                       "Group Name",
@@ -435,4 +422,4 @@ const AllUserReport = () => {
   );
 };
 
-export default AllUserReport;
+export default DueReport;

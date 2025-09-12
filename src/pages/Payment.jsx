@@ -8,13 +8,23 @@ import CustomAlert from "../components/alerts/CustomAlert";
 import CircularLoader from "../components/loaders/CircularLoader";
 import { FaWhatsappSquare } from "react-icons/fa";
 import Navbar from "../components/layouts/Navbar";
-import { Select, Dropdown, Modal as AntModal, Drawer, Tooltip } from "antd";
+import {
+  Select,
+  Dropdown,
+  Modal as AntModal,
+  Drawer,
+  Tooltip,
+  Spin,
+  Button,
+} from "antd";
 import { IoMdMore } from "react-icons/io";
 import { Link } from "react-router-dom";
 import dataPaymentsFor from "../data/paymentsFor";
 import BackdropBlurLoader from "../components/loaders/BackdropBlurLoader";
 import { FaReceipt } from "react-icons/fa";
 import { fieldSize } from "../data/fieldSize";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Space } from "lucide-react";
 const Payment = () => {
   const [groups, setGroups] = useState([]);
   const [actualGroups, setActualGroups] = useState([]);
@@ -27,9 +37,9 @@ const Payment = () => {
   const [userName, setUserName] = useState("");
   const [viewLoader, setViewLoader] = useState(false);
   const [filteredAuction, setFilteredAuction] = useState([]);
-  const [groupInfo, setGroupInfo] = useState({});
-  const [showModal, setShowModal] = useState(false);
 
+  const [showModal, setShowModal] = useState(false);
+  const [enrollmentLoading, setEnrollmentLoading] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [currentUpdateAmount, setCurrentUpdateAmount] = useState(false);
   //const [showModalView, setShowModelView] = useState(false);
@@ -138,6 +148,11 @@ const Payment = () => {
   });
   // const [showPrintModal, setShowPrintModal] = useState(false);
   const [modifyPayment, setModifyPayment] = useState(false);
+  const [modifyMinMaxPaymentDate, setModifyMinMaxPaymentDate] = useState(false);
+  const now = new Date();
+  const yesterday = new Date(new Date().setDate(new Date().getDate() - 1))
+    .toISOString()
+    .split("T")[0];
   // const [printDetails, setPrintDetails] = useState({
   //   customerName: "",
   //   groupName: "",
@@ -158,16 +173,21 @@ const Payment = () => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
 
-    if (
-      userObj &&
-      userObj.admin_access_right_id?.access_permissions?.edit_payment
-    ) {
-      const isModify =
-        userObj.admin_access_right_id?.access_permissions?.edit_payment ===
-        "true"
-          ? true
-          : false;
-      setModifyPayment(isModify);
+    if (userObj) {
+      // Check for admin access rights
+      const adminAccessPermissions =
+        userObj.admin_access_right_id?.access_permissions;
+
+      // Set modifyPayment for admin users with the edit_payment permission
+      if (adminAccessPermissions?.edit_payment === "true") {
+        setModifyPayment(true); // Admin can modify payment date
+      }
+
+      // Set modifyPayment and modifyMinMaxPaymentDate for users with limited access
+      if (adminAccessPermissions?.edit_limited_payment === "true") {
+        setModifyPayment(true); // Limited users can modify payment date
+        setModifyMinMaxPaymentDate(true); // Limited users have min/max date restrictions
+      }
     }
   }, []);
   useEffect(() => {
@@ -213,62 +233,6 @@ const Payment = () => {
                 group?.admin_type?.admin_name ||
                 "Super Admin",
               action: (
-                // <div className="flex justify-center gap-2">
-                //   <Dropdown
-                //     trigger={["click"]}
-                //     menu={{
-                //       items: [
-                //         // {
-                //         //   key: "1",
-                //         //   label: (
-                //         //     <div
-                //         //       className="text-orange-600 "
-                //         //       onClick={() => handleEditAmountModalOpen(group._id)}
-                //         //     >
-                //         //       Edit
-                //         //     </div>
-                //         //   ),
-                //         // },
-                //         {
-                //           key: "2",
-                //           label: (
-                //             <div
-                //               className="text-green-600 "
-                //               onClick={() => handleViewModalOpen(group._id)}
-                //             >
-                //               View
-                //             </div>
-                //           ),
-                //         },
-                //         {
-                //           key: "3",
-                //           label: (
-                //             <Link
-                //               to={`/print/${group._id}`}
-                //               className="text-blue-600 "
-                //             >
-                //               Print
-                //             </Link>
-                //           ),
-                //         },
-                //         {
-                //           key: "4",
-                //           label: (
-                //             <div
-                //               className="text-red-600 "
-                //               onClick={() => handleDeleteModalOpen(group._id)}
-                //             >
-                //               Delete
-                //             </div>
-                //           ),
-                //         },
-                //       ],
-                //     }}
-                //     placement="bottomLeft"
-                //   >
-                //     <IoMdMore className="text-bold" />
-                //   </Dropdown>
-                // </div>
                 <div className="flex justify-center gap-2">
                   <Dropdown
                     trigger={["click"]}
@@ -462,6 +426,8 @@ const Payment = () => {
 
     if (groupId) {
       try {
+        setEnrollmentLoading(true);
+
         const response = await api.get(`/enroll/get-group-enroll/${groupId}`);
         if (response.data && response.data.length > 0) {
           setFilteredUsers(response.data);
@@ -471,6 +437,8 @@ const Payment = () => {
       } catch (error) {
         console.error("Error fetching enrollment data:", error);
         setFilteredUsers([]);
+      } finally {
+        setEnrollmentLoading(false);
       }
     } else {
       setFilteredUsers([]);
@@ -500,29 +468,6 @@ const Payment = () => {
     { key: "collected_by", header: "Collected By" },
     { key: "action", header: "Action" }
   );
-  const handleGroup = async (event) => {
-    const groupId = event.target.value;
-    setSelectedGroupId(groupId);
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      user_id: groupId,
-    }));
-    setErrors((prevData) => ({ ...prevData, customer: "" }));
-
-    handleGroupChange(groupId);
-    handleGroupAuctionChange(groupId);
-
-    if (groupId) {
-      try {
-        const response = await api.get(`/group/get-by-id-group/${groupId}`);
-        setGroupInfo(response.data || {});
-      } catch (error) {
-        setGroupInfo({});
-      }
-    } else {
-      setGroupInfo({});
-    }
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -533,6 +478,8 @@ const Payment = () => {
   };
 
   const handleCustomer = async (groupId) => {
+    setFilteredAuction([]);
+    setFilteredUsers([]);
     setSelectedGroupId(groupId);
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -542,17 +489,6 @@ const Payment = () => {
     setPaymentGroupTickets([]);
     handleGroupChange(groupId);
     handleGroupAuctionChange(groupId);
-
-    if (groupId) {
-      try {
-        const response = await api.get(`/group/get-by-id-group/${groupId}`);
-        setGroupInfo(response.data || {});
-      } catch (error) {
-        setGroupInfo({});
-      }
-    } else {
-      setGroupInfo({});
-    }
   };
   const handleGroupPayment = async (groupId) => {
     setSelectedAuctionGroupId(groupId);
@@ -643,61 +579,7 @@ const Payment = () => {
     setFormData((prevData) => ({
       ...prevData,
       account_type: selectedMode,
-
-
     }));
-  };
-  const createReceipt = async (formData) => {
-    try {
-      const {
-        group_id,
-        user_id,
-        ticket,
-        receipt_no,
-        pay_date,
-        amount,
-        pay_type,
-        transaction_id,
-      } = formData;
-
-      const responseUser = await api.get(`user/get-user-by-id/${user_id}`);
-
-      const responseGroup = await api.get(`group/get-by-id-group/${group_id}`);
-
-      if (responseUser.status === 200 && responseGroup.status === 200) {
-        const customerName = responseUser?.data?.full_name;
-        const groupName = responseGroup?.data?.group_name;
-        if (customerName && groupName) {
-          setPrintDetails((prev) => ({
-            ...prev,
-            customerName,
-            groupName,
-            ticketNumber: ticket,
-            receiptNumber: receipt_no,
-            paymentDate: pay_date,
-            paymentMode: pay_type,
-            transactionId: pay_type === "cash" ? "" : transaction_id,
-            amount,
-          }));
-          // setShowPrintModal(true);
-        }
-      }
-      if (responseUser.status >= 400 || responseGroup.status >= 400) {
-        setAlertConfig({
-          visibility: true,
-          noReload: true,
-          message: `Error Creating Receipt`,
-          type: "error",
-        });
-      }
-    } catch (err) {
-      setAlertConfig({
-        visibility: true,
-        noReload: true,
-        message: `Error Creating Receipt`,
-        type: "error",
-      });
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -816,16 +698,6 @@ const Payment = () => {
     }
   };
 
-  // const handleViewModalOpen = async (groupId) => {
-  //   try {
-  //     const response = await api.get(`/payment/get-payment-by-id/${groupId}`);
-  //     setCurrentGroup(response.data);
-  //     setShowModelView(true);
-
-  //   }catch (error) {
-  //     console.error("Error view Payment Details:", error);
-  // }
-
   const handleDeleteAuction = async () => {
     if (currentGroup) {
       try {
@@ -844,35 +716,6 @@ const Payment = () => {
       }
     }
   };
-
-  // const handleViewModalOpen = async (groupId) => {
-  //   try {
-  //     const response = await api.get(`/payment/get-payment-by-id/${groupId}`);
-  //     setCurrentViewGroup(response.data);
-  //     setShowModalView(true);
-  //   } catch (error) {
-  //     console.error("Error fetching auction:", error);
-  //   }
-  // };
-
-  //   const handleViewModalOpen = async (groupId) => {
-  //   try {
-  //     setLoading(true);
-  //     setShowModalView(false); // Ensure modal resets before reopening
-  //     setCurrentGroupId(groupId);
-
-  //     const response = await api.get(`/payment/get-payment-by-id/${groupId}`);
-  //     setCurrentViewGroup(response.data);
-
-  //     setTimeout(() => {
-  //       setShowModalView(true);
-  //     }, 100);
-  //   } catch (error) {
-  //     console.error("Error fetching auction:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleViewModalOpen = async (groupId) => {
     try {
@@ -1029,7 +872,7 @@ const Payment = () => {
             <div className="flex-grow p-7">
               <h1 className="text-2xl font-semibold">Payments</h1>
               <div className="mt-6  mb-8">
-                  <div className="mb-10">
+                <div className="mb-10">
                   <label className="font-bold">Search or Select Group</label>
                   <div className="flex justify-between items-center w-full">
                     <Select
@@ -1071,17 +914,7 @@ const Payment = () => {
                     </div>
                   </div>
                 </div>
-                {/* <UploadModal
-                show={showUploadModal}
-                onClose={handleUploadModalClose}
-                onSubmit={handleFileSubmit}
-                groups={groups}
-                selectedGroupId={selectedGroupId}
-                handleGroup={handleGroup}
-                handleChangeUser={handleChangeUser}
-                formData={formData}
-                filteredAuction={filteredAuction}
-              /> */}
+
                 {TablePayments && TablePayments.length > 0 ? (
                   <DataTable
                     data={TablePayments.filter((item) =>
@@ -1097,7 +930,7 @@ const Payment = () => {
                     printHeaderValues={[
                       selectednewGroup?.group_name || "Today's",
                     ]}
-                   exportedFileName={`Payments-${selectednewGroup?.group_name} .csv`}
+                    exportedFileName={`Payments-${selectednewGroup?.group_name} .csv`}
                   />
                 ) : (
                   <div className="mt-10 text-center text-gray-500">
@@ -1113,16 +946,28 @@ const Payment = () => {
               </div>
             </div>
 
-            <Modal
-              isVisible={showModal}
+            <Drawer
+              open={showModal}
               onClose={() => {
                 setSelectedGroupId("");
                 setShowModal(false);
                 setErrors({});
                 setPaymentGroupTickets([]);
               }}
+              extra={
+                <Tooltip title="Last 3 Transactions">
+                  <button
+                    onClick={fetchLastThreeTransactions}
+                    value="Last Three transaction"
+                    className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-200 font-medium"
+                  >
+                    <FaReceipt className="text-lg" />
+                    <span>Last 3 Transactions</span>
+                  </button>
+                </Tooltip>
+              }
             >
-              <div className="py-6 px-5 lg:px-8 text-left">
+              <>
                 <h3 className="mb-4 text-xl font-bold text-gray-900">
                   Add Payment
                 </h3>
@@ -1228,20 +1073,26 @@ const Payment = () => {
                     )}
                   </div>
 
-                  <div className="w-full">
+                  <div
+                    className={`${
+                      enrollmentLoading ? "cursor-progress" : ""
+                    } w-full`}
+                  >
                     <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
+                      className="block mb-2 text-sm font-medium text-gray-900 "
                       htmlFor="category"
                     >
                       Group & Ticket <span className="text-red-500 ">*</span>
                     </label>
                     <Select
+                      disabled={enrollmentLoading}
                       mode="multiple"
                       name="group_id"
                       placeholder="Select Group | Ticket"
                       onChange={handlePaymentAntSelect}
+                      loading={enrollmentLoading}
                       value={paymentGroupTickets}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 "
+                      className={` bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 `}
                     >
                       {filteredAuction.map((entry, index) => {
                         const groupName =
@@ -1294,6 +1145,8 @@ const Payment = () => {
                         disabled={!modifyPayment}
                         type="date"
                         name="pay_date"
+                        min={modifyMinMaxPaymentDate ? yesterday : undefined}
+                        max={modifyMinMaxPaymentDate ? today : undefined}
                         value={formData.pay_date}
                         id="pay_date"
                         onChange={handleChange}
@@ -1328,14 +1181,6 @@ const Payment = () => {
                           required
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         />
-                        <Tooltip title="Last 3 Transactions">
-                          <button
-                            className="bg-green-300 rounded-md p-2 border-2 font-semibold"
-                            onClick={(e) => fetchLastThreeTransactions(e)}
-                          >
-                            <FaReceipt />
-                          </button>
-                        </Tooltip>
                       </div>
 
                       {errors.amount && (
@@ -1359,8 +1204,7 @@ const Payment = () => {
                       >
                         <option value="cash">Cash</option>
                         <option value="online">Online</option>
-                         <option value="cheque">Cheque</option>
-
+                        <option value="cheque">Cheque</option>
                       </select>
                     </div>
                   </div>
@@ -1408,7 +1252,6 @@ const Payment = () => {
                       )}
                     </div>
                   )}
-
                   {paymentMode === "cheque" && (
                     <>
                       {/* Row 1 */}
@@ -1521,18 +1364,15 @@ const Payment = () => {
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                           onChange={handleAccountTypeChange}
                         >
-
                           <>
                             <option value={""}>Select Account Type</option>
                             <option value="suspense">Suspense</option>
                             <option value="credit">Credit</option>
                             <option value="adjustment">Adjustment</option>
-                            <option value="change group">Change Group</option>  
+                            <option value="change group">Change Group</option>
                             <option value="others">Others</option>
                           </>
-
                         </select>
-
                       </div>
                     )}
                   </div>
@@ -1559,104 +1399,18 @@ const Payment = () => {
                   <div className="w-full flex justify-end">
                     <button
                       type="submit"
-                      className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-                              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                      className="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700 
+               focus:ring-2 focus:outline-none focus:ring-blue-300 
+               font-medium rounded-md text-sm px-4 py-2 shadow-sm transition-all"
                     >
                       Save Payment
                     </button>
                   </div>
                 </form>
-              </div>
-            </Modal>
-            {/* <Modal
-              isVisible={showUpdatemodal}
-              onClose={() => {
-                setSelectedGroupId("");
-                setShowUpdateModal(false);
-                setErrors({});
-                setPaymentGroupTickets([]);
-              }}
-            >
-              <div className="py-6 px-5 lg:px-8 text-left">
-                <h3 className="mb-4 text-xl font-bold text-gray-900">
-                  Update payment
-                </h3>
-                <form className="space-y-6" onSubmit={handleUpdate} noValidate>
-                  <div className="flex flex-row justify-between space-x-4">
-                    <div className="w-1/2">
-                      <label
-                        className="block mb-2 text-sm font-medium text-gray-900"
-                        htmlFor="pay_date"
-                      >
-                        Payment Date
-                      </label>
-                      <input
-                        type="date"
-                        name="pay_date"
-                        id="pay_date"
-                        value={
-                          updateFormData?.pay_date
-                            ? new Date(updateFormData.pay_date)
-                                .toISOString()
-                                .split("T")[0]
-                            : ""
-                        }
-                        onChange={handleInputChange}
-                        placeholder="Update payDate"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
-                      />
+              </>
+            </Drawer>
 
-                      {errors.pay_date && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {errors.pay_date}
-                        </p>
-                      )}
-                    </div>
-                    <div className="w-1/2">
-                      <label
-                        className="block mb-2 text-sm font-medium text-gray-900"
-                        htmlFor="group_value"
-                      >
-                        Amount <span className="text-red-500 ">*</span>
-                      </label>
-                      <input
-                        type="number"
-                        name="amount"
-                        value={updateFormData?.amount}
-                        id="amount"
-                        onChange={handleInputChange}
-                        placeholder="Enter Amount"
-                        required
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
-                      />
-
-                      {errors.amount && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {errors.amount}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="w-full flex justify-end">
-                    <button
-                      type="submit"
-                      className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-                              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                    >
-                      Update Payment
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </Modal> */}
             <Modal
-              // isVisible={showUpdatemodal}
-              // onClose={() => {
-              //   setSelectedGroupId("");
-              //   setShowUpdateModal(false);
-              //   setErrors({});
-              //   setPaymentGroupTickets([]);
-              // }}
               isVisible={showUpdateModal}
               onClose={() => {
                 setSelectedGroupId("");
@@ -1679,15 +1433,18 @@ const Payment = () => {
                         Payment Date
                       </label>
                       <input
+                        disabled={!modifyPayment}
                         type="date"
                         name="pay_date"
+                        min={modifyMinMaxPaymentDate ? yesterday : undefined}
+                        max={modifyMinMaxPaymentDate ? today : undefined}
                         id="pay_date"
                         value={
                           updateFormData?.pay_date &&
-                            !isNaN(new Date(updateFormData.pay_date))
+                          !isNaN(new Date(updateFormData.pay_date))
                             ? new Date(updateFormData.pay_date)
-                              .toISOString()
-                              .split("T")[0]
+                                .toISOString()
+                                .split("T")[0]
                             : ""
                         }
                         onChange={handleInputChange}
@@ -2018,9 +1775,9 @@ const Payment = () => {
                 <div className="mb-3 flex gap-x-2">
                   <strong>Bid Amount:</strong>{" "}
                   {currentViewGroup?.group_id?.group_value -
-                    currentViewGroup?.win_amount
+                  currentViewGroup?.win_amount
                     ? currentViewGroup?.group_id?.group_value -
-                    currentViewGroup?.win_amount
+                      currentViewGroup?.win_amount
                     : ""}
                 </div>
                 <div className="mb-3 flex gap-x-2">
@@ -2055,7 +1812,6 @@ const Payment = () => {
                   <strong>Updated At:</strong>{" "}
                   {currentViewGroup?.updatedAt?.split("T")[0]}
                 </div>
-
                 <div className="mb-3 flex gap-x-2">
                   <strong>Cheque Number:</strong>{" "}
                   {currentViewGroup?.cheque_number}

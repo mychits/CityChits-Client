@@ -7,12 +7,14 @@ import Modal from "../components/modals/Modal";
 import DataTable from "../components/layouts/Datatable";
 import CustomAlert from "../components/alerts/CustomAlert";
 import { FaWhatsappSquare } from "react-icons/fa";
-import { Select, Dropdown, notification, Pagination } from "antd";
+import { FaWhatsapp } from "react-icons/fa";
+import { FiLink } from "react-icons/fi";
+import { Select, Dropdown, notification } from "antd";
 import { IoMdMore } from "react-icons/io";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
-
+import { FiMail } from "react-icons/fi";
 const Enroll = () => {
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
@@ -23,7 +25,7 @@ const Enroll = () => {
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [currentUpdateGroup, setCurrentUpdateGroup] = useState(null);
   const [availableTickets, setAvailableTickets] = useState([]);
-  const [showModalDelete, setShowModalDelete] = useState(false);
+  const [showModalRemove, setShowModalRemove] = useState(false);
   const [currentGroup, setCurrentGroup] = useState(null);
   const [availableTicketsAdd, setAvailableTicketsAdd] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -32,8 +34,14 @@ const Enroll = () => {
   const [allEnrollUrl, setAllEnrollUrl] = useState(true);
   const [leads, setLeads] = useState([]);
   const [agents, setAgents] = useState([]);
+  const [removalReason, setRemovalReason] = useState("");
   const date = new Date().toISOString().split("T")[0];
-  const whatsappEnable = true;
+  const [thirdPartyEnable, setThirdPartyEnable] = useState({
+    email: true,
+    whatsapp: true,
+    paymentLink: true,
+  });
+  const [email, setEmail] = useState([]);
   const [enrollmentStep, setEnrollmentStep] = useState("verify");
   const [alertConfig, setAlertConfig] = useState({
     visibility: false,
@@ -51,7 +59,9 @@ const Enroll = () => {
     referred_customer: "",
     agent: "",
     referred_lead: "",
+    email_id: "",
     chit_asking_month: "",
+    created_by: "",
   });
   const [isVerified, setIsVerified] = useState(false);
   const [updateFormData, setUpdateFormData] = useState({
@@ -64,39 +74,36 @@ const Enroll = () => {
     agent: "",
     referred_lead: "",
     chit_asking_month: "",
+    blocked_referral: false,
+    blocked_referral_type: "",
+    blocked_referred_customer: "",
+    blocked_referred_lead: "",
+    blocked_referred_agent: "",
   });
+
   const [searchText, setSearchText] = useState("");
-
-  // NEW: State for Filters
-  const [paymentTypeFilter, setPaymentTypeFilter] = useState("");
-  const [referredTypeFilter, setReferredTypeFilter] = useState("");
-  const [chitMonthFilter, setChitMonthFilter] = useState("");
-
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(9); // Default 9 items per page to match 3x3 grid
-
+  const [selectedCustomer, setSelectedCustomer] = useState([]);
   const onGlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
-    setCurrentPage(1); // Reset to first page when searching
   };
-
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
     const adminId = userObj._id;
     if (adminId) {
       setAdmin(userObj._id);
+
+      setFormData((prev) => ({ ...prev, created_by: adminId }));
     } else {
       setAdmin("");
     }
   }, []);
-
   useEffect(() => {
     const fetchGroups = async () => {
       try {
         const response = await api.get("/group/get-group-admin");
+
         setGroups(response.data);
       } catch (error) {
         console.error("Error fetching group data:", error);
@@ -113,9 +120,9 @@ const Enroll = () => {
         setTableEnrolls([]);
         setIsDataTableLoading(true);
         const response = await api.get(url);
-        if (response?.data && response?.data?.length > 0) {
-          setFilteredUsers(response?.data);
-          const formattedData = response?.data.map((group, index) => {
+        if (response.data && response.data.length > 0) {
+          setFilteredUsers(response.data);
+          const formattedData = response.data.map((group, index) => {
             if (!group?.group_id || !group?.user_id) return {};
             return {
               _id: group?._id,
@@ -124,7 +131,9 @@ const Enroll = () => {
               phone_number: group?.user_id?.phone_number,
               group_name: group?.group_id?.group_name,
               payment_type: group?.payment_type,
-              enrollment_date: group?.createdAt ? group?.createdAt?.split("T")[0] : "",
+              enrollment_date: group?.createdAt
+                ? group?.createdAt?.split("T")[0]
+                : "",
               chit_asking_month: group?.chit_asking_month,
               referred_type: group?.referred_type,
               referred_by:
@@ -132,11 +141,11 @@ const Enroll = () => {
                   ? `${group.agent.name} | ${group.agent.phone_number}`
                   : group?.referred_customer?.full_name &&
                     group?.referred_customer?.phone_number
-                    ? `${group.referred_customer.full_name} | ${group?.referred_customer?.phone_number}`
-                    : group?.referred_lead?.lead_name &&
-                      group?.referred_lead?.agent_number
-                      ? `${group.referred_lead.lead_name} | ${group.referred_lead.agent_number}`
-                      : "N/A",
+                  ? `${group.referred_customer.full_name} | ${group?.referred_customer?.phone_number}`
+                  : group?.referred_lead?.lead_name &&
+                    group?.referred_lead?.agent_number
+                  ? `${group.referred_lead.lead_name} | ${group.referred_lead.agent_number}`
+                  : "N/A",
               ticket: group.tickets,
               action: (
                 <div className="flex justify-center items-center gap-2">
@@ -159,12 +168,12 @@ const Enroll = () => {
                           label: (
                             <div
                               className="text-red-600"
-                              onClick={() => handleDeleteModalOpen(group._id)}
+                              onClick={() => handleRemoveModalOpen(group._id)}
                             >
-                              Delete
+                              Remove
                             </div>
                           ),
-                        }
+                        },
                       ],
                     }}
                     placement="bottomLeft"
@@ -201,7 +210,6 @@ const Enroll = () => {
     };
     fetchUsers();
   }, []);
-
   useEffect(() => {
     const fetchAgents = async () => {
       try {
@@ -213,7 +221,6 @@ const Enroll = () => {
     };
     fetchAgents();
   }, []);
-
   useEffect(() => {
     const fetchLeads = async () => {
       try {
@@ -231,6 +238,7 @@ const Enroll = () => {
       ...prevData,
       [field]: value,
     }));
+
     setErrors((prevErrors) => ({
       ...prevErrors,
       [field]: "",
@@ -245,18 +253,45 @@ const Enroll = () => {
       }
     }
   };
-
+  function setRefferedType(referralArray) {
+    const found = referralArray.find((referee) => referee.data);
+    return found ? found.value : null;
+  }
   const handleAntInputDSelect = (field, value) => {
-    setUpdateFormData((prevData) => ({
-      ...prevData,
-      [field]: value,
-    }));
+    if (field === "referred_type" && value === "Blocked Referral") {
+      setUpdateFormData((prevData) => ({
+        ...prevData,
+        referred_type: "",
+        blocked_referral: true,
+        referred_customer: "",
+        referred_lead: "",
+        agent: "",
+        blocked_referral_type: setRefferedType([
+          { data: prevData?.referred_customer, value: "Customer" },
+          { data: prevData?.referred_lead, value: "Lead" },
+          { data: prevData?.agent, value: "Agent" },
+        ]),
+        blocked_referred_customer: prevData?.referred_customer?._id,
+        blocked_referred_lead: prevData?.referred_lead?._id,
+        blocked_referred_agent: prevData?.agent?._id,
+      }));
+      return;
+    } else {
+      setUpdateFormData((prevData) => ({
+        ...prevData,
+        blocked_referral_type: false,
+        blocked_referred_customer: "",
+        blocked_referred_lead: "",
+        blocked_referred_agent: "",
+        [field]: value,
+      }));
+    }
+
     setErrors({ ...errors, [field]: "" });
   };
-
   const handleGroupChange = async (groupId) => {
     setSelectedGroup(groupId);
-    setCurrentPage(1); // Reset to first page when changing group
+
     if (groupId) {
       let url;
       if (groupId === "today") {
@@ -290,11 +325,11 @@ const Enroll = () => {
                   ? `${group.agent.name} | ${group.agent.phone_number}`
                   : group?.referred_customer?.full_name &&
                     group?.referred_customer?.phone_number
-                    ? `${group.referred_customer.full_name} | ${group?.referred_customer?.phone_number}`
-                    : group?.referred_lead?.lead_name &&
-                      group?.referred_lead?.agent_number
-                      ? `${group.referred_lead.lead_name} | ${group.referred_lead.agent_number}`
-                      : "N/A",
+                  ? `${group.referred_customer.full_name} | ${group?.referred_customer?.phone_number}`
+                  : group?.referred_lead?.lead_name &&
+                    group?.referred_lead?.agent_number
+                  ? `${group.referred_lead.lead_name} | ${group.referred_lead.agent_number}`
+                  : "N/A",
               ticket: group.tickets,
               action: (
                 <div className="flex justify-center items-center gap-2">
@@ -317,12 +352,12 @@ const Enroll = () => {
                           label: (
                             <div
                               className="text-red-600"
-                              onClick={() => handleDeleteModalOpen(group._id)}
+                              onClick={() => handleRemoveModalOpen(group._id)}
                             >
-                              Delete
+                              Remove
                             </div>
                           ),
-                        }
+                        },
                       ],
                     }}
                     placement="bottomLeft"
@@ -349,61 +384,33 @@ const Enroll = () => {
     }
   };
 
-  // Get current items for pagination
-  const getCurrentItems = () => {
-    let filteredData = [...TableEnrolls]; // Start with all data
-
-    // Apply Search Filter
-    if (searchText) {
-      filteredData = filteredData.filter(item =>
-        item.name?.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.phone_number?.includes(searchText) ||
-        item.group_name?.toLowerCase().includes(searchText.toLowerCase())
-      );
-    }
-
-    // Apply New Filters
-    if (paymentTypeFilter) {
-      filteredData = filteredData.filter(item => item.payment_type === paymentTypeFilter);
-    }
-
-    if (referredTypeFilter) {
-      filteredData = filteredData.filter(item => item.referred_type === referredTypeFilter);
-    }
-
-    if (chitMonthFilter) {
-      filteredData = filteredData.filter(item => item.chit_asking_month?.toString() === chitMonthFilter);
-    }
-
-    // Apply Pagination
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    return filteredData.slice(indexOfFirstItem, indexOfLastItem);
-  };
-
-  // Change page
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    // Scroll to top of content when changing pages
-    const contentElement = document.querySelector('.flex-grow');
-    if (contentElement) {
-      contentElement.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  // Change items per page
-  const handleItemsPerPageChange = (value) => {
-    setItemsPerPage(value);
-    setCurrentPage(1); // Reset to first page
-  };
+  const columns = [
+    { key: "id", header: "SL. NO" },
+    { key: "name", header: "Customer Name" },
+    { key: "phone_number", header: "Customer Phone Number" },
+  ];
+  if (allEnrollUrl) {
+    columns.push({ key: "group_name", header: "Enrolled Group" });
+  }
+  columns.push(
+    { key: "ticket", header: "Ticket Number" },
+    { key: "referred_type", header: "Referred Type" },
+    { key: "payment_type", header: "Payment Type" },
+    { key: "enrollment_date", header: "Enrollment Date" },
+    { key: "chit_asking_month", header: "Chit Asking Month" },
+    { key: "referred_by", header: "Referred By" },
+    { key: "action", header: "Action" }
+  );
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+
     if (name === "group_id") {
       try {
         const response = await api.post(`/enroll/get-next-tickets/${value}`);
@@ -414,17 +421,21 @@ const Enroll = () => {
       }
     }
   };
-
   const validate = (type) => {
     const newErrors = {};
     const data = type === "addEnrollment" ? formData : updateFormData;
     const noOfTickets = type === "addEnrollment" ? "no_of_tickets" : "tickets";
+    const regex = { email_id: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ };
     if (!data.group_id.trim()) {
       newErrors.group_id = "Please select a group";
     }
     if (!data.user_id) {
       newErrors.user_id = "Please select a customer";
     }
+    if (data.email_id && !regex.email_id.test(data.email_id)) {
+      newErrors.email_id = "Invalid email format";
+    }
+
     if (availableTicketsAdd.length > 0) {
       if (
         !data[noOfTickets] ||
@@ -438,6 +449,7 @@ const Enroll = () => {
         ] = `Maximum ${availableTicketsAdd.length} tickets allowed`;
       }
     }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -457,6 +469,8 @@ const Enroll = () => {
         agent,
         referred_lead,
         chit_asking_month,
+        email_id,
+        created_by,
       } = formData;
       const ticketsCount = parseInt(no_of_tickets, 10);
       const ticketEntries = availableTicketsAdd
@@ -472,16 +486,27 @@ const Enroll = () => {
           referred_type,
           chit_asking_month: Number(chit_asking_month),
           tickets: ticketNumber,
+          email_id,
+          created_by,
         }));
+
       try {
         for (const ticketEntry of ticketEntries) {
           console.log("ticket");
-          await api.post("/enroll/add-enroll", ticketEntry, {
-            headers: {
-              "Content-Type": "application/json",
+          await api.post(
+            "/enroll/add-enroll",
+            {
+              ...ticketEntry,
+              ...thirdPartyEnable,
             },
-          });
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
         }
+
         setShowModal(false);
         setFormData({
           group_id: "",
@@ -492,6 +517,7 @@ const Enroll = () => {
           referred_customer: "",
           agent: "",
           referred_lead: "",
+          email_id,
         });
         setAlertConfig({
           visibility: true,
@@ -528,6 +554,12 @@ const Enroll = () => {
         referred_lead: response.data?.referred_lead,
         referred_type: response.data?.referred_type,
         chit_asking_month: response.data?.chit_asking_month || "",
+        blocked_referral: response.data?.blocked_referral || false,
+        blocked_referral_type: response.data?.blocked_referral_type || "",
+        blocked_referral_customer:
+          response.data?.blocked_referral_customer || "",
+        blocked_referral_lead: response.data?.blocked_referral_lead || "",
+        blocked_referral_agent: response.data?.blocked_referral_agent || "",
       });
       setShowModalUpdate(true);
     } catch (error) {
@@ -535,32 +567,41 @@ const Enroll = () => {
     }
   };
 
-  const handleDeleteModalOpen = async (groupId) => {
+  const handleRemoveModalOpen = async (groupId) => {
     try {
       const response = await api.get(`/enroll/get-enroll-by-id/${groupId}`);
       setCurrentGroup(response.data);
-      setShowModalDelete(true);
+      setShowModalRemove(true);
     } catch (error) {
       console.error("Error fetching enroll:", error);
     }
   };
 
-  const handleDeleteGroup = async () => {
+  const handleRemoveGroup = async (e) => {
+    e.preventDefault();
+
     if (currentGroup) {
-      try {
-        await api.delete(`/enroll/delete-enroll/${currentGroup._id}`, {
-          deleted_by: admin,
-          deleted_at: new Date()
-        });
-        setShowModalDelete(false);
-        setCurrentGroup(null);
-        setAlertConfig({
-          visibility: true,
-          message: "Enroll deleted successfully",
-          type: "success",
-        });
-      } catch (error) {
-        console.error("Error deleting group:", error);
+      const user_id = currentGroup.user_id?._id;
+      if (user_id) {
+        try {
+          await api.put(`/enroll/remove-enroll/${currentGroup._id}`, {
+            user_id,
+            deleted_by: admin,
+            deleted_at: new Date(),
+            removalReason,
+          });
+          setRemovalReason("");
+          setShowModalRemove(false);
+          setCurrentGroup(null);
+          setAlertConfig({
+            visibility: true,
+            message: "Enroll deleted successfully",
+            type: "success",
+          });
+        } catch (error) {
+          setRemovalReason("");
+          console.error("Error deleting group:", error);
+        }
       }
     }
   };
@@ -573,6 +614,7 @@ const Enroll = () => {
         updateFormData
       );
       setShowModalUpdate(false);
+
       setAlertConfig({
         visibility: true,
         message: "Enrollment Updated Successfully",
@@ -607,16 +649,19 @@ const Enroll = () => {
       referred_lead,
       referred_type,
     } = formData;
+
     if (!user_id || !group_id) {
       notification.warning({
         message: "Please select both Group and Customer before verifying.",
       });
       return;
     }
+
     try {
       const response = await api.get(`/enroll/get-enroll-check`, {
         params: { user_id, group_id },
       });
+
       const selectedUser = users.find((u) => u._id === user_id);
       const selectedGroup = groups.find((g) => g._id === group_id);
       const selectedAgent = agents.find((a) => a._id === agent);
@@ -626,6 +671,7 @@ const Enroll = () => {
       const selectedReferredLead = leads?.find?.(
         (l) => l._id === referred_lead
       );
+
       if (response?.data) {
         const agentName =
           typeof response.data.agent === "object"
@@ -639,21 +685,24 @@ const Enroll = () => {
           typeof response.data.referred_lead === "object"
             ? response.data.referred_lead?.lead_name
             : null;
+
         const referredInfoParts = [];
+
         if (agentName)
           referredInfoParts.push(
             ` Already referred by Agent Name: ${agentName}`
           );
         if (referredCustomerName)
           referredInfoParts.push(
-            `ðŸ‘¤ Already referred by Customer Name: ${referredCustomerName}`
+            `Already referred by Customer Name: ${referredCustomerName}`
           );
         if (referredLeadName)
           referredInfoParts.push(
-            `ðŸ§² Already referred by Lead Name: ${referredLeadName}`
+            ` Already referred by Lead Name: ${referredLeadName}`
           );
         if (referredInfoParts.length === 0)
           referredInfoParts.push("Enrollment exists with no referral info.");
+
         setFormData((prev) => ({
           ...prev,
           no_of_tickets: response?.data?.no_of_tickets ?? prev.no_of_tickets,
@@ -667,13 +716,14 @@ const Enroll = () => {
             (response.data?.agent
               ? "Agent"
               : response.data?.referred_customer
-                ? "Customer"
-                : response.data?.referred_lead
-                  ? "Leads"
-                  : ""),
+              ? "Customer"
+              : response.data?.referred_lead
+              ? "Leads"
+              : ""),
           chit_asking_month:
             response?.data?.chit_asking_month ?? prev.chit_asking_month,
         }));
+
         let selectedBy = "Unknown";
         if (referred_type === "Agent")
           selectedBy = selectedAgent?.name || "Unknown Agent";
@@ -682,8 +732,10 @@ const Enroll = () => {
             selectedReferredCustomer?.full_name || "Unknown Customer";
         else if (referred_type === "Leads")
           selectedBy = selectedReferredLead?.lead_name || "Unknown Lead";
+
         setIsExistingEnrollment(true);
         setEnrollmentStep("continue");
+
         notification.warning({
           message: (
             <span
@@ -723,6 +775,7 @@ const Enroll = () => {
         setIsExistingEnrollment(false);
         setIsVerified(true);
         setEnrollmentStep("continue");
+
         notification.success({
           message: `Eligible for Enrollment`,
           description: `User "${selectedUser?.full_name}" can be enrolled in "${selectedGroup?.group_name}".`,
@@ -740,6 +793,7 @@ const Enroll = () => {
 
   const handleMultiStep = async (e) => {
     e.preventDefault();
+
     if (enrollmentStep === "verify") {
       await handleVerify();
     } else if (enrollmentStep === "continue") {
@@ -747,83 +801,6 @@ const Enroll = () => {
     } else if (enrollmentStep === "submit") {
       handleSubmit(e);
     }
-  };
-
-
-  const renderEnrollmentCards = () => {
-    const currentItems = getCurrentItems();
-    if (TableEnrolls.length === 0 && isDataTableLoading) {
-      return (
-        <div className="flex justify-center items-center h-64">
-          <CircularLoader isLoading={isDataTableLoading} failure={false} data="Enrollment Data" />
-        </div>
-      );
-    }
-    if (currentItems.length === 0 && !isDataTableLoading) {
-      return (
-        <div className="flex justify-center items-center h-64 text-gray-500 col-span-3">
-          No enrollments found.
-        </div>
-      );
-    }
-    return currentItems.map((enrollment, index) => (
-      <div
-        key={enrollment._id}
-        className="bg-gradient-to-br from-purple-50 to-purple-100 border border-custom-violet rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200"
-      >
-        <div className="flex justify-between items-start mb-3">
-          <h3 className="font-semibold text-purple-800">{enrollment.group_name}</h3>
-          <button
-            className="text-gray-500 hover:text-gray-700"
-            onClick={() => handleDeleteModalOpen(enrollment._id)}
-          >
-            <IoMdMore />
-          </button>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-          <div className="text-center">
-            <p className="text-purple-700 font-medium">{enrollment.ticket}</p>
-            <p className="text-gray-600">Ticket</p>
-          </div>
-          <div className="text-center">
-            <p className="text-purple-700 font-medium">{enrollment.name}</p>
-            <p className="text-gray-600">Customer</p>
-          </div>
-          <div className="text-center">
-            <p className="text-purple-700 font-medium">{enrollment.phone_number}</p>
-            <p className="text-gray-600">Phone</p>
-          </div>
-        </div>
-        <div className="mt-4 pt-3 border-t border-purple-200">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-            <div>
-              <p className="text-purple-700 font-medium">{enrollment.payment_type}</p>
-              <p className="text-gray-600">Payment Type</p>
-            </div>
-            <div>
-              <p className="text-purple-700 font-medium">{enrollment.referred_type}</p>
-              <p className="text-gray-600">Referred Type</p>
-            </div>
-            <div>
-              <p className="text-purple-700 font-medium">{enrollment.enrollment_date}</p>
-              <p className="text-gray-600">Date</p>
-            </div>
-            <div>
-              <p className="text-purple-700 font-medium">{enrollment.chit_asking_month}</p>
-              <p className="text-gray-600">Month</p>
-            </div>
-          </div>
-        </div>
-        <div className="mt-4 flex justify-end">
-          <button
-            className="text-purple-700 hover:text-purple-900"
-            onClick={() => handleUpdateModalOpen(enrollment._id)}
-          >
-            Edit
-          </button>
-        </div>
-      </div>
-    ));
   };
 
   return (
@@ -846,7 +823,7 @@ const Enroll = () => {
               <div className="mb-2">
                 <label>Search or Select Group</label>
               </div>
-              <div className="flex justify-between items-center w-full">
+              <div className="flex  justify-between items-center w-full">
                 <Select
                   showSearch
                   popupMatchSelectWidth={false}
@@ -859,17 +836,17 @@ const Enroll = () => {
                   }
                   placeholder="Search or Select Group"
                   onChange={handleGroupChange}
-                  className="border h-14 w-full max-w-md"
+                  className="border  h-14 w-full max-w-md"
                 >
-                  <Select.Option key={"$1"} value={"today"}>Today's Enrollment</Select.Option>
+                  <Select.Option key={"$1"} value={"today"}>
+                    Today's Enrollment
+                  </Select.Option>
                   {groups.map((group) => (
                     <Select.Option key={group._id} value={group._id}>
                       {group.group_name}
                     </Select.Option>
                   ))}
                 </Select>
-
-
                 <button
                   onClick={() => setShowModal(true)}
                   className="ml-4 bg-custom-violet text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
@@ -878,111 +855,28 @@ const Enroll = () => {
                 </button>
               </div>
             </div>
-
-            {/* --- START: NEW FILTER SECTION --- */}
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg border">
-              <h3 className="text-lg font-medium mb-4">Filters</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Payment Type Filter */}
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-700">Payment Type</label>
-                  <Select
-                    placeholder="All Types"
-                    allowClear
-                    onChange={(value) => {
-                      setPaymentTypeFilter(value || "");
-                    }}
-                    className="w-full"
-                  >
-                    {["Daily", "Weekly", "Monthly"].map((type) => (
-                      <Select.Option key={type} value={type}>
-                        {type}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-
-                {/* Referred Type Filter */}
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-700">Referred Type</label>
-                  <Select
-                    placeholder="All Types"
-                    allowClear
-                    onChange={(value) => {
-                      setReferredTypeFilter(value || "");
-                    }}
-                    className="w-full"
-                  >
-                    {["Self Joining", "Customer", "Employee", "Leads", "Others"].map((type) => (
-                      <Select.Option key={type} value={type}>
-                        {type}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-
-
-
-                {/* Clear Filters Button */}
-                <div className="flex items-end">
-                  <button
-                    onClick={() => {
-                      setPaymentTypeFilter("");
-                      setReferredTypeFilter("");
-                      setChitMonthFilter("");
-                    }}
-                    className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md w-full"
-                  >
-                    Clear Filters
-                  </button>
-                </div>
-              </div>
-            </div>
-
-
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {renderEnrollmentCards()}
-            </div>
-
-
-            {TableEnrolls.length > 0 && (
-              <div className="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div className="flex items-center">
-                  <span className="text-sm text-gray-700 mr-2">Items per page:</span>
-                  <Select
-                    value={itemsPerPage}
-                    onChange={handleItemsPerPageChange}
-                    className="w-20"
-                  >
-                    <Select.Option value={6}>6</Select.Option>
-                    <Select.Option value={9}>9</Select.Option>
-                    <Select.Option value={12}>12</Select.Option>
-                    <Select.Option value={18}>18</Select.Option>
-                    <Select.Option value={24}>24</Select.Option>
-                  </Select>
-                </div>
-                <Pagination
-                  current={currentPage}
-                  pageSize={itemsPerPage}
-                  total={searchText
-                    ? TableEnrolls.filter(item =>
-                      item.name?.toLowerCase().includes(searchText.toLowerCase()) ||
-                      item.phone_number?.includes(searchText) ||
-                      item.group_name?.toLowerCase().includes(searchText.toLowerCase())
-                    ).length
-                    : TableEnrolls.length}
-                  onChange={handlePageChange}
-                  showSizeChanger={false}
-                  showQuickJumper
-                  showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
-                  className="pagination"
-                />
-              </div>
+            {TableEnrolls?.length > 0 ? (
+              <DataTable
+                updateHandler={handleUpdateModalOpen}
+                data={filterOption(TableEnrolls, searchText)}
+                columns={columns}
+                exportedFileName={`Enrollments-${
+                  TableEnrolls.length > 0
+                    ? TableEnrolls[0].name +
+                      " to " +
+                      TableEnrolls[TableEnrolls.length - 1].name
+                    : "empty"
+                }.csv`}
+              />
+            ) : (
+              <CircularLoader
+                isLoading={isDataTableLoading}
+                failure={TableEnrolls?.length <= 0 && selectedGroup}
+                data={"Enrollment Data"}
+              />
             )}
           </div>
         </div>
-        {/* Modals remain unchanged */}
         <Modal
           isVisible={showModal}
           onClose={() => {
@@ -990,21 +884,19 @@ const Enroll = () => {
             setErrors({});
           }}
         >
-          <div className="py-6 px-5 lg:px-8 text-left">
-            <h3 className="mb-4 text-xl font-bold text-gray-900">
+          <div className="py-6 px-5 lg:px-8 text-left bg-white rounded-lg">
+            <h3 className="mb-6 text-2xl font-bold text-gray-900 border-b pb-3">
               Add Enrollment
             </h3>
+
             <form className="space-y-6" onSubmit={handleSubmit} noValidate>
-              <div className="w-full">
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="category"
-                >
-                  Group <span className="text-red-500 ">*</span>
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-gray-800">
+                  Group <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
-                  placeholder="Select Or Search Group"
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                  placeholder="Select or Search Group"
                   popupMatchSelectWidth={false}
                   showSearch
                   name="group_id"
@@ -1024,19 +916,17 @@ const Enroll = () => {
                   ))}
                 </Select>
                 {errors.group_id && (
-                  <p className="mt-1 text-sm text-red-600">{errors.group_id}</p>
+                  <p className="mt-1 text-xs text-red-600">{errors.group_id}</p>
                 )}
               </div>
-              <div className="w-full">
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="category"
-                >
-                  Customer <span className="text-red-500 ">*</span>
+
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-gray-800">
+                  Customer <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
-                  placeholder="Select Or Search Customer"
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                  placeholder="Select or Search Customer"
                   popupMatchSelectWidth={false}
                   showSearch
                   name="user_id"
@@ -1047,28 +937,61 @@ const Enroll = () => {
                       .includes(input.toLowerCase())
                   }
                   value={formData?.user_id || undefined}
-                  onChange={(value) => handleAntDSelect("user_id", value)}
+                  //onChange={(value) => handleAntDSelect("user_id", value)}
+                  onChange={(value) => {
+                    handleAntDSelect("user_id", value);
+
+                    // find selected user
+                    const selectedUser = users.find((u) => u._id === value);
+                    if (selectedUser) {
+                      setEmail(selectedUser.email || "");
+                      setFormData((prev) => ({
+                        ...prev,
+                        email_id: selectedUser.email,
+                      }));
+                    }
+                  }}
                 >
                   {users.map((user) => (
                     <Select.Option key={user._id} value={user._id}>
-                      {user.full_name} |{" "}
-                      {user.phone_number ? user.phone_number : "No Number"}
+                      {user.full_name} | {user.phone_number || "No Number"}
                     </Select.Option>
                   ))}
                 </Select>
-                {errors.user_id && (
-                  <p className="mt-1 text-sm text-red-600">{errors.user_id}</p>
+                {formData?.user_id && (
+                  <div className="mt-3">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      title="Email ID For Payment Link Submission"
+                    >
+                      Email
+                    </label>
+                    <input
+                      title="Email ID For Payment Link Submission"
+                      type="email"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2"
+                      value={email || ""}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setFormData((prev) => ({
+                          ...prev,
+                          email_id: e.target.value,
+                        }));
+                      }}
+                    />
+                  </div>
+                )}
+                {errors.email_id && (
+                  <p className="mt-1 text-xs text-red-600">{errors.email_id}</p>
                 )}
               </div>
-              <div className="w-full">
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="payment_type"
-                >
-                  Select Payment Type <span className="text-red-500 ">*</span>
+
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-gray-800">
+                  Payment Type <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                   placeholder="Select Payment Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1086,8 +1009,9 @@ const Enroll = () => {
                   ))}
                 </Select>
               </div>
-              {/* <div className="w-full">
-                <label className="block mb-2 text-sm font-medium text-gray-900">
+
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-gray-800">
                   Chit Asking Month
                 </label>
                 <input
@@ -1096,18 +1020,16 @@ const Enroll = () => {
                   value={formData.chit_asking_month}
                   onChange={handleChange}
                   placeholder="Enter month number (e.g., 1 for Jan)"
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                 />
-              </div> */}
-              <div className="w-full">
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="referred_type"
-                >
-                  Select Referred Type <span className="text-red-500 ">*</span>
+              </div>
+
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-gray-800">
+                  Referred Type <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                   placeholder="Select Referred Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1118,7 +1040,14 @@ const Enroll = () => {
                   value={formData?.referred_type || undefined}
                   onChange={(value) => handleAntDSelect("referred_type", value)}
                 >
-                  {["Self Joining", "Customer", "Employee", "Leads", "Others"].map((refType) => (
+                  {[
+                    "Self Joining",
+                    "Customer",
+                    "Employee",
+                    "Leads",
+
+                    "Others",
+                  ].map((refType) => (
                     <Select.Option key={refType} value={refType}>
                       {refType}
                     </Select.Option>
@@ -1134,8 +1063,9 @@ const Enroll = () => {
                     Select Referred Customer{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
+
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
                     placeholder="Select Or Search Referred Customer"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1169,8 +1099,9 @@ const Enroll = () => {
                     Select Referred Leads{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
+
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
                     placeholder="Select Or Search Referred Leads"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1203,14 +1134,16 @@ const Enroll = () => {
                     Select Referred Employee{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
+
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
                     placeholder="Select Or Search Referred Employee"
                     popupMatchSelectWidth={false}
                     showSearch
                     name="agent"
                     filterOption={(input, option) => {
-                      if (!option || !option.children) return false;
+                      if (!option || !option.children) return false; // Ensure option and children exist
+
                       return option.children
                         .toString()
                         .toLowerCase()
@@ -1227,60 +1160,100 @@ const Enroll = () => {
                   </Select>
                 </div>
               )}
+
               {formData.group_id && availableTicketsAdd.length === 0 ? (
-                <>
-                  <p className="text-center text-red-600">Group is Full</p>
-                </>
+                <p className="text-center text-red-600 font-medium">
+                  Group is Full
+                </p>
               ) : formData.group_id && availableTicketsAdd.length !== 0 ? (
                 <div>
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="email"
-                  >
-                    Number of Tickets <span className="text-red-500 ">*</span>
+                  <label className="block mb-2 text-sm font-semibold text-gray-800">
+                    Number of Tickets <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
                     name="no_of_tickets"
                     value={formData?.no_of_tickets}
                     id="name"
-                    onChange={(e) => {
-                      handleChange(e);
-                    }}
+                    onChange={handleChange}
                     placeholder="Enter the Number of Tickets"
                     required
                     max={availableTicketsAdd.length}
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                   />
                   {errors.no_of_tickets && (
-                    <p className="mt-1 text-sm text-red-600">
+                    <p className="mt-1 text-xs text-red-600">
                       {errors.no_of_tickets}
                     </p>
                   )}
-                  <span className="mt-10 flex items-center justify-center text-sm text-blue-900">
+                  <p className="mt-1 text-xs text-blue-800 text-center">
                     Only {availableTicketsAdd.length} tickets left
-                  </span>
+                  </p>
                 </div>
-              ) : (
-                <p className="text-center text-red-600"></p>
-              )}
-              <div className="flex flex-col items-center p-4 max-w-full bg-white rounded-lg shadow-sm space-y-4">
-                <div className="flex items-center space-x-3">
-                  <FaWhatsappSquare color="green" className="w-10 h-10" />
-                  <h2 className="text-lg font-semibold text-gray-800">
-                    WhatsApp
-                  </h2>
-                </div>
-                <div className="flex items-center space-x-2">
+              ) : null}
+
+              <div className="border-t pt-4 space-y-4">
+                <h2 className="text-base font-semibold text-gray-900">
+                  Actions
+                </h2>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <FaWhatsapp className="text-green-600 w-5 h-5" />
+                    <span className="text-gray-800">
+                      Enable WhatsApp Sending
+                    </span>
+                  </div>
                   <input
                     type="checkbox"
-                    checked={whatsappEnable}
-                    className="text-green-500 checked:ring-2  checked:ring-green-700  rounded-full w-4 h-4"
+                    checked={thirdPartyEnable.whatsapp}
+                    onChange={() =>
+                      setThirdPartyEnable((prev) => ({
+                        ...prev,
+                        whatsapp: !prev.whatsapp,
+                      }))
+                    }
+                    className="w-5 h-5 accent-green-600 cursor-pointer"
                   />
-                  <span className="text-gray-700">Send Via Whatsapp</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <FiLink className="text-green-600 w-5 h-5" />
+                    <span className="text-gray-800">
+                      Enable Registration Payment Link
+                    </span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={thirdPartyEnable.paymentLink}
+                    onChange={() =>
+                      setThirdPartyEnable((prev) => ({
+                        ...prev,
+                        paymentLink: !prev.paymentLink,
+                      }))
+                    }
+                    className="w-5 h-5 accent-green-600 cursor-pointer"
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <FiMail className="w-5 h-5" aria-hidden="true" />
+                    <span className="text-gray-800">Enable Email</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={thirdPartyEnable.email}
+                    onChange={() =>
+                      setThirdPartyEnable((prev) => ({
+                        ...prev,
+                        email: !prev.email,
+                      }))
+                    }
+                    className="w-5 h-5 accent-green-600 cursor-pointer"
+                  />
                 </div>
               </div>
-              <div className="w-full flex justify-end">
+
+              <div className="flex justify-end pt-4">
                 <button
                   type="button"
                   disabled={
@@ -1289,27 +1262,29 @@ const Enroll = () => {
                       (!isVerified || availableTicketsAdd.length === 0))
                   }
                   onClick={handleMultiStep}
-                  className={`w-1/4 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center ${loading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : enrollmentStep === "verify"
+                  className={`w-1/4 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors ${
+                    loading
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : enrollmentStep === "verify"
                       ? "bg-gray-600 hover:bg-gray-700"
                       : enrollmentStep === "continue"
-                        ? "bg-green-600 hover:bg-green-700"
-                        : "bg-blue-700 hover:bg-blue-800"
-                    }`}
+                      ? "bg-green-600 hover:bg-green-700"
+                      : "bg-blue-700 hover:bg-blue-800"
+                  }`}
                 >
                   {loading
                     ? "Processing..."
                     : enrollmentStep === "verify"
-                      ? "Verify"
-                      : enrollmentStep === "continue"
-                        ? "Continue"
-                        : "Submit"}
+                    ? "Verify"
+                    : enrollmentStep === "continue"
+                    ? "Continue"
+                    : "Submit"}
                 </button>
               </div>
             </form>
           </div>
         </Modal>
+
         <Modal
           isVisible={showModalUpdate}
           onClose={() => {
@@ -1346,6 +1321,7 @@ const Enroll = () => {
                   ))}
                 </select>
               </div>
+
               <div className="w-full">
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
@@ -1414,6 +1390,7 @@ const Enroll = () => {
                   className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                 />
               </div>
+
               <div className="w-full">
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
@@ -1435,13 +1412,21 @@ const Enroll = () => {
                     handleAntInputDSelect("referred_type", value)
                   }
                 >
-                  {["Self Joining", "Customer", "Employee", "Leads", "Others"].map((refType) => (
+                  {[
+                    "Self Joining",
+                    "Customer",
+                    "Employee",
+                    "Leads",
+                    "Blocked Referral",
+                    "Others",
+                  ].map((refType) => (
                     <Select.Option key={refType} value={refType}>
                       {refType}
                     </Select.Option>
                   ))}
                 </Select>
               </div>
+
               {updateFormData.referred_type === "Customer" && (
                 <div className="w-full">
                   <label
@@ -1451,6 +1436,7 @@ const Enroll = () => {
                     Select Referred Customer{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
+
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Or Search Referred Customer"
@@ -1465,7 +1451,7 @@ const Enroll = () => {
                     }
                     value={updateFormData?.referred_customer || undefined}
                     onChange={(value) =>
-                      handleAntDSelect("referred_customer", value)
+                      handleAntInputDSelect("referred_customer", value)
                     }
                   >
                     {users.map((user) => (
@@ -1485,6 +1471,7 @@ const Enroll = () => {
                     Select Referred Leads{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
+
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Or Search Referred Lead"
@@ -1519,6 +1506,7 @@ const Enroll = () => {
                     Select Referred Employee{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
+
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Or Search Referred Employee"
@@ -1568,6 +1556,7 @@ const Enroll = () => {
                     ))}
                 </select>
               </div>
+
               <button
                 type="submit"
                 className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
@@ -1578,28 +1567,49 @@ const Enroll = () => {
           </div>
         </Modal>
         <Modal
-          isVisible={showModalDelete}
+          isVisible={showModalRemove}
           onClose={() => {
-            setShowModalDelete(false);
+            setShowModalRemove(false);
             setCurrentGroup(null);
           }}
         >
           <div className="py-6 px-5 lg:px-8 text-left">
-            <h3 className="mb-4 text-xl font-bold text-gray-900">
-              Sure want to remove this Enrollment ?
+            <h3 className="mb-4 text-xl font-bold text-gray-900"> 
+              Please Select a Reason for Removal
             </h3>
+
             {currentGroup && (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleDeleteGroup();
-                }}
-                className="space-y-6"
-              >
+              <form onSubmit={handleRemoveGroup} className="space-y-6">
+                <div>
+                  <label
+                    htmlFor="removalReason"
+                    className="block mb-2 text-sm font-medium text-gray-700"
+                  >
+                    Removal Reason <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="removalReason"
+                    name="removalReason"
+                    value={removalReason}
+                    onChange={(e) => setRemovalReason(e.target.value)}
+                    required
+                    className="block w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  >
+                    <option value="">-- Select Reason --</option>
+                    <option value="Group Closed">Group Closed</option>
+                    <option value="Chit Cancellation">Chit Cancellation</option>
+                    <option value="On Hold">On Hold</option>
+                    <option value="In Active Customer">
+                      InActive Customer
+                    </option>
+                    <option value="Legal">Legal</option>
+                    <option value="Others">Others</option>
+                  </select>
+                </div>
+
                 <button
                   type="submit"
-                  className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-full text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
                 >
                   Remove
                 </button>

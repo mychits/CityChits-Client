@@ -18,7 +18,7 @@ const DueMessage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [totalUsers, setTotalUsers] = useState(0);
   const [notifier, contextHolder] = notification.useNotification();
-
+  const [selectAll, setSelectAll] = useState(false);
   const groupOptions = [...new Set(usersData.map((u) => u.groupName))];
 
   const filteredUsers = useMemo(() => {
@@ -70,6 +70,14 @@ const DueMessage = () => {
       };
     });
   }, [usersData, groupFilter, fromDate, toDate, searchText, activeUserData]);
+  useEffect(() => {
+    if (filteredUsers.length > 0) {
+      const allSelected = filteredUsers.every((user) => user.isSelected);
+      setSelectAll(allSelected);
+    } else {
+      setSelectAll(false);
+    }
+  }, [filteredUsers]);
 
   const visibleSelectedCount = useMemo(() => {
     return filteredUsers.filter((user) => user.isSelected).length;
@@ -150,7 +158,8 @@ const DueMessage = () => {
                 groupType === "double"
                   ? groupInstall * auctionCount + groupInstall
                   : totalPayable + groupInstall + totalProfit;
-              const amountToBePaid = groupType === "double"
+              const amountToBePaid =
+                groupType === "double"
                   ? groupInstall * auctionCount + groupInstall
                   : totalPayable + groupInstall + totalProfit;
               const balance =
@@ -258,6 +267,43 @@ const DueMessage = () => {
                       ))}
                     </Select>
                   </div>
+                  <div className="flex items-center mt-6">
+                    <input
+                      type="checkbox"
+                      checked={selectAll}
+                      onChange={(e) => {
+                        const isChecked = e.target.checked;
+                        setSelectAll(isChecked);
+
+                        // Update all filtered users
+                        setActiveUserData((prev) => {
+                          const updated = { ...prev };
+                          filteredUsers.forEach((user) => {
+                            updated[user._id] = {
+                              info: {
+                                ...updated[user._id]?.info,
+                                status: isChecked,
+                                balance: user.balance,
+                                userPhone: user.userPhone,
+                                paymentsTicket: user.paymentsTicket,
+                                groupName: user.groupName,
+                                userName: user.userName,
+                                groupId: user.groupId,
+                                userId: user.userId,
+                                amountPaid: user.amountPaid,
+                                amountToBePaid: user.totalToBePaid,
+                              },
+                            };
+                          });
+                          return updated;
+                        });
+                      }}
+                      className="mr-2"
+                    />
+                    <label className="text-sm font-medium text-gray-700">
+                      Select All
+                    </label>
+                  </div>
                 </div>
                 <div className="flex justify-end mb-4">
                   <button
@@ -280,7 +326,10 @@ const DueMessage = () => {
                   data={filteredUsers}
                   columns={Auctioncolumns}
                   catcher="_id"
-                  exportedFileName={`CustomerReport.csv`}
+                  exportedPdfName="Due Message"
+                  printHeaderKeys={["Group Name"]}
+                  printHeaderValues={[groupFilter]}
+                  exportedFileName={`Due Message.csv`}
                 />
               </div>
             </div>

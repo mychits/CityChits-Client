@@ -263,21 +263,21 @@ const Home = () => {
               Monitor key business indicators and make data-driven decisions.
             </p>
           </header>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10 auto-rows-fr">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10 auto-rows-fr ">
             {cardData.map((card) => (
               <div
                 key={card.key}
-                className="transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
+                className="transform transition-all duration-300 hover:scale-[1.02] hover:shadow-violet-700  hover:shadow-2xl"
               >
                 <div
                   className={`relative rounded-3xl p-1 
           bg-white border ${card.borderColor}
            transition-all duration-300 ease-out
-          hover:shadow-2xl hover:scale-[1.07] hover:${card.borderColor}
+          hover:shadow-2xl bg-violet-400  hover:scale-[1.07] hover:${card.borderColor}
           hover:${card.ringColor}
           cursor-pointer`}
                 >
-                  <div className="bg-white rounded-2xl overflow-hidden h-full">
+                  <div className="bg-white  rounded-2xl overflow-hidden h-full ">
                     <div className="p-4">
                       <div className="flex items-start justify-between">
                         <div className={`p-2 rounded-xl ${card.iconBg} mb-4`}>
