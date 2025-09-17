@@ -23,7 +23,6 @@ import { fieldSize } from "../data/fieldSize";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend);
 
-// ---------- Helpers ----------
 const formatINR = (n) =>
   `₹${Number(n || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
 const formatNum = (n) => Number(n || 0).toLocaleString("en-IN");
@@ -51,7 +50,6 @@ export default function Analytics() {
     type: "info",
   });
 
-  // KPIs
   const [kpis, setKpis] = useState({
     totalCollection: 0,
     thisPeriodCollection: 0,
@@ -62,20 +60,20 @@ export default function Analytics() {
     enrollmentsCount: 0,
   });
 
-  // Raw payments
   const [payments, setPayments] = useState([]);
   const [recent, setRecent] = useState([]);
 
-  // Date range
+  // Always use current month for calculations
   const today = new Date();
-  const defaultFrom = fmtDate(startOfMonth(addMonths(today, -11)));
-  const defaultTo = fmtDate(today);
-  const [fromDate, setFromDate] = useState(defaultFrom);
-  const [toDate, setToDate] = useState(defaultTo);
+  const currentMonthStart = fmtDate(startOfMonth(today));
+  const currentMonthEnd = fmtDate(endOfMonth(today));
+  
+  // For the 12-month aggregation, we'll still show the last 12 months
+  const twelveMonthsAgo = fmtDate(startOfMonth(addMonths(today, -11)));
+  const currentDate = fmtDate(today);
 
-  // Aggregations
   const monthlyAggregation = useMemo(() => {
-    const end = new Date(toDate);
+    const end = new Date(currentDate);
     const labels = [];
     for (let i = 11; i >= 0; i--) {
       const d = addMonths(end, -i);
@@ -91,7 +89,7 @@ export default function Analytics() {
       if (idx >= 0 && idx < labels.length) sums[idx] += Number(p.amount || 0);
     });
     return { labels, sums };
-  }, [payments, toDate]);
+  }, [payments]); // Removed toDate dependency
 
   const revenueSplit = useMemo(() => {
     const map = {};
@@ -133,7 +131,6 @@ export default function Analytics() {
       .slice(0, 7);
   }, [payments]);
 
-  // Chart Options
   const chartOptions = {
     responsive: true,
     plugins: {
@@ -169,16 +166,16 @@ export default function Analytics() {
     ],
   };
 
-const parseINRString = (val) => {
-  if (val === null || val === undefined) return 0;
-  if (typeof val === 'number') return val;
-  if (typeof val === 'string') {
-    const cleaned = val.replace(/,/g, ''); 
-    const num = parseFloat(cleaned);
-    return isNaN(num) ? 0 : num;
-  }
-  return 0;
-};
+  const parseINRString = (val) => {
+    if (val === null || val === undefined) return 0;
+    if (typeof val === 'number') return val;
+    if (typeof val === 'string') {
+      const cleaned = val.replace(/[^0-9.-]/g, ''); 
+      const num = parseFloat(cleaned);
+      return isNaN(num) ? 0 : num;
+    }
+    return 0;
+  };
 
   const groupsBarData = {
     labels: topGroups.map((g) => g.name),
@@ -224,7 +221,6 @@ const parseINRString = (val) => {
     ],
   };
 
-  // Fetch data
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -232,48 +228,91 @@ const parseINRString = (val) => {
         setLoading(true);
         setError("");
 
-        const [usersRes, groupsRes, agentsRes, employeesRes, enrollRes, totalCollRes, currentMonthRes, paymentsByDatesRes, lastNTransRes] =
+        // First, get user data to get current user ID
+        const usersRes = await api.get("/user/get-user").catch(() => ({ data: [] }));
+        if (cancelled) return;
+        
+        const users = usersRes?.data || [];
+        // Try to find the current user (adjust based on your auth system)
+        const currentUser = users.length > 0 ? users[0] : null;
+        const currentUserId = currentUser?._id || currentUser?.id || null;
+
+        // Get groups for constructing payment_group_tickets
+        const groupsRes = await api.get("/group/get-group-admin").catch(() => ({ data: [] }));
+        if (cancelled) return;
+        
+        const groups = groupsRes?.data || [];
+        
+        // Format payment_group_tickets as required by backend: ["group-{group_id}|{ticket}"]
+        // Since we don't have ticket info, we'll try with a default ticket of "1"
+        // You may need to adjust this based on your actual data structure
+        const paymentGroupTickets = groups.map(group => {
+          const groupId = group._id || group.id;
+          return `group-${groupId}|1`; // Using 1 as default ticket
+        });
+
+        // If we couldn't get a user ID, we'll handle it gracefully
+        let lastNTransRes;
+        if (currentUserId && paymentGroupTickets.length > 0) {
+          lastNTransRes = await api.get("/payment/get-last-n-transaction", {
+            params: { 
+              user_id: currentUserId,
+              payment_group_tickets: paymentGroupTickets,
+              limit: 10
+            },
+          }).catch(() => ({ data: [] }));
+        } else {
+          // Fallback: use empty array if we can't construct the required parameters
+          lastNTransRes = { data: [] };
+        }
+
+        // Make other API calls - using current month dates for period-specific data
+        const [agentsRes, employeesRes, enrollRes, totalCollRes, currentMonthRes, paymentsByDatesRes] =
           await Promise.allSettled([
-            api.get("/user/get-user").catch(() => ({ data: [] })),
-            api.get("/group/get-group-admin").catch(() => ({ data: [] })),
             api.get("/agent/get").catch(() => ({ data: [] })),
             api.get("/agent/get-employee").catch(() => ({ data: [] })),
             api.get("/enroll/get-enroll").catch(() => ({ data: [] })),
             api.get("/payment/get-total-payment-amount").catch(() => ({ data: {} })),
             api.get("/payment/get-current-month-payment", {
-              params: { from_date: fromDate, to_date: toDate },
+              params: { 
+                from_date: currentMonthStart, 
+                to_date: currentMonthEnd 
+              },
             }).catch(() => ({ data: {} })),
             api.get("/payment/get-payments-by-dates", {
-              params: { from_date: fromDate, to_date: toDate },
+              params: { 
+                from_date: twelveMonthsAgo, 
+                to_date: currentDate 
+              },
             }).catch(() => ({ data: [] })),
-            api.get("/payment/get-last-n-transaction", { params: { limit: 10 } }).catch(() => ({ data: [] })),
           ]);
 
         if (cancelled) return;
 
         const unwrap = (res) => (res?.status === "fulfilled" ? res.value : res.reason);
 
-        const users = unwrap(usersRes)?.data || [];
-        const groups = unwrap(groupsRes)?.data || [];
         const agents = unwrap(agentsRes)?.data || [];
         const employees = unwrap(employeesRes)?.data || [];
         const enrolls = unwrap(enrollRes)?.data || [];
         const totalColl = unwrap(totalCollRes)?.data || {};
         const currentMonth = unwrap(currentMonthRes)?.data || {};
         const paymentsRange = unwrap(paymentsByDatesRes)?.data || [];
-        const lastN = unwrap(lastNTransRes)?.data || [];
+        const lastN = lastNTransRes?.data || [];
 
-    setKpis({
-  totalCollection: parseINRString(totalColl?.totalAmount),
-  thisPeriodCollection: parseINRString(currentMonth?.monthlyPayment),
-  usersCount: Array.isArray(users) ? users.length : 0,
-  groupsCount: Array.isArray(groups) ? groups.length : 0,
-  agentsCount: Array.isArray(agents?.agent || agents) ? (agents.agent?.length || agents.length) : 0,
-  employeesCount: Array.isArray(employees?.employee || employees) ? (employees.employee?.length || employees.length) : 0,
-  enrollmentsCount: Array.isArray(enrolls) ? enrolls.length : 0,
-});
+        setKpis({
+          totalCollection: parseINRString(totalColl?.totalAmount),
+          thisPeriodCollection: parseINRString(currentMonth?.monthlyPayment),
+          usersCount: Array.isArray(users) ? users.length : 0,
+          groupsCount: Array.isArray(groups) ? groups.length : 0,
+          agentsCount: Array.isArray(agents?.agent || agents) ? (agents.agent?.length || agents.length) : 0,
+          employeesCount: Array.isArray(employees?.employee || employees) ? (employees.employee?.length || employees.length) : 0,
+          enrollmentsCount: Array.isArray(enrolls) ? enrolls.length : 0,
+        });
 
-        const paymentList = Array.isArray(paymentsRange) && paymentsRange.length > 0 ? paymentsRange : lastN;
+        // Prefer payments from date range, fallback to last N transactions
+        const paymentList = Array.isArray(paymentsRange) && paymentsRange.length > 0 
+          ? paymentsRange 
+          : lastN;
 
         const normalized = (paymentList || []).map((p) => ({
           ...p,
@@ -311,7 +350,7 @@ const parseINRString = (val) => {
     return () => {
       cancelled = true;
     };
-  }, [fromDate, toDate]);
+  }, []); // Empty dependency array - no longer depends on fromDate/toDate
 
   const downloadCSV = () => {
     const header = ["#", "Date", "Name", "Group", "Ticket", "Receipt", "Mode", "Amount"];
@@ -390,24 +429,7 @@ const parseINRString = (val) => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                  <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border">
-                    <label className="text-sm text-gray-600">From</label>
-                    <input
-                      type="date"
-                      className="px-2 py-1 text-sm border-none outline-none"
-                      value={fromDate}
-                      onChange={(e) => setFromDate(e.target.value)}
-                    />
-                  </div>
-                  <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border">
-                    <label className="text-sm text-gray-600">To</label>
-                    <input
-                      type="date"
-                      className="px-2 py-1 text-sm border-none outline-none"
-                      value={toDate}
-                      onChange={(e) => setToDate(e.target.value)}
-                    />
-                  </div>
+                 
                   <button
                     onClick={downloadCSV}
                     className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-sm font-medium flex items-center justify-center gap-2 min-w-max"

@@ -5,10 +5,13 @@ import sidebarMenu from "../../data/sidebarMenu";
 import Navbar from "./Navbar";
 import { NavLink, useLocation } from "react-router-dom";
 
+
 const Sidebar = ({
   navSearchBarVisibility = false,
   navbarVisibility = true,
   onGlobalSearchChangeHandler = () => {},
+  showMobileSidebar = false,
+  setShowMobileSidebar = () => {},
 }) => {
   const [open, setOpen] = useState(true);
   const [showArrowLeft, setShowArrowLeft] = useState(false);
@@ -30,15 +33,18 @@ const Sidebar = ({
   return (
     <>
       <Navbar
-        isOpened={open}
         visibility={navSearchBarVisibility}
         onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+        showMobileSidebar={showMobileSidebar}
+        setShowMobileSidebar={setShowMobileSidebar}
       />
       {navbarVisibility && (
         <div
-          className={`bg-primary-variant min-h-screen p-5 pt-8 ${
+          className={`bg-primary-variant min-h-screen p-5 pt-8 fixed md:static z-40 transition-all duration-300 ${
             open ? "w-64" : "w-28"
-          } duration-300 relative border-r-8 border-primary outline-r-8 outline-primary-variant`}
+          } ${!navbarVisibility ? "hidden" : ""} ${
+            showMobileSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          }`}
           onMouseEnter={() => setShowArrowLeft(true)}
           onMouseLeave={() => setShowArrowLeft(false)}
         >
@@ -51,7 +57,7 @@ const Sidebar = ({
             />
           )}
 
-          <ul className="pt-2 space-y-2 ">
+          <ul className="pt-2 space-y-2">
             {sidebarMenu.map((menu, index) => {
               const isOpen = submenuOpenIndex === index;
 
@@ -165,6 +171,13 @@ const Sidebar = ({
             })}
           </ul>
         </div>
+      )}
+
+      {showMobileSidebar && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          onClick={() => setShowMobileSidebar(false)}
+        ></div>
       )}
     </>
   );

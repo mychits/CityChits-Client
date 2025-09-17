@@ -33,6 +33,7 @@ const QuickSearch = () => {
     type: "info",
   });
   const [searchText, setSearchText] = useState("");
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 
   const fil =
     activeFilters.length > 0
@@ -160,38 +161,47 @@ const QuickSearch = () => {
     );
   };
 
+  const onGlobalSearchChangeHandler = (e) => {
+    setSearchText(e.target.value);
+  };
+
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="min-h-screen mt-20 bg-gradient-to-br from-gray-50 to-gray-100 transition-colors duration-300">
       <CustomAlert
         type={alertConfig.type}
         isVisible={alertConfig.visibility}
         message={alertConfig.message}
       />
 
-      <div className="flex mt-20">
+      <div className="flex">
         <Sidebar
           navSearchBarVisibility={true}
-          onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
+          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+          showMobileSidebar={showMobileSidebar}
+          setShowMobileSidebar={setShowMobileSidebar}
         />
 
-        <div className="flex-grow p-8 space-y-8">
+        <div className="flex-1 p-4 md:p-8  md:mr-11   pb-8">
           {/* Page Header */}
-          <Card className="shadow-md border border-gray-200 rounded-xl bg-white/80 backdrop-blur-sm">
-            <h1 className="text-3xl font-bold text-violet-700">
+          <header className="mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 mb-2">
               Customer <span className="text-neutral-500">Search</span>
             </h1>
-            <p className="text-gray-500 text-sm mt-2">
-              Quickly find, filter, and view customer details
+            <p className="text-gray-600 max-w-2xl text-sm sm:text-base">
+              Quickly find, filter, and view customer details using multiple search criteria.
             </p>
-          </Card>
+          </header>
 
-          {/* Search & Filters */}
-          <Card className="shadow-sm border border-gray-200 rounded-xl">
+          {/* Search & Filters Card */}
+          <Card
+            className="mb-8 shadow-sm border border-gray-200 rounded-xl"
+            bodyStyle={{ padding: "1.5rem" }}
+          >
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="relative w-full lg:w-1/3">
                 <input
                   type="text"
-                  placeholder=" Search by ID, Name, or Phone..."
+                  placeholder="Search by ID, Name, or Phone..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
                   className="w-full rounded-lg border border-gray-300 pl-12 pr-5 py-3 text-sm shadow-sm focus:border-violet-700 focus:ring-2 focus:ring-violet-700 outline-none transition"
@@ -225,89 +235,100 @@ const QuickSearch = () => {
             </div>
           </Card>
 
-          {/* Results */}
-          <Card className="shadow-md border border-gray-200 rounded-xl">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4">
+          {/* Results Card */}
+          <Card
+            className="shadow-md border border-gray-200 rounded-xl"
+            bodyStyle={{ padding: "1.5rem" }}
+          >
+            <h3 className="text-lg font-semibold text-gray-700 mb-6">
               Customer List
             </h3>
 
             {isLoading ? (
-              <CircularLoader
-                isLoading={isLoading}
-                failure={TableUsers.length <= 0}
-                data="Customer Data"
-              />
+              <div className="flex justify-center py-10">
+                <CircularLoader
+                  isLoading={isLoading}
+                  failure={TableUsers.length <= 0}
+                  data="Customer Data"
+                />
+              </div>
             ) : searchText.trim() ? (
               <>
                 {(selectedExactMatch || searchResults.length > 0) && (
-                  <div className="mb-6 border border-violet-200 rounded-lg p-4 bg-violet-50/70">
-                    <h4 className="text-violet-800 text-base font-semibold mb-3">
+                  <div className="mb-8 p-5 border border-violet-200 rounded-xl bg-violet-50/70">
+                    <h4 className="text-violet-800 text-lg font-semibold mb-4">
                       Exact Match
                     </h4>
-                    <Table
-                      bordered={false}
-                      size="middle"
-                      pagination={false}
-                      scroll={{ x: true }}
-                      tableLayout="fixed"
-                      rowClassName={() =>
-                        "group hover:bg-violet-50 cursor-pointer transition duration-200"
-                      }
-                      columns={columns}
-                      dataSource={
-                        selectedExactMatch
-                          ? [selectedExactMatch]
-                          : searchResults
-                              .filter((res) => res.score <= 0.05)
-                              .map((res) => res.item)
-                              .slice(0, 1)
-                      }
-                    />
+                    <div className="overflow-x-auto">
+                      <Table
+                        bordered={false}
+                        size="middle"
+                        pagination={false}
+                        scroll={{ x: 'max-content' }}
+                        tableLayout="auto"
+                        rowClassName={() =>
+                          "group hover:bg-violet-50 cursor-pointer transition duration-200"
+                        }
+                        columns={columns}
+                        dataSource={
+                          selectedExactMatch
+                            ? [selectedExactMatch]
+                            : searchResults
+                                .filter((res) => res.score <= 0.05)
+                                .map((res) => res.item)
+                                .slice(0, 1)
+                        }
+                      />
+                    </div>
                   </div>
                 )}
 
                 {relatedMatches.length > 0 && (
-                  <div className="pt-4 border-t">
-                    <h4 className="text-gray-700 text-base font-medium mb-2">
+                  <div className="pt-6 border-t">
+                    <h4 className="text-gray-700 text-base font-medium mb-4">
                       Related Results
                     </h4>
-                    <Table
-                      bordered={false}
-                      size="middle"
-                      pagination={{ pageSize: 12, showSizeChanger: false }}
-                      scroll={{ x: true }}
-                      tableLayout="fixed"
-                      rowClassName={() =>
-                        "group hover:bg-violet-50 cursor-pointer transition duration-200"
-                      }
-                      columns={columns}
-                      dataSource={relatedMatches}
-                      onRow={(record) => ({
-                        onClick: () => handleRelatedClick(record),
-                      })}
-                    />
+                    <div className="overflow-x-auto">
+                      <Table
+                        bordered={false}
+                        size="middle"
+                        pagination={{ pageSize: 12, showSizeChanger: false }}
+                        scroll={{ x: 'max-content' }}
+                        tableLayout="auto"
+                        rowClassName={() =>
+                          "group hover:bg-violet-50 cursor-pointer transition duration-200"
+                        }
+                        columns={columns}
+                        dataSource={relatedMatches}
+                        onRow={(record) => ({
+                          onClick: () => handleRelatedClick(record),
+                        })}
+                      />
+                    </div>
                   </div>
                 )}
               </>
             ) : (
-              <Table
-                bordered={false}
-                size="middle"
-                pagination={{ pageSize: 12, showSizeChanger: false }}
-                scroll={{ x: true }}
-                tableLayout="fixed"
-                rowClassName={() =>
-                  "bg-white hover:bg-violet-50 cursor-pointer transition duration-200"
-                }
-                onHeaderRow={() => {
-                  return {
-                    className:
-                      "bg-gray-900 text-white [&>th]:!bg-violet-700 [&>th]:!text-white [&>th]:font-semibold",
-                  };
-                }}
-                columns={columns}
-                dataSource={TableUsers}
-              />
+              <div className="overflow-x-auto">
+                <Table
+                  bordered={false}
+                  size="middle"
+                  pagination={{ pageSize: 12, showSizeChanger: false }}
+                  scroll={{ x: 'max-content' }}
+                  tableLayout="auto"
+                  rowClassName={() =>
+                    "bg-white hover:bg-violet-50 cursor-pointer transition duration-200"
+                  }
+                  onHeaderRow={() => {
+                    return {
+                      className:
+                        "bg-gray-900 text-white [&>th]:!bg-violet-700 [&>th]:!text-white [&>th]:font-semibold",
+                    };
+                  }}
+                  columns={columns}
+                  dataSource={TableUsers}
+                />
+              </div>
             )}
           </Card>
         </div>

@@ -557,7 +557,7 @@ useEffect(() => {
     }));
 
     setModalVisible(true);
-    setLeadIdState(null); // clear so it won't reopen
+    setLeadIdState(null); 
   }
 }, [leadIdState, leads, agents, leadAgentIdState, currentTask]);
   const handleInput = (e) => {
@@ -678,7 +678,7 @@ useEffect(() => {
                   setModalVisible(true);
                   resetForm();
                 }}
-                className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                className="ml-4 bg-violet-700 text-white px-4 py-2 rounded shadow-md hover:bg-violet-900 transition duration-200"
               >
                 + Add Task
               </button>

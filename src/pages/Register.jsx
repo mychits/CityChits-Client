@@ -33,51 +33,33 @@ const Register = () => {
   const removeBranch = (i) =>
     setBranches(branches.filter((_, idx) => idx !== i));
 
-//   const handleRegister = async (e) => {
-//     e.preventDefault();
-//     try {
-//       const response = await api.post("/admin/register-company", {
-//         company_name: companyName,
-//         company_contact_number: companyContact,
-//         company_branches: branches,
-//         admin_name: adminName,
-//         phoneNumber,
-//         password,
-//       });
-//       if (response.status === 201) {
-//         navigate("/login");
-//       }
-//     } catch (err) {
-//       setError("Registration failed. Try again.");
-//     }
-//   };
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    if (loading) return;
+    setError("");
+    setLoading(true);
 
-const handleRegister = async (e) => {
-  e.preventDefault();
-  if (loading) return;  
-  setError("");
-  setLoading(true);
+    try {
+      const response = await api.post("/admin/register-company", {
+        company_name: companyName,
+        company_contact_number: companyContact,
+        company_branches: branches,
+        admin_name: adminName,
+        phoneNumber,
+        password,
+      });
 
-  try {
-    const response = await api.post("/admin/register-company", {
-      company_name: companyName,
-      company_contact_number: companyContact,
-      company_branches: branches,
-      admin_name: adminName,
-      phoneNumber,
-      password,
-    });
-
-    if (response.status === 201) {
-      navigate("/dashboard");
+      if (response.status === 201) {
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      const msg =
+        err.response?.data?.message || "Registration failed. Try again.";
+      setError(msg);
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    const msg = err.response?.data?.message || "Registration failed. Try again.";
-    setError(msg);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-28 lg:px-8">
@@ -90,7 +72,6 @@ const handleRegister = async (e) => {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form onSubmit={handleRegister} className="space-y-6">
-         
           <div>
             <label className="block text-sm font-medium text-gray-900">
               Company Name
@@ -119,7 +100,6 @@ const handleRegister = async (e) => {
             />
           </div>
 
-   
           <h3 className="text-md font-semibold">Branch Details</h3>
           {branches.map((b, i) => (
             <div key={i} className="p-3 border rounded-md space-y-2">
@@ -148,9 +128,7 @@ const handleRegister = async (e) => {
                 placeholder="State"
                 value={b.state}
                 disabled={loading}
-                onChange={(e) =>
-                  handleBranchChange(i, "state", e.target.value)
-                }
+                onChange={(e) => handleBranchChange(i, "state", e.target.value)}
                 className="block w-full rounded-md border-0 py-1 px-2 shadow-sm ring-1 ring-gray-300"
               />
               <input
@@ -183,7 +161,6 @@ const handleRegister = async (e) => {
             + Add Another Branch
           </button>
 
-         
           <h3 className="text-md font-semibold">Admin Details</h3>
           <div>
             <label className="block text-sm font-medium text-gray-900">

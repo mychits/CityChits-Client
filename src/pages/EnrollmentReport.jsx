@@ -164,13 +164,14 @@ const EnrollmentReport = () => {
 
 
   const groupOptions = [
+    { value: "All", label: "All" },
     { value: "Today", label: "Today" },
     { value: "Yesterday", label: "Yesterday" },
     { value: "ThisMonth", label: "This Month" },
     { value: "LastMonth", label: "Last Month" },
     { value: "ThisYear", label: "This Year" },
     { value: "Custom", label: "Custom" },
-    { value: "All", label: "All" }
+    
   ];
 
   const handleSelectFilter = (value) => {
@@ -404,12 +405,8 @@ const EnrollmentReport = () => {
               <DataTable
                 data={filterOption(TableGroups, searchText)}
                 columns={columns}
-                exportedFileName={`Leads-${TableGroups.length > 0
-                  ? TableGroups[0].date +
-                  " to " +
-                  TableGroups[TableGroups.length - 1].date
-                  : "empty"
-                  }.csv`}
+                exportedPdfName={`Enrollment Report`}
+                exportedFileName={`Enrollment Report.csv`}
               />
             ) : (
               <div className="flex w-full justify-center items-center">

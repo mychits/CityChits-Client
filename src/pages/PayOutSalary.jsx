@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import Sidebar from "../components/layouts/Sidebar";
 import API from "../instance/TokenInstance";
@@ -7,14 +6,20 @@ import DataTable from "../components/layouts/Datatable";
 import CustomAlert from "../components/alerts/CustomAlert";
 import CircularLoader from "../components/loaders/CircularLoader";
 import Navbar from "../components/layouts/Navbar";
-import { Select, Tooltip, notification } from "antd";
+import { Select, Tooltip, notification, Dropdown } from "antd";
+import SettingSidebar from "../components/layouts/SettingSidebar";
+import SalarySlipPrint from "../components/printFormats/SalarySlipPrint";
+import { IoMdMore } from "react-icons/io";
 
-const PayOutSalary = () => {
+const PayoutSalary = () => {
+
   const paymentFor = "salary";
   const [api, contextHolder] = notification.useNotification();
   const [showSalaryModal, setShowSalaryModal] = useState(false);
   const [modifyPayment, setModifyPayment] = useState(false);
   const [adminId, setAdminId] = useState("");
+  const [absent, setAbsent] = useState(0);
+  const [selectedMonth, setSelectedMonth] = useState(null);
   const [alertConfig, setAlertConfig] = useState({
     visibility: false,
     message: "Something went wrong!",
@@ -39,6 +44,9 @@ const PayOutSalary = () => {
   const [reRender, setReRender] = useState(0);
 
   const today = new Date();
+  const currentMonth = `${today.getFullYear()}-${String(
+    today.getMonth() + 1
+  ).padStart(2, "0")}`;
 
   const [salaryForm, setSalaryForm] = useState({
     agent_id: "",
@@ -63,7 +71,6 @@ const PayOutSalary = () => {
   const [alreadyPaid, setAlreadyPaid] = useState("0.00");
   const [remainingSalary, setRemainingSalary] = useState("0.00");
 
-  // Always format to YYYY-MM-DD for backend
   const formatDate = (date) => {
     if (!date) return "";
     if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
@@ -77,7 +84,20 @@ const PayOutSalary = () => {
     return `${year}-${month}-${day}`;
   };
 
-  const calculateProRatedSalary = async (fromDateStr, toDateStr, monthlySalary, empId) => {
+  useEffect(() => {
+    const today = new Date();
+    const currentMonth = `${today.getFullYear()}-${String(
+      today.getMonth() + 1
+    ).padStart(2, "0")}`;
+    setSelectedMonth(currentMonth);
+  }, []);
+
+  const calculateProRatedSalary = async (
+    fromDateStr,
+    toDateStr,
+    monthlySalary,
+    empId
+  ) => {
     if (!fromDateStr || !toDateStr || !monthlySalary || !empId) {
       setCalculatedSalary("");
       setAlreadyPaid("0.00");
@@ -98,6 +118,7 @@ const PayOutSalary = () => {
 
     let current = new Date(fromDate);
     let totalSalary = 0;
+    let lossOfPay = 0;
 
     while (current <= toDate) {
       const year = current.getFullYear();
@@ -121,10 +142,12 @@ const PayOutSalary = () => {
 
       totalSalary += daysWorked * dailySalary;
       current = new Date(year, month + 1, 1);
+      lossOfPay = parseInt(absent) * dailySalary;
     }
 
     const proRatedSalary = totalSalary;
-    const totalPayableWithIncentive = proRatedSalary; // Add incentive later if needed
+
+    const totalPayableWithIncentive = proRatedSalary - parseInt(lossOfPay);
 
     setCalculatedSalary(totalPayableWithIncentive.toFixed(2));
     setTotalWithIncentive(totalPayableWithIncentive.toFixed(2));
@@ -132,7 +155,9 @@ const PayOutSalary = () => {
     try {
       const res = await API.get("/payment-out/get-salary-payments");
       const paidToAgent = res?.data?.filter((p) => {
-        const pAgentId = p.agent_id?._id ? String(p.agent_id._id) : String(p.agent_id);
+        const pAgentId = p.agent_id?._id
+          ? String(p.agent_id._id)
+          : String(p.agent_id);
         const matchesAgent = pAgentId === String(empId);
         const payDate = new Date(formatDate(p.pay_date));
         return matchesAgent && payDate >= fromDate && payDate <= toDate;
@@ -165,7 +190,6 @@ const PayOutSalary = () => {
         const baseSalary = emp.salary || "";
         setEmployeeDetails({ joining_date: joining, salary: baseSalary });
 
-        // 👇 If dates already selected, trigger target + salary calculation
         if (salaryForm.from_date && salaryForm.to_date) {
           const fd = formatDate(salaryForm.from_date);
           const td = formatDate(salaryForm.to_date);
@@ -206,6 +230,33 @@ const PayOutSalary = () => {
         pay_for: payment.pay_for,
         disbursed_by: payment.admin_type?.name,
         receipt_no: payment.receipt_no,
+        action: (
+          <div className="flex justify-center gap-2">
+            <Dropdown
+              trigger={["click"]}
+             
+              menu={{
+                items: [
+                  {
+                    key: "1",
+                    label: (
+                      <div
+                        className="text-green-600"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <SalarySlipPrint payment={payment} />
+                      </div>
+                    ),
+                  },
+                ],
+              }}
+            >
+              <IoMdMore className="text-bold" />
+            </Dropdown>
+          </div>
+        ),
       }));
       setSalaryPayments(responseData);
     } catch (error) {
@@ -216,38 +267,38 @@ const PayOutSalary = () => {
     }
   };
 
-const fetchTargetDetails = async (agentId, fromDate, toDate) => {
-  if (!agentId || !fromDate || !toDate) {
-    resetTargetData();
-    return;
-  }
-
-  try {
-    const res = await API.get(`/target/employee/${agentId}`, {
-      params: { from_date: fromDate, to_date: toDate },
-    });
-
-    if (res.data?.success && res.data?.summary) {
-      const empSummary = res.data.summary;
-
-      setTargetData({
-        target: empSummary.agent?.target?.value || "Not Set",
-        achieved: empSummary.metrics?.actual_business || "₹0.00",
-        difference: empSummary.metrics?.target_difference || "₹0.00",
-        remaining: empSummary.metrics?.target_remaining || "₹0.00",
-        incentiveAmount: empSummary.metrics?.total_estimated || "₹0.00",
-        incentivePercent:
-          (empSummary.agent?.target?.achievement_percent || "0") + "%",
-      });
+  const fetchTargetDetails = async (agentId, fromDate, toDate) => {
+    if (!agentId || !fromDate || !toDate) {
+      resetTargetData();
       return;
     }
 
-    resetTargetData();
-  } catch (error) {
-    console.error("Error fetching target details", error);
-    resetTargetData();
-  }
-};
+    try {
+      const res = await API.get(`/target/employee/${agentId}`, {
+        params: { from_date: fromDate, to_date: toDate },
+      });
+
+      if (res.data?.success && res.data?.summary) {
+        const empSummary = res.data.summary;
+
+        setTargetData({
+          target: empSummary.agent?.target?.value || "Not Set",
+          achieved: empSummary.metrics?.actual_business || "₹0.00",
+          difference: empSummary.metrics?.target_difference || "₹0.00",
+          remaining: empSummary.metrics?.target_remaining || "₹0.00",
+          incentiveAmount: empSummary.metrics?.total_estimated || "₹0.00",
+          incentivePercent:
+            (empSummary.agent?.target?.achievement_percent || "0") + "%",
+        });
+        return;
+      }
+
+      resetTargetData();
+    } catch (error) {
+      console.error("Error fetching target details", error);
+      resetTargetData();
+    }
+  };
 
   const resetTargetData = () => {
     setTargetData({
@@ -259,7 +310,6 @@ const fetchTargetDetails = async (agentId, fromDate, toDate) => {
       incentivePercent: "0%",
     });
   };
-
 
   // Load user info on mount
   useEffect(() => {
@@ -300,40 +350,117 @@ const fetchTargetDetails = async (agentId, fromDate, toDate) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // const handleSalarySubmit = async (e) => {
+  //   e.preventDefault();
+  //   const isValid = validateForm();
+  //   if (isValid) {
+
+  //     const alreadyPaid = await checkSalaryStatus(salaryForm.agent_id, selectedMonth);
+  // if (alreadyPaid) {
+  //   return; // stop submit
+  // }
+
+  //     try {
+  //       setIsLoading(true);
+  //       const payload = {
+  //         ...salaryForm,
+  //         admin_type: adminId,
+  //         absent_days: String(absent),
+  //       paid_month: String(selectedMonth),
+  //       };
+  //    const res=   await API.post("/payment-out/add-salary-payment", payload);
+  //       if (res.data.alreadyPaid) {
+  //     api.open({
+  //       message: "Salary Already Paid",
+  //       description: res.data.message,
+  //       className: "bg-yellow-500 rounded-lg font-semibold text-white",
+  //       showProgress: true,
+  //       pauseOnHover: false,
+  //     });
+  //     setShowSalaryModal(false);
+  //     return;
+  //   }
+  //       api.open({
+  //         message: "Salary Payout Successful",
+  //         description: "The salary payment has been successfully processed.",
+  //         className: "bg-green-500 rounded-lg font-semibold text-white",
+  //         showProgress: true,
+  //         pauseOnHover: false,
+  //       });
+  //       setShowSalaryModal(false);
+  //       resetForm();
+  //       setReRender((val) => val + 1);
+  //       fetchSalaryPayments();
+  //     } catch (error) {
+  //       const message = error.message || "Something went wrong";
+  //       api.open({
+  //         message: "Salary Payout Failed",
+  //         description: message,
+  //         showProgress: true,
+  //         pauseOnHover: false,
+  //         className: "bg-red-500 rounded-lg font-semibold text-white",
+  //       });
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   }
+  // };
+
   const handleSalarySubmit = async (e) => {
     e.preventDefault();
     const isValid = validateForm();
-    if (isValid) {
-      try {
-        setIsLoading(true);
-        const payload = {
-          ...salaryForm,
-          admin_type: adminId,
-        };
-        await API.post("/payment-out/add-salary-payment", payload);
+    if (!isValid) return;
+
+    try {
+      setIsLoading(true);
+
+      const payload = {
+        ...salaryForm,
+        admin_type: adminId,
+        absent_days: String(absent),
+        paid_month: String(selectedMonth),
+      };
+
+      const res = await API.post("/payment-out/add-salary-payment", payload);
+
+      if (res.data.alreadyPaid) {
         api.open({
-          message: "Salary Payout Successful",
-          description: "The salary payment has been successfully processed.",
-          className: "bg-green-500 rounded-lg font-semibold text-white",
+          message: "Salary Already Paid",
+          description: res.data.message,
+          className: "bg-yellow-500 rounded-lg font-semibold text-white",
           showProgress: true,
           pauseOnHover: false,
         });
         setShowSalaryModal(false);
-        resetForm();
-        setReRender((val) => val + 1);
-        fetchSalaryPayments();
-      } catch (error) {
-        const message = error.message || "Something went wrong";
-        api.open({
-          message: "Salary Payout Failed",
-          description: message,
-          showProgress: true,
-          pauseOnHover: false,
-          className: "bg-red-500 rounded-lg font-semibold text-white",
-        });
-      } finally {
-        setIsLoading(false);
+        return;
       }
+
+      api.open({
+        message: "Salary Payout Successful",
+        description: res.data.message,
+        className: "bg-green-500 rounded-lg font-semibold text-white",
+        showProgress: true,
+        pauseOnHover: false,
+      });
+
+      setShowSalaryModal(false);
+      resetForm();
+      setReRender((val) => val + 1);
+      fetchSalaryPayments();
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      api.open({
+        message: "Salary Payout Failed",
+        description: message,
+        showProgress: true,
+        pauseOnHover: false,
+        className: "bg-red-500 rounded-lg font-semibold text-white",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -366,6 +493,7 @@ const fetchTargetDetails = async (agentId, fromDate, toDate) => {
     { key: "receipt_no", header: "Receipt No" },
     { key: "note", header: "Note" },
     { key: "disbursed_by", header: "Disbursed by" },
+    { key: "action", header: "Action" },
   ];
 
   return (
@@ -448,7 +576,9 @@ const fetchTargetDetails = async (agentId, fromDate, toDate) => {
                     showSearch
                     optionFilterProp="children"
                     filterOption={(input, option) =>
-                      option.children.toLowerCase().includes(input.toLowerCase())
+                      option.children
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
                     }
                     value={salaryForm.agent_id || undefined}
                     onChange={(value) => {
@@ -475,7 +605,9 @@ const fetchTargetDetails = async (agentId, fromDate, toDate) => {
                     ))}
                   </Select>
                   {errors.agent_id && (
-                    <p className="text-red-500 text-xs mt-1">{errors.agent_id}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.agent_id}
+                    </p>
                   )}
                 </div>
 
@@ -493,7 +625,8 @@ const fetchTargetDetails = async (agentId, fromDate, toDate) => {
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    {/* <div className="grid grid-cols-2 gap-4">
+                      
                       <div>
                         <label className="block mb-2 text-sm font-medium text-gray-900">
                           From Date <span className="text-red-500">*</span>
@@ -520,6 +653,94 @@ const fetchTargetDetails = async (agentId, fromDate, toDate) => {
                         />
                       </div>
 
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-900">
+                          The number of absent days{" "}
+                          <span className="text-red-500"></span>
+                        </label>
+                        <input
+                          type="number"
+                          name="absent"
+                          value={absent}
+                          onChange={(e) => setAbsent(e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg"
+                        />
+                      </div>
+
+                      <div className="col-span-2">
+                        <button
+                          type="button"
+                          className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                          onClick={() => {
+                            if (
+                              salaryForm.agent_id &&
+                              salaryForm.from_date &&
+                              salaryForm.to_date &&
+                              employeeDetails.salary
+                            ) {
+                              const fd = formatDate(salaryForm.from_date);
+                              const td = formatDate(salaryForm.to_date);
+                              fetchTargetDetails(salaryForm.agent_id, fd, td);
+                              calculateProRatedSalary(
+                                fd,
+                                td,
+                                employeeDetails.salary,
+                                salaryForm.agent_id
+                              );
+                            }
+                          }}
+                        >
+                          Calculate
+                        </button>
+                      </div>
+                    </div> */}
+
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* Select Month - Left Column */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-900 mb-2">
+                          Select Month
+                        </label>
+                        <input
+                          type="month"
+                          value={selectedMonth || ""}
+                          max={currentMonth}
+                          onChange={(e) => {
+                            const selected = e.target.value;
+                            setSelectedMonth(selected);
+
+                            const startOfMonth = `${selected}-01`;
+                            const endOfMonth = new Date(
+                              new Date(selected + "-01").getFullYear(),
+                              new Date(selected + "-01").getMonth() + 1,
+                              0
+                            ).toLocaleDateString("en-CA");
+
+                            setSalaryForm((prev) => ({
+                              ...prev,
+                              from_date: startOfMonth,
+                              to_date: endOfMonth,
+                            }));
+                          }}
+                          className="w-full p-3 border border-gray-300 rounded-lg"
+                        />
+                      </div>
+
+                      {/* Absent Days - Right Column */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-900 mb-2">
+                          Number of Absent Days
+                        </label>
+                        <input
+                          type="number"
+                          name="absent"
+                          value={absent}
+                          onChange={(e) => setAbsent(e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg"
+                        />
+                      </div>
+
+                      {/* Calculate Button - Full Width */}
                       <div className="col-span-2">
                         <button
                           type="button"
@@ -551,30 +772,41 @@ const fetchTargetDetails = async (agentId, fromDate, toDate) => {
                     {/* ✅ TARGET DATA DISPLAY */}
                     <div className="grid grid-cols-2 gap-4 mt-6 p-3 rounded-lg bg-gray-50">
                       <div>
-                        <label className="block text-sm font-medium">Target</label>
+                        <label className="block text-sm font-medium">
+                          Target
+                        </label>
                         <input
-                          value={`${targetData.target?.toLocaleString("en-IN")}`}
+                          value={`${targetData.target?.toLocaleString(
+                            "en-IN"
+                          )}`}
                           readOnly
                           className="w-full border rounded px-3 py-2 bg-white font-semibold"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium">Achieved</label>
+                        <label className="block text-sm font-medium">
+                          Achieved
+                        </label>
                         <input
-                          value={`${targetData.achieved?.toLocaleString("en-IN")}`}
+                          value={`${targetData.achieved?.toLocaleString(
+                            "en-IN"
+                          )}`}
                           readOnly
                           className="w-full border rounded px-3 py-2 bg-white font-semibold"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium">Difference</label>
+                        <label className="block text-sm font-medium">
+                          Difference
+                        </label>
                         <input
-                          value={`${targetData.difference?.toLocaleString("en-IN")}`}
+                          value={`${targetData.difference?.toLocaleString(
+                            "en-IN"
+                          )}`}
                           readOnly
                           className="w-full border rounded px-3 py-2 bg-white font-semibold"
                         />
                       </div>
-                    
                     </div>
 
                     <div>
@@ -620,7 +852,8 @@ const fetchTargetDetails = async (agentId, fromDate, toDate) => {
                 {calculatedSalary && (
                   <div className="mt-2">
                     <label className="block mb-2 text-sm font-medium text-gray-900">
-                      Enter Payable Amount (₹) <span className="text-red-500">*</span>
+                      Enter Payable Amount (₹){" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="number"
@@ -647,7 +880,9 @@ const fetchTargetDetails = async (agentId, fromDate, toDate) => {
                       placeholder="Enter amount to pay"
                     />
                     {errors.amount && (
-                      <p className="text-red-500 text-xs mt-1">{errors.amount}</p>
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.amount}
+                      </p>
                     )}
 
                     <div className="grid grid-cols-2 gap-4 mt-3">
@@ -759,4 +994,4 @@ const fetchTargetDetails = async (agentId, fromDate, toDate) => {
   );
 };
 
-export default PayOutSalary;
+export default PayoutSalary;

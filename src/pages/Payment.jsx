@@ -221,7 +221,7 @@ const Payment = () => {
               name: group?.user_id?.full_name,
               phone_number: group?.user_id?.phone_number,
               group_name: group?.group_id?.group_name,
-
+              pay_type: group?.pay_type,
               ticket: group.ticket,
               receipt: group.receipt_no,
               old_receipt: group.old_receipt_no,
@@ -464,7 +464,7 @@ const Payment = () => {
     { key: "old_receipt", header: "Old Receipt" },
     { key: "receipt", header: "Receipt" },
     { key: "amount", header: "Amount" },
-
+    {key: "pay_type", header: "Payment Type"},
     { key: "collected_by", header: "Collected By" },
     { key: "action", header: "Action" }
   );
@@ -528,6 +528,7 @@ const Payment = () => {
               receipt: group.receipt_no,
               old_receipt: group.old_receipt_no,
               amount: group.amount,
+              pay_type: group?.pay_type,
               date: group?.pay_date.split("T")[0],
               transaction_date: group?.createdAt?.split("T")[0],
               collected_by:
@@ -571,7 +572,10 @@ const Payment = () => {
       ...prevData,
       pay_type: selectedMode,
 
-      transaction_id: selectedMode === "online" ? prevData.transaction_id : "",
+      transaction_id:
+        selectedMode === "online" || selectedMode === "online/upi"
+          ? prevData.transaction_id
+          : "",
     }));
   };
   const handleAccountTypeChange = (e) => {
@@ -1204,6 +1208,7 @@ const Payment = () => {
                       >
                         <option value="cash">Cash</option>
                         <option value="online">Online</option>
+                        <option value="online/upi">Online/UPI</option>
                         <option value="cheque">Cheque</option>
                       </select>
                     </div>
@@ -1228,7 +1233,7 @@ const Payment = () => {
                       />
                     </div>
                   )}
-                  {paymentMode === "online" && (
+                  {(paymentMode === "online" || paymentMode === "online/upi") && (
                     <div className="w-full mt-4">
                       <label
                         className="block mb-2 text-sm font-medium text-gray-900"

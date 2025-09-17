@@ -85,6 +85,8 @@ import { GiMoneyStack } from "react-icons/gi";
 import { TbReportSearch } from "react-icons/tb";
 import { MdOutlinePayment } from "react-icons/md";
 
+import { SlCalender } from "react-icons/sl";
+
 import { MdOutlinePending } from "react-icons/md";
 
  const GlobalSearchChangeHandler = (e) => {
@@ -148,6 +150,7 @@ const subMenus = [
   { title: "Loan Report", link: "/reports/loan-report", Icon: GiMoneyStack },
   { title: "Sales Report", link: "/reports/sales-report", Icon: FaUserCheck },
    { title: "Payment Summary", link: "/reports/payment-summary", Icon: TbReportSearch },
+    {title: "Monthly Installment Turnover", link: "/reports/monthly-install-turnover", Icon: SlCalender },
 ];
 
 const Reports = () => {

@@ -36,10 +36,13 @@ const Group = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const groupsPerPage = 12;
 
+
+
   const [showModal, setShowModal] = useState(false);
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false);
 
+    const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [formData, setFormData] = useState({
     group_name: "",
     group_type: "",
@@ -177,6 +180,7 @@ const Group = () => {
     if (!validateForm("addGroup")) return;
 
     try {
+        const user = JSON.parse(localStorage.getItem("user"));
       await api.post("/group/add-group", formData, {
         headers: { "Content-Type": "application/json" },
       });
@@ -680,7 +684,12 @@ const Group = () => {
       />
 
       <div className="flex mt-20">
-        <Sidebar navSearchBarVisibility={true} onGlobalSearchChangeHandler={onGlobalSearchChangeHandler} />
+          <Sidebar
+          navSearchBarVisibility={true}
+          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+          showMobileSidebar={showMobileSidebar}
+          setShowMobileSidebar={setShowMobileSidebar}
+        />
 
         <div className="flex-grow flex flex-col bg-gray-50">
           <main className="flex-grow overflow-auto p-6">

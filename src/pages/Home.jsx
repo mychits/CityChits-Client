@@ -2,7 +2,7 @@ import Sidebar from "../components/layouts/Sidebar";
 import { MdGroups, MdOutlinePayments, MdGroupWork } from "react-icons/md";
 import { FaUserLock } from "react-icons/fa";
 import { SlCalender } from "react-icons/sl";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import api from "../instance/TokenInstance";
 import CustomCard from "../components/cards/CustomCard";
 
@@ -17,9 +17,11 @@ const Home = () => {
   const [searchValue, setSearchValue] = useState("");
   const [reloadTrigger, setReloadTrigger] = useState(0);
   const [hidePayment, setHidePayment] = useState(false);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
 
+  // Check payment access
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
@@ -34,20 +36,7 @@ const Home = () => {
     }
   }, []);
 
-  useEffect(() => {
-    const user = localStorage.getItem("user");
-    const userObj = JSON.parse(user);
-    if (
-      userObj &&
-      userObj.admin_access_right_id?.access_permissions?.edit_payment
-    ) {
-      const isModify =
-        userObj.admin_access_right_id?.access_permissions?.edit_payment ===
-        "true";
-      setHidePayment(isModify);
-    }
-  }, []);
-
+  // Fetch data
   useEffect(() => {
     const fetchGroups = async () => {
       try {
@@ -138,6 +127,8 @@ const Home = () => {
         });
 
         setPaymentsPerMonthValue(response?.data?.monthlyPayment || 0);
+
+        console.log(response?.data?.monthlyPayment)
       } catch (error) {
         console.error("Error fetching monthly payment data:", error);
       }
@@ -214,7 +205,7 @@ const Home = () => {
     {
       icon: MdOutlinePayments,
       title: "Total Revenue",
-      value: ` ${paymentsValue}`,
+      value: `${paymentsValue.toLocaleString()}`,
       subtitle: "All-time earnings",
       color: "from-emerald-500 to-emerald-600",
       iconBg: "bg-emerald-100",
@@ -227,7 +218,7 @@ const Home = () => {
     {
       icon: SlCalender,
       title: "Monthly Revenue",
-      value: ` ${paymentsPerMonthValue}`,
+      value: `${paymentsPerMonthValue.toLocaleString()}`,
       subtitle: "Current billing cycle",
       color: "from-sky-500 to-sky-600",
       iconBg: "bg-sky-100",
@@ -236,10 +227,11 @@ const Home = () => {
       ringColor: "ring-sky-500/20",
       redirect: "/payment",
       key: "7",
-    }
-  ].filter((card) =>
-    card.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-    card.subtitle.toLowerCase().includes(searchValue.toLowerCase())
+    },
+  ].filter(
+    (card) =>
+      card.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+      card.subtitle.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   const onGlobalSearchChangeHandler = (e) => {
@@ -252,32 +244,34 @@ const Home = () => {
         <Sidebar
           navSearchBarVisibility={true}
           onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+          showMobileSidebar={showMobileSidebar}
+          setShowMobileSidebar={setShowMobileSidebar}
         />
-        <div className="flex-1 ml-16 mr-11 mt-11 pb-8">
+        <div className="flex-1 p-4 md:p-8 md:ml-16 md:mr-11 md:mt-11 pb-8">
           <header className="mb-8">
-            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 mb-2">
+            <h1 className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 mb-2">
               Chit Intelligence Dashboard
             </h1>
-            <p className="text-gray-600 max-w-2xl">
+            <p className="text-gray-600 max-w-2xl text-sm sm:text-base">
               Real-time analytics and performance metrics for your organization.
               Monitor key business indicators and make data-driven decisions.
             </p>
           </header>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10 auto-rows-fr ">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 auto-rows-fr">
             {cardData.map((card) => (
               <div
                 key={card.key}
-                className="transform transition-all duration-300 hover:scale-[1.02] hover:shadow-violet-700  hover:shadow-2xl"
+                className="transform transition-all duration-300 hover:scale-[1.05] hover:shadow-xl min-w-0"
               >
                 <div
-                  className={`relative rounded-3xl p-1 
-          bg-white border ${card.borderColor}
-           transition-all duration-300 ease-out
-          hover:shadow-2xl bg-violet-400  hover:scale-[1.07] hover:${card.borderColor}
-          hover:${card.ringColor}
-          cursor-pointer`}
+                  className={`relative rounded-3xl p-1 cursor-pointer transition-all duration-300 ease-out
+                  bg-white border ${card.borderColor} 
+                  hover:shadow-violet-500 hover:shadow-xl
+                  hover:border-violet-500
+                  hover:bg-violet-300`}
                 >
-                  <div className="bg-white  rounded-2xl overflow-hidden h-full ">
+                  <div className="bg-white rounded-2xl overflow-hidden h-full">
                     <div className="p-4">
                       <div className="flex items-start justify-between">
                         <div className={`p-2 rounded-xl ${card.iconBg} mb-4`}>
@@ -288,10 +282,12 @@ const Home = () => {
                         </span>
                       </div>
 
-                      <h3 className="text-sm font-semibold text-gray-800 mb-1">
+                      <h3 className="text-sm font-semibold text-gray-800 mb-1 truncate">
                         {card.title}
                       </h3>
-                      <p className="text-xs text-gray-500 mb-2">{card.subtitle}</p>
+                      <p className="text-xs text-gray-500 mb-2 line-clamp-2">
+                        {card.subtitle}
+                      </p>
 
                       <div className="mt-2">
                         <span className="text-xl font-bold text-gray-900">
@@ -330,9 +326,8 @@ const Home = () => {
             ))}
           </div>
 
-
           {cardData.length === 0 && (
-            <div className="col-span-full flex flex-col items-center justify-center py-6 rounded-2xl bg-white shadow-lg">
+            <div className="col-span-full flex flex-col items-center justify-center py-12 px-6 rounded-2xl bg-white shadow-lg mx-4 md:mx-0">
               <div className="text-gray-400 mb-4">
                 <svg
                   className="w-16 h-16 mx-auto"
@@ -348,9 +343,13 @@ const Home = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">No results found</h3>
+              <h3 className="text-xl font-semibold text-gray-700 mb-2 text-center">
+                No results found
+              </h3>
               <p className="text-gray-500 max-w-md text-center">
-                We couldn't find any matching results for "{searchValue}". Try adjusting your search terms.
+                We couldn't find any matching results for{" "}
+                <span className="font-medium">"{searchValue}"</span>. Try adjusting your search
+                terms.
               </p>
             </div>
           )}
