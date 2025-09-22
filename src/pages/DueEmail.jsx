@@ -84,7 +84,7 @@ const DueEmail = () => {
       key,
       message: "Sending Emails..",
       description: "Processing...",
-      className: "bg-blue-300 rounded-lg font-bold",
+      className: "bg-violet-300 rounded-lg font-bold",
       duration: 2,
     });
 
@@ -271,7 +271,7 @@ const DueEmail = () => {
                 <div className="flex justify-end mb-4">
                   <button
                     onClick={sendEmail}
-                    className="relative bg-blue-600 text-white px-4 py-2 rounded shadow-md hover:bg-blue-700 transition duration-200 flex items-center"
+                    className="relative bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-700 transition duration-200 flex items-center"
                   >
                     {visibleSelectedCount > 0 && (
                       <div

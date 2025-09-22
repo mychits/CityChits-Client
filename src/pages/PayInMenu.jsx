@@ -9,7 +9,7 @@ const PayInMenu = () => {
     {
       id: "#1",
       title: "Registration Fee",
-      icon: <TicketCheck size={28} className="text-blue-600" />,
+      icon: <TicketCheck size={28} className="text-violet-600" />,
       href:"/pay-in-menu/registration-fee"
     },
     {

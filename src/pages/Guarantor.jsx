@@ -297,7 +297,7 @@ const Guarantor = () => {
                         label: (
                           <div
                             onClick={() => handleGuarantorPrint(group?._id)}
-                            className=" text-blue-600 "
+                            className=" text-violet-600 "
                           >
                             Print
                           </div>
@@ -1143,7 +1143,7 @@ const handleUpdate = async (e) => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                  className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
                 >
                   + Add Guarantor
                 </button>
@@ -1184,7 +1184,7 @@ const handleUpdate = async (e) => {
                   Customer Name <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   placeholder="Select Or Search Customer"
                   showSearch
                   value={formData.user_id || undefined}
@@ -1235,7 +1235,7 @@ const handleUpdate = async (e) => {
                   mode="tags"
                   allowClear
                   placeholder="Select enrollments"
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   value={formData.enrollment_ids}
                   onChange={(selectedEnrollmentIds) => {
                     setFormData((prev) => ({
@@ -1276,7 +1276,7 @@ const handleUpdate = async (e) => {
                   Select Referred Type <span className="text-red-500 ">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   placeholder="Select Referred Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1314,7 +1314,7 @@ const handleUpdate = async (e) => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       placeholder="Select Or Search Referred Guarantor"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1388,7 +1388,7 @@ const handleUpdate = async (e) => {
                           onChange={handleChange}
                           placeholder="Enter Guarantor Name"
                           required
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                         />
                         {errors.guarantor_name && (
                           <p className="mt-2 text-sm text-red-600">
@@ -1407,7 +1407,7 @@ const handleUpdate = async (e) => {
                           onChange={handleChange}
                           placeholder="Enter Phone Number"
                           required
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                         />
                         {errors.guarantor_phone_number && (
                           <p className="mt-2 text-sm text-red-600">
@@ -1487,7 +1487,7 @@ const handleUpdate = async (e) => {
                           onChange={handleChange}
                           placeholder="Enter Email"
                           required
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                         />
                         {errors.guarantor_email && (
                           <p className="mt-2 text-sm text-red-600">
@@ -1510,7 +1510,7 @@ const handleUpdate = async (e) => {
                               : ""
                           }
                           onChange={handleChange}
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                         />
                       </div>
                     </div>
@@ -1945,7 +1945,7 @@ const handleUpdate = async (e) => {
                       <button
                         type="button"
                         onClick={addNewDocField}
-                        className="mt-2 px-2 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
+                        className="mt-2 px-2 py-1 bg-violet-600 text-white rounded-lg shadow hover:bg-violet-800"
                       >
                         + Add Document
                       </button>
@@ -2061,7 +2061,7 @@ const handleUpdate = async (e) => {
                                 value={formData.guarantor_bussiness_address}
                                 onChange={handleChange}
                                 placeholder="Enter  Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                                {errors.guarantor_bussiness_address && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2087,7 +2087,7 @@ const handleUpdate = async (e) => {
                                 value={formData.guarantor_bussiness_type}
                                 onChange={handleChange}
                                 placeholder="e.g., Retail, Manufacturing"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_bussiness_type && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2105,7 +2105,7 @@ const handleUpdate = async (e) => {
                                 value={formData.guarantor_bussiness_name}
                                 onChange={handleChange}
                                 placeholder="Enter Business Name"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_bussiness_name && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2123,7 +2123,7 @@ const handleUpdate = async (e) => {
                                 value={formData.guarantor_bussiness_address}
                                 onChange={handleChange}
                                 placeholder="Enter Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_bussiness_address && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2147,7 +2147,7 @@ const handleUpdate = async (e) => {
                                 value={formData.guarantor_profession_type}
                                 onChange={handleChange}
                                 placeholder="e.g., Doctor, CA, Engineer"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_profession_type && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2165,7 +2165,7 @@ const handleUpdate = async (e) => {
                                 value={formData.guarantor_bussiness_address}
                                 onChange={handleChange}
                                 placeholder="Clinic/Office Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_bussiness_address && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2189,7 +2189,7 @@ const handleUpdate = async (e) => {
                                 value={formData.guarantor_agri_rtc_no}
                                 onChange={handleChange}
                                 placeholder="Enter RTC Number"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_agri_rtc_no && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2207,7 +2207,7 @@ const handleUpdate = async (e) => {
                                 value={formData.guarantor_land_holdings}
                                 onChange={handleChange}
                                 placeholder="e.g., 5.5"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_land_holdings && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2225,7 +2225,7 @@ const handleUpdate = async (e) => {
                                 value={formData.guarantor_bussiness_address}
                                 onChange={handleChange}
                                 placeholder="Farm or Operation Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_bussiness_address && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2250,7 +2250,7 @@ const handleUpdate = async (e) => {
                                 value={formData.guarantor_bussiness_address}
                                 onChange={handleChange}
                                 placeholder="Enter Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_bussiness_address && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2273,7 +2273,7 @@ const handleUpdate = async (e) => {
                         onChange={handleFileChange}
                         accept="image/*"
                         required
-                        className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 hover:bg-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                        className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 hover:bg-gray-100 focus:ring-violet-500 focus:border-violet-500"
                       />
                       {errors.guarantor_income_document && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2450,7 +2450,7 @@ const handleUpdate = async (e) => {
                       accept="image/*"
                       placeholder="Upload Document"
                       required
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                      {errors.guarantor_document && (
                       <p className="mt-2 text-sm text-red-600">
@@ -2496,7 +2496,7 @@ const handleUpdate = async (e) => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
               focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Save Guarantor
@@ -2519,7 +2519,7 @@ const handleUpdate = async (e) => {
                   Customer Name <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   placeholder="Select Or Search Customer"
                   showSearch
                   value={updateFormData.user_id || ""}
@@ -2564,7 +2564,7 @@ const handleUpdate = async (e) => {
                   mode="tags"
                   allowClear
                   placeholder="Select enrollments"
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   value={updateFormData.enrollment_ids}
                   onChange={(selectedEnrollmentIds) => {
                     setUpdateFormData((prev) => ({
@@ -2604,7 +2604,7 @@ const handleUpdate = async (e) => {
                   Select Referred Type <span className="text-red-500 ">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   placeholder="Select Referred Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -2642,7 +2642,7 @@ const handleUpdate = async (e) => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       placeholder="Select Or Search Referred Customer"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -2716,7 +2716,7 @@ const handleUpdate = async (e) => {
                           onChange={handleInputChange}
                           placeholder="Enter Guarantor Name"
                           required
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                         />
                         {errors.guarantor_name && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2736,7 +2736,7 @@ const handleUpdate = async (e) => {
                           onChange={handleInputChange}
                           placeholder="Enter Phone Number"
                           required
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                         />
                         {errors.guarantor_phone_number && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2818,7 +2818,7 @@ const handleUpdate = async (e) => {
                           onChange={handleInputChange}
                           placeholder="Enter Email"
                           required
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                         />
                         {errors.guarantor_email && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2841,7 +2841,7 @@ const handleUpdate = async (e) => {
                               : ""
                           }
                           onChange={handleInputChange}
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                         />
                       </div>
                     </div>
@@ -3287,7 +3287,7 @@ const handleUpdate = async (e) => {
                       <button
                         type="button"
                         onClick={addNewDocField}
-                        className="mt-2 px-2 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
+                        className="mt-2 px-2 py-1 bg-violet-600 text-white rounded-lg shadow hover:bg-violet-800"
                       >
                         + Add Document
                       </button>
@@ -3516,7 +3516,7 @@ const handleUpdate = async (e) => {
                                 }
                                 onChange={handleInputChange}
                                 placeholder="Enter Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_bussiness_address && (
                           <p className="mt-2 text-sm text-red-600">
@@ -3542,7 +3542,7 @@ const handleUpdate = async (e) => {
                                 value={updateFormData.guarantor_bussiness_type}
                                 onChange={handleInputChange}
                                 placeholder="e.g., Retail, Manufacturing"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_bussiness_type && (
                           <p className="mt-2 text-sm text-red-600">
@@ -3560,7 +3560,7 @@ const handleUpdate = async (e) => {
                                 value={updateFormData.guarantor_bussiness_name}
                                 onChange={handleInputChange}
                                 placeholder="Enter Business Name"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_bussiness_name && (
                           <p className="mt-2 text-sm text-red-600">
@@ -3580,7 +3580,7 @@ const handleUpdate = async (e) => {
                                 }
                                 onChange={handleInputChange}
                                 placeholder="Enter Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_bussiness_address && (
                           <p className="mt-2 text-sm text-red-600">
@@ -3605,7 +3605,7 @@ const handleUpdate = async (e) => {
                                 value={updateFormData.guarantor_profession_type}
                                 onChange={handleInputChange}
                                 placeholder="e.g., Doctor, CA, Engineer"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_profession_type && (
                           <p className="mt-2 text-sm text-red-600">
@@ -3625,7 +3625,7 @@ const handleUpdate = async (e) => {
                                 }
                                 onChange={handleInputChange}
                                 placeholder="Clinic/Office Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_bussiness_address && (
                           <p className="mt-2 text-sm text-red-600">
@@ -3650,7 +3650,7 @@ const handleUpdate = async (e) => {
                                 value={updateFormData.guarantor_agri_rtc_no}
                                 onChange={handleInputChange}
                                 placeholder="Enter RTC Number"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                                {errors.guarantor_agri_rtc_no && (
                           <p className="mt-2 text-sm text-red-600">
@@ -3668,7 +3668,7 @@ const handleUpdate = async (e) => {
                                 value={updateFormData.guarantor_land_holdings}
                                 onChange={handleInputChange}
                                 placeholder="e.g., 5.5"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_land_holdings && (
                           <p className="mt-2 text-sm text-red-600">
@@ -3688,7 +3688,7 @@ const handleUpdate = async (e) => {
                                 }
                                 onChange={handleInputChange}
                                 placeholder="Farm or Operation Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                               {errors.guarantor_bussiness_address && (
                           <p className="mt-2 text-sm text-red-600">
@@ -3715,7 +3715,7 @@ const handleUpdate = async (e) => {
                                 }
                                 onChange={handleInputChange}
                                 placeholder="Enter Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
                               />
                                {errors.guarantor_bussiness_address && (
                           <p className="mt-2 text-sm text-red-600">
@@ -3738,7 +3738,7 @@ const handleUpdate = async (e) => {
                         onChange={handleFileChange}
                         accept="image/*"
                         required
-                        className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 hover:bg-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                        className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 hover:bg-gray-100 focus:ring-violet-500 focus:border-violet-500"
                       />
                       {errors.guarantor_income_document && (
                           <p className="mt-2 text-sm text-red-600">
@@ -3918,7 +3918,7 @@ const handleUpdate = async (e) => {
                       accept="image/*"
                       placeholder="Upload Document"
                       required
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                      {errors.guarantor_document && (
                       <p className="mt-2 text-sm text-red-600">
@@ -3967,7 +3967,7 @@ const handleUpdate = async (e) => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
               focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Update
@@ -4012,13 +4012,13 @@ const handleUpdate = async (e) => {
                     id="groupName"
                     placeholder="Enter the Guarantor Name"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Delete
                 </button>

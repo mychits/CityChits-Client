@@ -439,7 +439,7 @@ const Auction = () => {
                       setShowModal(true);
                       setErrors({});
                     }}
-                    className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                    className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
                   >
                     + Add Auction
                   </button>
@@ -500,7 +500,7 @@ const Auction = () => {
                   <select
                     value={selectedGroupId}
                     onChange={handleGroup}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   >
                     <option value="">Select Group</option>
                     {groups.map((group) => (
@@ -528,7 +528,7 @@ const Auction = () => {
                       id="group_value"
                       placeholder="select group to check"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -545,7 +545,7 @@ const Auction = () => {
                       id="group_install"
                       placeholder="select group to check"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -562,7 +562,7 @@ const Auction = () => {
                       value={formData.auction_type}
                       onChange={handleChange}
                       required
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     >
                       <option value="normal">Normal Auction</option>
                       <option value="free">Free Auction</option>
@@ -587,7 +587,7 @@ const Auction = () => {
                     value={`${formData.user_id}-${formData.ticket}`}
                     onChange={handleChangeUser}
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   >
                     <option value="">Select Customer</option>
                     {filteredUsers.map(
@@ -624,7 +624,7 @@ const Auction = () => {
                     id="name"
                     placeholder="Enter the Bid Amount"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                   {errors.bid_amount && (
                     <p className="mt-1 text-sm text-red-500">
@@ -647,7 +647,7 @@ const Auction = () => {
                       id="commission"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -664,7 +664,7 @@ const Auction = () => {
                       id="win_amount"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -683,7 +683,7 @@ const Auction = () => {
                       id="divident"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -700,7 +700,7 @@ const Auction = () => {
                       id="divident_head"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -717,7 +717,7 @@ const Auction = () => {
                       id="payable"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -737,7 +737,7 @@ const Auction = () => {
                       id="date"
                       placeholder="Enter the Date"
                       required
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                     {errors.auction_date && (
                       <p className="mt-1 text-sm text-red-500">
@@ -760,7 +760,7 @@ const Auction = () => {
                       id="date"
                       placeholder="Enter the Date"
                       required
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                     {errors.next_date && (
                       <p className="mt-1 text-sm text-red-500">
@@ -772,8 +772,8 @@ const Auction = () => {
                 <div className="w-full flex justify-end">
                   <button
                     type="submit"
-                    className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                   >
                     Save Auction
                   </button>
@@ -807,7 +807,7 @@ const Auction = () => {
                       id="name"
                       placeholder="SI Number"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -825,7 +825,7 @@ const Auction = () => {
                       id="name"
                       placeholder="Enter the Group Name"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -844,7 +844,7 @@ const Auction = () => {
                       id="group_value"
                       placeholder="select group to check"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -861,7 +861,7 @@ const Auction = () => {
                       id="group_install"
                       placeholder="select group to check"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -887,7 +887,7 @@ const Auction = () => {
                       id="name"
                       placeholder="Enter the User Name"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                 )}
@@ -906,7 +906,7 @@ const Auction = () => {
                     id="name"
                     placeholder="Enter the User Name"
                     readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
 
@@ -928,7 +928,7 @@ const Auction = () => {
                     id="name"
                     placeholder="Enter the Bid Amount"
                     readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
@@ -946,7 +946,7 @@ const Auction = () => {
                       id="commission"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -963,7 +963,7 @@ const Auction = () => {
                       id="win_amount"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -982,7 +982,7 @@ const Auction = () => {
                       id="divident"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -999,7 +999,7 @@ const Auction = () => {
                       id="divident_head"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -1016,7 +1016,7 @@ const Auction = () => {
                       id="payable"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -1036,7 +1036,7 @@ const Auction = () => {
                       id="date"
                       placeholder="Enter the Date"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -1054,7 +1054,7 @@ const Auction = () => {
                       id="date"
                       placeholder="Enter the Date"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -1083,7 +1083,7 @@ const Auction = () => {
                   <button
                     type="submit"
                     className="w-full text-white bg-red-700 hover:bg-red-800
-                    focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                   >
                     Delete
                   </button>

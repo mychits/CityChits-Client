@@ -294,7 +294,7 @@ const HardTransfer = () => {
             <h1 className="text-2xl font-semibold">Hard Transfer</h1>
             <Button
               onClick={handleAddTransferClick}
-              className="bg-blue-950 text-white px-5 py-5 rounded shadow-md hover:bg-blue-800 transition duration-200 text-lg"
+              className="bg-violet-950 text-white px-5 py-5 rounded shadow-md hover:bg-violet-800 transition duration-200 text-lg"
               disabled={loader}
             >
               {loader ? <Spin indicator={<LoadingOutlined spin />} /> : "+ Add Transfer"}

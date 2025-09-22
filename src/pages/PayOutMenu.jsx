@@ -9,7 +9,7 @@ const PayOutMenu = () => {
     {
       id: "#1",
       title: "Chit",
-      icon: <TicketCheck size={28} className="text-blue-600" />,
+      icon: <TicketCheck size={28} className="text-violet-600" />,
       href:"/general-payment-out/chit"
     },
     {

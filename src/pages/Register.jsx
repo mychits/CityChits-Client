@@ -1,229 +1,202 @@
 import { useState } from "react";
 import { AiOutlineGold } from "react-icons/ai";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import api from "../instance/TokenInstance";
 
 const Register = () => {
   const [companyName, setCompanyName] = useState("");
   const [companyContact, setCompanyContact] = useState("");
+  const [password, setPassword] = useState(""); 
   const [branches, setBranches] = useState([
-    { address: "", pincode: "", state: "", country_code: "" },
+    { branch_name: "", address: "", pincode: "", state: "", country: "" },
   ]);
-  const [adminName, setAdminName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleBranchChange = (i, field, value) => {
-    const copy = [...branches];
-    copy[i][field] = value;
-    setBranches(copy);
+  const handleBranchChange = (index, field, value) => {
+    const newBranches = [...branches];
+    newBranches[index][field] = value;
+    setBranches(newBranches);
   };
 
-  const addBranch = () =>
+  const addBranch = () => {
     setBranches([
       ...branches,
-      { address: "", pincode: "", state: "", country_code: "" },
+      { branch_name: "", address: "", pincode: "", state: "", country: "" },
     ]);
+  };
 
-  const removeBranch = (i) =>
-    setBranches(branches.filter((_, idx) => idx !== i));
+  const removeBranch = (index) => {
+    const newBranches = branches.filter((_, i) => i !== index);
+    setBranches(newBranches);
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    if (loading) return;
     setError("");
-    setLoading(true);
+
+    if (!companyName.trim() || !companyContact.trim() || !password.trim()) {
+      setError("Company Name, Contact, and Password are required.");
+      return;
+    }
+
+    for (let i = 0; i < branches.length; i++) {
+      if (!branches[i].branch_name.trim()) {
+        setError(`Branch ${i + 1}: Branch Name is required.`);
+        return;
+      }
+    }
 
     try {
-      const response = await api.post("/admin/register-company", {
+      setLoading(true);
+      const response = await api.post("/admin/register", {
         company_name: companyName,
         company_contact_number: companyContact,
-        company_branches: branches,
-        admin_name: adminName,
-        phoneNumber,
-        password,
+        password, 
+        branches,
       });
 
-      if (response.status === 201) {
-        navigate("/dashboard");
-      }
+      console.log("Register success:", response.data);
+      alert("Company Registered! Use your contact number and the chosen password to login.");
+      navigate("/");
     } catch (err) {
-      const msg =
-        err.response?.data?.message || "Registration failed. Try again.";
-      setError(msg);
+      console.error("Register error:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Failed to register. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-28 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <AiOutlineGold className="mx-auto text-5xl h-25 w-auto text-primary" />
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 text-gray-900">
-          Register your Company
+    <div className="flex min-h-screen flex-col justify-center px-6 py-28 bg-gray-50">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <AiOutlineGold className="mx-auto text-5xl text-violet-500" />
+        <h2 className="mt-6 text-2xl font-bold text-gray-900">
+          Register Company & Branch
         </h2>
       </div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md">
         <form onSubmit={handleRegister} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-900">
-              Company Name
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Company Name</label>
             <input
               type="text"
-              disabled={loading}
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
               required
-              className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-red-100 sm:text-sm"
+              className="mt-2 block w-full rounded-md border px-3 py-2"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900">
-              Company Contact Number
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Company Contact</label>
             <input
               type="text"
-              disabled={loading}
               value={companyContact}
               onChange={(e) => setCompanyContact(e.target.value)}
               required
-              className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-red-100 sm:text-sm"
-            />
-          </div>
-
-          <h3 className="text-md font-semibold">Branch Details</h3>
-          {branches.map((b, i) => (
-            <div key={i} className="p-3 border rounded-md space-y-2">
-              <input
-                type="text"
-                disabled={loading}
-                placeholder="Address"
-                value={b.address}
-                onChange={(e) =>
-                  handleBranchChange(i, "address", e.target.value)
-                }
-                className="block w-full rounded-md border-0 py-1 px-2 shadow-sm ring-1 ring-gray-300"
-              />
-              <input
-                type="text"
-                placeholder="Pincode"
-                disabled={loading}
-                value={b.pincode}
-                onChange={(e) =>
-                  handleBranchChange(i, "pincode", e.target.value)
-                }
-                className="block w-full rounded-md border-0 py-1 px-2 shadow-sm ring-1 ring-gray-300"
-              />
-              <input
-                type="text"
-                placeholder="State"
-                value={b.state}
-                disabled={loading}
-                onChange={(e) => handleBranchChange(i, "state", e.target.value)}
-                className="block w-full rounded-md border-0 py-1 px-2 shadow-sm ring-1 ring-gray-300"
-              />
-              <input
-                type="text"
-                disabled={loading}
-                placeholder="Country Code"
-                value={b.country_code}
-                onChange={(e) =>
-                  handleBranchChange(i, "country_code", e.target.value)
-                }
-                className="block w-full rounded-md border-0 py-1 px-2 shadow-sm ring-1 ring-gray-300"
-              />
-
-              {branches.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeBranch(i)}
-                  className="text-red-500 text-sm mt-1"
-                >
-                  Remove
-                </button>
-              )}
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addBranch}
-            className="text-sm text-primary"
-          >
-            + Add Another Branch
-          </button>
-
-          <h3 className="text-md font-semibold">Admin Details</h3>
-          <div>
-            <label className="block text-sm font-medium text-gray-900">
-              Admin Name
-            </label>
-            <input
-              type="text"
-              value={adminName}
-              onChange={(e) => setAdminName(e.target.value)}
-              required
-              disabled={loading}
-              className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-red-100 sm:text-sm"
+              className="mt-2 block w-full rounded-md border px-3 py-2"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900">
-              Phone Number
-            </label>
-            <input
-              type="text"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              required
-              disabled={loading}
-              className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-red-100 sm:text-sm"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-900">
-              Password
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              disabled={loading}
-              className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-red-100 sm:text-sm"
+              className="mt-2 block w-full rounded-md border px-3 py-2"
+              placeholder="Set a password for login"
             />
           </div>
+
+          <h3 className="font-semibold text-gray-700 mt-4">Branches</h3>
+          {branches.map((branch, index) => (
+            <div
+              key={index}
+              className="p-4 border rounded-md bg-white space-y-2 relative"
+            >
+              {branches.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeBranch(index)}
+                  className="absolute top-2 right-2 text-red-500 font-bold"
+                  title="Remove Branch"
+                >
+                  &times;
+                </button>
+              )}
+              <input
+                type="text"
+                placeholder="Branch Name"
+                value={branch.branch_name}
+                onChange={(e) => handleBranchChange(index, "branch_name", e.target.value)}
+                required
+                className="block w-full rounded-md border px-3 py-2"
+              />
+              <input
+                type="text"
+                placeholder="Address"
+                value={branch.address}
+                onChange={(e) => handleBranchChange(index, "address", e.target.value)}
+                className="block w-full rounded-md border px-3 py-2"
+              />
+              <input
+                type="text"
+                placeholder="Pincode"
+                value={branch.pincode}
+                onChange={(e) => handleBranchChange(index, "pincode", e.target.value)}
+                className="block w-full rounded-md border px-3 py-2"
+              />
+              <input
+                type="text"
+                placeholder="State"
+                value={branch.state}
+                onChange={(e) => handleBranchChange(index, "state", e.target.value)}
+                className="block w-full rounded-md border px-3 py-2"
+              />
+              <input
+                type="text"
+                placeholder="Country"
+                value={branch.country}
+                onChange={(e) => handleBranchChange(index, "country", e.target.value)}
+                className="block w-full rounded-md border px-3 py-2"
+              />
+            </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={addBranch}
+            className="w-full rounded-md border px-3 py-2 bg-gray-200 hover:bg-gray-300 text-sm font-medium"
+          >
+            + Add Another Branch
+          </button>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700"
+            className="w-full rounded-md bg-violet-500 px-3 py-2 text-white font-semibold hover:bg-violet-600 disabled:opacity-50"
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
-        </form>
 
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Already have an account?{" "}
-          <Link
-            to="/dashboard"
-            className="font-semibold text-primary hover:text-red-500"
-          >
-            Login
-          </Link>
-        </p>
+          <p className="text-sm text-center mt-4 text-gray-700">
+            Already have an account?{" "}
+            <span
+              onClick={() => navigate("/")}
+              className="font-semibold text-violet-500 cursor-pointer"
+            >
+              Login
+            </span>
+          </p>
+        </form>
       </div>
     </div>
   );

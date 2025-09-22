@@ -287,7 +287,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                         <Link
                           target="_blank"
                           to={`/print/${group._id}`}
-                          className="text-blue-600 "
+                          className="text-violet-600 "
                         >
                           Print
                         </Link>
@@ -610,7 +610,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                   </div>
                    )}
 
-                  <div className="text-md font-semibold text-blue-700 mb-2">
+                  <div className="text-md font-semibold text-violet-700 mb-2">
                     <label> Total Amount </label>
                     <div>
                       <input
@@ -671,7 +671,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                   <select
                     value={selectedGroupId}
                     onChange={handleGroup}
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   >
                     <option value="">Select Group</option>
                     {groups.map((group) => (
@@ -693,7 +693,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                     value={`${formData.user_id}-${formData.ticket}`}
                     onChange={handleChangeUser}
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   >
                     <Select.Option value="">Select Customer</Select.Option>
                     {filteredUsers.map((user) => (
@@ -721,7 +721,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                       id="receipt_no"
                       placeholder="Receipt No."
                       readOnly
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                   <div className="w-1/2">
@@ -738,7 +738,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                       id="pay_date"
                       onChange={handleChange}
                       placeholder=""
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -757,7 +757,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                       id="amount"
                       onChange={handleChange}
                       placeholder="Enter Amount"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                   <div className="w-1/2">
@@ -770,7 +770,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                     <select
                       name="pay_mode"
                       id="pay_mode"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       onChange={handlePaymentModeChange}
                     >
                       <option value="cash">Cash</option>
@@ -793,14 +793,14 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                       value={formData.transaction_id}
                       onChange={handleChange}
                       placeholder="Enter Transaction ID"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                 )}
                 <button
                   type="submit"
-                  className="w-full text-white bg-blue-700 hover:bg-blue-800
-                              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-full text-white bg-violet-700 hover:bg-violet-800
+                              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Add
                 </button>
@@ -831,7 +831,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                     id="name"
                     placeholder="Enter the Group Name"
                     readOnly
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
@@ -849,7 +849,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                       id="group_value"
                       placeholder="select group to check"
                       readOnly
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                   <div className="w-1/2">
@@ -866,7 +866,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                       id="group_install"
                       placeholder="select group to check"
                       readOnly
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -885,7 +885,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                     id="name"
                     placeholder="Enter the User Name"
                     readOnly
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
 
@@ -907,7 +907,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                     id="name"
                     placeholder="Enter the Bid Amount"
                     readOnly
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
@@ -925,7 +925,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                       id="commission"
                       placeholder=""
                       readOnly
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                   <div className="w-1/2">
@@ -942,7 +942,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                       id="win_amount"
                       placeholder=""
                       readOnly
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -961,7 +961,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                       id="divident"
                       placeholder=""
                       readOnly
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                   <div className="w-1/2">
@@ -978,7 +978,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                       id="divident_head"
                       placeholder=""
                       readOnly
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                   <div className="w-1/2">
@@ -995,7 +995,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                       id="payable"
                       placeholder=""
                       readOnly
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1015,7 +1015,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                       id="date"
                       placeholder="Enter the Date"
                       readOnly
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                   <div className="w-1/2">
@@ -1033,7 +1033,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                       id="date"
                       placeholder="Enter the Date"
                       readOnly
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1062,7 +1062,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                   <button
                     type="submit"
                     className="w-full text-white bg-red-700 hover:bg-red-800
-                    focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                   >
                     Delete
                   </button>

@@ -230,7 +230,7 @@ const GeneralPaymentOut = () => {
                         key: "2",
                         label: (
                           <div
-                            className="text-blue-600"
+                            className="text-violet-600"
                             onClick={() =>
                               handleUpdateModalOpen(g._id, idx + 2)
                             }

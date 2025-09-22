@@ -247,7 +247,7 @@ const GroupSettings = () => {
                   id="name"
                   placeholder="Enter the Group Name"
                   readOnly
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 />
               </div>
               <div className="w-full">
@@ -262,7 +262,7 @@ const GroupSettings = () => {
                   value={updateFormData.group_type || ""}
                   readOnly
                   id="category"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option readOnly value="">
                     Select Group Type
@@ -291,7 +291,7 @@ const GroupSettings = () => {
                     id="text"
                     placeholder="Enter Group Value"
                     readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
                 <div className="w-1/2">
@@ -308,7 +308,7 @@ const GroupSettings = () => {
                     id="text"
                     placeholder="Enter Group Installment Amount"
                     readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
               </div>
@@ -327,7 +327,7 @@ const GroupSettings = () => {
                     id="text"
                     placeholder="Enter Group Members"
                     readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
                 <div className="w-1/2">
@@ -345,7 +345,7 @@ const GroupSettings = () => {
                     id="text"
                     placeholder="Enter Group Duration"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
               </div>
@@ -363,7 +363,7 @@ const GroupSettings = () => {
                   id="name"
                   placeholder="Enter the Registration Fee"
                   readOnly
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 />
               </div>
               <div className="flex flex-row justify-between space-x-4">
@@ -381,7 +381,7 @@ const GroupSettings = () => {
                     id="date"
                     placeholder="Enter the Date"
                     readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
                 <div className="w-1/2">
@@ -398,7 +398,7 @@ const GroupSettings = () => {
                     readOnly
                     id="date"
                     placeholder="Enter the Date"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
               </div>
@@ -417,7 +417,7 @@ const GroupSettings = () => {
                     readOnly
                     id="text"
                     placeholder="Enter Minimum Bid"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
                 <div className="w-1/2">
@@ -434,7 +434,7 @@ const GroupSettings = () => {
                     readOnly
                     id="text"
                     placeholder="Enter Maximum Bid"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
               </div>

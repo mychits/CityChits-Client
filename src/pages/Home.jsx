@@ -5,6 +5,9 @@ import { SlCalender } from "react-icons/sl";
 import { useEffect, useState } from "react";
 import api from "../instance/TokenInstance";
 import CustomCard from "../components/cards/CustomCard";
+import { FaClipboardList } from "react-icons/fa";
+import Navbar from "../components/layouts/Navbar";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 
 const Home = () => {
   const [groups, setGroups] = useState([]);
@@ -19,8 +22,20 @@ const Home = () => {
   const [hidePayment, setHidePayment] = useState(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 
+  const [enrollmentsCount, setEnrollmentsCount] = useState(0);
+
   const [isLoading, setIsLoading] = useState(false);
 
+  const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
+
+    const [alertConfig, setAlertConfig] = useState({
+      visibility: false,
+      message: "Something went wrong!",
+      type: "info",
+    });
   // Check payment access
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -47,6 +62,19 @@ const Home = () => {
       }
     };
     fetchGroups();
+  }, [reloadTrigger]);
+
+  useEffect(() => {
+    const fetchEnrollments = async () => {
+      try {
+        const response = await api.get("/enroll/get-enroll");
+        setEnrollmentsCount(Array.isArray(response.data) ? response.data.length : 0);
+      } catch (error) {
+        console.error("Error fetching enrollments:", error);
+        setEnrollmentsCount(0);
+      }
+    };
+    fetchEnrollments();
   }, [reloadTrigger]);
 
   useEffect(() => {
@@ -126,9 +154,9 @@ const Home = () => {
           },
         });
 
-        setPaymentsPerMonthValue(response?.data?.monthlyPayment || 0);
+        setPaymentsPerMonthValue(response?.data?.totalFilteredPayment || 0);
 
-        console.log(response?.data?.monthlyPayment)
+        console.log(response?.data?.totalFilteredPayment)
       } catch (error) {
         console.error("Error fetching monthly payment data:", error);
       }
@@ -139,7 +167,7 @@ const Home = () => {
   const cardData = [
     {
       icon: MdGroupWork,
-      title: "Corporate Groups",
+      title: "Chit Groups",
       value: groups.length,
       subtitle: "Active business units",
       color: "from-indigo-500 to-indigo-600",
@@ -162,6 +190,20 @@ const Home = () => {
       ringColor: "ring-amber-500/20",
       redirect: "/user",
       key: "2",
+    },
+
+    {
+      icon: FaClipboardList,
+      title: "Total Enrollments",
+      value: enrollmentsCount.toLocaleString(),
+      subtitle: "Active enrollments this period",
+      color: "from-teal-500 to-teal-600",
+      iconBg: "bg-teal-100",
+      iconColor: "text-teal-600",
+      borderColor: "border-teal-600",
+      ringColor: "ring-teal-500/20",
+      redirect: "/enrollment",
+      key: "8",
     },
     {
       icon: FaUserLock,
@@ -239,20 +281,27 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen mt-20 bg-gradient-to-br from-gray-50 to-gray-100 transition-colors duration-300">
-      <div className="flex">
-        <Sidebar
-          navSearchBarVisibility={true}
-          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-          showMobileSidebar={showMobileSidebar}
-          setShowMobileSidebar={setShowMobileSidebar}
-        />
+    <div >
+       <div className="flex mt-20" >
+          <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
         <div className="flex-1 p-4 md:p-8 md:ml-16 md:mr-11 md:mt-11 pb-8">
           <header className="mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 mb-2">
+            <h1 className="text-3xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 mb-2">
               Chit Intelligence Dashboard
             </h1>
-            <p className="text-gray-600 max-w-2xl text-sm sm:text-base">
+            <p className="text-gray-500 max-w-2xl text-lg ">
               Real-time analytics and performance metrics for your organization.
               Monitor key business indicators and make data-driven decisions.
             </p>
@@ -277,30 +326,30 @@ const Home = () => {
                         <div className={`p-2 rounded-xl ${card.iconBg} mb-4`}>
                           <card.icon className={`w-5 h-5 ${card.iconColor}`} />
                         </div>
-                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-600">
+                        <span className="text-sm font-medium px-2 py-1 rounded-full bg-violet-50 ">
                           Live
                         </span>
                       </div>
 
-                      <h3 className="text-sm font-semibold text-gray-800 mb-1 truncate">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-1 truncate">
                         {card.title}
                       </h3>
-                      <p className="text-xs text-gray-500 mb-2 line-clamp-2">
+                      <p className="text-sm text-gray-500 mb-2 line-clamp-2">
                         {card.subtitle}
                       </p>
 
                       <div className="mt-2">
-                        <span className="text-xl font-bold text-gray-900">
+                        <span className="text-2xl font-bold text-gray-900">
                           {card.value}
                         </span>
                       </div>
 
                       <div className="mt-6 pt-4 border-t border-gray-100">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-500">Updated: Just now</span>
+                          <span className="text-sm text-gray-500">Updated: Just now</span>
                           <a
                             href={card.redirect}
-                            className="text-xs font-medium text-gray-600 hover:text-gray-900 transition-colors flex items-center"
+                            className="text-md font-medium text-gray-600 hover:text-gray-900 transition-colors flex items-center"
                           >
                             View details
                             <svg
@@ -343,7 +392,7 @@ const Home = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-gray-700 mb-2 text-center">
+              <h3 className="text-2xl font-semibold text-gray-700 mb-2 text-center">
                 No results found
               </h3>
               <p className="text-gray-500 max-w-md text-center">

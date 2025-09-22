@@ -362,7 +362,7 @@ const PigmeReport = () => {
                   value={updateFormData.customer}
                   onChange={handleInputChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="" selected hidden>
                     Select Customer Name
@@ -372,7 +372,7 @@ const PigmeReport = () => {
                   ))}
                 </select> */}
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   placeholder="Select Or Search  Customer Name "
                   popupMatchSelectWidth={false}
                   showSearch
@@ -411,7 +411,7 @@ const PigmeReport = () => {
                   value={updateFormData.maturity_period}
                   onChange={handleInputChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="" selected hidden>
                     Select Maturity Period
@@ -463,7 +463,7 @@ const PigmeReport = () => {
                     id="maturity_interest"
                     placeholder="Enter Maturity Interest"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
                 <div className="w-1/2">
@@ -481,7 +481,7 @@ const PigmeReport = () => {
                     id="tenure"
                     placeholder="Enter Payable Amount"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.payable_amount && (
                     <p className="text-red-500 text-sm mt-1">
@@ -507,7 +507,7 @@ const PigmeReport = () => {
                     id="start_date"
                     placeholder="Enter the Date"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.start_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -530,7 +530,7 @@ const PigmeReport = () => {
                     id="end_date"
                     placeholder="Enter End Date"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.end_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -555,10 +555,10 @@ const PigmeReport = () => {
                     id="note"
                     placeholder="Specify Note if any!"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   <div
-                    className="bg-blue-700 hover:bg-blue-800 w-10 h-10 flex justify-center items-center rounded-md"
+                    className="bg-violet-700 hover:bg-violet-800 w-10 h-10 flex justify-center items-center rounded-md"
                     onClick={() => {
                       window.open("Calculator:///");
                     }}
@@ -570,8 +570,8 @@ const PigmeReport = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
+                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
                 >
                   Update Pigme
                 </button>
@@ -616,13 +616,13 @@ const PigmeReport = () => {
                     id="borrowerName"
                     placeholder="Enter the Pigme Customer Name"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Delete
                 </button>

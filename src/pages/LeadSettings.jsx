@@ -10,10 +10,10 @@ import { GoGraph } from "react-icons/go";
 const data = [
   {
     title: "Designation",
-    color: "bg-blue-200",
+    color: "bg-violet-200",
     path: "/designation",
     icon: <IoPeopleOutline size={35} />,
-    iconColor: "bg-blue-700",
+    iconColor: "bg-violet-700",
   },
   
   {

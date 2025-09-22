@@ -142,14 +142,14 @@ const PayOutOthers = () => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
-    setAdminName(userObj.name || "");
+    setAdminName(userObj?.name || "");
 
     if (
       userObj &&
-      userObj.admin_access_right_id?.access_permissions?.edit_payment
+      userObj?.admin_access_right_id?.access_permissions?.edit_payment
     ) {
       const isModify =
-        userObj.admin_access_right_id?.access_permissions?.edit_payment ===
+        userObj?.admin_access_right_id?.access_permissions?.edit_payment ===
         "true"
           ? true
           : false;
@@ -767,7 +767,7 @@ const PayOutOthers = () => {
                     <div>
                       <button
                         onClick={() => setShowModal(true)}
-                        className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                        className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
                       >
                         +Add Payment Out
                       </button>
@@ -981,7 +981,7 @@ const PayOutOthers = () => {
                         id="pay_date"
                         onChange={handleChange}
                         placeholder=""
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full h-14"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full h-14"
                       />
 
                       {errors.pay_date && (
@@ -1009,7 +1009,7 @@ const PayOutOthers = () => {
                           onChange={handleChange}
                           placeholder="Enter Amount"
                           required
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                         />
                         <Tooltip title="Last 3 Transactions">
                           <button
@@ -1037,7 +1037,7 @@ const PayOutOthers = () => {
                       <select
                         name="pay_mode"
                         id="pay_mode"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                         onChange={handlePaymentModeChange}
                       >
                         <option value="cash">Cash</option>
@@ -1088,7 +1088,7 @@ const PayOutOthers = () => {
                         value={formData.transaction_id}
                         onChange={handleChange}
                         placeholder="Enter Transaction ID"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                       />
                       {errors.transaction_id && (
                         <p className="text-red-500 text-xs mt-1">
@@ -1108,7 +1108,7 @@ const PayOutOthers = () => {
                       name="disbursement_type"
                       id="pay_mode"
                       value={formData.disbursement_type}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                       onChange={handleChange}
                     >
                       <option value="">Select any</option>
@@ -1169,7 +1169,7 @@ const PayOutOthers = () => {
                     />
                   </div>
                   <div className="w-full">
-                  <div className="w-full bg-blue-50 p-3 rounded-lg">
+                  <div className="w-full bg-violet-50 p-3 rounded-lg">
                   <label className="block mb-1 text-sm font-medium text-gray-900">
                     Disbursed By
                   </label>
@@ -1206,8 +1206,8 @@ const PayOutOthers = () => {
                     <Tooltip title="Saving Payment Out">
                       <button
                         type="submit"
-                        className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-                              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                        className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
+                              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                       >
                         Save Payment Out
                       </button>

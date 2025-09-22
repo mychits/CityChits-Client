@@ -315,12 +315,12 @@ const PayoutSalary = () => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
-    setAdminId(userObj._id);
-    setAdminName(userObj.name || "");
+    setAdminId(userObj?._id);
+    setAdminName(userObj?.name || "");
 
     if (userObj?.admin_access_right_id?.access_permissions?.edit_payment) {
       setModifyPayment(
-        userObj.admin_access_right_id.access_permissions.edit_payment === "true"
+        userObj?.admin_access_right_id?.access_permissions?.edit_payment === "true"
       );
     }
   }, []);
@@ -523,7 +523,7 @@ const PayoutSalary = () => {
                     setShowSalaryModal(true);
                     resetForm();
                   }}
-                  className="ml-4 bg-blue-900 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition duration-200 flex items-center"
+                  className="ml-4 bg-violet-900 text-white px-4 py-2 rounded shadow-md hover:bg-violet-600 transition duration-200 flex items-center"
                 >
                   <span className="mr-2">+</span> Salary Payment
                 </button>
@@ -531,7 +531,7 @@ const PayoutSalary = () => {
             </div>
 
             <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4 text-blue-800 border-b pb-2">
+              <h2 className="text-xl font-semibold mb-4 text-violet-800 border-b pb-2">
                 Salary Payments
               </h2>
 
@@ -670,7 +670,7 @@ const PayoutSalary = () => {
                       <div className="col-span-2">
                         <button
                           type="button"
-                          className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                          className="mt-2 bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded"
                           onClick={() => {
                             if (
                               salaryForm.agent_id &&
@@ -744,7 +744,7 @@ const PayoutSalary = () => {
                       <div className="col-span-2">
                         <button
                           type="button"
-                          className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                          className="mt-2 bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded"
                           onClick={() => {
                             if (
                               salaryForm.agent_id &&
@@ -962,7 +962,7 @@ const PayoutSalary = () => {
                   />
                 </div>
 
-                <div className="w-full bg-blue-50 p-3 rounded-lg">
+                <div className="w-full bg-violet-50 p-3 rounded-lg">
                   <label className="block mb-1 text-sm font-medium text-gray-900">
                     Disbursed By
                   </label>
@@ -980,7 +980,7 @@ const PayoutSalary = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
+                    className="px-4 py-2 bg-violet-700 text-white rounded-lg hover:bg-violet-600 disabled:opacity-50"
                   >
                     {isLoading ? "Processing..." : "Save Payment"}
                   </button>

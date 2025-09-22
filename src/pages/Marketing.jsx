@@ -140,7 +140,7 @@ import { LiaSmsSolid } from "react-icons/lia";
 //               <Fragment key={menu.key}>
 //                 <div
 //                   onClick={() => toggleMenu(index)}
-//                   className="flex items-center gap-3 text-lg font-semibold text-blue-900 px-2 py-2 cursor-pointer hover:opacity-80 rounded-md transition"
+//                   className="flex items-center gap-3 text-lg font-semibold text-violet-900 px-2 py-2 cursor-pointer hover:opacity-80 rounded-md transition"
 //                 >
 //                   {menu.icon}
 //                   {menu.title}
@@ -165,10 +165,10 @@ import { LiaSmsSolid } from "react-icons/lia";
 //                           target={submenu.newTab ? "_blank" : "_self"}
 //                           className={({ isActive }) =>
 //                             `flex items-center gap-3 p-2 rounded-md transition font-medium ${
-//                               submenu.red ? "text-red-700" : "text-blue-950"
+//                               submenu.red ? "text-red-700" : "text-violet-950"
 //                             } ${
 //                               isActive
-//                                 ? "bg-blue-100 border-l-4 border-blue-400"
+//                                 ? "bg-violet-100 border-l-4 border-violet-400"
 //                                 : "hover:bg-gray-200"
 //                             }`
 //                           }
@@ -353,7 +353,7 @@ const Marketing = () => {
                     target={menu.newTab ? "_blank" : "_self"}
                     className={({ isActive }) =>
                       `flex items-center gap-3 p-2 rounded-md transition font-medium cursor-pointer 
-                      ${isActive ? "bg-blue-500 text-white" : "hover:bg-gray-200 text-blue-950"}`
+                      ${isActive ? "bg-violet-500 text-white" : "hover:bg-gray-200 text-violet-950"}`
                     }
                   >
                     {menu.icon}
@@ -363,7 +363,7 @@ const Marketing = () => {
                   <div
                     onClick={() => hasSubMenu && toggleMenu(menu.key)}
                     className={`flex items-center gap-3 p-2 rounded-md transition font-medium cursor-pointer 
-                    ${isOpen ? "bg-gray-100 text-blue-950" : "hover:bg-gray-200 text-blue-950"}`}
+                    ${isOpen ? "bg-gray-100 text-violet-950" : "hover:bg-gray-200 text-violet-950"}`}
                   >
                     {menu.icon}
                     <span>{menu.title}</span>

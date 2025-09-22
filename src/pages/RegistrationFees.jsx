@@ -960,13 +960,13 @@ const RegistrationFee = () => {
                     <div>
                       <button
                         onClick={() => setShowModal(true)}
-                        className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                        className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
                       >
                         + Add Registration Fees
                       </button>
                       <button
                         onClick={() => setShowUploadModal(true)}
-                        className="ml-4 bg-yellow-300 text-black px-4 py-2 rounded shadow-md hover:bg-yellow-400 transition duration-200"
+                        className="ml-4 bg-violet-300 text-black px-4 py-2 rounded shadow-md hover:bg-violet-400 transition duration-200"
                       >
                         Upload Excel
                       </button>
@@ -1141,7 +1141,7 @@ const RegistrationFee = () => {
                     <select
                       name="pay"
                       id="pay_for"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                       onChange={handlePaymentFor}
                     >
                       <option value="">Select Registration Fee Type</option>
@@ -1164,7 +1164,7 @@ const RegistrationFee = () => {
                       placeholder="Select Group | Ticket"
                       onChange={handlePaymentAntSelect}
                       value={paymentGroupTickets}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 "
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5 "
                     >
                       {formData.pay_for === "Reg|Chit" && (
                         <>
@@ -1235,7 +1235,7 @@ const RegistrationFee = () => {
                         id="pay_date"
                         onChange={handleChange}
                         placeholder=""
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                       />
 
                       {errors.pay_date && (
@@ -1263,7 +1263,7 @@ const RegistrationFee = () => {
                           onChange={handleChange}
                           placeholder="Enter Amount"
                           required
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                         />
                       </div>
 
@@ -1283,7 +1283,7 @@ const RegistrationFee = () => {
                       <select
                         name="pay_mode"
                         id="pay_mode"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                         onChange={handlePaymentModeChange}
                       >
                         <option value="cash">Cash</option>
@@ -1326,7 +1326,7 @@ const RegistrationFee = () => {
                         value={formData.transaction_id}
                         onChange={handleChange}
                         placeholder="Enter Transaction ID"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                       />
                       {errors.transaction_id && (
                         <p className="text-red-500 text-xs mt-1">
@@ -1338,8 +1338,8 @@ const RegistrationFee = () => {
                   <div className="w-full flex justify-end">
                     <button
                       type="submit"
-                      className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-                              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                      className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
+                              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                     >
                       Save Payment
                     </button>
@@ -1362,7 +1362,7 @@ const RegistrationFee = () => {
               <h3 className="mb-4 text-xl font-bold text-gray-900">
                 Payment Details
               </h3>
-              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
+              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5">
                 <div className="mb-3 flex gap-x-2">
                   <strong>Group: </strong>{" "}
                   {currentViewGroup?.group_id?.group_name}
@@ -1445,7 +1445,7 @@ const RegistrationFee = () => {
                     <button
                       type="submit"
                       className="w-full text-white bg-red-700 hover:bg-red-800
-                    focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                     >
                       Delete
                     </button>

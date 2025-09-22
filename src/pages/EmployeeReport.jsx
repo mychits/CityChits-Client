@@ -125,7 +125,7 @@ const columns = selectedEmployeeId === "ALL"
           
           <div className="mt-6 mb-8">
             <div className="mb-2">
-            <div className="flex justify-center items-center w-full gap-4 bg-blue-50 p-2 w-30 h-40 rounded-3xl border   space-x-2">
+            <div className="flex justify-center items-center w-full gap-4 bg-violet-50 p-2 w-30 h-40 rounded-3xl border   space-x-2">
               <div className="mb-2">
                 <label className="block text-lg text-gray-500 text-center font-semibold mb-2">
                   Employee
@@ -153,7 +153,7 @@ const columns = selectedEmployeeId === "ALL"
             </div>
             </div>
           </div>
-         <div className="ml-6 text-md font-semibold text-blue-700 mb-5">
+         <div className="ml-6 text-md font-semibold text-violet-700 mb-5">
             <label> Total Business: </label>
             <div className="mt-2">
             <input

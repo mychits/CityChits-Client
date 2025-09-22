@@ -753,7 +753,7 @@ const LeadReport = () => {
                   id="name"
                   placeholder="Enter the Group Name"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
                 {errors.lead_name && (
                   <p className="mt-1 text-sm text-red-500">
@@ -777,7 +777,7 @@ const LeadReport = () => {
                     id="text"
                     placeholder="Enter Lead Phone Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.lead_phone && (
                     <p className="mt-1 text-sm text-red-500">
@@ -798,7 +798,7 @@ const LeadReport = () => {
                     value={updateFormData.lead_profession}
                     onChange={handleInputChange}
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   >
                     <option value="">Select Work/Profession</option>
                     <option value="employed">Employed</option>
@@ -846,7 +846,7 @@ const LeadReport = () => {
                   value={updateFormData.group_id}
                   onChange={handleInputChange}
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 >
                   <option value="">Select Group</option>
                   {groups.map((group) => (
@@ -887,7 +887,7 @@ const LeadReport = () => {
                   value={updateFormData.lead_type}
                   onChange={handleInputChange}
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 >
                   <option value="">Select Lead Source Type</option>
                   <option value="social">Social Media</option>
@@ -942,7 +942,7 @@ const LeadReport = () => {
                       value={updateFormData.lead_customer}
                       onChange={handleInputChange}
                       required
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     >
                       <option value="">Select Customer</option>
                       {users.map((user) => (
@@ -952,7 +952,7 @@ const LeadReport = () => {
                       ))}
                     </select> */}
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       placeholder="Select Or Search Customers"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -996,7 +996,7 @@ const LeadReport = () => {
                 id="text"
                 placeholder="Specify note if any!"
                 required
-                className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
               />
               <div className="w-full">
                 <label
@@ -1011,7 +1011,7 @@ const LeadReport = () => {
                   value={updateFormData.lead_needs}
                   onChange={handleInputChange}
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 >
                   <option value="">Select Lead Needs and Goals</option>
                   <option value="savings">Savings</option>
@@ -1058,7 +1058,7 @@ const LeadReport = () => {
                       value={updateFormData.lead_agent}
                       onChange={handleInputChange}
                       required
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     >
                       <option value="">Select Agent</option>
                       {agents.map((agent) => (
@@ -1078,8 +1078,8 @@ const LeadReport = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Update
                 </button>
@@ -1122,13 +1122,13 @@ const LeadReport = () => {
                     id="groupName"
                     placeholder="Enter the Lead Name"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Delete
                 </button>

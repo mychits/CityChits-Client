@@ -304,7 +304,7 @@ while (loop <= end) {
         {selectedAgentDetails && (
           <>
             <div className="bg-gray-100 p-4 rounded shadow mb-6">
-              <h2 className="font-bold text-lg text-blue-800 mb-3">
+              <h2 className="font-bold text-lg text-violet-800 mb-3">
                 Agent Details
               </h2>
               <div className="grid md:grid-cols-3 gap-4">
@@ -411,35 +411,35 @@ while (loop <= end) {
 
         <div className="flex flex-wrap gap-6 mb-4 items-center px-2">
           <div className="flex flex-col">
-            <label className="font-semibold text-blue-700 mb-1">
+            <label className="font-semibold text-violet-700 mb-1">
               Total Leads:
             </label>
             <input
               readOnly
               value={totalLeads.toLocaleString("en-IN")}
-              className="border rounded px-3 py-1 w-[150px] text-center text-blue-700 font-medium"
+              className="border rounded px-3 py-1 w-[150px] text-center text-violet-700 font-medium"
             />
           </div>
 
           <div className="flex flex-col">
-            <label className="font-semibold text-blue-700 mb-1">
+            <label className="font-semibold text-violet-700 mb-1">
               Total Customers:
             </label>
             <input
               readOnly
               value={totalCustomers.toLocaleString("en-IN")}
-              className="border rounded px-3 py-1 w-[150px] text-center text-blue-700 font-medium"
+              className="border rounded px-3 py-1 w-[150px] text-center text-violet-700 font-medium"
             />
           </div>
 
           <div className="flex flex-col">
-            <label className="font-semibold text-blue-700 mb-1">
+            <label className="font-semibold text-violet-700 mb-1">
               Total Sales:
             </label>
             <input
               readOnly
               value={`₹${totalSales.toLocaleString("en-IN")}`}
-              className="border rounded px-3 py-1 w-[150px] text-center text-blue-700 font-medium"
+              className="border rounded px-3 py-1 w-[150px] text-center text-violet-700 font-medium"
             />
           </div>
         </div>

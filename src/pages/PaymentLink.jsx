@@ -360,7 +360,7 @@ const User = () => {
               {getSelectedCustomerDetails().length > 5 && !showAllCustomers && (
                 <button 
                   onClick={() => setShowAllCustomers(true)}
-                  className="text-blue-600 hover:text-blue-800 text-sm font-medium mt-2 flex items-center"
+                  className="text-violet-600 hover:text-violet-800 text-sm font-medium mt-2 flex items-center"
                 >
                   Show all {getSelectedCustomerDetails().length} customers
                 </button>
@@ -400,7 +400,7 @@ const User = () => {
                   placeholder="Enter amount"
                   min="1"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
               </div>
               <div>
@@ -418,7 +418,7 @@ const User = () => {
                   id="purpose"
                   placeholder="Enter payment purpose"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
               </div>
               <div>
@@ -498,9 +498,9 @@ const User = () => {
                   disabled={paymentLinkLoading}
                   className={`w-auto px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
                     paymentLinkLoading
-                      ? "bg-blue-400"
-                      : "bg-blue-600 hover:bg-blue-700"
-                  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+                      ? "bg-violet-400"
+                      : "bg-violet-600 hover:bg-violet-700"
+                  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500`}
                 >
                   {paymentLinkLoading ? (
                     <span className="flex items-center">

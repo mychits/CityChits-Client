@@ -853,7 +853,7 @@ const UserReport = () => {
             </h1>
             <div className="mt-6 mb-8">
               <div className="mb-2">
-                <div className="flex justify-center items-center w-full gap-4 bg-blue-50    p-2 w-30 h-40  rounded-3xl  border   space-x-2  ">
+                <div className="flex justify-center items-center w-full gap-4 bg-violet-50    p-2 w-30 h-40  rounded-3xl  border   space-x-2  ">
                   <div className="mb-2">
                     <label
                       className="block text-lg text-gray-500 text-center  font-semibold mb-2"
@@ -892,7 +892,7 @@ const UserReport = () => {
                       <button
                         className={`px-6 py-2 font-medium ${
                           activeTab === "groupDetails"
-                            ? "border-b-2 border-blue-500 text-blue-500"
+                            ? "border-b-2 border-violet-500 text-violet-500"
                             : "text-gray-500"
                         }`}
                         onClick={() => handleTabChange("groupDetails")}
@@ -902,7 +902,7 @@ const UserReport = () => {
                       <button
                         className={`px-6 py-2 font-medium ${
                           activeTab === "basicReport"
-                            ? "border-b-2 border-blue-500 text-blue-500"
+                            ? "border-b-2 border-violet-500 text-violet-500"
                             : "text-gray-500"
                         }`}
                         onClick={() => handleTabChange("basicReport")}
@@ -913,7 +913,7 @@ const UserReport = () => {
                       <button
                         className={`px-6 py-2 font-medium ${
                           activeTab === "disbursement"
-                            ? "border-b-2 border-blue-500 text-blue-500"
+                            ? "border-b-2 border-violet-500 text-violet-500"
                             : "text-gray-500"
                         }`}
                         onClick={() => handleTabChange("disbursement")}
@@ -937,7 +937,7 @@ const UserReport = () => {
                                   type="text"
                                   placeholder="Search customer details..."
                                   className="w-full pl-12 pr-5 py-3.5 text-gray-800 bg-white border border-gray-200 rounded-full shadow-3xl 
-                   placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 
+                   placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-violet-400 
                    transition-all duration-300 ease-in-out text-sm md:text-base"
                                   value={searchText}
                                   onChange={(e) =>
@@ -1019,7 +1019,7 @@ const UserReport = () => {
         ${
           visibleRows.row1
             ? "bg-gradient-to-r from-green-500 to-green-700 text-white shadow-lg"
-            : "bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-md hover:shadow-lg hover:scale-105"
+            : "bg-gradient-to-r from-violet-700 to-violet-900 text-white shadow-md hover:shadow-lg hover:scale-105"
         }
       `}
                                 >
@@ -1039,7 +1039,7 @@ const UserReport = () => {
         ${
           visibleRows.row2
             ? "bg-gradient-to-r from-green-500 to-green-700 text-white shadow-lg"
-            : "bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-md hover:shadow-lg hover:scale-105"
+            : "bg-gradient-to-r from-violet-700 to-violet-900 text-white shadow-md hover:shadow-lg hover:scale-105"
         }
       `}
                                 >
@@ -1059,7 +1059,7 @@ const UserReport = () => {
         ${
           visibleRows.row3
             ? "bg-gradient-to-r from-green-500 to-green-700 text-white shadow-lg"
-            : "bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-md hover:shadow-lg hover:scale-105"
+            : "bg-gradient-to-r from-violet-700 to-violet-900 text-white shadow-md hover:shadow-lg hover:scale-105"
         }
       `}
                                 >
@@ -1079,7 +1079,7 @@ const UserReport = () => {
         ${
           visibleRows.row4
             ? "bg-gradient-to-r from-green-500 to-green-700 text-white shadow-lg"
-            : "bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-md hover:shadow-lg hover:scale-105"
+            : "bg-gradient-to-r from-violet-700 to-violet-900 text-white shadow-md hover:shadow-lg hover:scale-105"
         }
       `}
                                 >
@@ -1464,7 +1464,7 @@ const UserReport = () => {
                                 type="text"
                                 value={`Payment Balance: ₹${finalPaymentBalance}`}
                                 readOnly
-                                className="px-4 py-2 border rounded font-semibold w-60 text-center bg-blue-100 text-blue-800 border-blue-400"
+                                className="px-4 py-2 border rounded font-semibold w-60 text-center bg-violet-100 text-violet-800 border-violet-400"
                               />
 
                               <input

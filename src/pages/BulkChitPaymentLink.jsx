@@ -50,9 +50,9 @@ const BulkChitPaymentLink = () => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
-    const adminId = userObj._id;
+    const adminId = userObj?._id;
     if (adminId) {
-      setAdmin(userObj._id);
+      setAdmin(userObj?._id);
     } else {
       setAdmin("");
     }
@@ -88,7 +88,7 @@ const BulkChitPaymentLink = () => {
                   type="checkbox"
                   checked={selectedEnrollments.includes(group._id)}
                   onChange={(e) => handleEnrollmentSelect(group._id, e)}
-                  className="form-checkbox h-4 w-4 text-blue-600"
+                  className="form-checkbox h-4 w-4 text-violet-600"
                 />
               ),
               _id: group?._id,
@@ -245,7 +245,7 @@ const BulkChitPaymentLink = () => {
                   type="checkbox"
                   checked={selectedEnrollments.includes(group._id)}
                   onChange={(e) => handleEnrollmentSelect(group._id, e)}
-                  className="form-checkbox h-4 w-4 text-blue-600"
+                  className="form-checkbox h-4 w-4 text-violet-600"
                 />
               ),
               _id: group?._id,
@@ -480,16 +480,16 @@ const handleEnrollmentSelect = (id) => {
       type="checkbox"
       checked={selectedEnrollments.length === TableEnrolls.length && TableEnrolls.length > 0}
       onChange={handleSelectAll}
-      className="form-checkbox h-4 w-4 text-blue-600"
+      className="form-checkbox h-4 w-4 text-violet-600"
     />
   ),
   render: (row) => (
-    <div className={selectedEnrollments.includes(row._id) ? "bg-blue-100" : ""}>
+    <div className={selectedEnrollments.includes(row._id) ? "bg-violet-100" : ""}>
       <input
         type="checkbox"
         checked={selectedEnrollments.includes(row._id)}
         onChange={() => handleEnrollmentSelect(row._id)}
-        className="form-checkbox h-4 w-4 text-blue-600"
+        className="form-checkbox h-4 w-4 text-violet-600"
       />
     </div>
   ),
@@ -568,7 +568,7 @@ const handleEnrollmentSelect = (id) => {
                   {selectedEnrollments.length > 0 && (
                     <button
                       onClick={handleOpenPaymentLinkModal}
-                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                      className="bg-violet-600 text-white px-4 py-2 rounded hover:bg-violet-700"
                     >
                       Add Payment Link ({selectedEnrollments.length})
                     </button>
@@ -611,13 +611,13 @@ const handleEnrollmentSelect = (id) => {
               Create Payment Links
             </h3>
 
-            <div className="mb-4 p-3 bg-blue-50 rounded">
-              <p className="text-sm text-blue-700">
+            <div className="mb-4 p-3 bg-violet-50 rounded">
+              <p className="text-sm text-violet-700">
                 Creating payment links for {selectedEnrollments.length} selected enrollment{selectedEnrollments.length > 1 ? 's' : ''}
               </p>
               <div className="mt-2 max-h-40 overflow-y-auto">
                 {TableEnrolls.filter(enroll => selectedEnrollments.includes(enroll._id)).map((enrollment, index) => (
-                  <div key={index} className="text-sm py-1 border-b border-blue-100 last:border-0">
+                  <div key={index} className="text-sm py-1 border-b border-violet-100 last:border-0">
                     {enrollment.name} | {enrollment.phone_number} | {enrollment.group_name} | Ticket {enrollment.ticket}
                   </div>
                 ))}
@@ -635,7 +635,7 @@ const handleEnrollmentSelect = (id) => {
                   value={paymentLinkForm.amount}
                   onChange={handlePaymentLinkChange}
                   placeholder="Enter amount"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
                   min="0.01"
                   step="0.01"
                 />
@@ -666,7 +666,7 @@ const handleEnrollmentSelect = (id) => {
                     name="send_sms"
                     checked={paymentLinkForm.send_sms}
                     onChange={handlePaymentLinkChange}
-                    className="h-4 w-4 text-blue-600"
+                    className="h-4 w-4 text-violet-600"
                   />
                   <label htmlFor="send_sms" className="ml-2 text-sm text-gray-700">
                     Send SMS
@@ -680,7 +680,7 @@ const handleEnrollmentSelect = (id) => {
                     name="send_email"
                     checked={paymentLinkForm.send_email}
                     onChange={handlePaymentLinkChange}
-                    className="h-4 w-4 text-blue-600"
+                    className="h-4 w-4 text-violet-600"
                   />
                   <label htmlFor="send_email" className="ml-2 text-sm text-gray-700">
                     Send Email
@@ -693,7 +693,7 @@ const handleEnrollmentSelect = (id) => {
                   type="submit"
                   disabled={loading}
                   className={`px-5 py-2.5 rounded-lg font-medium transition-colors ${
-                    loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-950 text-white hover:bg-blue-800"
+                    loading ? "bg-gray-400 cursor-not-allowed" : "bg-violet-950 text-white hover:bg-violet-800"
                   }`}
                 >
                   {loading ? "Creating..." : "Create Payment Links"}

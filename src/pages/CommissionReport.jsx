@@ -376,7 +376,7 @@ const CommissionReport = () => {
 
           <div className="mt-6 mb-8">
             <div className="mb-2">
-              <div className="flex justify-center items-center w-full gap-4 bg-blue-50 p-2 w-30 h-40 rounded-3xl border   space-x-2">
+              <div className="flex justify-center items-center w-full gap-4 bg-violet-50 p-2 w-30 h-40 rounded-3xl border   space-x-2">
                 <div className="mb-2">
                   <label className="block text-lg text-gray-500 text-center font-semibold mb-2">
                     Employee
@@ -431,7 +431,7 @@ const CommissionReport = () => {
                     setToDate(tempToDate);
                   }}
                   disabled={!tempFromDate || !tempToDate}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 mt-7 py-2 rounded"
+                  className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-4 mt-7 py-2 rounded"
                 >
                   Filter
                 </button>
@@ -765,7 +765,7 @@ const CommissionReport = () => {
                   <button type="button" onClick={() => setShowCommissionModal(false)} className="px-4 py-2 border rounded">
                     Cancel
                   </button>
-                  <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">
+                  <button type="submit" className="px-4 py-2 bg-violet-600 text-white rounded">
                     Save Payment
                   </button>
                 </div>

@@ -40,7 +40,7 @@ const Sidebar = ({
       />
       {navbarVisibility && (
         <div
-          className={`bg-primary-variant min-h-screen p-5 pt-8 fixed md:static z-40 transition-all duration-300 ${
+          className={`bg-violet-50 mt-2 p-5 pt-7 fixed md:static  transition-all duration-300 ${
             open ? "w-64" : "w-28"
           } ${!navbarVisibility ? "hidden" : ""} ${
             showMobileSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
@@ -76,7 +76,7 @@ const Sidebar = ({
                       `flex items-center gap-x-4 p-3 rounded-xl shadow-sm transition-all duration-200 ${
                         isActive && !menu.submenu
                           ? "bg-violet-500 text-white"
-                          : "bg-white text-gray-700 hover:bg-purple-100"
+                          : "bg-white text-gray-700 hover:bg-violet-200"
                       } ${menu.spacing ? "mt-6" : ""}`
                     }
                   >

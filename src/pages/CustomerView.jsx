@@ -22,6 +22,7 @@ import { Button, message } from "antd";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { BsCurrencyRupee } from "react-icons/bs";
+import { SlCalender } from "react-icons/sl";
 import {
   FiUser,
   FiPhone,
@@ -34,9 +35,7 @@ import {
   FiFileText,
   FiUsers,
   FiDollarSign,
-
 } from "react-icons/fi";
-
 const CustomerView = () => {
   const [searchParams] = useSearchParams();
   const userId = searchParams.get("user_id");
@@ -102,6 +101,37 @@ const CustomerView = () => {
     setSelectedGroupDetails(auction);
     setIsGroupModalOpen(true);
   };
+
+const calculateCustomerAge = (joiningDate) => {
+  if (!joiningDate) return "—";
+
+  const join = new Date(joiningDate);
+  const today = new Date();
+
+
+  if (join > today) {
+    return "Invalid joining date";
+  }
+
+  let years = today.getFullYear() - join.getFullYear();
+  let months = today.getMonth() - join.getMonth();
+  let days = today.getDate() - join.getDate();
+
+  if (days < 0) {
+    months--;
+
+    const prevMonthDays = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+    days += prevMonthDays;
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  return `${years} years ${months} months ${days} days`;
+};
+
   const handleCloseModal = () => {
     setIsGroupModalOpen(false);
     setSelectedGroupDetails(null);
@@ -344,7 +374,7 @@ const CustomerView = () => {
   useEffect(() => {
     const fetchRegistrationFee = async () => {
       if (
-        activeTab === "basicReport" &&
+        activeTab === "daybook" && // <-- FIXED: Changed from "basicReport" to "daybook"
         selectedGroup &&
         EnrollGroupId.groupId &&
         EnrollGroupId.ticket &&
@@ -687,11 +717,25 @@ const CustomerView = () => {
     setSelectedGroup(groupId);
     handleGroupAuctionChange(groupId);
   };
+  // New state for stats section loading
+  const [statsLoading, setStatsLoading] = useState(true);
   useEffect(() => {
-    if (userId) {
-      handleGroupPayment(userId);
-    }
-  }, []);
+    const fetchData = async () => {
+      setStatsLoading(true); // Start loading when userId changes
+      if (userId) {
+        try {
+          await handleGroupAuctionChange(userId); // Wait for this to finish
+        } catch (error) {
+          console.error("Error in initial fetch:", error);
+        } finally {
+          setStatsLoading(false); // Stop loading after fetch attempt, success or fail
+        }
+      } else {
+        setStatsLoading(false); // If no userId, stop loading immediately
+      }
+    };
+    fetchData();
+  }, [userId]); // Keep the existing dependency on userId
   const handleEnrollGroup = (event) => {
     const value = event.target.value;
     if (value) {
@@ -1038,7 +1082,6 @@ const CustomerView = () => {
       setAvailableTickets([]);
     }
   }, [selectedGroup]);
-
   // Helper functions to check if tab has data
   const hasDetailsData = () =>
     group.full_name ||
@@ -1049,24 +1092,19 @@ const CustomerView = () => {
     group.dateofbirth ||
     group.marital_status ||
     TableAuctions.some((a) => a.referred_type !== "N/A" || a.referrer_name !== "N/A");
-
   const hasAddressData = () =>
     group.address ||
     group.pincode ||
     group.district ||
     group.state ||
     group.nationality;
-
   const hasBankData = () =>
     group.bank_name ||
     group.bank_branch_name ||
     group.bank_account_number ||
     group.bank_IFSC_code;
-
   const hasDocsData = () => group.adhaar_no || group.pan_no;
-
   const hasGroupsData = () => TableAuctions.length > 0;
-
   // Fixed Tooltip Component - Now clearly visible above content
   const TabTooltip = ({ children, visible }) => (
     <div
@@ -1077,28 +1115,23 @@ const CustomerView = () => {
       <div className="p-3 border-b border-gray-100 bg-gray-50">
         <span className="text-sm font-semibold text-gray-700">Preview</span>
       </div>
-
       <div className="p-4">
         {/* Wrap children like InfoBoxes */}
         <div className="flex flex-wrap gap-4 max-w-[calc(10*250px)]">
           {children}
         </div>
       </div>
-
       {/* Downward-pointing arrow */}
       <div className="absolute top-full left-6 w-3 h-3 bg-white border-l border-b border-gray-200 rotate-45 transform -translate-x-1"></div>
     </div>
   );
-
   if (screenLoading)
     return (
       <div className="w-screen m-24">
         <CircularLoader color="text-green-600" />
       </div>
     );
-
   return (
-
     <>
       <div className="w-screen min-h-screen mt-20 bg-gray-50">
         <div className="flex mt-20">
@@ -1107,17 +1140,14 @@ const CustomerView = () => {
             onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
           />
           <div className="flex-grow p-8 space-y-6">
-
             <div className="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden">
               <div className="bg-white px-6 py-4">
                 <h1 className="text-2xl text-custom-violet font-bold ">Customer Profile</h1>
-
               </div>
               <div className="p-6">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-
                   <div className="lg:col-span-1 flex flex-col items-center">
-                    <div className="relative w-36 h-36  rounded-full overflow-hidden border-4 border-blue-100 shadow-md bg-gray-50">
+                    <div className="relative w-44 h-44  rounded-full overflow-hidden border-4 border-violet-200 shadow-lg bg-gray-50">
                       <img
                         src={
                           selectedFile
@@ -1143,79 +1173,124 @@ const CustomerView = () => {
                       </span>
                     </div>
                   </div>
-
-                  <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
-                    {[
-                      {
-                        label: "TOTAL GROUPS",
-                        value: TableAuctions?.length || 0,
-                        icon: <FiUsers className="text-violet-600" />,
-                      },
-                      {
-                        label: "NET TO BE PAID",
-                        value: ` ${(NetTotalprofit || 0).toLocaleString("en-IN")}`,
-                        icon: <BsCurrencyRupee className="text-violet-600" />,
-                      },
-                      {
-                        label: "TOTAL PAID",
-                        value: ` ${(Totalpaid || 0).toLocaleString("en-IN")}`,
-                        icon: <BsCurrencyRupee className="text-violet-600" />,
-                      },
-                      {
-                        label: "TOTAL PROFIT",
-                        value: ` ${(Totalprofit || 0).toLocaleString("en-IN")}`,
-                        icon: <BsCurrencyRupee className="text-violet-600" />,
-                      },
-                      {
-                        label: "BALANCE",
-                        value: ` ${(NetTotalprofit && Totalpaid) ? Number(NetTotalprofit - Totalpaid).toLocaleString("en-IN") : 0}`,
-                        icon: <BsCurrencyRupee className="text-violet-600" />,
-                      },
-                      {
-                        label: "LATEST PAYMENT",
-                        value: isLoadingPayment
-                          ? <CircularLoader color="text-violet-600" size="sm" />
-                          : ` ${Number(lastPayment?.amount || 0).toLocaleString("en-IN")}`,
-                        icon: <BsCurrencyRupee className="text-violet-600" />,
-                      },
-                      {
-                        label: "LATEST DISBURSEMENT",
-                        value: detailsLoading
-                          ? <CircularLoader color="text-violet-600" size="sm" />
-                          : ` ${Number(groupPaid || 0).toLocaleString("en-IN")}`,
-                        icon: <BsCurrencyRupee className="text-violet-600" />,
-                      },
-
-                    ].map((stat, idx) => (
-                      <div
-                        key={idx}
-                        className="bg-gradient-to-br from-violet-50 to-white rounded-xl shadow-md p-5 flex flex-col gap-3 border border-violet-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-                      >
-                        {/* Header */}
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-semibold text-violet-700 tracking-wide uppercase">
-                            {stat.label}
-                          </span>
-                          <div className="bg-violet-100 p-2 rounded-lg shadow-sm">
-                            {stat.icon}
-                          </div>
-                        </div>
-
-                        {/* Value */}
-                        <div
-                          className="text-lg font-bold text-gray-900 break-words whitespace-pre-wrap w-full"
-                          style={{ wordBreak: "break-word" }}
-                        >
-                          {stat.value}
-                        </div>
+                  <div className="lg:col-span-3">
+                    {statsLoading ? (
+                      <div className="flex items-center justify-center h-64">
+                        <CircularLoader color="text-violet-600" size="lg" />
                       </div>
-                    ))}
-                  </div>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+                        {[
+                          {
+                            label: "TOTAL GROUPS",
+                            value: TableAuctions?.length || 0,
+                            icon: <FiUsers className="text-violet-600" />,
+                          },
+                          {
+                            label: "JOINED ON",
+                            value: group?.createdAt
+                              ? new Date(group.createdAt).toLocaleDateString("en-GB")
+                              : "—",
+                            icon: <SlCalender className="text-violet-600" />,
+                          },
+                          {
+                            label: "CUSTOMER TENURE",
+                            value: calculateCustomerAge(group?.createdAt),
+                            icon: <FiCalendar className="text-violet-600" />,
+                          },
 
+                          {
+                            label: "CUSTOMER STATUS",
+                            value: (() => {
+                              const lastPaymentDate = lastPayment?.date
+                                ? new Date(lastPayment.date)
+                                : null;
+
+                              const threeMonthsAgo = new Date();
+                              threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+
+                              if (!lastPaymentDate || lastPaymentDate < threeMonthsAgo) {
+                                return "Inactive";
+                              }
+                              return "Active";
+                            })(),
+                            icon: <FiUser className="text-violet-600" />,
+                          },
+
+                          {
+                            label: "NET TO BE PAID",
+                            value: ` ${(NetTotalprofit || 0).toLocaleString("en-IN")}`,
+                            icon: <BsCurrencyRupee className="text-violet-600" />,
+                          },
+                          {
+                            label: "TOTAL PAID",
+                            value: ` ${(Totalpaid || 0).toLocaleString("en-IN")}`,
+                            icon: <BsCurrencyRupee className="text-violet-600" />,
+                          },
+                          {
+                            label: "TOTAL PROFIT",
+                            value: ` ${(Totalprofit || 0).toLocaleString("en-IN")}`,
+                            icon: <BsCurrencyRupee className="text-violet-600" />,
+                          },
+                          {
+                            label: "BALANCE",
+                            value: ` ${(NetTotalprofit && Totalpaid) ? Number(NetTotalprofit - Totalpaid).toLocaleString("en-IN") : 0}`,
+                            icon: <BsCurrencyRupee className="text-violet-600" />,
+                          },
+                          {
+                            label: "LATEST PAYMENT",
+                            value: isLoadingPayment
+                              ? <CircularLoader color="text-violet-600" size="sm" />
+                              : lastPayment?.amount
+                                ? `${(lastPayment.amount || 0).toLocaleString("en-IN")} `
+                                : 0,
+                            icon: <BsCurrencyRupee className="text-violet-600" />,
+                          },
+                          {
+                            label: "LATEST PAYMENT DATE",
+                            value: isLoadingPayment
+                              ? <CircularLoader color="text-violet-600" size="sm" />
+                              : lastPayment?.date
+                                ? ` ${new Date(lastPayment.date).toLocaleDateString("en-GB")}`
+                                : 0,
+                            icon: <SlCalender className="text-violet-600" />,
+                          },
+                          {
+                            label: "LATEST DISBURSEMENT",
+                            value: detailsLoading
+                              ? <CircularLoader color="text-violet-600" size="sm" />
+                              : ` ${Number(groupPaid || 0).toLocaleString("en-IN")}`,
+                            icon: <BsCurrencyRupee className="text-violet-600" />,
+                          },
+                        ].map((stat, idx) => (
+                          <div
+                            key={idx}
+                            className="bg-gradient-to-br from-violet-50 to-white rounded-xl shadow-md p-5 flex flex-col gap-3 border border-violet-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                          >
+                            {/* Header */}
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-semibold text-violet-700 tracking-wide uppercase">
+                                {stat.label}
+                              </span>
+                              <div className="bg-violet-100 p-2 rounded-lg shadow-sm">
+                                {stat.icon}
+                              </div>
+                            </div>
+                            {/* Value */}
+                            <div
+                              className="text-lg font-bold text-gray-900 break-words whitespace-pre-wrap w-full"
+                              style={{ wordBreak: "break-word" }}
+                            >
+                              {stat.value}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-
             {/* Tabs Section */}
             <div className="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden">
               <div className="border-b border-gray-200 px-6 py-4 relative">
@@ -1241,7 +1316,6 @@ const CustomerView = () => {
                       <TabTooltip visible>
                         <InfoBox
                           label="Full Name"
-
                           value={group.full_name}
                           icon={<FiUser />}
                         />
@@ -1312,7 +1386,6 @@ const CustomerView = () => {
                           value={group.address}
                           icon={<FiMapPin />}
                         />
-                      
                         <InfoBox
                           label="Pincode"
                           value={group.pincode}
@@ -1332,6 +1405,38 @@ const CustomerView = () => {
                           label="Nationality"
                           value={group.nationality}
                           icon={<FiMapPin />}
+                        />
+                      </TabTooltip>
+                    )}
+                  </div>
+                  {/* Documents Tab with Hover Preview */}
+                  <div className="relative">
+                    <button
+                      className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${activeTab === "docs"
+                        ? "bg-custom-violet text-white shadow"
+                        : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                        }`}
+                      onClick={() => setActiveTab("docs")}
+                      onMouseEnter={() => {
+                        if (hasDocsData()) {
+                          // setHoveredTab('docs');
+                        }
+                      }}
+                      onMouseLeave={() => setHoveredTab(null)}
+                    >
+                      Documents
+                    </button>
+                    {hoveredTab === 'docs' && (
+                      <TabTooltip visible>
+                        <InfoBox
+                          label="Aadhaar Number"
+                          value={group.adhaar_no}
+                          icon={<FiFileText />}
+                        />
+                        <InfoBox
+                          label="PAN Number"
+                          value={group.pan_no}
+                          icon={<FiFileText />}
                         />
                       </TabTooltip>
                     )}
@@ -1374,38 +1479,6 @@ const CustomerView = () => {
                           label="IFSC Code"
                           value={group.bank_IFSC_code}
                           icon={<FiCreditCard />}
-                        />
-                      </TabTooltip>
-                    )}
-                  </div>
-                  {/* Documents Tab with Hover Preview */}
-                  <div className="relative">
-                    <button
-                      className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${activeTab === "docs"
-                        ? "bg-custom-violet text-white shadow"
-                        : "bg-gray-50 text-gray-700 hover:bg-gray-100"
-                        }`}
-                      onClick={() => setActiveTab("docs")}
-                      onMouseEnter={() => {
-                        if (hasDocsData()) {
-                          // setHoveredTab('docs');
-                        }
-                      }}
-                      onMouseLeave={() => setHoveredTab(null)}
-                    >
-                      Documents
-                    </button>
-                    {hoveredTab === 'docs' && (
-                      <TabTooltip visible>
-                        <InfoBox
-                          label="Aadhaar Number"
-                          value={group.adhaar_no}
-                          icon={<FiFileText />}
-                        />
-                        <InfoBox
-                          label="PAN Number"
-                          value={group.pan_no}
-                          icon={<FiFileText />}
                         />
                       </TabTooltip>
                     )}
@@ -1493,7 +1566,6 @@ const CustomerView = () => {
                     />
                   </div>
                 )}
-                
                 {activeTab === "address" && (
                   <div className="flex flex-wrap gap-2">
                     <InfoBox
@@ -1625,14 +1697,13 @@ const CustomerView = () => {
                     )}
                   </div>
                 )}
-
                 {/* Day Book Tab Content */}
                 {activeTab === "daybook" && (
                   <div className="space-y-6">
                     <div className="flex flex-col md:flex-row gap-4">
                       <div className="flex-1">
                         <label className="mb-1 text-sm font-medium text-gray-700 flex items-center gap-2">
-                          <FiUsers className="text-blue-600" />
+                          <FiUsers className="text-violet-600" />
                           Group & Ticket
                         </label>
                         <select
@@ -1659,15 +1730,15 @@ const CustomerView = () => {
                         </select>
                       </div>
                       <div className="flex flex-wrap gap-2 justify-center items-center">
-                        <div className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-800 text-sm font-medium flex items-center gap-2">
+                        <div className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-800 text-lg font-medium flex items-center gap-2">
                           <FiFileText className="text-blue-600" />
                           Reg Fee: ₹{registrationAmount || 0}
                         </div>
-                        <div className="px-3 py-1.5 rounded-lg bg-green-50 text-green-800 text-sm font-medium flex items-center gap-2">
+                        <div className="px-3 py-1.5 rounded-lg bg-green-50 text-green-800 text-lg font-medium flex items-center gap-2">
                           <FiDollarSign className="text-green-600" />
                           Balance: ₹{finalPaymentBalance}
                         </div>
-                        <div className="px-3 py-1.5 rounded-lg bg-amber-50 text-amber-800 text-sm font-medium flex items-center gap-2">
+                        <div className="px-3 py-1.5 rounded-lg bg-amber-50 text-amber-800 text-lg font-medium flex items-center gap-2">
                           <FiDollarSign className="text-amber-600" />
                           Total: ₹{Number(finalPaymentBalance) + Number(registrationAmount || 0)}
                         </div>
@@ -1690,11 +1761,11 @@ const CustomerView = () => {
                       />
                     ) : (
                       <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600 mb-4">
-                          <FiDollarSign size={24} />
+                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-violet-100 text-violet-600 mb-4">
+                          <BsCurrencyRupee size={24} />
                         </div>
                         <h3 className="text-lg font-medium text-gray-900">No transactions found</h3>
-                        <p className="text-gray-500 mt-1">This customer has no payment history</p>
+                        <p className="text-gray-500 mt-1">select a group to view transactions</p>
                       </div>
                     )}
                   </div>
@@ -1708,8 +1779,8 @@ const CustomerView = () => {
           <Modal
             title={
               <div className="flex items-center gap-2">
-                <FiUsers className="text-blue-600" />
-                <span className="text-blue-900 font-bold">Group Details</span>
+                <FiUsers className="text-violet-600" />
+                <span className="text-violet-900 font-bold">Group Details</span>
               </div>
             }
             open={isGroupModalOpen}
@@ -1751,7 +1822,7 @@ const CustomerView = () => {
               </div>
               <div className="bg-gray-50 p-6 rounded-xl">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  <FiDollarSign className="text-blue-600" />
+                  <FiDollarSign className="text-violet-600" />
                   Financial Summary
                 </h3>
                 <div className="space-y-3">
@@ -1784,5 +1855,4 @@ const CustomerView = () => {
     </>
   );
 };
-
 export default CustomerView;

@@ -104,8 +104,8 @@ const PayOutPettyCash = () => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
-    setAdminId(userObj._id);
-    setAdminName(userObj.name || "");
+    setAdminId(userObj?._id);
+    setAdminName(userObj?.name || "");
 
     if (userObj?.admin_access_right_id?.access_permissions?.edit_payment) {
       setModifyPayment(
@@ -238,7 +238,7 @@ const PayOutPettyCash = () => {
               <Tooltip title="Record Petty Cash Expense">
                 <button
                   onClick={() => setShowPettyCashModal(true)}
-                  className="ml-4 bg-blue-900 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition duration-200 flex items-center"
+                  className="ml-4 bg-violet-900 text-white px-4 py-2 rounded shadow-md hover:bg-violet-600 transition duration-200 flex items-center"
                 >
                   <span className="mr-2">+</span> New Expense
                 </button>
@@ -246,7 +246,7 @@ const PayOutPettyCash = () => {
             </div>
 
             <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4 text-blue-800 border-b pb-2">
+              <h2 className="text-xl font-semibold mb-4 text-violet-800 border-b pb-2">
                 Petty Cash Transactions
               </h2>
 
@@ -458,7 +458,7 @@ const PayOutPettyCash = () => {
                   )}
                 </div>
                 
-                <div className="w-full bg-blue-50 p-3 rounded-lg">
+                <div className="w-full bg-violet-50 p-3 rounded-lg">
                   <label className="block mb-1 text-sm font-medium text-gray-900">
                     Disbursed By
                   </label>
@@ -477,7 +477,7 @@ const PayOutPettyCash = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
+                    className="px-4 py-2 bg-violet-700 text-white rounded-lg hover:bg-violet-600 disabled:opacity-50"
                   >
                     {isLoading ? "Processing..." : "Save Expense"}
                   </button>

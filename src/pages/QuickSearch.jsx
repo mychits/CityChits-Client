@@ -8,6 +8,9 @@ import { Table, Tag, Tooltip, Card } from "antd";
 import Fuse from "fuse.js";
 import { useNavigate } from "react-router-dom";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
+import Navbar from "../components/layouts/Navbar";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
+
 
 const QuickSearch = () => {
   const [users, setUsers] = useState([]);
@@ -19,6 +22,12 @@ const QuickSearch = () => {
   const [selectedExactMatch, setSelectedExactMatch] = useState(null);
   const [relatedMatches, setRelatedMatches] = useState([]);
 
+    const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
+
+   
   const filters = [
     { id: "1", filterName: "Customer Id", key: "customer_id" },
     { id: "2", filterName: "Name", key: "name" },
@@ -166,20 +175,21 @@ const QuickSearch = () => {
   };
 
   return (
-    <div className="min-h-screen mt-20 bg-gradient-to-br from-gray-50 to-gray-100 transition-colors duration-300">
-      <CustomAlert
-        type={alertConfig.type}
-        isVisible={alertConfig.visibility}
-        message={alertConfig.message}
-      />
-
-      <div className="flex">
-        <Sidebar
-          navSearchBarVisibility={true}
-          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-          showMobileSidebar={showMobileSidebar}
-          setShowMobileSidebar={setShowMobileSidebar}
-        />
+    <div>
+    <div className="flex mt-20" >
+          <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
 
         <div className="flex-1 p-4 md:p-8  md:mr-11   pb-8">
           {/* Page Header */}

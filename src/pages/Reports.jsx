@@ -40,8 +40,8 @@
             
 //                 className={({ isActive }) =>
 //                   `my-2 flex items-center gap-2 font-medium rounded-md hover:bg-gray-300  p-3 ${
-//                     red ? "text-red-800" : "text-blue-950"
-//                   } ${isActive ? "bg-gray-200 border-l-8 border-blue-300" : ""}`
+//                     red ? "text-red-800" : "text-violet-950"
+//                   } ${isActive ? "bg-gray-200 border-l-8 border-violet-300" : ""}`
 //                 }
 //                 to={link}
 //               >
@@ -174,7 +174,7 @@ const Reports = () => {
               className={({ isActive }) =>
                 `whitespace-nowrap my-2 flex items-center gap-2 font-medium rounded-3xl hover:bg-violet-200 p-3 ${
                   red ? "text-red-800" : "text-gray-900"
-                } ${isActive ? "bg-gray-200 border-l-8 border-blue-300" : ""}`
+                } ${isActive ? "bg-gray-200 border-l-8 border-violet-300" : ""}`
               }
             >
               {({ isActive }) => (

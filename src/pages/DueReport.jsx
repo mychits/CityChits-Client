@@ -368,7 +368,7 @@ const DueReport = () => {
                     <span className="text-xl font-bold text-gray-700">
                       Total Customers
                     </span>
-                    <span className="text-lg font-bold  text-blue-600">
+                    <span className="text-lg font-bold  text-violet-600">
                       {totals.totalCustomers}
                     </span>
                   </div>
@@ -384,7 +384,7 @@ const DueReport = () => {
                     <span className="text-xl font-bold text-gray-700">
                       Amount to be Paid
                     </span>
-                    <span className="text-lg font-bold text-blue-600">
+                    <span className="text-lg font-bold text-violet-600">
                       ₹{totals.totalToBePaid}
                     </span>
                   </div>

@@ -8,8 +8,16 @@ import { IoMdMore } from "react-icons/io";
 import { MdLibraryAdd } from "react-icons/md";
 import CustomAlert from "../components/alerts/CustomAlert";
 import CircularLoader from "../components/loaders/CircularLoader";
+import Navbar from "../components/layouts/Navbar";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 
 const { Option } = Select;
+
+const GlobalSearchChangeHandler = (e) => {
+  const { value } = e.target;
+  setSearchText(value);
+};
+
 
 
 const formatDateISO = (date) => {
@@ -28,7 +36,7 @@ const Group = () => {
   const [filters, setFilters] = useState({
     groupType: "",
     relationshipManager: "",
-    dateRange: "all", 
+    dateRange: "all",
     startDateFrom: "",
     startDateTo: "",
   });
@@ -42,7 +50,7 @@ const Group = () => {
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false);
 
-    const [showMobileSidebar, setShowMobileSidebar] = useState(false);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [formData, setFormData] = useState({
     group_name: "",
     group_type: "",
@@ -90,6 +98,17 @@ const Group = () => {
     };
     getEmployees();
   }, []);
+  useEffect(() => {
+    if (showModal || showModalUpdate || showModalDelete) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [showModal, showModalUpdate, showModalDelete]);
 
   useEffect(() => {
     const fetchGroups = async () => {
@@ -180,7 +199,7 @@ const Group = () => {
     if (!validateForm("addGroup")) return;
 
     try {
-        const user = JSON.parse(localStorage.getItem("user"));
+      const user = JSON.parse(localStorage.getItem("user"));
       await api.post("/group/add-group", formData, {
         headers: { "Content-Type": "application/json" },
       });
@@ -295,18 +314,20 @@ const Group = () => {
 
   const handleShareClick = (groupId) => {
     if (!groupId) return;
-    const baseUrl = "http://prod-chit.s3-website.eu-north-1.amazonaws.com";
+    //const baseUrl = "http://prod-chit.s3-website.eu-north-1.amazonaws.com";
+    const baseUrl = "http://localhost:5173";
+
     const fullUrl = `${baseUrl}/enrollment-request-form/?group_id=${groupId}`;
     window.open(fullUrl, "_blank");
   };
 
- 
+
   const filteredGroups = groups.filter((g) => {
     const matchesSearch = (() => {
       const lowerSearch = searchText.toLowerCase().trim();
       const isNumericSearch = !isNaN(lowerSearch) && lowerSearch !== "";
 
-   
+
       const byGroupName = g.group_name?.toString().toLowerCase().includes(lowerSearch);
 
 
@@ -314,7 +335,7 @@ const Group = () => {
 
 
       const groupValueStr = g.group_value?.toString() || "";
-      const normalizedSearch = lowerSearch.replace(/[,]/g, ""); 
+      const normalizedSearch = lowerSearch.replace(/[,]/g, "");
       const byChitAmount =
         isNumericSearch &&
         (groupValueStr.includes(normalizedSearch) || groupValueStr === normalizedSearch);
@@ -365,7 +386,7 @@ const Group = () => {
           <span className="text-red-600">Delete</span>
         </Menu.Item>
         <Menu.Item key="3" onClick={() => handleShareClick(group._id)}>
-          <span className="text-green-600">Copy Link</span>
+          <span className="text-green-600">Share Link</span>
         </Menu.Item>
       </Menu>
     );
@@ -443,11 +464,10 @@ const Group = () => {
           <button
             key={num}
             onClick={() => setCurrentPage(num)}
-            className={`px-3 py-1 rounded ${
-              currentPage === num
+            className={`px-3 py-1 rounded ${currentPage === num
                 ? "bg-purple-600 text-white"
                 : "bg-white border border-gray-300"
-            }`}
+              }`}
           >
             {num}
           </button>
@@ -481,7 +501,7 @@ const Group = () => {
         <form className="space-y-5" onSubmit={handleSubmit} noValidate>
           <InputField name="group_name" label="Group Name" value={formData.group_name} onChange={handleChange} error={errors.group_name} />
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-900">Group Type</label>
+            <label className="block mb-2 text-sm font-medium text-gray-700">Group Type</label>
             <Select
               showSearch
               placeholder="Select Group Type"
@@ -676,19 +696,19 @@ const Group = () => {
 
   return (
     <>
-      <CustomAlert
-        type={alertConfig.type}
-        isVisible={alertConfig.visibility}
-        message={alertConfig.message}
-        onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
-      />
-
-      <div className="flex mt-20">
-          <Sidebar
-          navSearchBarVisibility={true}
-          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-          showMobileSidebar={showMobileSidebar}
-          setShowMobileSidebar={setShowMobileSidebar}
+      <div className="flex mt-20 " >
+        <Sidebar />
+        <Navbar
+          onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+          visibility={true}
+        />
+        <CustomAlertDialog
+          type={alertConfig.type}
+          isVisible={alertConfig.visibility}
+          message={alertConfig.message}
+          onClose={() =>
+            setAlertConfig((prev) => ({ ...prev, visibility: false }))
+          }
         />
 
         <div className="flex-grow flex flex-col bg-gray-50">
@@ -706,11 +726,11 @@ const Group = () => {
               </button>
             </div>
 
-            
+
             <div className="mb-6 p-4 bg-white rounded-lg shadow border border-gray-200">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-700">Group Type</label>
+                  <label className="block mb-2 text-md font-medium text-gray-700">Group Type</label>
                   <select
                     name="groupType"
                     value={filters.groupType}
@@ -724,7 +744,7 @@ const Group = () => {
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-700">Relationship Manager</label>
+                  <label className="block mb-2 text-md font-medium text-gray-700">Relationship Manager</label>
                   <select
                     name="relationshipManager"
                     value={filters.relationshipManager}
@@ -740,9 +760,9 @@ const Group = () => {
                   </select>
                 </div>
 
-          
+
                 <div className="lg:col-span-2">
-                  <label className="block mb-2 w-24 text-sm font-medium text-gray-700">Date Range</label>
+                  <label className="block mb-2 w-24 text-md font-medium text-gray-700">Date Range</label>
                   <select
                     value={filters.dateRange}
                     onChange={(e) => {
@@ -766,10 +786,10 @@ const Group = () => {
                           yesterday.setDate(today.getDate() - 1);
                           from = to = formatDateISO(yesterday);
                           break;
-                       
+
                         case "thisWeek":
-                          const dayOfWeek = today.getDay(); 
-                          const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; 
+                          const dayOfWeek = today.getDay();
+                          const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
                           const monday = new Date(today);
                           monday.setDate(today.getDate() + diffToMonday);
                           const sunday = new Date(monday);
@@ -805,18 +825,18 @@ const Group = () => {
                     <option value="all">All Time</option>
                     <option value="today">Today</option>
                     <option value="yesterday">Yesterday</option>
-                   
+
                     <option value="thisWeek">This Week</option>
                     <option value="thisMonth">This Month</option>
                     <option value="thisYear">This Year</option>
                     <option value="custom">Custom Range</option>
                   </select>
 
-                 
+
                   {filters.dateRange === "custom" && (
                     <div className="grid grid-cols-2 gap-2 mt-2">
                       <div>
-                        <label className="block text-xs text-gray-600">From</label>
+                        <label className="block text-sm text-gray-600">From</label>
                         <input
                           type="date"
                           value={filters.startDateFrom}
@@ -830,7 +850,7 @@ const Group = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-600">To</label>
+                        <label className="block text-sm text-gray-600">To</label>
                         <input
                           type="date"
                           value={filters.startDateTo}
@@ -850,7 +870,7 @@ const Group = () => {
 
               <div className="mt-4 flex items-center justify-between">
                 <div className="w-1/3">
-                 
+
                   <input
                     placeholder="Search by group, RM, or chit amount"
                     value={searchText}
@@ -878,7 +898,7 @@ const Group = () => {
               </div>
             </div>
 
-            
+
             {isLoading ? (
               <div className="py-12">
                 <CircularLoader isLoading={isLoading} failure={false} data={"Group Data"} />
@@ -902,7 +922,7 @@ const Group = () => {
         </div>
       </div>
 
-      
+
       <AddGroupModal />
       <UpdateGroupModal />
       <DeleteGroupModal />

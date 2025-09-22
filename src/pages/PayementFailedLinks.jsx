@@ -68,7 +68,7 @@ const FailedPaymentLinks = () => {
                     key: "1",
                     label: (
                       <div
-                        className="text-blue-600"
+                        className="text-violet-600"
                         onClick={() => handleRetrySingle(payment._id)}
                       >
                         Retry Payment Link
@@ -270,7 +270,7 @@ const FailedPaymentLinks = () => {
                 {selectedPayments.length > 0 && (
                   <button
                     onClick={() => setShowRetryModal(true)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded shadow-md hover:bg-blue-700 transition duration-200 flex items-center"
+                    className="bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-700 transition duration-200 flex items-center"
                   >
                     <FaRedo className="mr-2" />
                     Retry Selected ({selectedPayments.length})
@@ -309,7 +309,7 @@ const FailedPaymentLinks = () => {
         <Modal isVisible={showRetryModal} onClose={() => setShowRetryModal(false)}>
           <div className="py-6 px-5 lg:px-8 text-left">
             <div className="flex items-center mb-4">
-              <FaRedo className="text-2xl text-blue-600 mr-2" />
+              <FaRedo className="text-2xl text-violet-600 mr-2" />
               <h3 className="text-xl font-bold text-gray-900">Retry Payment Links</h3>
             </div>
             
@@ -337,7 +337,7 @@ const FailedPaymentLinks = () => {
                   placeholder="Enter amount"
                   min="1"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
               </div>
               
@@ -356,7 +356,7 @@ const FailedPaymentLinks = () => {
                   id="purpose"
                   placeholder="Enter payment purpose"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
               </div>
               
@@ -425,8 +425,8 @@ const FailedPaymentLinks = () => {
                   type="submit"
                   disabled={retryLoading}
                   className={`w-auto px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-                    retryLoading ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
-                  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+                    retryLoading ? 'bg-violet-400' : 'bg-violet-600 hover:bg-violet-700'
+                  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500`}
                 >
                   {retryLoading ? (
                     <span className="flex items-center">

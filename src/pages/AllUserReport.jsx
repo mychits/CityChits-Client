@@ -116,12 +116,12 @@ const AllUserReport = () => {
                   status: data.isPrized === "true" ? "Prized" : "Un Prized",
                   statusDiv:
                     data.isPrized === "true" ? (
-                      <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-3 py-1 rounded-full shadow-sm border border-green-300">
+                      <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-5 py-1 rounded-full shadow-sm ">
                         <span className="font-semibold text-sm">Prized</span>
                       </div>
                     ) : (
-                      <div className="inline-flex items-center gap-2 bg-red-100 text-red-800 px-3 py-1 rounded-full shadow-sm border border-red-300">
-                        <span className="font-semibold text-sm">Un Prized</span>
+                      <div className="inline-flex items-center  bg-red-100 text-red-800 px-5 py-1 rounded-full shadow-sm ">
+                        <span className="font-semibold text-sm">UnPrized</span>
                       </div>
                     ),
                 };
@@ -381,7 +381,7 @@ const AllUserReport = () => {
                     <span className="text-xl font-bold text-gray-700">
                       Total Customers
                     </span>
-                    <span className="text-lg font-bold  text-blue-600">
+                    <span className="text-lg font-bold  text-violet-600">
                       {totals.totalCustomers}
                     </span>
                   </div>
@@ -397,7 +397,7 @@ const AllUserReport = () => {
                     <span className="text-xl font-bold text-gray-700">
                       Amount to be Paid
                     </span>
-                    <span className="text-lg font-bold text-blue-600">
+                    <span className="text-lg font-bold text-violet-600">
                       ₹{totals.totalToBePaid}
                     </span>
                   </div>

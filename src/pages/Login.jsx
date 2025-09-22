@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-
-import { AiOutlineGold } from "react-icons/ai";
+import { useState } from "react";
+import { AiOutlineLogin } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import api from "../instance/TokenInstance";
 
@@ -8,114 +7,93 @@ const Login = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      navigate("/dashboard");
-    }
-  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      const response = await api.post(`/admin/login`, {
-        phoneNumber,
-        password,
-      });
+    setError("");
 
-      const { token } = response.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("user",JSON.stringify(response?.data?.admin))
+    if (!phoneNumber.trim() || !password.trim()) {
+      setError("Please enter both phone number and password.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await api.post("/admin/login", { phoneNumber, password });
+
+      console.log("Login success:", response.data);
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("admin", JSON.stringify(response.data.admin));
       navigate("/dashboard");
-      console.log("Login successful:", token);
-    } catch (error) {
-      setError("Invalid phone number or password.");
-      console.error("Login error:", error);
+    } catch (err) {
+      console.error("Login error:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Failed to login. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-28 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          {/* <img src={mychits} alt="MyChits" className="mx-auto  h-25 w-auto text-primary" /> */}
-          <AiOutlineGold className="mx-auto text-5xl h-25 w-auto text-primary" />
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Login to your account
-          </h2>
-        </div>
-
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <label
-                htmlFor="phoneNumber"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Phone Number
-              </label>
-              <div className="mt-2">
-                <input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="text"
-                  required
-                  autoComplete="phoneNumber"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-100 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Password
-                </label>
-                <div className="text-sm">
-                  <a
-                    href="#"
-                    className="font-semibold text-primary hover:text-red-500"
-                  >
-                    Forgot password?
-                  </a>
-                </div>
-              </div>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-200 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
-
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-
-            <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm active:bg-red-500 hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Login
-              </button>
-            </div>
-          </form>
-        </div>
+    <div className="flex min-h-screen flex-col justify-center px-6 py-28 bg-gray-50">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <AiOutlineLogin className="mx-auto text-5xl text-violet-500" />
+        <h2 className="mt-6 text-2xl font-bold text-gray-900">Admin Login</h2>
+        <p className="text-sm text-gray-600 mt-2">
+          Use <strong>Company Contact Number</strong> and the password you set during registration
+        </p>
       </div>
-      
 
-    </>
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md">
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Company Contact Number</label>
+            <input
+              type="text"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              required
+              className="mt-2 block w-full rounded-md border px-3 py-2"
+              placeholder="Enter your company contact number"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="mt-2 block w-full rounded-md border px-3 py-2"
+              placeholder="Enter your password"
+            />
+          </div>
+
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-md bg-violet-500 px-3 py-2 text-white font-semibold hover:bg-violet-600 disabled:opacity-50"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+
+          <p className="text-sm text-center mt-4 text-gray-700">
+            Don't have an account?{" "}
+            <span
+              onClick={() => navigate("/register")}
+              className="font-semibold text-violet-500 cursor-pointer"
+            >
+              Register
+            </span>
+          </p>
+        </form>
+      </div>
+    </div>
   );
 };
 

@@ -348,7 +348,7 @@ const LoanReport = () => {
                 value={updateFormData.borrower}
                 onChange={handleChange}
                 required
-                className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
               >
                 <option value="" selected hidden>
                   Select Borrower Name
@@ -358,7 +358,7 @@ const LoanReport = () => {
                 ))}
               </select> */}
               <Select
-                className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 placeholder="Select Or Search Borrower Name"
                 popupMatchSelectWidth={false}
                 showSearch
@@ -399,7 +399,7 @@ const LoanReport = () => {
                   id="loan_amount"
                   placeholder="Enter Loan Amount"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
                 {errors.loan_amount && (
                   <p className="text-red-500 text-sm mt-1">
@@ -422,7 +422,7 @@ const LoanReport = () => {
                   id="tenure"
                   placeholder="Enter Tenure in Days"
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 />
                 {errors.tenure && (
                   <p className="text-red-500 text-sm mt-1">{errors.tenure}</p>
@@ -446,7 +446,7 @@ const LoanReport = () => {
                   id="service_charges"
                   placeholder="Enter Service Charges"
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 />
                 {errors.service_charges && (
                   <p className="text-red-500 text-sm mt-1">
@@ -470,7 +470,7 @@ const LoanReport = () => {
                   onChange={handleInputChange}
                   id="daily_payment_amount"
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm  focus:ring-blue-500 focus:border-blue rounded-lg  w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm  focus:ring-violet-500 focus:border-violet rounded-lg  w-full p-2.5"
                 />
                 {errors.daily_payment_amount && (
                   <p className="text-red-500 text-sm mt-1">
@@ -496,7 +496,7 @@ const LoanReport = () => {
                   id="start_date"
                   placeholder="Enter the Date"
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 />
                 {errors.start_date && (
                   <p className="text-red-500 text-sm mt-1">
@@ -519,7 +519,7 @@ const LoanReport = () => {
                   id="end_date"
                   placeholder="Enter End Date"
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 />
                 {errors.end_date && (
                   <p className="text-red-500 text-sm mt-1">{errors.end_date}</p>
@@ -542,10 +542,10 @@ const LoanReport = () => {
                   id="note"
                   placeholder="Specify Note if any!"
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full  p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full  p-2.5"
                 />
                 <div
-                  className="bg-blue-700 hover:bg-blue-800 w-10 h-10 flex justify-center items-center rounded-md"
+                  className="bg-violet-700 hover:bg-violet-800 w-10 h-10 flex justify-center items-center rounded-md"
                   onClick={() => {
                     window.open("Calculator:///");
                   }}
@@ -557,8 +557,8 @@ const LoanReport = () => {
             <div className="w-full flex justify-end">
               <button
                 type="submit"
-                className="w-1/4 text-white bg-blue-700 hover:bg-blue-800
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
+                className="w-1/4 text-white bg-violet-700 hover:bg-violet-800
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
               >
                 Update Loan
               </button>
@@ -601,13 +601,13 @@ const LoanReport = () => {
                   id="borrowerName"
                   placeholder="Enter the Borrower Name"
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 />
               </div>
               <button
                 type="submit"
                 className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
               >
                 Delete
               </button>

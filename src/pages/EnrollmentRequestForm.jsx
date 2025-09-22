@@ -207,7 +207,7 @@ const EnrollmentRequestForm = () => {
           </p>
 
           <Link to={"https://maps.app.goo.gl/X7FezFRPiTjuYoVt5"}>
-            <button className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 transition">
+            <button className="mt-4 px-6 py-2 bg-violet-600 text-white font-semibold rounded hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-300 transition">
               Our Location
             </button>
           </Link>
@@ -218,7 +218,7 @@ const EnrollmentRequestForm = () => {
     return (
       <div className="bg-white p-4 rounded-md shadow-2xl sm:my-10 sm:mx-64">
         <form onSubmit={handleSubmit}>
-          <div className="m-3 mt-3 p-4 text-xl sm:text-4xl font-bold rounded-md text-amber-50 bg-blue-900">
+          <div className="m-3 mt-3 p-4 text-xl sm:text-4xl font-bold rounded-md text-amber-50 bg-custom-violet">
             <h2> Chit Enrollment Form </h2>
           </div>
 
@@ -232,7 +232,7 @@ const EnrollmentRequestForm = () => {
               </h2>
               <select
                 disabled
-                className="w-full p-2 border border-gray-300 rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50  focus:ring-blue-500  focus:border-blue-500 cursor-not-allowed"
+                className="w-full p-2 border border-gray-300 rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50  focus:ring-violet-500  focus:border-violet-500 cursor-not-allowed"
               >
                 <option value={selectedGroup?._id} className="text-gray-600">
                   {selectedGroup?.group_name}
@@ -245,7 +245,7 @@ const EnrollmentRequestForm = () => {
                     Group Type
                   </h2>
                   <input
-                    className="w-full p-2 border border-gray-300 bg-gray-50 rounded-md mb-4 mt-1 sm:text-lg text-sm  text-gray-600 focus:ring-blue-500  focus:border-blue-500 cursor-not-allowed"
+                    className="w-full p-2 border border-gray-300 bg-gray-50 rounded-md mb-4 mt-1 sm:text-lg text-sm  text-gray-600 focus:ring-violet-500  focus:border-violet-500 cursor-not-allowed"
                     name=""
                     type="text"
                     placeholder=""
@@ -263,7 +263,7 @@ const EnrollmentRequestForm = () => {
                     Group Value
                   </h2>
                   <input
-                    className="w-full p-2 border  border-gray-300 rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 text-gray-600 focus:ring-blue-500  focus:border-blue-500 hover:cursor-not-allowed"
+                    className="w-full p-2 border  border-gray-300 rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 text-gray-600 focus:ring-violet-500  focus:border-violet-500 hover:cursor-not-allowed"
                     name=""
                     type="text"
                     placeholder="50000 "
@@ -279,7 +279,7 @@ const EnrollmentRequestForm = () => {
                     Group Installment
                   </h2>
                   <input
-                    className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-600 focus:ring-blue-500  focus:border-blue-500 hover:cursor-not-allowed"
+                    className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-600 focus:ring-violet-500  focus:border-violet-500 hover:cursor-not-allowed"
                     name=""
                     type="text"
                     placeholder="400 "
@@ -292,7 +292,7 @@ const EnrollmentRequestForm = () => {
                     Group Duration
                   </h2>
                   <input
-                    className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-600 focus:ring-blue-500  focus:border-blue-500 hover:cursor-not-allowed"
+                    className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-600 focus:ring-violet-500  focus:border-violet-500 hover:cursor-not-allowed"
                     name=""
                     type="text"
                     placeholder="13.2 "
@@ -305,8 +305,8 @@ const EnrollmentRequestForm = () => {
           </div>
 
           <div>
-            <div className="bg-[#17216D] rounded-md m-3 ">
-              <h2 className="p-4 text-left text-white rounded-md font-bold text-xl bg-blue-900 ">
+            <div className="bg-[#4c107e] rounded-md m-3 ">
+              <h2 className="p-4 text-left text-white rounded-md font-bold text-xl bg-custom-violet ">
                 {" "}
                 Customer Details
               </h2>
@@ -325,7 +325,7 @@ const EnrollmentRequestForm = () => {
                           name="title"
                           value={enrollData?.title}
                           onChange={handleChange}
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                         >
                           <option value="">Select </option>
                           <option value="Mr">Mr</option>
@@ -340,7 +340,7 @@ const EnrollmentRequestForm = () => {
                           First Name
                         </h1>
                         <input
-                          className="bg-gray-50 w-full p-2 rounded-lg mb-4 mt-1 sm:text-lg text-sm  border border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="bg-gray-50 w-full p-2 rounded-lg mb-4 mt-1 sm:text-lg text-sm  border border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="first_name"
                           type="text"
                           required
@@ -354,7 +354,7 @@ const EnrollmentRequestForm = () => {
                           Last Name
                         </h1>
                         <input
-                          className="bg-gray-50 w-full p-2 rounded-lg mb-4 mt-1 sm:text-lg text-sm  border border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="bg-gray-50 w-full p-2 rounded-lg mb-4 mt-1 sm:text-lg text-sm  border border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="last_name"
                           type="text"
                           placeholder="Enter Last Name"
@@ -375,7 +375,7 @@ const EnrollmentRequestForm = () => {
                           Password
                         </h2>
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 placeholder:text-black bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 placeholder:text-black bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="password"
                           type="password"
                           placeholder="Enter Password"
@@ -395,7 +395,7 @@ const EnrollmentRequestForm = () => {
                           Date of Birth
                         </h2>
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 placeholder:text-black bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 placeholder:text-black bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="dateofbirth"
                           type="date"
                           placeholder="dd-mm-yyyy"
@@ -412,7 +412,7 @@ const EnrollmentRequestForm = () => {
                           name="gender"
                           value={enrollData?.gender}
                           onChange={handleChange}
-                          className="w-full p-2 border rounded-md mb-4 sm:text-lg text-sm  mt-1 bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 sm:text-lg text-sm  mt-1 bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                         >
                           <option value="">Select Gender</option>
                           <option value="Male">Male</option>
@@ -428,7 +428,7 @@ const EnrollmentRequestForm = () => {
                         </h2>
 
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="phone_number"
                           type="tel"
                           inputMode="numeric"
@@ -450,7 +450,7 @@ const EnrollmentRequestForm = () => {
                         </h2>
 
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="email"
                           type="email"
                           placeholder="Enter Email ID"
@@ -475,7 +475,7 @@ const EnrollmentRequestForm = () => {
                           name="marital_status"
                           value={enrollData?.marital_status}
                           onChange={handleChange}
-                          className="w-full p-2 border rounded-md mb-4 sm:text-lg text-sm mt-1 bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 sm:text-lg text-sm mt-1 bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                         >
                           <option value="">Select Marital Status</option>
                           <option value="Married">Married</option>
@@ -488,7 +488,7 @@ const EnrollmentRequestForm = () => {
                           Referral Name
                         </h2>
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="referral_name"
                           type="text"
                           placeholder="Enter Referral Name"
@@ -507,7 +507,7 @@ const EnrollmentRequestForm = () => {
                           name="nationality"
                           value={enrollData?.nationality}
                           onChange={handleChange}
-                          className="w-full p-2 border rounded-md mb-4 sm:text-lg text-sm mt-1 bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 sm:text-lg text-sm mt-1 bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                         >
                           <option value="">Select Nationality</option>
                           <option value="Indian">Indian</option>
@@ -520,7 +520,7 @@ const EnrollmentRequestForm = () => {
                           Alternate Number
                         </h2>
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="alternate_number"
                           type="tel"
                           inputMode="numeric"
@@ -537,7 +537,7 @@ const EnrollmentRequestForm = () => {
                           Village
                         </h2>
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="village"
                           type="text"
                           placeholder="Enter Village "
@@ -551,7 +551,7 @@ const EnrollmentRequestForm = () => {
                           Taluk
                         </h2>
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="taluk"
                           type="text"
                           placeholder="Enter Taluk "
@@ -570,7 +570,7 @@ const EnrollmentRequestForm = () => {
                           name="state"
                           value={enrollData?.state}
                           onChange={handleChange}
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500 focus:border-violet-500"
                         >
                           <option value="">Select State</option>
                           <option value="Karnataka">Karnataka</option>
@@ -588,7 +588,7 @@ const EnrollmentRequestForm = () => {
                             name="district"
                             value={enrollData?.district}
                             onChange={handleChange}
-                            className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500 focus:border-violet-500"
                           >
                             <option value="">Select District</option>
                             {districts.map((district, index) => (
@@ -609,7 +609,7 @@ const EnrollmentRequestForm = () => {
                             value={enrollData?.district}
                             onChange={handleChange}
                             placeholder="Enter District"
-                            className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500 focus:border-violet-500"
                           />
                         </div>
                       )}
@@ -619,7 +619,7 @@ const EnrollmentRequestForm = () => {
                       Address
                     </h2>
                     <input
-                      className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                      className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                       name="address"
                       type="text"
                       placeholder="Address"
@@ -638,7 +638,7 @@ const EnrollmentRequestForm = () => {
                           Father Name
                         </h2>
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="father_name"
                           type="text"
                           placeholder="Enter Customer Father Name"
@@ -652,7 +652,7 @@ const EnrollmentRequestForm = () => {
                           Pincode
                         </h2>
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="pincode"
                           type="number"
                           placeholder="Enter Pincode"
@@ -672,7 +672,7 @@ const EnrollmentRequestForm = () => {
                     <div className="sm:flex gap-3">
                       <button
                         type="button"
-                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-blue-900 hover:bg-indigo-600 text-white p-2 rounded-md"
+                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-custom-violet hover:bg-violet-600 text-white p-2 rounded-md"
                         onClick={() => setStep(2)}
                       >
                         Add Nominee
@@ -684,7 +684,7 @@ const EnrollmentRequestForm = () => {
                 {step === 2 && (
                   <div>
                     <div className="bg-[#17216D] rounded-md mb-3">
-                      <h2 className="p-4 text-left font-bold rounded-md bg-blue-900 text-xl text-white">
+                      <h2 className="p-4 text-left font-bold rounded-md bg-custom-violet text-xl text-white">
                         {" "}
                         Nominee Details
                       </h2>
@@ -696,7 +696,7 @@ const EnrollmentRequestForm = () => {
                           Nominee Name
                         </h2>
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="nominee_name"
                           type="text"
                           placeholder="Enter Nominee Name"
@@ -710,7 +710,7 @@ const EnrollmentRequestForm = () => {
                           Nominee Date of Birth
                         </h2>
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="nominee_dateofbirth"
                           type="date"
                           placeholder="dd-mm-yyyy"
@@ -729,7 +729,7 @@ const EnrollmentRequestForm = () => {
                           name="nominee_relationship"
                           value={enrollData?.nominee_relationship}
                           onChange={handleChange}
-                          className="w-full p-2 border rounded-md  sm:text-lg text-sm mb-4 mt-1 bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md  sm:text-lg text-sm mb-4 mt-1 bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                         >
                           <option value="">Select Relationship</option>
                           <option value="Father">Father</option>
@@ -746,7 +746,7 @@ const EnrollmentRequestForm = () => {
                           Nominee Phone Number
                         </h2>
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="nominee_phone_number"
                           type="numeric"
                           placeholder="Enter Nominee Phone Number"
@@ -758,7 +758,7 @@ const EnrollmentRequestForm = () => {
                     <div className="sm:flex gap-3">
                       <button
                         type="button"
-                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-blue-900 hover:bg-indigo-600 text-white p-2 rounded-md"
+                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-custom-violet hover:bg-violet-600 text-white p-2 rounded-md"
                         onClick={() => setStep(1)}
                       >
                         Back
@@ -766,7 +766,7 @@ const EnrollmentRequestForm = () => {
 
                       <button
                         type="button"
-                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-blue-900 hover:bg-indigo-600 text-white p-2 rounded-md"
+                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-custom-violet hover:bg-violet-600 text-white p-2 rounded-md"
                         onClick={() => setStep(3)}
                       >
                         Add Documents
@@ -778,7 +778,7 @@ const EnrollmentRequestForm = () => {
                 {step === 3 && (
                   <div>
                     <div className="bg-[#17216D] rounded-md">
-                      <h2 className="p-4 text-left font-bold rounded-md bg-blue-900 text-xl text-white mb-3">
+                      <h2 className="p-4 text-left font-bold rounded-md bg-custom-violet text-xl text-white mb-3">
                         {" "}
                         Document Details
                       </h2>
@@ -790,7 +790,7 @@ const EnrollmentRequestForm = () => {
                           Aadhar Number
                         </h1>
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="adhaar_no"
                           type="numeric"
                           placeholder="Enter Adhaar Number"
@@ -811,7 +811,7 @@ const EnrollmentRequestForm = () => {
                         </h1>
 
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="pan_no"
                           type="text"
                           accept="image/*"
@@ -835,7 +835,7 @@ const EnrollmentRequestForm = () => {
                         </h1>
 
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="aadhar_frontphoto"
                           type="file"
                           accept="image/*"
@@ -850,7 +850,7 @@ const EnrollmentRequestForm = () => {
                         </h1>
 
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="aadhar_backphoto"
                           type="file"
                           accept="image/*"
@@ -867,7 +867,7 @@ const EnrollmentRequestForm = () => {
                         </h1>
 
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="pan_frontphoto"
                           type="file"
                           accept="image/*"
@@ -882,7 +882,7 @@ const EnrollmentRequestForm = () => {
                         </h1>
 
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="pan_backphoto"
                           type="file"
                           accept="image/*"
@@ -897,7 +897,7 @@ const EnrollmentRequestForm = () => {
                     </h1>
                     <img src="path/to image" alt="" />
                     <input
-                      className="w-full p-4 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                      className="w-full p-4 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                       name="profilephoto"
                       type="file"
                       accept="image/*"
@@ -907,7 +907,7 @@ const EnrollmentRequestForm = () => {
                     <div className="sm:flex gap-3">
                       <button
                         type="button"
-                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-blue-900 hover:bg-indigo-600 text-white p-2 rounded-md"
+                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-custom-violet hover:bg-violet-600 text-white p-2 rounded-md"
                         onClick={() => setStep(2)}
                       >
                         Back
@@ -915,7 +915,7 @@ const EnrollmentRequestForm = () => {
 
                       <button
                         type="button"
-                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-blue-900 hover:bg-indigo-600 text-white p-2 rounded-md"
+                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-custom-violet hover:bg-violet-600 text-white p-2 rounded-md"
                         onClick={() => setStep(4)}
                       >
                         Add Bank Details
@@ -927,7 +927,7 @@ const EnrollmentRequestForm = () => {
                 {step === 4 && (
                   <div>
                     <div className="bg-[#17216D] rounded-md mb-3">
-                      <h2 className="p-4 text-left font-bold rounded-md bg-blue-900 text-xl text-white">
+                      <h2 className="p-4 text-left font-bold rounded-md bg-custom-violet text-xl text-white">
                         {" "}
                         Bank Details
                       </h2>
@@ -939,7 +939,7 @@ const EnrollmentRequestForm = () => {
                           Bank Name
                         </h2>
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="bank_name"
                           type="text"
                           placeholder="Enter Bank Name "
@@ -954,7 +954,7 @@ const EnrollmentRequestForm = () => {
                         </h2>
 
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="bank_branch_name"
                           type="text"
                           placeholder="Enter Bank Branch Name"
@@ -970,7 +970,7 @@ const EnrollmentRequestForm = () => {
                           Bank Account Number
                         </h2>
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="bank_account_number"
                           type="text"
                           placeholder="Enter Bank Account Number "
@@ -985,7 +985,7 @@ const EnrollmentRequestForm = () => {
                         </h2>
 
                         <input
-                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500  focus:border-blue-500"
+                          className="w-full p-2 border rounded-md mb-4 mt-1 sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500  focus:border-violet-500"
                           name="bank_IFSC_code"
                           type="text"
                           placeholder="Enter Customer Bank IFSC Code"
@@ -997,7 +997,7 @@ const EnrollmentRequestForm = () => {
                     <div className="sm:flex gap-3">
                       <button
                         type="button"
-                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-blue-900 hover:bg-indigo-600 text-white p-2 rounded-md"
+                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-custom-violet hover:bg-violet-600 text-white p-2 rounded-md"
                         onClick={() => setStep(3)}
                       >
                         Back
@@ -1005,7 +1005,7 @@ const EnrollmentRequestForm = () => {
 
                       <button
                         type="submit"
-                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-blue-900 hover:bg-indigo-600 text-white p-2 rounded-md"
+                        className="w-40 active:scale-95 font-semibold border-2 border-black shadow-md bg-custom-violet hover:bg-violet-600 text-white p-2 rounded-md"
                       >
                         Submit
                       </button>

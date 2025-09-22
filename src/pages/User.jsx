@@ -154,19 +154,19 @@ const User = () => {
           collection_area: group.collection_area?.route_name,
           approval_status:
             group.approval_status === "true" ? (
-              <div className="inline-block px-3 py-1 text-sm font-medium text-green-800 bg-green-100 rounded-full shadow-sm">
+              <div className="inline-block px-3 py-1 text-md font-medium  bg-green-200 rounded-full shadow-sm">
                 Approved
               </div>
             ) : group.approval_status === "false" ? (
-              <div className="inline-block px-3 py-1 text-sm font-medium text-red-800 bg-red-100 rounded-full shadow-sm">
+              <div className="inline-block px-3 py-1 text-md font-medium  bg-red-200 rounded-full shadow-sm">
                 Pending
               </div>
             ) : (
-              <div className="inline-block px-3 py-1 text-sm font-medium text-green-800 bg-green-100  rounded-full shadow-sm">
+              <div className="inline-block px-3 py-1 text-md font-medium  bg-green-200  rounded-full shadow-sm">
                 Approved
               </div>
             ),
-          action: (
+          action: ( 
             <div className="flex justify-center gap-2">
               <Dropdown
                 trigger={["click"]}
@@ -435,7 +435,7 @@ const User = () => {
 
   const columns = [
     { key: "id", header: "SL. NO" },
-    { key: "approval_status", header: "Approval Status" },
+ 
     { key: "customer_id", header: "Customer Id" },
     { key: "name", header: "Customer Name" },
     { key: "phone_number", header: "Customer Phone Number" },
@@ -443,7 +443,7 @@ const User = () => {
     { key: "address", header: "Customer Address" },
     { key: "pincode", header: "Customer Pincode" },
     { key: "collection_area", header: "Area" },
-
+   { key: "approval_status", header: "Approval Status" },
     { key: "action", header: "Action" },
   ];
 
@@ -645,7 +645,7 @@ const User = () => {
   return (
     <>
       <div>
-        <div className="flex mt-20">
+        <div className="flex mt-20" >
           <Sidebar />
           <Navbar
             onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
@@ -670,7 +670,7 @@ const User = () => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                  className="ml-4 bg-violet-800 text-white px-4 py-2 rounded shadow-md hover:bg-violet-600 transition duration-200"
                 >
                   + Add Customer
                 </button>
@@ -952,8 +952,8 @@ const User = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-1/4 text-white bg-violet-600 hover:bg-violet-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Save Customer
                 </button>
@@ -1683,8 +1683,8 @@ const User = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-1/4 text-white bg-violet-600 hover:bg-violet-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Update
                 </button>

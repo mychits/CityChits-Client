@@ -393,7 +393,7 @@ import filterOption from "../helpers/filterOption";
 //                     ))}
 //                   </Select>
 //                 </div>
-//                 <div className="text-md font-semibold text-blue-700 mb-2">
+//                 <div className="text-md font-semibold text-violet-700 mb-2">
 //                   <label>Total Amount</label>
 //                   <div>
 //                     <input
@@ -634,7 +634,7 @@ const PaymentSummary = () => {
                     />
                   </div>
                 )}
-                <div className="text-md font-semibold text-blue-700">
+                <div className="text-md font-semibold text-violet-700">
                   <label>Total Amount</label>
                   <input
                     readOnly

@@ -601,7 +601,7 @@ const UnApprovedCustomer = () => {
   const renderCustomerCard = (customer) => (
     <div key={customer.id} className="bg-red-50 border border-red-300 rounded-lg p-4 mb-4 hover:shadow-md transition-shadow duration-300">
       <div className="flex justify-between items-start">
-        <h3 className="font-bold text-lg">{customer.name}</h3>
+        <h3 className="font-bold text-xl">{customer.name}</h3>
         <Dropdown 
           trigger={['click']} 
           menu={{
@@ -633,7 +633,7 @@ const UnApprovedCustomer = () => {
                 label: (
                   <div
                     onClick={() => handleEnrollmentRequestPrint(customer._id)}
-                    className="text-blue-600 cursor-pointer"
+                    className="text-violet-600 cursor-pointer"
                   >
                     Print
                   </div>
@@ -670,24 +670,24 @@ const UnApprovedCustomer = () => {
         </Dropdown>
       </div>
       
-      <div className="mt-3 grid grid-cols-3 gap-4">
+      <div className="mt-7 grid grid-cols-3 gap-4">
         <div>
-          <p className="text-sm text-gray-500">Phone</p>
+          <p className="text-md text-gray-500">Phone</p>
           <p className="font-medium">{customer.phone_number}</p>
         </div>
         <div>
-          <p className="text-sm text-gray-500">ID</p>
+          <p className="text-md text-gray-500">ID</p>
           <p className="font-medium">{customer.customer_id}</p>
         </div>
         <div>
-          <p className="text-sm text-gray-500">Status</p>
+          <p className="text-md text-gray-500">Status</p>
           <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(customer.approval_status)}`}>
             {customer.approval_status}
           </span>
         </div>
       </div>
       
-      <div className="mt-4 flex items-center text-sm text-gray-600">
+      <div className="mt-7 flex items-center text-lg   text-gray-600">
         <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
         </svg>
@@ -712,14 +712,14 @@ const UnApprovedCustomer = () => {
         </div>
       )}
       
-      <div className="mt-4 text-center">
+      {/* <div className="mt-4 text-center">
         <button 
           onClick={() => handleUpdateModalOpen(customer._id)}
           className="text-purple-600 hover:text-purple-800 text-sm font-medium"
         >
           Show More
         </button>
-      </div>
+      </div> */}
     </div>
   );
 
@@ -736,9 +736,9 @@ const UnApprovedCustomer = () => {
         />
         <div className="flex mt-20">
           <Sidebar navSearchBarVisibility={true} onGlobalSearchChangeHandler={GlobalSearchChangeHandler} />
-          <div className="flex-grow p-7">
+          <div className="flex-grow mt-9 p-7">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold text-gray-800"> Unverified Customers</h1>
+              <h1 className="text-3xl font-bold text-gray-800"> Unverified Customers</h1>
               {/* <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                 + Add Customer
               </button> */}
@@ -748,7 +748,7 @@ const UnApprovedCustomer = () => {
               <CircularLoader isLoading={isLoading} failure={false} data="Customer Data" />
             ) : (
               <>
-                <div className="mb-4 text-sm text-gray-600">
+                <div className="mb-4 text-md text-gray-600">
                   Showing {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredUsers.length)} of {filteredUsers.length} customers
                 </div>
                 
@@ -775,20 +775,20 @@ const UnApprovedCustomer = () => {
           onClose={() => setShowModalUpdate(false)}
         >
           <div className="py-6 px-5 lg:px-8 text-left">
-            <h3 className="mb-4 text-xl font-bold text-custom-blue">
+            <h3 className="mb-4 text-xl font-bold text-custom-violet">
               Update Customer
             </h3>
             <form className="space-y-6" onSubmit={handleUpdate} noValidate>
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="title"
                   >
                     Title
                   </label>
                   <Select
-                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-md rounded-lg w-full"
                     placeholder="Select Title"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -811,10 +811,10 @@ const UnApprovedCustomer = () => {
                 </div>
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="email"
                   >
-                    Full Name <span className="text-red-500 text-sm mt-1">*</span>
+                    Full Name <span className="text-red-500 text-md mt-1">*</span>
                   </label>
                   <Input
                     type="text"
@@ -824,7 +824,7 @@ const UnApprovedCustomer = () => {
                     id="name"
                     placeholder="Enter the Full Name"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.full_name && (
                     <p className="mt-2 text-sm text-red-600">
@@ -836,7 +836,7 @@ const UnApprovedCustomer = () => {
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="date"
                   >
                     Email
@@ -849,18 +849,18 @@ const UnApprovedCustomer = () => {
                     id="text"
                     placeholder="Enter Email"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.email && (
-                    <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+                    <p className="mt-2 text-md text-red-600">{errors.email}</p>
                   )}
                 </div>
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="date"
                   >
-                    Phone Number <span className="text-red-500 text-sm mt-1">*</span>
+                    Phone Number <span className="text-red-500 text-md mt-1">*</span>
                   </label>
                   <Input
                     type="number"
@@ -870,10 +870,10 @@ const UnApprovedCustomer = () => {
                     id="text"
                     placeholder="Enter Phone Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.phone_number && (
-                    <p className="mt-2 text-sm text-red-600">
+                    <p className="mt-2 text-md text-red-600">
                       {errors.phone_number}
                     </p>
                   )}
@@ -882,10 +882,10 @@ const UnApprovedCustomer = () => {
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="date"
                   >
-                    Aadhar Number <span className="text-red-500 text-sm mt-1">*</span>
+                    Aadhar Number <span className="text-red-500 text-md mt-1">*</span>
                   </label>
                   <Input
                     type="text"
@@ -895,7 +895,7 @@ const UnApprovedCustomer = () => {
                     id="text"
                     placeholder="Enter Adhaar Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.adhaar_no && (
                     <p className="mt-2 text-sm text-red-600">
@@ -905,7 +905,7 @@ const UnApprovedCustomer = () => {
                 </div>
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="date"
                   >
                     Pan Number
@@ -918,7 +918,7 @@ const UnApprovedCustomer = () => {
                     id="text"
                     placeholder="Enter Pan Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.pan_no && (
                     <p className="mt-2 text-sm text-red-600">{errors.pan_no}</p>
@@ -927,10 +927,10 @@ const UnApprovedCustomer = () => {
               </div>
               <div>
                 <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
+                  className="block mb-2 text-md font-medium text-gray-900"
                   htmlFor="address"
                 >
-                  Address <span className="text-red-500 text-sm mt-1">*</span>
+                  Address <span className="text-red-500 text-md mt-1">*</span>
                 </label>
                 <Input
                   type="text"
@@ -940,19 +940,19 @@ const UnApprovedCustomer = () => {
                   id="address"
                   placeholder="Enter the Address"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
                 {errors.address && (
-                  <p className="mt-2 text-sm text-red-600">{errors.address}</p>
+                  <p className="mt-2 text-md text-red-600">{errors.address}</p>
                 )}
               </div>
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="date"
                   >
-                    Pincode <span className="text-red-500 text-sm mt-1">*</span>
+                    Pincode <span className="text-red-500 text-md mt-1">*</span>
                   </label>
                   <Input
                     type="text"
@@ -962,17 +962,17 @@ const UnApprovedCustomer = () => {
                     id="text"
                     placeholder="Enter Pincode"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.pincode && (
-                    <p className="mt-2 text-sm text-red-600">
+                    <p className="mt-2 text-md text-red-600">
                       {errors.pincode}
                     </p>
                   )}
                 </div>
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="email"
                   >
                     Father Name
@@ -984,20 +984,20 @@ const UnApprovedCustomer = () => {
                     onChange={handleInputChange}
                     id="father-name"
                     placeholder="Enter the Father name"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
               </div>
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-full">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="area"
                   >
                     Collection Area
                   </label>
                   <Select
-                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-md rounded-lg w-full"
                     placeholder="Select Or Search Collection Area"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1027,7 +1027,7 @@ const UnApprovedCustomer = () => {
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="date"
                   >
                     Customer Date of Birth
@@ -1045,18 +1045,18 @@ const UnApprovedCustomer = () => {
                     onChange={handleInputChange}
                     id="date"
                     placeholder="Enter the Date of Birth"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="gender"
                   >
                     Gender
                   </label>
                   <Select
-                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-md rounded-lg w-full"
                     placeholder="Select Gender"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1080,13 +1080,13 @@ const UnApprovedCustomer = () => {
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="marital-status"
                   >
                     Marital Status
                   </label>
                   <Select
-                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-md rounded-lg w-full"
                     placeholder="Select Marital Status"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1112,7 +1112,7 @@ const UnApprovedCustomer = () => {
                 </div>
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="referral-name"
                   >
                     Referral Name
@@ -1124,20 +1124,20 @@ const UnApprovedCustomer = () => {
                     onChange={handleInputChange}
                     id="referral-name"
                     placeholder="Enter the Referral Name"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
               </div>
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="nationality"
                   >
                     Nationality
                   </label>
                   <Select
-                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-md rounded-lg w-full"
                     placeholder="Select Nationality"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1161,7 +1161,7 @@ const UnApprovedCustomer = () => {
                 </div>
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="alternate-number"
                   >
                     Alternate Phone Number
@@ -1173,14 +1173,14 @@ const UnApprovedCustomer = () => {
                     onChange={handleInputChange}
                     id="alternate-number"
                     placeholder="Enter the Alternate Phone number"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
               </div>
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="village"
                   >
                     Village
@@ -1192,12 +1192,12 @@ const UnApprovedCustomer = () => {
                     onChange={handleInputChange}
                     id="village"
                     placeholder="Enter the Village"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="taluk"
                   >
                     Taluk
@@ -1209,20 +1209,20 @@ const UnApprovedCustomer = () => {
                     onChange={handleInputChange}
                     id="taluk"
                     placeholder="Enter the taluk"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
               </div>
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="state"
                   >
                     State
                   </label>
                   <Select
-                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-md rounded-lg w-full"
                     placeholder="Select State"
                     showSearch
                     name="state"
@@ -1243,7 +1243,7 @@ const UnApprovedCustomer = () => {
                 </div>
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="district"
                   >
                     District
@@ -1254,14 +1254,14 @@ const UnApprovedCustomer = () => {
                     value={updateFormData?.district}
                     onChange={handleInputChange}
                     placeholder="Enter District"
-                    className="w-full p-2 h-14 border rounded-md sm:text-lg text-sm bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full p-2 h-14 border rounded-md sm:text-lg text-md bg-gray-50 border-gray-300 text-gray-900 focus:ring-violet-500 focus:border-violet-500"
                   />
                 </div>
               </div>
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="nominee"
                   >
                     Nominee Name
@@ -1273,12 +1273,12 @@ const UnApprovedCustomer = () => {
                     onChange={handleInputChange}
                     id="nominee"
                     placeholder="Enter the Nominee Name"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="nominee-date"
                   >
                     Nominee Date of Birth
@@ -1296,20 +1296,20 @@ const UnApprovedCustomer = () => {
                     onChange={handleInputChange}
                     id="nominee-date"
                     placeholder="Enter the Nominee Date of Birth"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
               </div>
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="nominee-relationship"
                   >
                     Nominee Relationship
                   </label>
                   <Select
-                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-md rounded-lg w-full"
                     placeholder="Select Nominee Relationship"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1340,7 +1340,7 @@ const UnApprovedCustomer = () => {
                 </div>
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="nominee-phone-number"
                   >
                     Nominee Phone Number
@@ -1352,14 +1352,14 @@ const UnApprovedCustomer = () => {
                     onChange={handleInputChange}
                     id="nominee-phone-number"
                     placeholder="Enter the Nominee Phone number"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
               </div>
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="bank-name"
                   >
                     Bank Name
@@ -1371,12 +1371,12 @@ const UnApprovedCustomer = () => {
                     onChange={handleInputChange}
                     id="bank-name"
                     placeholder="Enter the Customer Bank Name"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="bank-branch-name"
                   >
                     Bank Branch Name
@@ -1388,14 +1388,14 @@ const UnApprovedCustomer = () => {
                     onChange={handleInputChange}
                     id="bank-branch-name"
                     placeholder="Enter the Bank Branch Name"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
               </div>
               <div className="flex flex-row justify-between gap-4">
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="account-number"
                   >
                     Bank Account Number
@@ -1407,12 +1407,12 @@ const UnApprovedCustomer = () => {
                     onChange={handleInputChange}
                     id="account-number"
                     placeholder="Enter the Customer Bank Account Number"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
                 <div className="w-1/2">
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="ifsc"
                   >
                     Bank IFSC Code
@@ -1424,15 +1424,15 @@ const UnApprovedCustomer = () => {
                     onChange={handleInputChange}
                     id="ifsc"
                     placeholder="Enter the Bank IFSC Code"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-md rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
               </div>
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-md px-5 py-2.5 text-center"
                 >
                   Update
                 </button>
@@ -1449,7 +1449,7 @@ const UnApprovedCustomer = () => {
           }}
         >
           <div className="py-6 px-5 lg:px-8 text-left">
-            <h3 className="mb-4 text-xl font-bold text-custom-blue">
+            <h3 className="mb-4 text-2xl font-bold ">
               Delete Customer
             </h3>
             {currentUser && (
@@ -1462,28 +1462,28 @@ const UnApprovedCustomer = () => {
               >
                 <div>
                   <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
+                    className="block mb-2 text-md font-medium text-gray-900"
                     htmlFor="groupName"
                   >
                     Please enter{" "}
-                    <span className="text-primary font-bold">
+                    <span className="text-violet-800 font-bold">
                       {currentUser.full_name}
                     </span>{" "}
                     to confirm deletion.{" "}
-                    <span className="text-red-500 text-sm mt-1">*</span>
+                    <span className="text-red-500 text-lg mt-1">*</span>
                   </label>
                   <Input
                     type="text"
                     id="groupName"
                     placeholder="Enter the User Full Name"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-full text-white bg-red-300 hover:bg-red-500
+          focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-xl px-5 py-2.5 text-center"
                 >
                   Delete
                 </button>

@@ -452,7 +452,7 @@ export default function Analytics() {
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <Kpi title="Total Collection" value={formatINR(kpis.totalCollection)} accent="indigo" />
                 <Kpi title="This Period" value={formatINR(kpis.thisPeriodCollection)} accent="emerald" />
-                <Kpi title="Users" value={formatNum(kpis.usersCount)} accent="blue" />
+                <Kpi title="Users" value={formatNum(kpis.usersCount)} accent="violet" />
                 <Kpi title="Groups" value={formatNum(kpis.groupsCount)} accent="violet" />
                 <Kpi title="Agents" value={formatNum(kpis.agentsCount)} accent="cyan" />
                 <Kpi title="Enrollments" value={formatNum(kpis.enrollmentsCount)} accent="amber" />
@@ -612,7 +612,7 @@ function Kpi({ title, value, accent = "indigo" }) {
   const accentClasses = {
     indigo: "from-indigo-50 to-indigo-100 border-indigo-200 text-indigo-700",
     emerald: "from-emerald-50 to-emerald-100 border-emerald-200 text-emerald-700",
-    blue: "from-blue-50 to-blue-100 border-blue-200 text-blue-700",
+    violet: "from-violet-50 to-violet-100 border-violet-200 text-violet-700",
     violet: "from-violet-50 to-violet-100 border-violet-200 text-violet-700",
     cyan: "from-cyan-50 to-cyan-100 border-cyan-200 text-cyan-700",
     amber: "from-amber-50 to-amber-100 border-amber-200 text-amber-700",

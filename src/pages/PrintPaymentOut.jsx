@@ -55,9 +55,9 @@ const PrintPaymentOut = () => {
     <div align="center" style={{ marginTop: "80px" }}>
       <button
         onClick={handlePrint}
-        className="border border-blue-400 text-white px-4 py-2 mb-5 rounded-md shadow hover:border-blue-700 transition duration-200 mt-4"
+        className="border border-violet-400 text-white px-4 py-2 mb-5 rounded-md shadow hover:border-violet-700 transition duration-200 mt-4"
       >
-        <BiPrinter color="blue" />
+        <BiPrinter color="violet" />
       </button>
 
      
