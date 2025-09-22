@@ -27,9 +27,9 @@ const Navbar = ({
   };
 
   return (
-    <nav className="w-full fixed top-0 left-0 ">
+    <nav className="w-full fixed z-50 top-0 left-0 ">
       
-      <div className="flex items-center justify-between bg-violet-900 shadow-xl backdrop-blur-md bg-opacity-95 px-4 sm:px-8 py-3 flex-wrap md:flex-nowrap">
+      <div className="flex items-center  justify-between bg-violet-900 shadow-xl backdrop-blur-md bg-opacity-95 px-4 sm:px-8 py-3 flex-wrap md:flex-nowrap">
 
       
         <button

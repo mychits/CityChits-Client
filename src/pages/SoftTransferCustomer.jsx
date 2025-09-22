@@ -36,6 +36,11 @@ const SoftTransferCustomer = () => {
   const [destinationCustomers, setDestinationCustomers] = useState([]);
   const [sourceCustomers, setSourceCustomers] = useState([]);
 
+    const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
+  
   const getGroupNameById = (groupId) => {
     const group = allGroups.find((g) => g._id === groupId);
     return group?.group_name || "Unknown Group";
@@ -294,11 +299,11 @@ const SoftTransferCustomer = () => {
   return (
     <>
       <div className="flex mt-20">
-        <Navbar
-          onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
-          visibility={true}
-        />
-        <Sidebar />
+         <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
         <div className="flex-grow p-7">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-semibold">Soft Transfer</h1>

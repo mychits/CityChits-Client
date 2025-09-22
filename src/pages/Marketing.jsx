@@ -6,6 +6,7 @@ import { RiMoneyRupeeCircleLine } from "react-icons/ri";
 import { FaFacebookSquare } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+import Navbar from "../components/layouts/Navbar";
 import { LiaSmsSolid } from "react-icons/lia";
 
 // const mainMenus = [
@@ -192,6 +193,10 @@ import { LiaSmsSolid } from "react-icons/lia";
 //     </div>
 //   );
 // };
+ const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
 const mainMenus = [
   {
     key: "#main-1",
@@ -386,7 +391,13 @@ const Marketing = () => {
 
   return (
     <div className="w-screen flex mt-20">
-      <Sidebar />
+   
+        <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          
       <div className="flex min-h-screen">
         <div className="w-[300px] bg-gray-50 min-h-screen p-4 space-y-4">
           {renderMenu(mainMenus)}

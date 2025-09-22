@@ -5,13 +5,14 @@ import api from "../instance/TokenInstance";
 import { fieldSize } from "../data/fieldSize";
 import Modal from "../components/modals/Modal";
 import DataTable from "../components/layouts/Datatable";
-import CustomAlert from "../components/alerts/CustomAlert";
+
 import { FaWhatsappSquare } from "react-icons/fa";
 import { Select, Dropdown, notification } from "antd";
 import { IoMdMore } from "react-icons/io";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 const MobileAppEnroll = () => {
      const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
@@ -37,6 +38,12 @@ const MobileAppEnroll = () => {
     message: "Something went wrong!",
     type: "info",
   });
+
+   const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
+
   const [isExistingEnrollment, setIsExistingEnrollment] = useState(false);
   const [admin, setAdmin] = useState("");
   const [formData, setFormData] = useState({
@@ -643,16 +650,19 @@ const MobileAppEnroll = () => {
   return (
     <>
       <div>
-        <div className="flex mt-20">
+       <div className="flex mt-20" >
+          <Sidebar />
           <Navbar
-            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
             visibility={true}
           />
-          <Sidebar />
-          <CustomAlert
+          <CustomAlertDialog
             type={alertConfig.type}
             isVisible={alertConfig.visibility}
             message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
           />
           <div className="flex-grow p-7">
             <h1 className="text-2xl font-semibold mb-16">Mobile App Enrollments</h1>

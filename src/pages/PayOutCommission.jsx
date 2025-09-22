@@ -9,6 +9,7 @@ import CircularLoader from "../components/loaders/CircularLoader";
 import Navbar from "../components/layouts/Navbar";
 import { Select, Tooltip, notification } from "antd";
 import SettingSidebar from "../components/layouts/SettingSidebar";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 
 const CommissionPayout = () => {
   const paymentFor = "commission";
@@ -54,6 +55,11 @@ const CommissionPayout = () => {
   const currentMonth = `${today.getFullYear()}-${String(
     today.getMonth() + 1
   ).padStart(2, "0")}`;
+
+    const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
 
   const [commissionForm, setCommissionForm] = useState({
     agent_id: "",
@@ -488,14 +494,20 @@ const CommissionPayout = () => {
     <>
       <div>
         {contextHolder}
-        <div className="flex mt-20">
-          <Navbar visibility={true} />
+       
+        <div className="flex mt-20" >
           <Sidebar />
-          <CustomAlert
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
             type={alertConfig.type}
             isVisible={alertConfig.visibility}
             message={alertConfig.message}
-            noReload={alertConfig.noReload}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
           />
           <div className="flex-grow p-7">
             <div className="flex flex-col md:flex-row justify-between items-center mb-4">

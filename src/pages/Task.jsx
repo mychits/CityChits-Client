@@ -432,8 +432,13 @@ const Task = () => {
     lead: "",
   });
 
+    const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
+
   const location = useLocation();
-  const { leadId, leadAgentId } = location.state || {}; // Extract both
+  const { leadId, leadAgentId } = location.state || {}; 
   const [leadIdState, setLeadIdState] = useState(location.state?.leadId || null);
 const [leadAgentIdState] = useState(location.state?.leadAgentId || null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -446,7 +451,7 @@ const [leadAgentIdState] = useState(location.state?.leadAgentId || null);
     type: "info",
   });
 
-  // Fetch all data: agents, leads, tasks
+ 
   const fetchAllData = async () => {
     try {
       setIsLoading(true);
@@ -657,17 +662,21 @@ useEffect(() => {
 
   return (
     <>
-      <div className="flex mt-20">
-        <Navbar visibility={true} />
-        <CustomAlertDialog
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-          onClose={() =>
-            setAlertConfig((prev) => ({ ...prev, visibility: false }))
-          }
-        />
-        <Sidebar />
+    
+        <div className="flex mt-20" >
+          <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
 
         <div className="flex-grow p-7">
           <div className="mt-6 mb-8">

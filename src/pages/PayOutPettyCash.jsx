@@ -8,6 +8,7 @@ import CustomAlert from "../components/alerts/CustomAlert";
 import CircularLoader from "../components/loaders/CircularLoader";
 import Navbar from "../components/layouts/Navbar";
 import { Select, Tooltip, notification } from "antd";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 
 const PayOutPettyCash = () => {
   const paymentFor = "petty_cash";
@@ -15,6 +16,11 @@ const PayOutPettyCash = () => {
   const [showPettyCashModal, setShowPettyCashModal] = useState(false);
   const [modifyPayment, setModifyPayment] = useState(false);
   const [adminId, setAdminId] = useState("");
+
+   const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
 
   const [alertConfig, setAlertConfig] = useState({
     visibility: false,
@@ -216,15 +222,20 @@ const PayOutPettyCash = () => {
     <>
       <div>
         {contextHolder}
-        <div className="flex mt-20">
-          <Navbar visibility={true} />
-          <Sidebar />
-          <CustomAlert
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-            noReload={alertConfig.noReload}
-          />
+         <div className="flex mt-20" >
+                  <Sidebar />
+                  <Navbar
+                    onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+                    visibility={true}
+                  />
+                  <CustomAlertDialog
+                    type={alertConfig.type}
+                    isVisible={alertConfig.visibility}
+                    message={alertConfig.message}
+                    onClose={() =>
+                      setAlertConfig((prev) => ({ ...prev, visibility: false }))
+                    }
+                  />
           <div className="flex-grow p-7">
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-semibold">

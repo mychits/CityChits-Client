@@ -163,8 +163,12 @@ const Reports = () => {
 
   return (
     <div>
-      <div className="min-w-screen min-h-screen flex mt-20">
-          <Sidebar navSearchBarVisibility={true} onGlobalSearchChangeHandler={GlobalSearchChangeHandler} />
+      <div className="min-w-screen min-h-screen  flex mt-20">
+         <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
 
         {/* <div className="w-[300px]  bg-gray-50 min-h-screen p-4">
           {subMenus.map(({ title, link, Icon, red }) => (
@@ -189,7 +193,7 @@ const Reports = () => {
           ))}
         </div> */}
 
-        <div className="flex-grow p-6  ">
+        <div className="flex-grow  p-6  ">
           {location.pathname === "/reports" ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 w-full">
               {subMenus.map(({ title, Icon, link }, idx) => (

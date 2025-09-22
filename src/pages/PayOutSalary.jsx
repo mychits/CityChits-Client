@@ -10,6 +10,7 @@ import { Select, Tooltip, notification, Dropdown } from "antd";
 import SettingSidebar from "../components/layouts/SettingSidebar";
 import SalarySlipPrint from "../components/printFormats/SalarySlipPrint";
 import { IoMdMore } from "react-icons/io";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 
 const PayoutSalary = () => {
 
@@ -27,6 +28,10 @@ const PayoutSalary = () => {
     type: "info",
   });
 
+   const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
   const [targetData, setTargetData] = useState({
     target: 0,
     achieved: 0,
@@ -500,14 +505,19 @@ const PayoutSalary = () => {
     <>
       <div>
         {contextHolder}
-        <div className="flex mt-20">
-          <Navbar visibility={true} />
+        <div className="flex mt-20" >
           <Sidebar />
-          <CustomAlert
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
             type={alertConfig.type}
             isVisible={alertConfig.visibility}
             message={alertConfig.message}
-            noReload={alertConfig.noReload}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
           />
           <div className="flex-grow p-7">
             <div className="flex justify-between items-center">

@@ -485,12 +485,17 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                           .toString()
                           .toLowerCase()
                           .includes(input.toLowerCase())
+                          
+                          
                       }
-                      className="w-full max-w-xs h-11"
+                      className="w-full   max-w-xs h-11"
+                     
+                      
                     >
                       {dayGroup.map((time) => (
-                        <Select.Option key={time.value} value={time.value}>
+                        <Select.Option key={time.value} value={time.value} >
                           {time.label}
+                        
                         </Select.Option>
                       ))}
                     </Select>
@@ -521,7 +526,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                           .toLowerCase()
                           .includes(input.toLowerCase())
                       }
-                      className="w-full max-w-xs h-11"
+                      className="w-full   max-w-xs h-11"
                     >
                       <Select.Option value={""}>All</Select.Option>
                       {groups.map((group) => (
@@ -545,7 +550,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                       }
                       placeholder="Search Or Select Customer"
                       onChange={(groupId) => setSelectedCustomers(groupId)}
-                      className="w-full max-w-xs h-11"
+                      className="w-full   max-w-xs h-11"
                     // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
                     >
                       <Select.Option value="">All</Select.Option>
@@ -570,7 +575,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                           .toLowerCase()
                           .includes(input.toLowerCase())
                       }
-                      className="w-full max-w-xs h-11"
+                      className="w-full   max-w-xs h-11"
                     // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
                     >
                       <Select.Option value="">All</Select.Option>
@@ -593,7 +598,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                           .toLowerCase()
                           .includes(input.toLowerCase())
                       }
-                      className="w-full max-w-xs h-11"
+                      className="w-full  max-w-xs h-11"
                     // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
                     >
                      

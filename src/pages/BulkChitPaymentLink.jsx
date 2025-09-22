@@ -9,6 +9,7 @@ import { IoMdMore } from "react-icons/io";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import dayjs from "dayjs";
 
 const BulkChitPaymentLink = () => {
@@ -35,6 +36,13 @@ const BulkChitPaymentLink = () => {
     message: "",
     type: "info",
   });
+
+   const [alertConfig, setAlertConfig] = useState({
+      visibility: false,
+      message: "Something went wrong!",
+      type: "info",
+    });
+
   const [admin, setAdmin] = useState("");
   const date = new Date().toISOString().split("T")[0];
   const [allEnrollUrl, setAllEnrollUrl] = useState(true);
@@ -42,7 +50,7 @@ const BulkChitPaymentLink = () => {
   const [agents, setAgents] = useState([]);
   const selectAllCheckboxRef = useRef(null);
 
-  const onGlobalSearchChangeHandler = (e) => {
+  const GlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
@@ -518,9 +526,21 @@ const handleEnrollmentSelect = (id) => {
   return (
     <>
       <div>
-        <div className="flex mt-20">
-          <Navbar onGlobalSearchChangeHandler={onGlobalSearchChangeHandler} visibility={true} />
+      
+        <div className="flex mt-20" >
           <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
 
           {alert.visible && (
             <div className="fixed top-4 right-4 z-50 w-96">
@@ -553,7 +573,7 @@ const handleEnrollmentSelect = (id) => {
                   }
                   placeholder="Search or Select Group"
                   onChange={handleGroupChange}
-                  className="border h-14 w-full max-w-md"
+                  className="border h-14   w-full max-w-md"
                 >
                   <Select.Option key="today" value="today">
                     Today's Enrollment

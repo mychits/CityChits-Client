@@ -13,6 +13,7 @@ import { IoMdMore } from "react-icons/io";
 import { Link } from "react-router-dom";
 import dataPaymentsFor from "../data/paymentsFor";
 import BackdropBlurLoader from "../components/loaders/BackdropBlurLoader";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import { FaReceipt } from "react-icons/fa";
 import { fieldSize } from "../data/fieldSize";
 const RegistrationFee = () => {
@@ -22,7 +23,7 @@ const RegistrationFee = () => {
   const [TablePayments, setTablePayments] = useState([]);
   const [selectedAuctionGroup, setSelectedAuctionGroup] = useState("");
   const [selectedGroupId, setSelectedGroupId] = useState("");
-  const [selectedAuctionGroupId, setSelectedAuctionGroupId] = useState("");
+  const [selectedAuctionGroupId, setSelectedAuctionGroupId] = useState("today");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [userName, setUserName] = useState("");
   const [viewLoader, setViewLoader] = useState(false);
@@ -106,7 +107,7 @@ const RegistrationFee = () => {
     }
     return dropDownItemList;
   };
-  const onGlobalSearchChangeHandler = (e) => {
+  const GlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
@@ -139,6 +140,13 @@ const RegistrationFee = () => {
   const handleUploadModalClose = () => {
     setShowUploadModal(false);
   };
+
+  useEffect(() => {
+  if (selectedAuctionGroupId) {
+    handleGroupPayment(selectedAuctionGroupId);
+  }
+}, [selectedAuctionGroupId]);
+
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -916,18 +924,20 @@ const RegistrationFee = () => {
         <BackdropBlurLoader title={"payment Data processing...."} />
       ) : (
         <div>
-          <div className="flex mt-20">
-            <Navbar
-              onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-              visibility={true}
-            />
-            <Sidebar />
-            <CustomAlert
-              type={alertConfig.type}
-              isVisible={alertConfig.visibility}
-              message={alertConfig.message}
-              noReload={alertConfig.noReload}
-            />
+        <div className="flex mt-20" >
+          <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
             <div className="flex-grow p-7">
               <h1 className="text-2xl font-semibold">Registration Fee</h1>
               <div className="mt-6  mb-8">
@@ -938,7 +948,7 @@ const RegistrationFee = () => {
                       placeholder="Today's Registration Fee"
                       popupMatchSelectWidth={false}
                       showSearch
-                      className="w-full  h-14 max-w-md"
+                      className="w-full   h-14 max-w-md"
                       filterOption={(input, option) =>
                         option.children
                           .toString()

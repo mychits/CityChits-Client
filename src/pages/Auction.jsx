@@ -15,6 +15,7 @@ import { Select } from "antd";
 import { IoMdMore } from "react-icons/io";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 const Auction = () => {
   const [groups, setGroups] = useState([]);
   const [TableAuctions, setTableAuctions] = useState([]);
@@ -34,7 +35,7 @@ const Auction = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const onGlobalSearchChangeHandler = (e) => {
+  const GlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
@@ -396,17 +397,19 @@ const Auction = () => {
   return (
     <>
       <div>
-        <div className="flex mt-20">
+    <div className="flex mt-20" >
+          <Sidebar />
           <Navbar
-            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
             visibility={true}
           />
-          <Sidebar />
-
-          <CustomAlert
+          <CustomAlertDialog
             type={alertConfig.type}
             isVisible={alertConfig.visibility}
             message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
           />
           <div className="flex-grow p-7">
             <h1 className="text-2xl font-semibold">Auctions</h1>

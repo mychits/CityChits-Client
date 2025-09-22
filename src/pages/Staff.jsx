@@ -10,8 +10,7 @@ import axios from "axios";
 import { fieldSize } from "../data/fieldSize"
 import api from "../instance/TokenInstance";
 import DataTable from "../components/layouts/Datatable";
-
-import CustomAlert from "../components/alerts/CustomAlert";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
@@ -536,41 +535,61 @@ const Staff = () => {
   return (
     <>
       <div>
-        <CustomAlert
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-        />
-        <div className="flex mt-20">
 
-          <Sidebar navSearchBarVisibility={true} onGlobalSearchChangeHandler={GlobalSearchChangeHandler} />
-
-          
-
+        <div className="flex mt-20" >
+          <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
 
           <div className="flex-grow p-7 w-8 ">
-            <DataTable
-              catcher="_id"
-              updateHandler={handleUpdateModalOpen}
-              data={filterOption(TableAgents, searchText)}
-              columns={columns}
-              selectionColor="custom-violet"
-             exportedFileName={`Employees-${TableAgents.length > 0
-                  ? TableAgents[0].name +
-                  " to " +
-                  TableAgents[TableAgents.length - 1].name
-                  : "empty"
+            {/* Header section */}
+            <div className="mt-6 mb-8">
+              <div className="flex justify-between items-center w-full">
+                <h1 className="text-2xl font-semibold">Staff</h1>
+                <button
+                  onClick={() => {
+                    setShowModal(true);
+                    setErrors({});
+                  }}
+                  className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                >
+                  + Add Staff
+                </button>
+              </div>
+            </div>
+
+            {/* Table or Loader */}
+            {TableAgents?.length > 0 && !isLoading ? (
+              <DataTable
+                catcher="_id"
+                updateHandler={handleUpdateModalOpen}
+                data={filterOption(TableAgents, searchText)}
+                columns={columns}
+                selectionColor="custom-violet"
+                exportedFileName={`Employees-${TableAgents.length > 0
+                    ? TableAgents[0].name + " to " + TableAgents[TableAgents.length - 1].name
+                    : "empty"
                   }.csv`}
-              onClickHandler={() => {
-                setShowModal(true);
-                setErrors({});
-              }}
-              iconName="Staff"
-              clickableIconName="Add Staff"
-            />
+            
+              />
+            ) : (
+              <CircularLoader
+                isLoading={isLoading}
+                failure={TableAgents.length <= 0}
+                data="Staff Data"
+              />
+            )}
           </div>
-
-
 
         </div>
 

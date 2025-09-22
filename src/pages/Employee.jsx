@@ -12,7 +12,8 @@ import { fieldSize } from "../data/fieldSize";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
-import CustomAlert from "../components/alerts/CustomAlert";
+
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 
 const Employee = () => {
   const [users, setUsers] = useState([]);
@@ -471,38 +472,63 @@ const Employee = () => {
   return (
     <>
       <div>
-        <CustomAlert
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-        />
-        <div className="flex mt-20">
-          <Sidebar navSearchBarVisibility={true} onGlobalSearchChangeHandler={GlobalSearchChangeHandler} />
-
-
-       
-
+ 
+         <div className="flex mt-20" >
+           <Sidebar />
+           <Navbar
+             onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+             visibility={true}
+           />
+           <CustomAlertDialog
+             type={alertConfig.type}
+             isVisible={alertConfig.visibility}
+             message={alertConfig.message}
+             onClose={() =>
+               setAlertConfig((prev) => ({ ...prev, visibility: false }))
+             }
+           />
           <div className="flex-grow p-7 w-8 ">
-            <DataTable
-              catcher="_id"
-              updateHandler={handleUpdateModalOpen}
-              data={filterOption(TableEmployees, searchText)}
-              columns={columns}
-              selectionColor="custom-violet"
-              exportedFileName={`Employees-${TableEmployees.length > 0
-                ? TableEmployees[0].name +
-                " to " +
-                TableEmployees[TableEmployees.length - 1].name
-                : "empty"
-                }.csv`}
-              onClickHandler={() => {
-                setShowModal(true);
-                setErrors({});
-              }}
-              iconName="Employees"
-              clickableIconName="Add Employee"
-            />
+            {/* Header section */}
+            <div className="mt-6 mb-8">
+              <div className="flex justify-between items-center w-full">
+                <h1 className="text-2xl font-semibold">Employees</h1>
+                <button
+                  onClick={() => {
+                    setShowModal(true);
+                    setErrors({});
+                  }}
+                  className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                >
+                  + Add Employee
+                </button>
+              </div>
+            </div>
+
+            {/* Table or Loader */}
+            {TableEmployees?.length > 0 && !isLoading ? (
+              <DataTable
+                catcher="_id"
+                updateHandler={handleUpdateModalOpen}
+                data={filterOption(TableEmployees, searchText)}
+                columns={columns}
+                selectionColor="custom-violet"
+                exportedFileName={`Employees-${TableEmployees.length > 0
+                    ? TableEmployees[0].name +
+                    " to " +
+                    TableEmployees[TableEmployees.length - 1].name
+                    : "empty"
+                  }.csv`}
+               
+              />
+            ) : (
+              <CircularLoader
+                isLoading={isLoading}
+                failure={TableEmployees.length <= 0}
+                data="Employee Data"
+              />
+            )}
           </div>
+
 
         </div>
 

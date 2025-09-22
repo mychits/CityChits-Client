@@ -726,22 +726,25 @@ const UnApprovedCustomer = () => {
   return (
     <>
       <div>
-        <CustomAlertDialog
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-          onClose={() =>
-            setAlertConfig((prev) => ({ ...prev, visibility: false }))
-          }
-        />
-        <div className="flex mt-20">
-          <Sidebar navSearchBarVisibility={true} onGlobalSearchChangeHandler={GlobalSearchChangeHandler} />
+        
+        <div className="flex mt-20" >
+                  <Sidebar />
+                  <Navbar
+                    onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+                    visibility={true}
+                  />
+                  <CustomAlertDialog
+                    type={alertConfig.type}
+                    isVisible={alertConfig.visibility}
+                    message={alertConfig.message}
+                    onClose={() =>
+                      setAlertConfig((prev) => ({ ...prev, visibility: false }))
+                    }
+                  />
           <div className="flex-grow mt-9 p-7">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-3xl font-bold text-gray-800"> Unverified Customers</h1>
-              {/* <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                + Add Customer
-              </button> */}
+             
             </div>
             
             {isLoading ? (

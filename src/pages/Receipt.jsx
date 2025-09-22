@@ -521,7 +521,7 @@ const Receipt = () => {
                           .toLowerCase()
                           .includes(input.toLowerCase())
                       }
-                      className="w-full max-w-xs h-11"
+                      className="w-full  max-w-xs h-11"
                     >
                       {groupOptions.map((time) => (
                         <Select.Option key={time.value} value={time.value}>

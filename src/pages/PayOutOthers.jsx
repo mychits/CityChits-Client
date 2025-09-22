@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import BackdropBlurLoader from "../components/loaders/BackdropBlurLoader";
 import { FaReceipt } from "react-icons/fa";
 import { fieldSize } from "../data/fieldSize";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 
 const PayOutOthers = () => {
   const { paymentType } = useParams();
@@ -54,6 +55,12 @@ const PayOutOthers = () => {
   const [lastThreePayments, setLastThreePayments] = useState([]);
   const [adminName, setAdminName] = useState("");
   const [showOthersField, setShowOthersField] = useState(false);
+
+   const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
+
   const [disbursementType, setDisbursementType] = useState("");
   const disbursementTypes = [
    
@@ -717,18 +724,20 @@ const PayOutOthers = () => {
         <BackdropBlurLoader title={"payment Data processing...."} />
       ) : (
         <div>
-          <div className="flex mt-20">
-            <Navbar
-              onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-              visibility={true}
-            />
-            <Sidebar />
-            <CustomAlert
-              type={alertConfig.type}
-              isVisible={alertConfig.visibility}
-              message={alertConfig.message}
-              noReload={alertConfig.noReload}
-            />
+         <div className="flex mt-20" >
+                  <Sidebar />
+                  <Navbar
+                    onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+                    visibility={true}
+                  />
+                  <CustomAlertDialog
+                    type={alertConfig.type}
+                    isVisible={alertConfig.visibility}
+                    message={alertConfig.message}
+                    onClose={() =>
+                      setAlertConfig((prev) => ({ ...prev, visibility: false }))
+                    }
+                  />
             <div className="flex-grow p-7">
               <h1 className="text-2xl font-semibold">
                 <span className="text-2xl text-red-500 font-bold">
@@ -745,7 +754,7 @@ const PayOutOthers = () => {
                       placeholder="Today's Payment"
                       popupMatchSelectWidth={false}
                       showSearch
-                      className="w-full  h-14 max-w-md"
+                      className="w-full    h-14 max-w-md"
                       filterOption={(input, option) =>
                         option.children
                           .toString()

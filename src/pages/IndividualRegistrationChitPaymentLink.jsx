@@ -11,6 +11,7 @@ import { IoMdMore } from "react-icons/io";
 import { Link } from "react-router-dom";
 import BackdropBlurLoader from "../components/loaders/BackdropBlurLoader";
 import { fieldSize } from "../data/fieldSize";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 
 const IndividualRegistrationChitPaymentLink = () => {
   const [groups, setGroups] = useState([]);
@@ -53,6 +54,12 @@ const IndividualRegistrationChitPaymentLink = () => {
     type: "info"
   });
 
+  const [alertConfig, setAlertConfig] = useState({
+      visibility: false,
+      message: "Something went wrong!",
+      type: "info",
+    });
+
   const dropDownItems = (group) => {
     const dropDownItemList = [
       {
@@ -79,7 +86,7 @@ const IndividualRegistrationChitPaymentLink = () => {
     return dropDownItemList;
   };
   
-  const onGlobalSearchChangeHandler = (e) => {
+  const GlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
@@ -538,12 +545,20 @@ const IndividualRegistrationChitPaymentLink = () => {
         <BackdropBlurLoader title={"payment Data processing...."} />
       ) : (
         <div>
-          <div className="flex mt-20">
-            <Navbar
-              onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-              visibility={true}
-            />
-            <Sidebar />
+        <div className="flex mt-20" >
+          <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
             
             {/* Ant Design Alert */}
             {alert.visible && (
@@ -568,7 +583,7 @@ const IndividualRegistrationChitPaymentLink = () => {
                       placeholder="Today's Payment"
                       popupMatchSelectWidth={false}
                       showSearch
-                      className="w-full  h-14 max-w-md"
+                      className="w-full   h-14 max-w-md"
                       filterOption={(input, option) =>
                         option.children
                           .toString()

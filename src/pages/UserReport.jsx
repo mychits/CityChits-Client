@@ -865,6 +865,7 @@ const UserReport = () => {
                       id="SS"
                       value={selectedAuctionGroupId || undefined}
                       onChange={handleGroupPayment}
+                    
                       showSearch
                       popupMatchSelectWidth={false}
                       placeholder="Search or Select Customer"
@@ -875,6 +876,7 @@ const UserReport = () => {
                           .includes(input.toLowerCase())
                       }
                       style={{ height: "50px", width: "600px" }}
+                      
                     >
                       {groups.map((group) => (
                         <option key={group._id} value={group._id}>

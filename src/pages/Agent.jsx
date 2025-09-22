@@ -12,6 +12,7 @@ import CustomAlert from "../components/alerts/CustomAlert";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import { fieldSize } from "../data/fieldSize"
 const Agent = () => {
   const [users, setUsers] = useState([]);
@@ -497,37 +498,63 @@ const Agent = () => {
   return (
     <>
       <div>
-        <CustomAlert
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-        />
-        <div className="flex mt-20">
-          <Sidebar navSearchBarVisibility={true} onGlobalSearchChangeHandler={GlobalSearchChangeHandler} />
+   <div className="flex mt-20" >
+          <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
 
          
 
-          <div className="flex-grow p-7 w-8 ">
-            <DataTable
-              catcher="_id"
-              updateHandler={handleUpdateModalOpen}
-              data={filterOption(TableAgents, searchText)}
-              columns={columns}
-              selectionColor="custom-violet"
-              exportedFileName={`Employees-${TableAgents.length > 0
-                  ? TableAgents[0].name +
-                  " to " +
-                  TableAgents[TableAgents.length - 1].name
-                  : "empty"
-                  }.csv`}
-              onClickHandler={() => {
-                setShowModal(true);
-                setErrors({});
-              }}
-              iconName="Agents"
-              clickableIconName="Add Agent"
-            />
-          </div>
+      <div className="flex-grow p-7 w-8 ">
+
+  <div className="mt-6 mb-8">
+    <div className="flex justify-between items-center w-full">
+      <h1 className="text-2xl font-semibold">Agents</h1>
+      <button
+        onClick={() => {
+          setShowModal(true);
+          setErrors({});
+        }}
+        className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+      >
+        + Add Agent
+      </button>
+    </div>
+  </div>
+
+  {TableAgents?.length > 0 && !isLoading ? (
+    <DataTable
+      catcher="_id"
+      updateHandler={handleUpdateModalOpen}
+      data={filterOption(TableAgents, searchText)}
+      columns={columns}
+      selectionColor="custom-violet"
+      exportedFileName={`Employees-${
+        TableAgents.length > 0
+          ? TableAgents[0].name + " to " + TableAgents[TableAgents.length - 1].name
+          : "empty"
+      }.csv`}
+    
+    />
+  ) : (
+    <CircularLoader
+      isLoading={isLoading}
+      failure={TableAgents.length <= 0}
+      data="Agent Data"
+    />
+  )}
+</div>
+
 
 
         </div>

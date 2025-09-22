@@ -13,6 +13,7 @@ import { IoMdMore } from "react-icons/io";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
 import { Space } from "lucide-react";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 
 const GeneralPaymentOut = () => {
   const [groups, setGroups] = useState([]);
@@ -59,7 +60,7 @@ const GeneralPaymentOut = () => {
     note: "",
   });
 
-  const onGlobalSearchChangeHandler = (e) => {
+  const GlobalSearchChangeHandler = (e) => {
     setSearchText(e.target.value);
   };
 
@@ -422,18 +423,20 @@ const GeneralPaymentOut = () => {
 const selectednewGroup = groups.find(g => g._id === selectedAuctionGroupId);
   return (
     <>
-      <div className="flex mt-20">
-        <Navbar
-          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-          visibility={true}
-        />
-        <Sidebar />
-
-        <CustomAlert
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-        />
+         <div className="flex mt-20" >
+          <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
 
         <div className="flex-grow p-7">
           <h1 className="text-2xl font-semibold">
@@ -449,7 +452,7 @@ const selectednewGroup = groups.find(g => g._id === selectedAuctionGroupId);
                   onChange={handleGroupAuction}
                   popupMatchSelectWidth={false}
                   showSearch
-                  className="w-full max-w-md"
+                  className="w-full   max-w-md"
                   placeholder="Search or Select Group"
                   filterOption={(input, option) =>
                     option.children

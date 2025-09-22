@@ -8,6 +8,7 @@ import CustomAlert from "../components/alerts/CustomAlert";
 import CircularLoader from "../components/loaders/CircularLoader";
 import { FaWhatsappSquare } from "react-icons/fa";
 import Navbar from "../components/layouts/Navbar";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import {
   Select,
   Dropdown,
@@ -126,6 +127,11 @@ const Payment = () => {
     noReload: false,
     type: "info",
   });
+
+    const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
 
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
@@ -861,18 +867,21 @@ const Payment = () => {
         <BackdropBlurLoader title={"payment Data processing...."} />
       ) : (
         <div>
-          <div className="flex mt-20">
-            <Navbar
-              onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-              visibility={true}
-            />
-            <Sidebar />
-            <CustomAlert
-              type={alertConfig.type}
-              isVisible={alertConfig.visibility}
-              message={alertConfig.message}
-              noReload={alertConfig.noReload}
-            />
+         
+                 <div className="flex mt-20" >
+                   <Sidebar />
+                   <Navbar
+                     onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+                     visibility={true}
+                   />
+                   <CustomAlertDialog
+                     type={alertConfig.type}
+                     isVisible={alertConfig.visibility}
+                     message={alertConfig.message}
+                     onClose={() =>
+                       setAlertConfig((prev) => ({ ...prev, visibility: false }))
+                     }
+                   />
             <div className="flex-grow p-7">
               <h1 className="text-2xl font-semibold">Payments</h1>
               <div className="mt-6  mb-8">
@@ -883,7 +892,7 @@ const Payment = () => {
                       placeholder="Today's Payment"
                       popupMatchSelectWidth={false}
                       showSearch
-                      className="w-full  h-14 max-w-md"
+                      className="w-full   h-14 max-w-md"
                       filterOption={(input, option) =>
                         option.children
                           .toString()

@@ -4,7 +4,7 @@ import Sidebar from "../components/layouts/Sidebar";
 import Modal from "../components/modals/Modal";
 import api from "../instance/TokenInstance";
 import DataTable from "../components/layouts/Datatable";
-import { Input,Select, Dropdown } from "antd";
+import { Input, Select, Dropdown } from "antd";
 import { IoMdMore } from "react-icons/io";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
@@ -23,7 +23,7 @@ const FilterGroups = () => {
   const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [reloadTrigger, setReloadTrigger] = useState(0);
- 
+
 
 
 
@@ -40,6 +40,11 @@ const FilterGroups = () => {
     message: "Something went wrong!",
     type: "info",
   });
+
+  const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
 
   const [formData, setFormData] = useState({
     group_name: "",
@@ -83,8 +88,8 @@ const FilterGroups = () => {
     { value: "Vacant Groups", label: "Vacant Groups" },
   ];
 
-  const groupType = [{value: "divident", label: "Divident Group"},
-                     {value: "double", label: "Double Group"},
+  const groupType = [{ value: "divident", label: "Divident Group" },
+  { value: "double", label: "Double Group" },
   ]
   const handleAntDSelect = (field, value) => {
     setFormData((prevData) => ({
@@ -97,7 +102,7 @@ const FilterGroups = () => {
       [field]: "",
     }));
   };
-      const handleAntInputDSelect = (field, value) => {
+  const handleAntInputDSelect = (field, value) => {
     setUpdateFormData((prevData) => ({
       ...prevData,
       [field]: value,
@@ -170,7 +175,7 @@ const FilterGroups = () => {
               </button> */}
 
               <Dropdown
-              trigger={['click']}
+                trigger={['click']}
                 menu={{
                   items: [
                     {
@@ -339,7 +344,7 @@ const FilterGroups = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-    const handleMobileAccessChange = async (groupId, newValue) => {
+  const handleMobileAccessChange = async (groupId, newValue) => {
     setUpdatingGroups((prev) => new Set([...prev, groupId]));
 
     try {
@@ -525,7 +530,7 @@ const FilterGroups = () => {
     { key: "id", header: "SL. NO" },
     { key: "name", header: "Group Name" },
     { key: "type", header: "Group Type" },
-    {key: "date", header: "Created On"},
+    { key: "date", header: "Created On" },
     { key: "value", header: "Group Value" },
     { key: "installment", header: "Group Installment" },
     { key: "members", header: "Group Members" },
@@ -550,37 +555,41 @@ const FilterGroups = () => {
         />
         <div className="flex mt-20">
           <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
 
           <div className="flex-grow p-7">
             <h1 className="text-2xl text-center font-semibold">Filter Groups</h1>
-             <div className="mb-10">
+            <div className="mb-10">
               <label className="font-bold text-xl mb-2">Search or Filter Group</label>
               <div className="flex justify-between items-center w-full mt-6">
-              <Select
-                placeholder="Filter by Group"
-                value={filterGroup}
-                popupMatchSelectWidth={false}
-                      showSearch
-                      className="w-full  h-14 max-w-md"
-                      filterOption={(input, option) =>
-                        option?.label
-                          .toString()
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                onChange={(value) => setFilterGroup(value)}
-                options={[
-                  { value: "", label: "All Groups" }, 
-                  ...groupOptions, 
-                ]}
-              />
+                <Select
+                  placeholder="Filter by Group"
+                  value={filterGroup}
+                  popupMatchSelectWidth={false}
+                  showSearch
+                  className="w-full  h-14 max-w-md"
+                  filterOption={(input, option) =>
+                    option?.label
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  onChange={(value) => setFilterGroup(value)}
+                  options={[
+                    { value: "", label: "All Groups" },
+                    ...groupOptions,
+                  ]}
+                />
               </div>
             </div>
             <div className="mt-6 mb-8">
-              
+
               <div className="flex justify-between items-center w-full">
                 <h1 className="text-2xl content-center font-semibold"></h1>
-             
+
                 <button
                   onClick={() => {
                     setShowModal(true);
@@ -700,7 +709,7 @@ const FilterGroups = () => {
                   <option value="divident">Divident Group</option>
                   <option value="double">Double Group</option>
                 </select> */}
-                 <Select
+                <Select
                   className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                   placeholder="Select Group Type"
                   popupMatchSelectWidth={false}
@@ -1001,7 +1010,7 @@ const FilterGroups = () => {
                 >
                   Filter Groups <span className="text-red-500 ">*</span>
                 </label>
-              
+
                 <Select
                   className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                   placeholder="Select Filter Groups"
@@ -1065,7 +1074,7 @@ const FilterGroups = () => {
                   <option value="divident">Dividend Group</option>
                   <option value="double">Double Group</option>
                 </select> */}
-                 <Select
+                <Select
                   className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                   placeholder="Select Group Type"
                   popupMatchSelectWidth={false}

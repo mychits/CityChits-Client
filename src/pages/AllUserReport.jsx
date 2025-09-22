@@ -16,6 +16,7 @@ const AllUserReport = () => {
   const [groupFilter, setGroupFilter] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
   const groupOptions = [...new Set(usersData.map((u) => u.groupName))];
 
@@ -87,10 +88,10 @@ const AllUserReport = () => {
                   reffered_by: data?.enrollment?.agent
                     ? data.enrollment.agent
                     : data?.enrollment?.reffered_customer
-                    ? data.enrollment.reffered_customer
-                    : data?.enrollment?.reffered_lead
-                    ? data.enrollment.reffered_lead
-                    : "N/A",
+                      ? data.enrollment.reffered_customer
+                      : data?.enrollment?.reffered_lead
+                        ? data.enrollment.reffered_lead
+                        : "N/A",
                   payment_type: data?.enrollment?.payment_type,
                   referred_type: data?.enrollment?.referred_type,
                   enrollmentDate: data?.enrollment?.createdAt
@@ -107,12 +108,12 @@ const AllUserReport = () => {
                   balance:
                     groupType === "double"
                       ? groupInstall * auctionCount +
-                        groupInstall -
-                        totalPaidAmount
+                      groupInstall -
+                      totalPaidAmount
                       : totalPayable +
-                        groupInstall +
-                        firstDividentHead -
-                        totalPaidAmount,
+                      groupInstall +
+                      firstDividentHead -
+                      totalPaidAmount,
                   status: data.isPrized === "true" ? "Prized" : "Un Prized",
                   statusDiv:
                     data.isPrized === "true" ? (
@@ -286,6 +287,7 @@ const AllUserReport = () => {
                         placeholder="--All groups--"
                         onChange={(value) => setGroupFilter(value)}
                         value={groupFilter || undefined}
+                        className="  "
                       >
                         {groupOptions.map((group) => (
                           <Select.Option key={group} value={group}>
@@ -374,6 +376,7 @@ const AllUserReport = () => {
                     ]}
                     exportedFileName={`CustomerReport.csv`}
                   />
+             
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
