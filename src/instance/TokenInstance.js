@@ -4,7 +4,7 @@ const api = axios.create({
   // baseURL: "https://mychits.online/api",
   // baseURL: "http://13.61.139.208:3000/api",
   // baseURL: "http://51.21.197.152:3000/api",
-  baseURL: "http://localhost:3000/api",
+  baseURL: "http://13.61.21.206:3000/api",
 });
 
 
