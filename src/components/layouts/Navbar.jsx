@@ -4,7 +4,7 @@ import GlobalSearchBar from "../search/GlobalSearchBar";
 import { MdKeyboardArrowDown, MdOutlineArrowCircleLeft } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { IoMdMore } from "react-icons/io";
-import {  HiX } from "react-icons/hi"; 
+import { HiX } from "react-icons/hi";
 import { BiMenu } from "react-icons/bi";
 import hotkeys from "../../data/hotKeys";
 import mychitsHead from "../../assets/images/mychits_head.svg";
@@ -12,10 +12,10 @@ import CityChits from "../../assets/images/CityChits.png"
 import { AiOutlineLogout } from "react-icons/ai";
 
 const Navbar = ({
-  onGlobalSearchChangeHandler = () => {},
+  onGlobalSearchChangeHandler = () => { },
   visibility = false,
   showMobileSidebar = false,
-  setShowMobileSidebar = () => {},
+  setShowMobileSidebar = () => { },
 }) => {
   const navigate = useNavigate();
   const [showHotKeys, setShowHotKeys] = useState(false);
@@ -29,27 +29,32 @@ const Navbar = ({
 
   return (
     <nav className="w-full fixed z-50 top-0 left-0 ">
-      
+
       <div className="flex items-center  justify-between bg-violet-900 shadow-xl backdrop-blur-md bg-opacity-95 px-4 sm:px-8 py-3 flex-wrap md:flex-nowrap">
 
-      
+
         <button
           onClick={() => navigate("/")}
           className="flex items-center space-x-2 sm:space-x-4 text-white transition-transform duration-300 hover:scale-105"
         >
           <img
-  src={CityChits}
-  alt="MyChits Logo"
-  className="h-10 sm:h-12 w-auto transition-transform duration-500 transform hover:rotate-y-180 hover:scale-110  animate-3d-spin "
-/>
+            src={CityChits}
+            alt="MyChits Logo"
+            className="h-10 sm:h-12 w-auto transition-transform duration-500 transform hover:rotate-y-180 hover:scale-110  animate-3d-spin "
+          />
 
-          <span className="font-extrabold text-xl sm:text-2xl tracking-wide hidden sm:block">
+          <span
+            className="relative font-extrabold text-xl sm:text-2xl tracking-wide hidden sm:block 
+             bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-400 
+             bg-clip-text text-transparent animate-pulse"
+          >
             City-Chits
           </span>
+
         </button>
 
         <div className="flex items-center space-x-4 flex-1 justify-center my-3 md:my-0">
-        
+
           <button
             onClick={() => navigate(-1)}
             className="p-2 md:p-3 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 text-white transition-all duration-300 hover:scale-105 active:scale-95 shadow-md hidden sm:block"
@@ -58,7 +63,7 @@ const Navbar = ({
             <MdOutlineArrowCircleLeft size={24} className="md:w-7 md:h-7" />
           </button>
 
-        
+
           <div className="flex items-center bg-white bg-opacity-20 backdrop-blur-md rounded-full px-3 sm:px-6 py-2 w-full max-w-lg md:max-w-5xl">
             <div className="flex-1">
               <GlobalSearchBar
@@ -97,7 +102,7 @@ const Navbar = ({
             )}
           </button>
 
-       
+
           <div className="relative">
             <button
               onClick={() => setShowMenu(!showMenu)}
@@ -109,12 +114,12 @@ const Navbar = ({
 
             {showMenu && (
               <div className="absolute right-0 mt-4 w-20 rounded-xl shadow-2xl overflow-hidden border  animate-fadeIn ">
-               
+
                 <button
                   onClick={handleLogout}
                   className="block w-full text-left py-2   text-gray-800 hover:bg-gradient-to-r hover:from-violet-100 hover:to-purple-400  transition-colors duration-300"
-                >  <AiOutlineLogout className="mx-auto text-3xl text-custom-violet"/> 
-                  
+                >  <AiOutlineLogout className="mx-auto text-3xl text-custom-violet" />
+
                 </button>
               </div>
             )}
@@ -147,7 +152,7 @@ const Navbar = ({
         </div>
       )}
 
-     
+
       <style jsx>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(-8px); }
