@@ -133,7 +133,7 @@ const Navbar = ({
                 to={path}
                 className={({ isActive }) =>
                   `bg-custom-violet text-center py-3 px-4 sm:py-4 sm:px-5 rounded-lg font-semibold shadow-md transition-all duration-300 transform hover:scale-105 active:scale-95 ${isActive
-                    ? "bg-custom-violet text-indigo-700 font-bold shadow-lg"
+                    ? "text-indigo-700 font-bold shadow-lg"
                     : "bg-violet-600 text-white hover:bg-opacity-30"
                   }`
                 }

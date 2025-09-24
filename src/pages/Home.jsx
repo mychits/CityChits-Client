@@ -8,6 +8,7 @@ import CustomCard from "../components/cards/CustomCard";
 import { FaClipboardList } from "react-icons/fa";
 import Navbar from "../components/layouts/Navbar";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [groups, setGroups] = useState([]);
@@ -347,8 +348,8 @@ const Home = () => {
                       <div className="mt-6 pt-4 border-t border-gray-100">
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-500">Updated: Just now</span>
-                          <a
-                            href={card.redirect}
+                          <Link
+                            to={card.redirect}
                             className="text-md font-medium text-gray-600 hover:text-gray-900 transition-colors flex items-center"
                           >
                             View details
@@ -365,7 +366,7 @@ const Home = () => {
                                 d="M9 5l7 7-7 7"
                               />
                             </svg>
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     </div>
