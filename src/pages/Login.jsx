@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AiOutlineLogin } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import api from "../instance/TokenInstance";
@@ -10,6 +10,17 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  // ✅ Step 1: Check localStorage on component mount
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const admin = localStorage.getItem("admin");
+
+    if (token && admin) {
+      // Already logged in → redirect to dashboard
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,9 +35,10 @@ const Login = () => {
       setLoading(true);
       const response = await api.post("/admin/login", { phoneNumber, password });
 
-      console.log("Login success:", response.data);
+      // ✅ Save token & admin to localStorage
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("admin", JSON.stringify(response.data.admin));
+
       navigate("/dashboard");
     } catch (err) {
       console.error("Login error:", err.response?.data || err.message);
@@ -49,7 +61,9 @@ const Login = () => {
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md">
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Company Contact Number</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Company Contact Number
+            </label>
             <input
               type="text"
               value={phoneNumber}

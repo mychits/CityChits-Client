@@ -1,14 +1,12 @@
 import Sidebar from "../components/layouts/Sidebar";
 import { MdGroups, MdOutlinePayments, MdGroupWork } from "react-icons/md";
-import { FaUserLock } from "react-icons/fa";
+import { FaUserLock, FaClipboardList } from "react-icons/fa";
 import { SlCalender } from "react-icons/sl";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../instance/TokenInstance";
-import CustomCard from "../components/cards/CustomCard";
-import { FaClipboardList } from "react-icons/fa";
 import Navbar from "../components/layouts/Navbar";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
-import { Link } from "react-router-dom";
 
 const Home = () => {
   const [groups, setGroups] = useState([]);
@@ -22,22 +20,63 @@ const Home = () => {
   const [reloadTrigger, setReloadTrigger] = useState(0);
   const [hidePayment, setHidePayment] = useState(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
-
   const [enrollmentsCount, setEnrollmentsCount] = useState(0);
-
   const [isLoading, setIsLoading] = useState(false);
+
+  const [alertConfig, setAlertConfig] = useState({
+    visibility: false,
+    message: "Something went wrong!",
+    type: "info",
+  });
+
+  const navigate = useNavigate();
+
+  const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
+  const [selectedRedirect, setSelectedRedirect] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [isLoadingVerify, setIsLoadingVerify] = useState(false);
 
   const GlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
-    setSearchText(value);
+    setSearchValue(value);
   };
 
-    const [alertConfig, setAlertConfig] = useState({
-      visibility: false,
-      message: "Something went wrong!",
-      type: "info",
-    });
-  // Check payment access
+  const handleViewDetailsClick = (redirect) => {
+    setSelectedRedirect(redirect);
+    setShowPasswordPrompt(true);
+    setErrorMsg(""); 
+  };
+
+  const verifyPasswordAndRedirect = async () => {
+    setIsLoadingVerify(true); 
+    setErrorMsg(""); 
+    try {
+      const admin = JSON.parse(localStorage.getItem("admin"));
+      if (!admin?.phoneNumber) {
+        setErrorMsg("No admin contact found. Please login again.");
+        setIsLoadingVerify(false);
+        return;
+      }
+
+      const response = await api.post("/admin/login", {
+        phoneNumber: admin.phoneNumber,
+        password: passwordInput,
+      });
+
+      if (response.data?.token) {
+        setShowPasswordPrompt(false);
+        setPasswordInput("");
+        setErrorMsg("");
+        navigate(selectedRedirect);
+      }
+    } catch (err) {
+      setErrorMsg(err.response?.data?.message || "Password verification failed");
+    } finally {
+      setIsLoadingVerify(false); 
+    }
+  };
+
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
@@ -52,7 +91,6 @@ const Home = () => {
     }
   }, []);
 
-  // Fetch data
   useEffect(() => {
     const fetchGroups = async () => {
       try {
@@ -156,8 +194,6 @@ const Home = () => {
         });
 
         setPaymentsPerMonthValue(response?.data?.totalFilteredPayment || 0);
-
-        console.log(response?.data?.totalFilteredPayment)
       } catch (error) {
         console.error("Error fetching monthly payment data:", error);
       }
@@ -192,7 +228,6 @@ const Home = () => {
       redirect: "/user",
       key: "2",
     },
-
     {
       icon: FaClipboardList,
       title: "Total Enrollments",
@@ -277,26 +312,22 @@ const Home = () => {
       card.subtitle.toLowerCase().includes(searchValue.toLowerCase())
   );
 
-  const onGlobalSearchChangeHandler = (e) => {
-    setSearchValue(e.target.value);
-  };
-
   return (
-    <div >
-       <div className="flex mt-20" >
-          <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
-          <CustomAlertDialog
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-            onClose={() =>
-              setAlertConfig((prev) => ({ ...prev, visibility: false }))
-            }
-          />
+    <div>
+      <div className="flex mt-20">
+        <Sidebar />
+        <Navbar
+          onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+          visibility={true}
+        />
+        <CustomAlertDialog
+          type={alertConfig.type}
+          isVisible={alertConfig.visibility}
+          message={alertConfig.message}
+          onClose={() =>
+            setAlertConfig((prev) => ({ ...prev, visibility: false }))
+          }
+        />
         <div className="flex-1 p-4 md:p-8 md:ml-16 md:mr-11 md:mt-11 pb-8">
           <header className="mb-8">
             <h1 className="text-3xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 mb-2">
@@ -347,9 +378,13 @@ const Home = () => {
 
                       <div className="mt-6 pt-4 border-t border-gray-100">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-500">Updated: Just now</span>
-                          <Link
-                            to={card.redirect}
+                          <span className="text-sm text-gray-500">
+                            Updated: Just now
+                          </span>
+                          <button
+                            onClick={() =>
+                              handleViewDetailsClick(card.redirect)
+                            }
                             className="text-md font-medium text-gray-600 hover:text-gray-900 transition-colors flex items-center"
                           >
                             View details
@@ -366,7 +401,7 @@ const Home = () => {
                                 d="M9 5l7 7-7 7"
                               />
                             </svg>
-                          </Link>
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -398,13 +433,90 @@ const Home = () => {
               </h3>
               <p className="text-gray-500 max-w-md text-center">
                 We couldn't find any matching results for{" "}
-                <span className="font-medium">"{searchValue}"</span>. Try adjusting your search
-                terms.
+                <span className="font-medium">"{searchValue}"</span>. Try
+                adjusting your search terms.
               </p>
             </div>
           )}
         </div>
       </div>
+
+   
+      {showPasswordPrompt && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4 animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 transform transition-all duration-300 scale-100 hover:scale-[1.01]">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-800"> Secure Access Required</h2>
+              <button
+                onClick={() => setShowPasswordPrompt(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <p className="text-gray-600 text-sm mb-6">
+              Please enter your admin password to proceed to <span className="font-medium text-violet-600">{selectedRedirect} page</span>
+            </p>
+
+            <div className="mb-6">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                placeholder="••••••••"
+                autoFocus
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-violet-200 focus:border-violet-500 outline-none transition-all duration-200 text-gray-800 placeholder-gray-400"
+              />
+              {errorMsg && (
+                <p className="mt-2 text-sm text-red-500 font-medium flex items-center">
+                  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  {errorMsg}
+                </p>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowPasswordPrompt(false)}
+                className="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors duration-200"
+                disabled={isLoadingVerify}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={verifyPasswordAndRedirect}
+                disabled={isLoadingVerify}
+                className={`flex-1 py-3 px-4 font-medium rounded-xl shadow-md transition-all duration-200 flex items-center justify-center
+                  ${isLoadingVerify
+                    ? "bg-violet-400 cursor-not-allowed opacity-80"
+                    : "bg-gradient-to-r from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700 text-white hover:shadow-lg"
+                  }`}
+              >
+                {isLoadingVerify ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Verifying...
+                  </>
+                ) : (
+                  "Verify & Proceed"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
