@@ -6,7 +6,7 @@ export default {
 		{
 			pattern:
 				/bg-(primary|custom-blue|custom-yellow|custom-violet|custom-green|custom-dark-green|custom-pink|custom-orange|custom-purple)/,
-			variants: ["hover"], 
+			variants: ["hover"],
 		},
 	],
 	theme: {
@@ -23,9 +23,9 @@ export default {
 				"custom-green": "#04A6C6",
 				"custom-dark-blue": "#316FE8",
 				"custom-dark-green": "#227B94",
-				"custom-pink":"#E75480",
-				"custom-orange":"#9D4EDD",
-				"custom-purple":"#CEA2FD",
+				"custom-pink": "#E75480",
+				"custom-orange": "#9D4EDD",
+				"custom-purple": "#CEA2FD",
 
 			},
 			container: {
@@ -37,6 +37,16 @@ export default {
 					xl: "5rem",
 					"2xl": "6rem",
 				},
+			},
+			keyframes: {
+				'3d-spin': {
+					'0%': { transform: 'rotateY(0deg)' },
+					'50%': { transform: 'rotateY(180deg) scale(1.1)' },
+					'100%': { transform: 'rotateY(360deg)' },
+				},
+			},
+			animation: {
+				'3d-spin': '3d-spin 6s linear infinite',
 			},
 		},
 	},

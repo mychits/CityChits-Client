@@ -38,10 +38,11 @@ const Navbar = ({
           className="flex items-center space-x-2 sm:space-x-4 text-white transition-transform duration-300 hover:scale-105"
         >
           <img
-            src={CityChits}
-            alt="MyChits Logo"
-            className="h-10  sm:h-12 w-auto transition-transform duration-300"
-          />
+  src={CityChits}
+  alt="MyChits Logo"
+  className="h-10 sm:h-12 w-auto transition-transform duration-500 transform hover:rotate-y-180 hover:scale-110  animate-3d-spin "
+/>
+
           <span className="font-extrabold text-xl sm:text-2xl tracking-wide hidden sm:block">
             City-Chits
           </span>
