@@ -8,6 +8,7 @@ import {  HiX } from "react-icons/hi";
 import { BiMenu } from "react-icons/bi";
 import hotkeys from "../../data/hotKeys";
 import mychitsHead from "../../assets/images/mychits_head.svg";
+import CityChits from "../../assets/images/CityChits.png"
 import { AiOutlineLogout } from "react-icons/ai";
 
 const Navbar = ({
@@ -37,12 +38,12 @@ const Navbar = ({
           className="flex items-center space-x-2 sm:space-x-4 text-white transition-transform duration-300 hover:scale-105"
         >
           <img
-            src={mychitsHead}
+            src={CityChits}
             alt="MyChits Logo"
-            className="h-10 sm:h-12 w-auto transition-transform duration-300"
+            className="h-10  sm:h-12 w-auto transition-transform duration-300"
           />
           <span className="font-extrabold text-xl sm:text-2xl tracking-wide hidden sm:block">
-            MyChits
+            City-Chits
           </span>
         </button>
 
