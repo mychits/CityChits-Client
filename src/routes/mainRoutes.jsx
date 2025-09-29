@@ -78,11 +78,13 @@ import HardTransferCustomer from "../pages/HardTransfer";
 import UnApprovedCustomer from "../pages/UnApprovedCustomer";
 import CustomerView from "../pages/CustomerView";
 import MobileAppEnroll from "../pages/MobileAppEnroll";
-import PaymentLink from "../pages/PaymentLink"; 
+import PaymentLink from "../pages/PaymentLink";
 import PaymentLinkMenu from "../pages/PaymentLinkMenu";
 import ChitBulkPaymentLink from "../pages/BulkChitPaymentLink";
 import Analytics from "../pages/Analytics";
 
+import TotalRevenue from "../pages/TotalRevenue";
+import MonthlyRevenue from "../pages/MonthlyRevenue";
 
 
 import TargetIncentiveReport from "../pages/TargetIncentive";
@@ -106,8 +108,8 @@ const mainRoutes = createBrowserRouter([
     element: <Login />,
   },
 
-    {
-    path: "/register",       
+  {
+    path: "/register",
     element: <Register />,
   },
 
@@ -129,14 +131,14 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
-{
-  path: "/analytics",
-  element: (
-    <ProtectedRoute>
-      <Analytics />
-    </ProtectedRoute>
-  ),
-},
+  {
+    path: "/analytics",
+    element: (
+      <ProtectedRoute>
+        <Analytics />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: "/reg-fee-print/:id",
 
@@ -184,7 +186,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-   {
+  {
     path: "/pay-in-menu/payment-link-menu/chit-payment",
     element: (
       <ProtectedRoute>
@@ -193,7 +195,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
-   {
+  {
     path: "/pay-in-menu/payment-link-menu/registration-chit-payment",
     element: (
       <ProtectedRoute>
@@ -202,7 +204,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
-  
+
   {
     path: "/pay-in-menu/payment-link-menu/chit-bulk-payment",
     element: (
@@ -211,7 +213,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  
+
   {
     path: "/print-payment-out/:id",
     element: (
@@ -221,7 +223,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
-    {
+  {
     path: "/mobile-app-enroll",
     element: (
       <ProtectedRoute>
@@ -265,7 +267,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
-    {
+  {
     path: "/target-commission",
     element: <TargetCommission />,
   },
@@ -286,7 +288,7 @@ const mainRoutes = createBrowserRouter([
     element: <TargetIncentiveReport />,
   },
 
-  
+
   {
     path: "/enrollment-request-form",
     element: <EnrollmentRequestForm />,
@@ -383,7 +385,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
- 
+
   {
     path: "/pay-out-menu",
     element: (
@@ -459,6 +461,9 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
+  { path: "/total-revenue", element: <TotalRevenue /> },
+  { path: "/monthly-revenue", element: <MonthlyRevenue /> },
+
   {
     path: "/lead-setting",
     element: <LeadSetting />,
@@ -506,7 +511,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-   ,
+  ,
   {
     path: "hard-transfer",
     element: (
@@ -552,7 +557,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
-      { path: "customer-view", element: <CustomerView /> },
+  { path: "customer-view", element: <CustomerView /> },
 
   {
     path: "/reports",
@@ -574,9 +579,9 @@ const mainRoutes = createBrowserRouter([
       { path: "commission-report", element: <CommissionReport /> },
       { path: "enrollment-report", element: <EnrollmentReport /> },
       { path: "payment-summary", element: <PaymentSummary /> },
-         {path: "monthly-install-turnover", element:<MonthlyInstallmentTurnoverReport/>},
+      { path: "monthly-install-turnover", element: <MonthlyInstallmentTurnoverReport /> },
 
-        {
+      {
         path: "due-report",
         element: <DueReport />,
       },

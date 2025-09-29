@@ -28,7 +28,7 @@ const Navbar = ({
   };
 
   return (
-    <nav className="w-full fixed z-50 top-0 left-0 ">
+    <nav className="w-full fixed z-50  top-0 left-0 ">
 
       <div className="flex items-center  justify-between bg-violet-900 shadow-xl backdrop-blur-md bg-opacity-95 px-4 sm:px-8 py-3 flex-wrap md:flex-nowrap">
 
@@ -48,7 +48,7 @@ const Navbar = ({
              bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-400 
              bg-clip-text text-transparent animate-pulse"
           >
-            City-Chits
+            Demo Rider
           </span>
 
         </button>

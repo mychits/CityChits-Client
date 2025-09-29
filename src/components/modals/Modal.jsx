@@ -11,7 +11,7 @@ const Modal = ({ isVisible, onClose, children ,borderColor="primary"}) => {
   return (
     <>
  <div 
-  className={`fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex justify-center items-center z-10 `}
+  className={`fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex justify-center items-center z-50 `}
   onClick={handleClose}
 >
   <div className="w-1/2 max-h-[calc(100vh-5rem)] flex flex-col relative overflow-hidden">

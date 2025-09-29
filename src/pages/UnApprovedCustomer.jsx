@@ -513,23 +513,23 @@ const UnApprovedCustomer = () => {
       case 'Approved':
         return 'bg-green-100 text-green-800';
       case 'Pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-red-200 border-red-600 border-2 ';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
 
-  // Simple Pagination Component (inline)
+
   const SimplePagination = ({ currentPage, totalPages, onPageChange }) => {
     if (totalPages <= 1) return null;
     
     const pages = [];
     const maxPagesToShow = 5;
     
-    // Always show first page
+ 
     pages.push(1);
     
-    // Show ellipsis and middle pages if needed
+  
     if (totalPages > maxPagesToShow) {
       if (currentPage > 3) {
         pages.push('...');

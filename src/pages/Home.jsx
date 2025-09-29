@@ -290,7 +290,7 @@ const Home = () => {
       iconColor: "text-emerald-600",
       borderColor: "border-emerald-600",
       ringColor: "ring-emerald-500/20",
-      redirect: "/payment",
+        redirect: "/total-revenue", 
       key: "6",
     },
     {
@@ -303,7 +303,7 @@ const Home = () => {
       iconColor: "text-sky-600",
       borderColor: "border-sky-600",
       ringColor: "ring-sky-500/20",
-      redirect: "/payment",
+       redirect: "/monthly-revenue",
       key: "7",
     },
   ].filter(
