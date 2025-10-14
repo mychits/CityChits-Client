@@ -41,11 +41,6 @@ const HardTransfer = () => {
     return group?.group_name || "Unknown Group";
   };
 
-    const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchText(value);
-  };
-
   const fetchTransfers = async () => {
     try {
       setIsDataTableLoading(true);
@@ -289,17 +284,17 @@ const HardTransfer = () => {
   return (
     <>
       <div className="flex mt-20">
-          <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
+        <Navbar
+          onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
+          visibility={true}
+        />
+        <Sidebar />
         <div className="flex-grow p-7">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-semibold">Hard Transfer</h1>
             <Button
               onClick={handleAddTransferClick}
-              className="bg-violet-950 text-white px-5 py-5 rounded shadow-md hover:bg-violet-800 transition duration-200 text-lg"
+              className="bg-blue-950 text-white px-5 py-5 rounded shadow-md hover:bg-blue-800 transition duration-200 text-lg"
               disabled={loader}
             >
               {loader ? <Spin indicator={<LoadingOutlined spin />} /> : "+ Add Transfer"}

@@ -9,7 +9,6 @@ import CircularLoader from "../components/loaders/CircularLoader";
 import Navbar from "../components/layouts/Navbar";
 import { Select, Tooltip, notification } from "antd";
 import SettingSidebar from "../components/layouts/SettingSidebar";
-import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 
 const CommissionPayout = () => {
   const paymentFor = "commission";
@@ -55,11 +54,6 @@ const CommissionPayout = () => {
   const currentMonth = `${today.getFullYear()}-${String(
     today.getMonth() + 1
   ).padStart(2, "0")}`;
-
-    const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchText(value);
-  };
 
   const [commissionForm, setCommissionForm] = useState({
     agent_id: "",
@@ -288,11 +282,11 @@ const CommissionPayout = () => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
-    setAdminId(userObj?._id);
-    setAdminName(userObj?.full_name || userObj?.name || "");
+    setAdminId(userObj._id);
+    setAdminName(userObj.full_name || userObj.name || "");
     if (userObj?.admin_access_right_id?.access_permissions?.edit_payment) {
       setModifyPayment(
-        userObj?.admin_access_right_id?.access_permissions?.edit_payment === "true"
+        userObj.admin_access_right_id.access_permissions.edit_payment === "true"
       );
     }
     fetchAgents();
@@ -494,20 +488,14 @@ const CommissionPayout = () => {
     <>
       <div>
         {contextHolder}
-       
-        <div className="flex mt-20" >
+        <div className="flex mt-20">
+          <Navbar visibility={true} />
           <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
-          <CustomAlertDialog
+          <CustomAlert
             type={alertConfig.type}
             isVisible={alertConfig.visibility}
             message={alertConfig.message}
-            onClose={() =>
-              setAlertConfig((prev) => ({ ...prev, visibility: false }))
-            }
+            noReload={alertConfig.noReload}
           />
           <div className="flex-grow p-7">
             <div className="flex flex-col md:flex-row justify-between items-center mb-4">
@@ -523,14 +511,14 @@ const CommissionPayout = () => {
                     setShowCommissionModal(true);
                     resetCommissionForm();
                   }}
-                  className="bg-violet-900 text-white px-4 py-2 rounded shadow-md hover:bg-violet-600 transition duration-200 flex items-center"
+                  className="bg-blue-900 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition duration-200 flex items-center"
                 >
                   <span className="mr-2">+</span> Commission / Incentive Payment
                 </button>
               </Tooltip>
             </div>
             <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4 text-violet-800 border-b pb-2">
+              <h2 className="text-xl font-semibold mb-4 text-blue-800 border-b pb-2">
                 Commission / Incentive Payments
               </h2>
               {isLoading ? (
@@ -804,7 +792,7 @@ const CommissionPayout = () => {
                     </h3>
                     <table className="min-w-full text-sm border">
                       <thead>
-                        <tr className="bg-violet-100 text-gray-700">
+                        <tr className="bg-blue-100 text-gray-700">
                           <th className="border px-3 py-2 text-left">Part</th>
                           <th className="border px-3 py-2 text-right">
                             Amount (₹)
@@ -927,7 +915,7 @@ const CommissionPayout = () => {
                     <div className="max-h-60 overflow-y-auto custom-scrollbar">
                       <table className="min-w-full text-sm border">
                         <thead>
-                          <tr className="bg-violet-100 text-gray-700">
+                          <tr className="bg-blue-100 text-gray-700">
                             <th className="border px-3 py-2 text-left">
                               Customer
                             </th>
@@ -974,7 +962,7 @@ const CommissionPayout = () => {
                     <div className="max-h-60 overflow-y-auto custom-scrollbar">
                       <table className="min-w-full text-sm border">
                         <thead>
-                          <tr className="bg-violet-100 text-gray-700">
+                          <tr className="bg-blue-100 text-gray-700">
                             <th className="border px-3 py-2 text-left">
                               Customer
                             </th>
@@ -1077,7 +1065,7 @@ const CommissionPayout = () => {
                   )}
                 </div>
 
-                <div className="w-full bg-violet-50 p-3 rounded-lg">
+                <div className="w-full bg-blue-50 p-3 rounded-lg">
                   <label className="block mb-1 text-sm font-medium text-gray-900">
                     Disbursed By
                   </label>
@@ -1098,7 +1086,7 @@ const CommissionPayout = () => {
                   <button
                     type="submit"
                     disabled={isLoading || isLoadingCommissionCalculation}
-                    className="px-4 py-2 bg-violet-700 text-white rounded-lg hover:bg-violet-600 disabled:opacity-50"
+                    className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
                   >
                     {isLoading ? "Processing..." : "Save Payment"}
                   </button>

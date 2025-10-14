@@ -128,32 +128,12 @@ const sidebarMenu = [
   ],
 },
 
-	{
-		id: ids.seven,
-		title: "Staff",
-		icon: GiRoundTable,
-		submenu: true,
-		submenuItems: [
-			{
-				id: "$101",
-				title: "All",
-				icon: HiOutlineUserGroup,
-				link: "/staff",
-			},
-			{
-				id: "$102",
-				title: "Agent",
-				icon: FaPersonMilitaryPointing,
-				link: "/agent",
-			},
-			{
-				id: "$103",
-				title: "Employee",
-				icon: FaUserTie,
-				link: "/employee",
-			},
-		],
-	},
+{
+    id: ids.seven,
+    title: "Staff",
+    icon: GiRoundTable,
+    link: "/staff-menu"
+},
 	{
 		id: "$18",
 		title: "Tasks",
@@ -203,24 +183,8 @@ const sidebarMenu = [
 		id: "",
 		title: "Payments",
 		icon: TbCoinRupeeFilled,
-		submenu: true,
-		submenuItems: [
-
-			{
-				id: "",
-				title: "Pay-In ",
-				icon: TbReceiptRupee,
-				link: "/pay-in-menu",
-			},
-			{
-				id: "",
-				title: "Pay-Out ",
-				icon: RiMoneyRupeeCircleLine,
-				link: "/pay-out-menu",
-			},
-
-
-		],
+		 link: "/payment-in-out-menu"
+	
 	},
 	{
 		id: "$10",
@@ -257,12 +221,12 @@ const sidebarMenu = [
 						icon: FaMapLocationDot,
 						link: "/collection-area-request",
 					},
-					{
-						id: ids.fifteen,
-						title: "Collection Mapping",
-						icon: RiUserLocationFill,
-						link: "/collection-area-mapping",
-					},
+					// {
+					// 	id: ids.fifteen,
+					// 	title: "Collection Mapping",
+					// 	icon: RiUserLocationFill,
+					// 	link: "/collection-area-mapping",
+					// },
 				],
 			},
 			{

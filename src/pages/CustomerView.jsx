@@ -155,28 +155,23 @@ const CustomerView = () => {
   };
   const [selectedFile, setSelectedFile] = useState(null);
   const handleUploadPhoto = async () => {
-    if (!selectedFile) return;
-    const formData = new FormData();
-    formData.append("profilephoto", selectedFile);
-    try {
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/user/update-user/${group._id}`,
-        {
-          method: "PUT",
-          body: formData,
-        }
-      );
-      if (!res.ok) throw new Error("Upload failed");
-      const data = await res.json();
-      message.success("Profile photo updated successfully!");
-      if (data?.profilephoto) {
-        setGroup((prev) => ({ ...prev, profilephoto: data.profilephoto }));
-      }
-    } catch (err) {
-      console.error(err);
-      message.error("Failed to upload photo");
+  if (!selectedFile) return;
+  const formData = new FormData();
+  formData.append("profilephoto", selectedFile);
+  try {
+    const { data } = await api.put(`/user/update-user/${group._id}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    message.success("Profile photo updated successfully!");
+    if (data?.profilephoto) {
+      setGroup((prev) => ({ ...prev, profilephoto: data.profilephoto }));
     }
-  };
+  } catch (err) {
+    console.error("Upload failed:", err);
+    message.error("Failed to upload photo");
+  }
+};
+
   const StatBox = ({ label, value, icon, trend, isPositive }) => (
     <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
       <div className="flex items-center justify-between mb-2">
@@ -316,18 +311,25 @@ const CustomerView = () => {
       fetchAllEnrollments();
     }
   }, [userId]);
-  useEffect(() => {
-    if (userId) {
-      setIsLoadingPayment(true);
-      fetch(`/api/payments?customerId=${userId}&_sort=date&_order=desc&_limit=1`)
-        .then((res) => res.json())
-        .then((data) => {
-          setLastPayments(data);
-          setIsLoadingPayment(false);
-        })
-        .catch(() => setIsLoadingPayment(false));
-    }
-  }, [userId]);
+useEffect(() => {
+  if (userId) {
+    setIsLoadingPayment(true);
+    api.get(`/payments`, {
+      params: {
+        customerId: userId,
+        _sort: "date",
+        _order: "desc",
+        _limit: 1,
+      },
+    })
+      .then(({ data }) => {
+        setLastPayments(data);
+        setIsLoadingPayment(false);
+      })
+      .catch(() => setIsLoadingPayment(false));
+  }
+}, [userId]);
+
   useEffect(() => {
     if (!userId) return;
     let cancelled = false;
@@ -1137,7 +1139,7 @@ const CustomerView = () => {
               <div className="p-6">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                   <div className="lg:col-span-1 flex flex-col items-center">
-                    <div className="relative w-44 h-44  rounded-full overflow-hidden border-4 border-violet-200 shadow-lg bg-gray-50">
+                    <div className="relative w-52 h-52  rounded-3xl overflow-hidden border-4 border-violet-200 shadow-lg bg-gray-50">
                       <img
                         src={
                           selectedFile
@@ -1256,7 +1258,7 @@ const CustomerView = () => {
                           },
 
                           {
-                            label: "NET TO BE PAID",
+                            label: "TOTAL  TO BE PAID",
                             value: ` ${(NetTotalprofit || 0).toLocaleString("en-IN")}`,
                             icon: <BsCurrencyRupee className="text-violet-600" />,
                           },
@@ -1265,34 +1267,56 @@ const CustomerView = () => {
                             value: ` ${(Totalpaid || 0).toLocaleString("en-IN")}`,
                             icon: <BsCurrencyRupee className="text-violet-600" />,
                           },
-                          {
-                            label: "TOTAL PROFIT",
-                            value: ` ${(Totalprofit || 0).toLocaleString("en-IN")}`,
-                            icon: <BsCurrencyRupee className="text-violet-600" />,
-                          },
-                          {
+                            {
                             label: " TOTAL BALANCE",
                             value: ` ${(NetTotalprofit && Totalpaid) ? Number(NetTotalprofit - Totalpaid).toLocaleString("en-IN") : 0}`,
                             icon: <BsCurrencyRupee className="text-violet-600" />,
                           },
                           {
-                            label: "LATEST PAYMENT",
-                            value: isLoadingPayment
-                              ? <CircularLoader color="text-violet-600" size="sm" />
-                              : lastPayment?.amount
-                                ? `${(lastPayment.amount || 0).toLocaleString("en-IN")} `
-                                : 0,
+                            label: "TOTAL PROFIT",
+                            value: ` ${(Totalprofit || 0).toLocaleString("en-IN")}`,
                             icon: <BsCurrencyRupee className="text-violet-600" />,
                           },
-                          {
-                            label: "LATEST PAYMENT DATE",
-                            value: isLoadingPayment
-                              ? <CircularLoader color="text-violet-600" size="sm" />
-                              : lastPayment?.date
-                                ? ` ${new Date(lastPayment.date).toLocaleDateString("en-GB")}`
-                                : 0,
-                            icon: <SlCalender className="text-violet-600" />,
-                          },
+                        
+                          // {
+                          //   label: "LATEST PAYMENT",
+                          //   value: isLoadingPayment
+                          //     ? <CircularLoader color="text-violet-600" size="sm" />
+                          //     : lastPayment?.amount
+                          //       ? `${(lastPayment.amount || 0).toLocaleString("en-IN")} `
+                          //       : 0,  
+                          //        icon: <BsCurrencyRupee className="text-violet-600" />,
+                          // },
+                          
+                          // {
+                          //   label: "LATEST PAYMENT DATE",
+                          //   value: isLoadingPayment
+                          //     ? <CircularLoader color="text-violet-600" size="sm" />
+                          //     : lastPayment?.date
+                          //       ? ` ${new Date(lastPayment.date).toLocaleDateString("en-GB")}`
+                          //       : 0,
+                          //   icon: <SlCalender className="text-violet-600" />,
+                          // },
+{
+  label: "LATEST PAYMENT",
+  value: isLoadingPayment ? (
+    <CircularLoader color="text-violet-600" size="sm" />
+  ) : lastPayment?.amount || lastPayment?.date ? (
+    <div className="flex flex-col items-start gap-0.5">
+      <span className="font-bold text-gray-900 text-lg">
+        ₹{(lastPayment.amount || 0).toLocaleString("en-IN")}
+      </span>
+      <span className="font-bold text-gray-900 text-lg mt-1">
+        {lastPayment.date
+          ? new Date(lastPayment.date).toLocaleDateString("en-GB")
+          : "—"}
+      </span>
+    </div>
+  ) : (
+    "—"
+  ),
+  icon: <BsCurrencyRupee className="text-violet-600" />,
+},
                           {
                             label: "LATEST DISBURSEMENT",
                             value: detailsLoading
@@ -1397,7 +1421,7 @@ const CustomerView = () => {
               </div>
               <div className="p-6 pt-8">
                 {activeTab === "groupDetails" && (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap  gap-2">
                     <InfoBox
                       label="Full Name"
                       value={group.full_name}
@@ -1516,27 +1540,26 @@ const CustomerView = () => {
                     />
                   </div>
                 )}
-               {activeTab === "docs" && (
-  <div className="flex flex-col gap-6">
+
+{activeTab === "docs" && (
+  <div className="space-y-6">
     {/* Aadhaar & PAN Numbers */}
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <InfoBox
         label="Aadhaar Number"
-        value={group.adhaar_no || "Not provided"}
-        icon={<FiFileText className="text-gray-500" />}
-        className="bg-gray-50 p-4 rounded-lg border"
+        value={group.adhaar_no}
+        icon={<FiFileText />}
       />
       <InfoBox
         label="PAN Number"
-        value={group.pan_no || "Not provided"}
-        icon={<FiFileText className="text-gray-500" />}
-        className="bg-gray-50 p-4 rounded-lg border"
+        value={group.pan_no}
+        icon={<FiFileText />}
       />
     </div>
 
-    {/* Document Upload Section */}
+    {/* Progress + Documents Side by Side */}
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Document Completion Card */}
+      {/* Document Completion */}
       {(() => {
         const docs = [
           group.aadhar_frontphoto,
@@ -1549,109 +1572,139 @@ const CustomerView = () => {
         const percent = Math.round((uploaded / total) * 100);
 
         return (
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">
-              Document Completion
-            </h3>
+          <div className="bg-white border rounded-lg p-4 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <Progress
-                percent={percent}
-                status={percent === 100 ? "success" : "active"}
-                showInfo={false}
-                className="w-full"
-              />
-              <span className="ml-3 text-sm font-medium text-gray-600 w-12">
+              <h3 className="text-sm font-semibold text-gray-800">
+                Document Completion
+              </h3>
+              <span
+                className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                  percent === 100
+                    ? "bg-green-100 text-green-700"
+                    : "bg-blue-100 text-blue-700"
+                }`}
+              >
                 {percent}%
               </span>
             </div>
-            <p className="text-xs text-gray-500">
+            <Progress percent={percent} showInfo={false} />
+            <p className="text-xs text-gray-500 mt-1">
               {uploaded} of {total} documents uploaded
             </p>
           </div>
         );
       })()}
 
-      {/* Document Previews */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <Collapse
-          accordion
-          bordered={false}
-          className="border-0"
-          expandIconPosition="end"
+      {/* Collapsible Aadhaar & PAN */}
+      <Collapse
+        accordion
+        bordered={false}
+        className="bg-white border rounded-lg shadow-sm"
+      >
+        {/* Aadhaar Section */}
+        <Collapse.Panel
+          header={<span className="font-medium text-gray-800">Aadhaar Documents</span>}
+          key="1"
         >
-          {/* Aadhaar Section */}
-          <Collapse.Panel
-            header={
-              <span className="font-medium text-gray-700">Aadhaar Documents</span>
-            }
-            key="1"
-            className="px-4 py-3 hover:bg-gray-50"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-4 pt-0">
-              {['front', 'back'].map((side) => {
-                const photoKey = `aadhar_${side}photo`;
-                const src = group[photoKey];
-                return (
-                  <div key={side}>
-                    <h4 className="text-sm font-medium text-gray-600 mb-2 capitalize">
-                      Aadhaar {side}
-                    </h4>
-                    {src && src !== "null" ? (
-                      <div className="border rounded-lg overflow-hidden bg-gray-50 aspect-[3/4]">
-                        <img
-                          src={src}
-                          alt={`Aadhaar ${side} photo`}
-                          className="w-full h-full object-contain p-2"
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center h-48 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-gray-400 text-sm">
-                        Not uploaded
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Aadhaar Front */}
+            <div>
+              <p className="text-xs font-medium text-gray-600">Front</p>
+              {group.aadhar_frontphoto ? (
+                <a
+                  href={group.aadhar_frontphoto}
+                  download={`${group.customer_name || "Customer"}_Aadhaar_Front${
+                    group.aadhar_frontphoto.split(".").pop()
+                      ? "." + group.aadhar_frontphoto.split(".").pop()
+                      : ""
+                  }`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  Aadhaar Front Document
+                </a>
+              ) : (
+                <p className="text-gray-400 italic text-xs">Not uploaded</p>
+              )}
             </div>
-          </Collapse.Panel>
 
-          {/* PAN Section */}
-          <Collapse.Panel
-            header={
-              <span className="font-medium text-gray-700">PAN Documents</span>
-            }
-            key="2"
-            className="px-4 py-3 hover:bg-gray-50"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-4 pt-0">
-              {['front', 'back'].map((side) => {
-                const photoKey = `pan_${side}photo`;
-                const src = group[photoKey];
-                return (
-                  <div key={side}>
-                    <h4 className="text-sm font-medium text-gray-600 mb-2 capitalize">
-                      PAN {side}
-                    </h4>
-                    {src && src !== "null" ? (
-                      <div className="border rounded-lg overflow-hidden bg-gray-50 aspect-[3/4]">
-                        <img
-                          src={src}
-                          alt={`PAN ${side} photo`}
-                          className="w-full h-full object-contain p-2"
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center h-48 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-gray-400 text-sm">
-                        Not uploaded
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+            {/* Aadhaar Back */}
+            <div>
+              <p className="text-xs font-medium text-gray-600">Back</p>
+              {group.aadhar_backphoto ? (
+                <a
+                  href={group.aadhar_backphoto}
+                  download={`${group.customer_name || "Customer"}_Aadhaar_Back${
+                    group.aadhar_backphoto.split(".").pop()
+                      ? "." + group.aadhar_backphoto.split(".").pop()
+                      : ""
+                  }`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  Aadhaar Back Document
+                </a>
+              ) : (
+                <p className="text-gray-400 italic text-xs">Not uploaded</p>
+              )}
             </div>
-          </Collapse.Panel>
-        </Collapse>
-      </div>
+          </div>
+        </Collapse.Panel>
+
+        {/* PAN Section */}
+        <Collapse.Panel
+          header={<span className="font-medium text-gray-800">PAN Documents</span>}
+          key="2"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* PAN Front */}
+            <div>
+              <p className="text-xs font-medium text-gray-600">Front</p>
+              {group.pan_frontphoto ? (
+                <a
+                  href={group.pan_frontphoto}
+                  download={`${group.customer_name || "Customer"}_PAN_Front${
+                    group.pan_frontphoto.split(".").pop()
+                      ? "." + group.pan_frontphoto.split(".").pop()
+                      : ""
+                  }`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  PAN Front Document
+                </a>
+              ) : (
+                <p className="text-gray-400 italic text-xs">Not uploaded</p>
+              )}
+            </div>
+
+            {/* PAN Back */}
+            <div>
+              <p className="text-xs font-medium text-gray-600">Back</p>
+              {group.pan_backphoto ? (
+                <a
+                  href={group.pan_backphoto}
+                  download={`${group.customer_name || "Customer"}_PAN_Back${
+                    group.pan_backphoto.split(".").pop()
+                      ? "." + group.pan_backphoto.split(".").pop()
+                      : ""
+                  }`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  PAN Back Document
+                </a>
+              ) : (
+                <p className="text-gray-400 italic text-xs">Not uploaded</p>
+              )}
+            </div>
+          </div>
+        </Collapse.Panel>
+      </Collapse>
     </div>
   </div>
 )}
@@ -1853,7 +1906,7 @@ const CustomerView = () => {
                     className="h-2 rounded-full bg-violet-600"
                   ></div>
                 </div>
-              </div>
+              </div>  
             </div>
           </Modal>
         )}

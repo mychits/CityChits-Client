@@ -20,7 +20,7 @@ import { IoMdMore } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { fieldSize } from "../data/fieldSize";
 
-const Receipt = () => {
+const RegistrationFeeReport = () => {
   const [groups, setGroups] = useState([]);
   const [TableDaybook, setTableDaybook] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState("");
@@ -54,13 +54,7 @@ const Receipt = () => {
   const [hideAccountType, setHideAccountType] = useState("");
   const [selectedAccountType, setSelectedAccountType] = useState("");
   const [selectedCustomers, setSelectedCustomers] = useState("");
-  const [payments, setPayments] = useState([]);
-
-  const [collectionAgent, setCollectionAgent] = useState("");
-  const [collectionAdmin, setCollectionAdmin] = useState("");
-  const [agents, setAgents] = useState([]);
-  const [admins, setAdmins] = useState([]);
-
+  const [payments, setPayments] = useState("");
   const [showAllPaymentModes, setShowAllPaymentModes] = useState(false);
   const [formData, setFormData] = useState({
     group_id: "",
@@ -71,8 +65,6 @@ const Receipt = () => {
     amount: "",
     pay_type: "cash",
     transaction_id: "",
-    collected_by: collectionAgent,
-    admin_type: collectionAdmin,
   });
   const [alertConfig, setAlertConfig] = useState({
     visibility: false,
@@ -97,21 +89,21 @@ const Receipt = () => {
     }
   }, []);
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    const userObj = JSON.parse(user);
-
-    if (
-      userObj &&
-      userObj.admin_access_right_id?.access_permissions?.edit_payment
-    ) {
-      const isModify =
-        userObj.admin_access_right_id?.access_permissions?.edit_payment ===
-        "true"
-          ? true
-          : false;
-      setHideAccountType(isModify);
-    }
-  }, []);
+      const user = localStorage.getItem("user");
+      const userObj = JSON.parse(user);
+  
+      if (
+        userObj &&
+        userObj.admin_access_right_id?.access_permissions?.edit_payment
+      ) {
+        const isModify =
+          userObj.admin_access_right_id?.access_permissions?.edit_payment ===
+          "true"
+            ? true
+            : false;
+        setHideAccountType(isModify);
+      }
+    }, []);
   useEffect(() => {
     const fetchGroups = async () => {
       try {
@@ -123,45 +115,8 @@ const Receipt = () => {
     };
     fetchGroups();
   }, []);
-  useEffect(() => {
-    (async () => {
-      try {
-        const [employees, admins] = await Promise.all([
-          api.get("/agent/get-employee"),
-          api.get("/admin/get-sub-admins"),
-        ]);
-        const emps = employees?.data?.employee.map((emp) => ({
-          _id: emp._id,
-          full_name: emp.name,
-          phone_number: emp.phone_number,
-          selected_type: "agent_type",
-        }));
-        setAgents(emps);
-        const adms = admins?.data?.map((ad) => ({
-          _id: ad?._id,
-          full_name: ad?.name,
-          phone_number: ad?.phoneNumber,
-          selected_type: "admin_type",
-        }));
-        setAdmins(adms);
-        console.log(adms, "adms");
-      } catch (error) {
-        setAdmins([]);
-        setAgents([]);
-      }
-    })();
-  }, []);
-  useEffect(() => {
-    const fetchReceipt = async () => {
-      try {
-        const response = await api.get("/payment/get-latest-receipt");
-        setReceiptNo(response.data);
-      } catch (error) {
-        console.error("Error fetching receipt data:", error);
-      }
-    };
-    fetchReceipt();
-  }, []);
+
+
 
   useEffect(() => {
     const fetchGroups = async () => {
@@ -287,7 +242,7 @@ const Receipt = () => {
     const fetchPayments = async () => {
       try {
         setIsLoading(true);
-        const response = await api.get(`/payment/get-report-receipt`, {
+        const response = await api.get(`/registration-fee/dates`, {
           params: {
             from_date: selectedFromDate,
             to_date: selectedDate,
@@ -295,12 +250,11 @@ const Receipt = () => {
             userId: selectedCustomers,
             pay_type: selectedPaymentMode,
             account_type: selectedAccountType,
-            collected_by: collectionAgent,
-            admin_type: collectionAdmin,
+            
           },
-          signal: abortController.signal,
+          signal:abortController.signal
         });
-        console.info(response.data, "testing account type");
+        console.info(response.data, "testing account type")
         if (response.data && response.data.length > 0) {
           const validPayments = response.data.filter(
             (payment) => payment.group_id !== null
@@ -312,7 +266,7 @@ const Receipt = () => {
             (sum, payment) => sum + Number(payment.amount || 0),
             0
           );
-          console.info(totalAmount, "check amount");
+          console.info(totalAmount,"check amount");
           setPayments(totalAmount);
 
           const formattedData = validPayments.map((group, index) => ({
@@ -376,9 +330,9 @@ const Receipt = () => {
     };
 
     fetchPayments();
-    return () => {
-      abortController.abort();
-    };
+     return ()=>{
+        abortController.abort();
+      }
   }, [
     selectedAuctionGroupId,
     selectedDate,
@@ -386,8 +340,6 @@ const Receipt = () => {
     selectedCustomers,
     selectedFromDate,
     selectedAccountType,
-    collectionAgent,
-    collectionAdmin,
   ]);
 
   const columns = [
@@ -404,8 +356,7 @@ const Receipt = () => {
     { key: "amount", header: "Amount" },
     { key: "mode", header: "Payment Mode" },
     ...(hideAccountType
-      ? [{ key: "account_type", header: "Account Type" }]
-      : []),
+    ? [{ key: "account_type", header: "Account Type" }]: []),
     { key: "collected_by", header: "Collected By" },
     { key: "action", header: "Action" },
   ];
@@ -531,23 +482,13 @@ const Receipt = () => {
             message={alertConfig.message}
           />
           <div className="flex-grow p-7">
-            <h1 className="text-2xl font-bold">Reports - Receipt</h1>
+            <h1 className="text-2xl font-bold">Registration Receipt Report</h1>
             <div className="mt-6 mb-8">
               <div className="mb-2">
                 <div className="flex justify-start items-center w-full gap-4">
                   <div className="mb-2">
                     <label>Filter Option</label>
-                    {/* <select
-                      onChange={handleSelectFilter}
-                      className="border border-gray-300 rounded px-6 shadow-sm outline-none w-full max-w-md"
-                    >
-                      <option value="Today">Today</option>
-                      <option value="Yesterday">Yesterday</option>
-                      <option value="ThisMonth">This Month</option>
-                      <option value="LastMonth">Last Month</option>
-                      <option value="ThisYear">This Year</option>
-                      <option value="Custom">Custom</option>
-                    </select> */}
+                   
                     <Select
                       showSearch
                       popupMatchSelectWidth={false}
@@ -692,57 +633,29 @@ const Receipt = () => {
                     >
                       <Select.Option value="">All</Select.Option>
                       <Select.Option value="cash">Cash</Select.Option>
+                      <Select.Option value="Payment Link">Online | Payment Link</Select.Option>
                       <Select.Option value="online">Online</Select.Option>
+                    
                     </Select>
                   </div>
                   {showAllPaymentModes && (
-                    <div className="mb-2">
-                      <label>Account Type</label>
-
-                      <Select
-                        value={selectedAccountType}
-                        showSearch
-                        placeholder="Search Or Select Account Type"
-                        popupMatchSelectWidth={false}
-                        onChange={(groupId) => setSelectedAccountType(groupId)}
-                        filterOption={(input, option) =>
-                          option.children
-                            .toString()
-                            .toLowerCase()
-                            .includes(input.toLowerCase())
-                        }
-                        className="w-full max-w-xs h-11"
-                      >
-                        <>
-                          <option value="">Select Account Type</option>
-                          <option value="suspense">Suspense</option>
-                          <option value="credit">Credit</option>
-                          <option value="adjustment">Adjustment</option>
-                          <option value="others">Others</option>
-                        </>
-                      </Select>
-                    </div>
-                  )}
                   <div className="mb-2">
-                    <label>Select Collection Agent</label>
-
+                    <label>Account Type</label>
+                    {/* <select
+                      value={selectedPaymentMode}
+                      onChange={(e) => setSelectedPaymentMode(e.target.value)}
+                      className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
+                    >
+                      <option value="">All</option>
+                      <option value="cash">Cash</option>
+                      <option value="online">Online</option>
+                    </select> */}
                     <Select
+                      value={selectedAccountType}
                       showSearch
-                      placeholder="Search Or Select Collection Agent"
+                      placeholder="Search Or Select Account Type"
                       popupMatchSelectWidth={false}
-                      onChange={(selection) => {
-                        const [id, type] = selection.split("|") || [];
-                        if (type === "admin_type") {
-                          setCollectionAdmin(id);
-                          setCollectionAgent("");
-                        } else if (type === "agent_type") {
-                          setCollectionAgent(id);
-                          setCollectionAdmin("");
-                        } else {
-                          setCollectionAdmin("");
-                          setCollectionAgent("");
-                        }
-                      }}
+                      onChange={(groupId) => setSelectedAccountType(groupId)}
                       filterOption={(input, option) =>
                         option.children
                           .toString()
@@ -750,35 +663,24 @@ const Receipt = () => {
                           .includes(input.toLowerCase())
                       }
                       className="w-full max-w-xs h-11"
+                      // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
                     >
-                      <Select.Option value="">All</Select.Option>
-                      {[...new Set(agents), ...new Set(admins)].map((dt) => (
-                        <Select.Option key={dt?._id} value={`${dt._id}|${dt.selected_type}`}>
-                          {dt.selected_type === "admin_type"
-                            ? "Admin | "
-                            : "Agent | "}
-                          {dt.full_name} | {dt.phone_number}
-                        </Select.Option>
-                      ))}
+                        <>
+                         <option value="">Select Account Type</option>
+                          <option value="suspense">Suspense</option>
+                          <option value="credit">Credit</option>
+                          <option value="adjustment">Adjustment</option>
+                          <option value="others">Others</option>
+                        </>
+                      
                     </Select>
                   </div>
-
-                  <div className="relative overflow-hidden bg-gradient-to-br from-indigo-500 via-white-500 to-blue-500 rounded-2xl shadow-lg p-4 transition-all hover:shadow-2xl hover:scale-[1.02] duration-300">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
-
-                    <div className="relative z-10">
-                      <p className="text-white/80 text-sm font-medium uppercase tracking-wider mb-2">
-                        Total Amount
-                      </p>
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-white text-4xl font-bold">
-                          ₹{payments || 0}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12"></div>
+                  )}
+                  <div>
+                    <h1 className="text-md mt-6">
+                      Total Amount:{" "}
+                      <span className="text-xl">₹{payments || 0}</span>
+                    </h1>
                   </div>
                 </div>
               </div>
@@ -787,8 +689,9 @@ const Receipt = () => {
                   <DataTable
                     data={filterOption(TableDaybook, searchText)}
                     columns={columns}
-                    exportedPdfName={`Receipt Report`}
-                    exportedFileName={`Reports Receipt.csv`}
+                    exportedPdfName={`Registration Receipt Report`}
+                 
+                    exportedFileName={`Registration Receipt.csv`}
                   />
                   <div className="flex justify-end mt-4 pr-4">
                     <span className="text-lg font-semibold">
@@ -1228,4 +1131,4 @@ const Receipt = () => {
   );
 };
 
-export default Receipt;
+export default RegistrationFeeReport;

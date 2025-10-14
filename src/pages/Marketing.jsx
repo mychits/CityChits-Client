@@ -6,7 +6,6 @@ import { RiMoneyRupeeCircleLine } from "react-icons/ri";
 import { FaFacebookSquare } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
-import Navbar from "../components/layouts/Navbar";
 import { LiaSmsSolid } from "react-icons/lia";
 
 // const mainMenus = [
@@ -141,7 +140,7 @@ import { LiaSmsSolid } from "react-icons/lia";
 //               <Fragment key={menu.key}>
 //                 <div
 //                   onClick={() => toggleMenu(index)}
-//                   className="flex items-center gap-3 text-lg font-semibold text-violet-900 px-2 py-2 cursor-pointer hover:opacity-80 rounded-md transition"
+//                   className="flex items-center gap-3 text-lg font-semibold text-blue-900 px-2 py-2 cursor-pointer hover:opacity-80 rounded-md transition"
 //                 >
 //                   {menu.icon}
 //                   {menu.title}
@@ -166,10 +165,10 @@ import { LiaSmsSolid } from "react-icons/lia";
 //                           target={submenu.newTab ? "_blank" : "_self"}
 //                           className={({ isActive }) =>
 //                             `flex items-center gap-3 p-2 rounded-md transition font-medium ${
-//                               submenu.red ? "text-red-700" : "text-violet-950"
+//                               submenu.red ? "text-red-700" : "text-blue-950"
 //                             } ${
 //                               isActive
-//                                 ? "bg-violet-100 border-l-4 border-violet-400"
+//                                 ? "bg-blue-100 border-l-4 border-blue-400"
 //                                 : "hover:bg-gray-200"
 //                             }`
 //                           }
@@ -193,10 +192,6 @@ import { LiaSmsSolid } from "react-icons/lia";
 //     </div>
 //   );
 // };
- const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchText(value);
-  };
 const mainMenus = [
   {
     key: "#main-1",
@@ -232,6 +227,50 @@ const mainMenus = [
           
         ],
       },
+       {
+        key: "#main-7",
+        title: "Lead Whatsapp Message",
+        icon: <FaWhatsapp size={20} />,
+        subMenus: [
+          {
+            key: "#20",
+            title: "Welcome Message",
+            link: "/marketing/lead-welcome-message",
+            icon: <RiMoneyRupeeCircleLine size={22} />,
+          },
+          {
+            key: "#21",
+            title: "ReferredBy Message",
+            link: "/marketing/lead-referredby-message",
+            icon: <RiMoneyRupeeCircleLine size={22} />,
+          },
+          ,
+         
+          
+        ],
+      },
+       {
+        key: "#main-8",
+        title: "Customer Whatsapp Message",
+        icon: <FaWhatsapp size={20} />,
+        subMenus: [
+          {
+            key: "#20",
+            title: "Welcome Message",
+            link: "/marketing/customer-welcome-message",
+            icon: <RiMoneyRupeeCircleLine size={22} />,
+          },
+          {
+            key: "#21",
+            title: "ChitPlan Message",
+            link: "/marketing/customer-chitplan-message",
+            icon: <RiMoneyRupeeCircleLine size={22} />,
+          },
+          ,
+         
+          
+        ],
+      },
       {
         key: "#main-6",
         title: "Auction Message",
@@ -249,6 +288,31 @@ const mainMenus = [
             link: "/marketing/bid-winner",
             icon: <RiMoneyRupeeCircleLine size={22} />,
           },
+          {
+            key: "#18",
+            title: "Auction Bid status",
+            link: "/marketing/bid-status",
+            icon: <RiMoneyRupeeCircleLine size={22} />,
+          },
+          {
+            key: "#19",
+            title: "Bid Winner Document List",
+            link: "/marketing/winner-document",
+            icon: <RiMoneyRupeeCircleLine size={22} />,
+          },
+          {
+            key: "#20",
+            title: "Auction information",
+            link: "/marketing/auction-info",
+            icon: <RiMoneyRupeeCircleLine size={22} />,
+          },
+          {
+            key: "#21",
+            title: "Auction Terms and Condition",
+            link: "/marketing/auction-terms-condition",
+            icon: <RiMoneyRupeeCircleLine size={22} />,
+          },
+
         ],
       },
       {
@@ -358,7 +422,7 @@ const Marketing = () => {
                     target={menu.newTab ? "_blank" : "_self"}
                     className={({ isActive }) =>
                       `flex items-center gap-3 p-2 rounded-md transition font-medium cursor-pointer 
-                      ${isActive ? "bg-violet-500 text-white" : "hover:bg-gray-200 text-violet-950"}`
+                      ${isActive ? "bg-blue-500 text-white" : "hover:bg-gray-200 text-blue-950"}`
                     }
                   >
                     {menu.icon}
@@ -368,7 +432,7 @@ const Marketing = () => {
                   <div
                     onClick={() => hasSubMenu && toggleMenu(menu.key)}
                     className={`flex items-center gap-3 p-2 rounded-md transition font-medium cursor-pointer 
-                    ${isOpen ? "bg-gray-100 text-violet-950" : "hover:bg-gray-200 text-violet-950"}`}
+                    ${isOpen ? "bg-gray-100 text-blue-950" : "hover:bg-gray-200 text-blue-950"}`}
                   >
                     {menu.icon}
                     <span>{menu.title}</span>
@@ -391,13 +455,7 @@ const Marketing = () => {
 
   return (
     <div className="w-screen flex mt-20">
-   
-        <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
-          
+      <Sidebar />
       <div className="flex min-h-screen">
         <div className="w-[300px] bg-gray-50 min-h-screen p-4 space-y-4">
           {renderMenu(mainMenus)}

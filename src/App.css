@@ -86,3 +86,15 @@ html, body {
 .animate-fadeIn {
   animation: fadeIn 0.4s ease-in-out;
 }
+
+/* Ensure Ant Design tags respect your color scheme */
+.ant-tag-geekblue {
+  background: #e6f7ff !important;
+  border-color: #91d5ff !important;
+  color: #1890ff !important;
+}
+.ant-tag-gold {
+  background: #fffbe6 !important;
+  border-color: #ffe58f !important;
+  color: #faad14 !important;
+}

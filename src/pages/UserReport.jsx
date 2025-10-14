@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import api from "../instance/TokenInstance";
 import DataTable from "../components/layouts/Datatable";
 import CircularLoader from "../components/loaders/CircularLoader";
+import CustomerReportPrint from "../components/printFormats/CustomerReportPrint";
 import { Select } from "antd";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import { useSearchParams } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
+import { IoMdDownload } from "react-icons/io";
 import Fuse from "fuse.js";
 const UserReport = () => {
   const [searchParams] = useSearchParams();
@@ -24,6 +26,7 @@ const UserReport = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [groupPaid, setGroupPaid] = useState("");
   const [groupToBePaid, setGroupToBePaid] = useState("");
+  const [customerTransactions, setCustomerTransactions] = useState(null);
   const [fromDate, setFromDate] = useState(() => {
     const today = new Date();
     return today.toISOString().split("T")[0];
@@ -347,17 +350,19 @@ const UserReport = () => {
     const fetchBorrower = async () => {
       try {
         setLoanCustomers([]);
-        const response = await api.get(
-          `/loans/get-borrower-by-user-id/${selectedGroup}`
-        );
+        const response = await api.get(`/payment/loan/user/${selectedGroup}`);
         if (response.data) {
-          const filteredBorrowerData = response.data.map((loan, index) => ({
-            sl_no: index + 1,
-            loan: loan.loan_id,
-            loan_amount: loan.loan_amount,
-            tenure: loan.tenure,
-            service_charge: loan.service_charges,
-          }));
+          const filteredBorrowerData = response.data?.overall_loan?.map(
+            (loan, index) => ({
+              sl_no: index + 1,
+              loan: loan?.loan_details?.loan?.loan_id,
+              loan_amount: loan?.loan_value,
+              tenure: loan?.loan_details?.loan?.tenure,
+              service_charge: loan?.loan_details?.loan?.service_charges,
+              total_paid_amount: loan?.total_paid_amount,
+              balance: loan?.balance,
+            })
+          );
           setFilteredBorrowerData(filteredBorrowerData);
         }
         setLoanCustomers(response.data);
@@ -466,6 +471,22 @@ const UserReport = () => {
     }
   };
 
+useEffect(() => {
+  const fetchCustomerTransaction = async () => {
+    try {
+      if (!selectedAuctionGroupId) return;
+
+      const response = await api.get(`/payment/users/${selectedAuctionGroupId}`);
+      console.info(response.data.payments, "Fetched user transactions");
+      setCustomerTransactions(response.data.payments); // <-- store in state
+    } catch (error) {
+      console.error("Unable to fetch customer transaction details", error);
+    }
+  };
+  fetchCustomerTransaction();
+}, [selectedAuctionGroupId]);
+
+
   useEffect(() => {
     const fetchPayments = async () => {
       try {
@@ -519,15 +540,8 @@ const UserReport = () => {
     { key: "loan_amount", header: "Loan Amount" },
     { key: "service_charge", header: "Service Charge" },
     { key: "tenure", header: "Tenure" },
-  ];
-  const columns = [
-    { key: "id", header: "SL. NO" },
-    { key: "group", header: "Group Name" },
-    { key: "name", header: "Customer Name" },
-    { key: "phone_number", header: "Customer Phone Number" },
-    { key: "ticket", header: "Ticket" },
-    { key: "amount", header: "Amount" },
-    { key: "mode", header: "Payment Mode" },
+    { key: "total_paid_amount", header: "Total Paid Amount" },
+    { key: "balance", header: "Balance" },
   ];
 
   const handleGroupAuctionChange = async (groupId) => {
@@ -540,7 +554,7 @@ const UserReport = () => {
 
         if (response.data && response.data.length > 0) {
           setFilteredAuction(response.data);
-          console.log(response.data,"resienns")
+          console.log(response.data, "resienns");
 
           const formattedData = response.data
             .map((group, index) => {
@@ -591,33 +605,36 @@ const UserReport = () => {
                 referred_type: group?.enrollment?.referred_type || "N/A",
                 referrer_name: group?.enrollment?.referrer_name || "N/A",
                 customer_status: group?.enrollment?.customer_status || "N/A",
-                removal_reason : group?.enrollment?.removal_reason || "N/A",
-               
+                removal_reason: group?.enrollment?.removal_reason || "N/A",
               };
             })
             .filter((item) => item !== null);
 
           setTableAuctions(formattedData);
           setCommission(0);
-         console.info(formattedData, "test");
-          const totalToBePaidAmount = formattedData.filter(summary=>summary.customer_status==="Active").reduce((sum, group) => {
-            return sum + (group?.totalBePaid || 0);
-          }, 0);
+          console.info(formattedData, "test");
+          const totalToBePaidAmount = formattedData
+            .filter((summary) => summary.customer_status === "Active")
+            .reduce((sum, group) => {
+              return sum + (group?.totalBePaid || 0);
+            }, 0);
           setTotalToBePaid(totalToBePaidAmount);
 
-          const totalNetToBePaidAmount = formattedData.filter(summary=>summary.customer_status==="Active").reduce((sum, group) => {
-            return sum + (group?.toBePaidAmount || 0);
-          }, 0);
+          const totalNetToBePaidAmount = formattedData
+            .filter((summary) => summary.customer_status === "Active")
+            .reduce((sum, group) => {
+              return sum + (group?.toBePaidAmount || 0);
+            }, 0);
           setNetTotalProfit(totalNetToBePaidAmount);
 
           const totalPaidAmount = formattedData
-  .filter(summary => summary.customer_status === "Active")
-  .reduce((sum, group) => sum + (group?.paidAmount || 0), 0);
+            .filter((summary) => summary.customer_status === "Active")
+            .reduce((sum, group) => sum + (group?.paidAmount || 0), 0);
           setTotalPaid(totalPaidAmount);
 
           const totalProfit = formattedData
-  .filter(summary => summary.customer_status === "Active")
-  .reduce((sum, group) => sum + (group?.profit || 0), 0);
+            .filter((summary) => summary.customer_status === "Active")
+            .reduce((sum, group) => sum + (group?.profit || 0), 0);
           setTotalProfit(totalProfit);
         } else {
           setFilteredAuction([]);
@@ -853,7 +870,7 @@ const UserReport = () => {
             </h1>
             <div className="mt-6 mb-8">
               <div className="mb-2">
-                <div className="flex justify-center items-center w-full gap-4 bg-violet-50    p-2 w-30 h-40  rounded-3xl  border   space-x-2  ">
+                <div className="flex justify-center items-center w-full gap-4 bg-blue-50    p-2 w-30 h-40  rounded-3xl  border   space-x-2  ">
                   <div className="mb-2">
                     <label
                       className="block text-lg text-gray-500 text-center  font-semibold mb-2"
@@ -865,7 +882,6 @@ const UserReport = () => {
                       id="SS"
                       value={selectedAuctionGroupId || undefined}
                       onChange={handleGroupPayment}
-                    
                       showSearch
                       popupMatchSelectWidth={false}
                       placeholder="Search or Select Customer"
@@ -876,7 +892,6 @@ const UserReport = () => {
                           .includes(input.toLowerCase())
                       }
                       style={{ height: "50px", width: "600px" }}
-                      
                     >
                       {groups.map((group) => (
                         <option key={group._id} value={group._id}>
@@ -887,6 +902,7 @@ const UserReport = () => {
                   </div>
                 </div>
               </div>
+
               {selectedGroup && (
                 <>
                   <div className="mt-6 mb-8">
@@ -894,7 +910,7 @@ const UserReport = () => {
                       <button
                         className={`px-6 py-2 font-medium ${
                           activeTab === "groupDetails"
-                            ? "border-b-2 border-violet-500 text-violet-500"
+                            ? "border-b-2 border-blue-500 text-blue-500"
                             : "text-gray-500"
                         }`}
                         onClick={() => handleTabChange("groupDetails")}
@@ -904,7 +920,7 @@ const UserReport = () => {
                       <button
                         className={`px-6 py-2 font-medium ${
                           activeTab === "basicReport"
-                            ? "border-b-2 border-violet-500 text-violet-500"
+                            ? "border-b-2 border-blue-500 text-blue-500"
                             : "text-gray-500"
                         }`}
                         onClick={() => handleTabChange("basicReport")}
@@ -915,12 +931,36 @@ const UserReport = () => {
                       <button
                         className={`px-6 py-2 font-medium ${
                           activeTab === "disbursement"
-                            ? "border-b-2 border-violet-500 text-violet-500"
+                            ? "border-b-2 border-blue-500 text-blue-500"
                             : "text-gray-500"
                         }`}
                         onClick={() => handleTabChange("disbursement")}
                       >
                         PayOut | Disbursement
+                      </button>
+                    </div>
+                    <div className="flex justify-end mb-3">
+                      <button
+                        onClick={() =>
+                          CustomerReportPrint(
+                            group,
+                            TableAuctions,
+                            filteredBorrowerData,
+                            filteredDisbursement,
+                            {
+                              TotalToBepaid,
+                              Totalprofit,
+                              NetTotalprofit,
+                              Totalpaid,
+                            },
+                            TableEnrolls,
+                            customerTransactions 
+                          )
+                        }
+                        className="flex items-center gap-2 px-6 py-2 bg-blue-500 text-white rounded shadow"
+                      >
+                        <IoMdDownload size={20} />
+                        Download Full Report
                       </button>
                     </div>
 
@@ -939,7 +979,7 @@ const UserReport = () => {
                                   type="text"
                                   placeholder="Search customer details..."
                                   className="w-full pl-12 pr-5 py-3.5 text-gray-800 bg-white border border-gray-200 rounded-full shadow-3xl 
-                   placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-violet-400 
+                   placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 
                    transition-all duration-300 ease-in-out text-sm md:text-base"
                                   value={searchText}
                                   onChange={(e) =>
@@ -1021,7 +1061,7 @@ const UserReport = () => {
         ${
           visibleRows.row1
             ? "bg-gradient-to-r from-green-500 to-green-700 text-white shadow-lg"
-            : "bg-gradient-to-r from-violet-700 to-violet-900 text-white shadow-md hover:shadow-lg hover:scale-105"
+            : "bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-md hover:shadow-lg hover:scale-105"
         }
       `}
                                 >
@@ -1041,7 +1081,7 @@ const UserReport = () => {
         ${
           visibleRows.row2
             ? "bg-gradient-to-r from-green-500 to-green-700 text-white shadow-lg"
-            : "bg-gradient-to-r from-violet-700 to-violet-900 text-white shadow-md hover:shadow-lg hover:scale-105"
+            : "bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-md hover:shadow-lg hover:scale-105"
         }
       `}
                                 >
@@ -1061,7 +1101,7 @@ const UserReport = () => {
         ${
           visibleRows.row3
             ? "bg-gradient-to-r from-green-500 to-green-700 text-white shadow-lg"
-            : "bg-gradient-to-r from-violet-700 to-violet-900 text-white shadow-md hover:shadow-lg hover:scale-105"
+            : "bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-md hover:shadow-lg hover:scale-105"
         }
       `}
                                 >
@@ -1081,7 +1121,7 @@ const UserReport = () => {
         ${
           visibleRows.row4
             ? "bg-gradient-to-r from-green-500 to-green-700 text-white shadow-lg"
-            : "bg-gradient-to-r from-violet-700 to-violet-900 text-white shadow-md hover:shadow-lg hover:scale-105"
+            : "bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-md hover:shadow-lg hover:scale-105"
         }
       `}
                                 >
@@ -1193,7 +1233,6 @@ const UserReport = () => {
                                       value={group.alternate_number}
                                     />
                                   </div>
-                                  
                                 </div>
                               )}
 
@@ -1409,6 +1448,7 @@ const UserReport = () => {
                                 className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
                               >
                                 <option value="">Select Group | Ticket</option>
+
                                 {filteredAuction.map((group) => {
                                   if (group?.enrollment?.group) {
                                     return (
@@ -1423,35 +1463,59 @@ const UserReport = () => {
                                   }
                                   return null;
                                 })}
-                                {loanCustomers.map((loan) => (
-                                  <option
-                                    key={loan._id}
-                                    value={`Loan|${loan._id}`}
-                                  >
-                                    {`${loan.loan_id} | ₹${loan.loan_amount}`}
-                                  </option>
-                                ))}
-                                {registrationFee.amount > 0 && (
-                                  <div className="mt-6 p-4 border rounded bg-gray-100 w-fit text-gray-800 shadow">
-                                    <p className="text-sm font-semibold">
-                                      Registration Fee Info
-                                    </p>
-                                    <p>
-                                      <strong>Amount:</strong> ₹
-                                      {registrationFee.amount}
-                                    </p>
-                                    <p>
-                                      <strong>Date:</strong>{" "}
-                                      {registrationFee.createdAt
-                                        ? new Date(
-                                            registrationFee.createdAt
-                                          ).toLocaleDateString("en-GB")
-                                        : "N/A"}
-                                    </p>
-                                  </div>
-                                )}
+
+                                {Array.isArray(loanCustomers)
+                                  ? loanCustomers.map((loan) => (
+                                      <option
+                                        key={loan._id}
+                                        value={`Loan|${loan._id}`}
+                                      >
+                                        {`${loan.loan_id || "N/A"} | ₹${
+                                          loan.loan_amount || 0
+                                        }`}
+                                      </option>
+                                    ))
+                                  : Array.isArray(loanCustomers?.overall_loan)
+                                  ? loanCustomers.overall_loan.map(
+                                      (loan, index) => (
+                                        <option
+                                          key={index}
+                                          value={`Loan|${
+                                            loan?.loan_details?.loan?._id ||
+                                            index
+                                          }`}
+                                        >
+                                          {`${
+                                            loan?.loan_details?.loan?.loan_id ||
+                                            "N/A"
+                                          } | ₹${loan?.loan_value || 0}`}
+                                        </option>
+                                      )
+                                    )
+                                  : null}
                               </select>
+
+                              {registrationFee.amount > 0 && (
+                                <div className="mt-6 p-4 border rounded bg-gray-100 w-fit text-gray-800 shadow">
+                                  <p className="text-sm font-semibold">
+                                    Registration Fee Info
+                                  </p>
+                                  <p>
+                                    <strong>Amount:</strong> ₹
+                                    {registrationFee.amount}
+                                  </p>
+                                  <p>
+                                    <strong>Date:</strong>{" "}
+                                    {registrationFee.createdAt
+                                      ? new Date(
+                                          registrationFee.createdAt
+                                        ).toLocaleDateString("en-GB")
+                                      : "N/A"}
+                                  </p>
+                                </div>
+                              )}
                             </div>
+
                             <div className="mt-6 flex justify-center gap-8 flex-wrap">
                               <input
                                 type="text"
@@ -1466,7 +1530,7 @@ const UserReport = () => {
                                 type="text"
                                 value={`Payment Balance: ₹${finalPaymentBalance}`}
                                 readOnly
-                                className="px-4 py-2 border rounded font-semibold w-60 text-center bg-violet-100 text-violet-800 border-violet-400"
+                                className="px-4 py-2 border rounded font-semibold w-60 text-center bg-blue-100 text-blue-800 border-blue-400"
                               />
 
                               <input

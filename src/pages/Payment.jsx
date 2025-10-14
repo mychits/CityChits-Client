@@ -8,7 +8,6 @@ import CustomAlert from "../components/alerts/CustomAlert";
 import CircularLoader from "../components/loaders/CircularLoader";
 import { FaWhatsappSquare } from "react-icons/fa";
 import Navbar from "../components/layouts/Navbar";
-import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import {
   Select,
   Dropdown,
@@ -127,11 +126,6 @@ const Payment = () => {
     noReload: false,
     type: "info",
   });
-
-    const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchText(value);
-  };
 
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
@@ -867,21 +861,18 @@ const Payment = () => {
         <BackdropBlurLoader title={"payment Data processing...."} />
       ) : (
         <div>
-         
-                 <div className="flex mt-20" >
-                   <Sidebar />
-                   <Navbar
-                     onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-                     visibility={true}
-                   />
-                   <CustomAlertDialog
-                     type={alertConfig.type}
-                     isVisible={alertConfig.visibility}
-                     message={alertConfig.message}
-                     onClose={() =>
-                       setAlertConfig((prev) => ({ ...prev, visibility: false }))
-                     }
-                   />
+          <div className="flex mt-20">
+            <Navbar
+              onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+              visibility={true}
+            />
+            <Sidebar />
+            <CustomAlert
+              type={alertConfig.type}
+              isVisible={alertConfig.visibility}
+              message={alertConfig.message}
+              noReload={alertConfig.noReload}
+            />
             <div className="flex-grow p-7">
               <h1 className="text-2xl font-semibold">Payments</h1>
               <div className="mt-6  mb-8">
@@ -892,7 +883,7 @@ const Payment = () => {
                       placeholder="Today's Payment"
                       popupMatchSelectWidth={false}
                       showSearch
-                      className="w-full   h-14 max-w-md"
+                      className="w-full  h-14 max-w-md"
                       filterOption={(input, option) =>
                         option.children
                           .toString()
@@ -914,13 +905,13 @@ const Payment = () => {
                     <div>
                       <button
                         onClick={() => setShowModal(true)}
-                        className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                        className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
                       >
                         + Add Payment
                       </button>
                       <button
                         onClick={() => setShowUploadModal(true)}
-                        className="ml-4 bg-violet-300 text-black px-4 py-2 rounded shadow-md hover:bg-violet-400 transition duration-200"
+                        className="ml-4 bg-yellow-300 text-black px-4 py-2 rounded shadow-md hover:bg-yellow-400 transition duration-200"
                       >
                         Upload Excel
                       </button>
@@ -972,7 +963,7 @@ const Payment = () => {
                   <button
                     onClick={fetchLastThreeTransactions}
                     value="Last Three transaction"
-                    className="flex items-center gap-2 bg-violet-600 hover:bg-violet-800 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-200 font-medium"
+                    className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-200 font-medium"
                   >
                     <FaReceipt className="text-lg" />
                     <span>Last 3 Transactions</span>
@@ -1105,7 +1096,7 @@ const Payment = () => {
                       onChange={handlePaymentAntSelect}
                       loading={enrollmentLoading}
                       value={paymentGroupTickets}
-                      className={` bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5 `}
+                      className={` bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 `}
                     >
                       {filteredAuction.map((entry, index) => {
                         const groupName =
@@ -1164,7 +1155,7 @@ const Payment = () => {
                         id="pay_date"
                         onChange={handleChange}
                         placeholder=""
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                       />
 
                       {errors.pay_date && (
@@ -1192,7 +1183,7 @@ const Payment = () => {
                           onChange={handleChange}
                           placeholder="Enter Amount"
                           required
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         />
                       </div>
 
@@ -1212,7 +1203,7 @@ const Payment = () => {
                       <select
                         name="pay_mode"
                         id="pay_mode"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         onChange={handlePaymentModeChange}
                       >
                         <option value="cash">Cash</option>
@@ -1257,7 +1248,7 @@ const Payment = () => {
                         value={formData.transaction_id}
                         onChange={handleChange}
                         placeholder="Enter Transaction ID"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                       />
                       {errors.transaction_id && (
                         <p className="text-red-500 text-xs mt-1">
@@ -1286,7 +1277,7 @@ const Payment = () => {
                             onChange={handleChange}
                             placeholder="Enter Cheque Number"
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                     focus:ring-blue-500 focus:border-violet-500 w-full p-2.5"
+                     focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                           />
                           {errors.cheque_number && (
                             <p className="text-red-500 text-xs mt-1">
@@ -1310,7 +1301,7 @@ const Payment = () => {
                             onChange={handleChange}
                             placeholder="Enter Cheque Date"
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                     focus:ring-blue-500 focus:border-violet-500 w-full p-2.5"
+                     focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                           />
                           {errors.cheque_date && (
                             <p className="text-red-500 text-xs mt-1">
@@ -1337,7 +1328,7 @@ const Payment = () => {
                             onChange={handleChange}
                             placeholder="Enter Bank Name"
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                     focus:ring-blue-500 focus:border-violet-500 w-full p-2.5"
+                     focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                           />
                         </div>
 
@@ -1356,7 +1347,7 @@ const Payment = () => {
                             onChange={handleChange}
                             placeholder="Enter Bank Branch"
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                     focus:ring-blue-500 focus:border-violet-500 w-full p-2.5"
+                     focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                           />
                         </div>
                       </div>
@@ -1375,7 +1366,7 @@ const Payment = () => {
                         <select
                           name="account_type"
                           id="account_type"
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                           onChange={handleAccountTypeChange}
                         >
                           <>
@@ -1403,7 +1394,7 @@ const Payment = () => {
                       <input
                         type="checkbox"
                         checked={whatsappEnable}
-                        className="text-violet-500 checked:ring-2  checked:ring-violet-700 rounded-full w-4 h-4"
+                        className="text-green-500 checked:ring-2  checked:ring-green-700 rounded-full w-4 h-4"
                       />
                       <span className="text-gray-700 text-sm">
                         Send Via Whatsapp
@@ -1413,7 +1404,7 @@ const Payment = () => {
                   <div className="w-full flex justify-end">
                     <button
                       type="submit"
-                      className="flex items-center gap-2 text-white bg-violet-600 hover:bg-violet-800 
+                      className="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700 
                focus:ring-2 focus:outline-none focus:ring-blue-300 
                font-medium rounded-md text-sm px-4 py-2 shadow-sm transition-all"
                     >
@@ -1463,7 +1454,7 @@ const Payment = () => {
                         }
                         onChange={handleInputChange}
                         placeholder="Update payDate"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                       />
                       {errors.pay_date && (
                         <p className="text-red-500 text-xs mt-1">
@@ -1488,7 +1479,7 @@ const Payment = () => {
                         onChange={handleInputChange}
                         placeholder="Enter Amount"
                         required
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                       />
                       {errors.amount && (
                         <p className="text-red-500 text-xs mt-1">
@@ -1502,8 +1493,8 @@ const Payment = () => {
                   <div className="w-full flex justify-end">
                     <button
                       type="submit"
-                      className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
-            focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                      className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+            focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                     >
                       Update
                     </button>
@@ -1769,7 +1760,7 @@ const Payment = () => {
               <h3 className="mb-4 text-xl font-bold text-gray-900">
                 Payment Details
               </h3>
-              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5">
+              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
                 <div className="mb-3 flex gap-x-2">
                   <strong>Group: </strong>{" "}
                   {currentViewGroup?.group_id?.group_name}
@@ -1868,7 +1859,7 @@ const Payment = () => {
                     <button
                       type="submit"
                       className="w-full text-white bg-red-700 hover:bg-red-800
-                    focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                     >
                       Delete
                     </button>

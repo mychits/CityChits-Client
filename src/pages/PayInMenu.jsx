@@ -9,21 +9,21 @@ const PayInMenu = () => {
     {
       id: "#1",
       title: "Registration Fee",
-      icon: <TicketCheck size={28} className="text-violet-600" />,
-      href:"/pay-in-menu/registration-fee"
+      icon: <TicketCheck size={28} className="text-blue-600" />,
+      href:"/payment-in-out-menu/pay-in-menu/registration-fee"
     },
     {
       id: "#2",
       title: "Chit Payment",
       icon: <HiCurrencyRupee size={28} className="text-yellow-600" />,
-       href:"/pay-in-menu/payment"
+       href:"/payment-in-out-menu/pay-in-menu/payment"
     },
      
     {
       id: "#3",
       title: "Payment Links",
       icon: <CiLink  size={28} className="text-green-600" />,
-       href:"/pay-in-menu/payment-link-menu"
+       href:"/payment-in-out-menu/pay-in-menu/payment-link-menu"
     },
    
   ];

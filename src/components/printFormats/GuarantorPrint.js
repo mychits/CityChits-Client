@@ -515,3 +515,4 @@ const handleGuarantorPrint = async (id) => {
 };
 
 export default handleGuarantorPrint;
+

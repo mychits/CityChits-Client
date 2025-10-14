@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../components/layouts/Sidebar";
 import Navbar from "../components/layouts/Navbar";
-import CustomAlert from "../components/alerts/CustomAlert";
 import CircularLoader from "../components/loaders/CircularLoader";
 import Modal from "../components/modals/Modal";
 import api from "../instance/TokenInstance";
-import { Input,Dropdown } from "antd";
+import { Input, Dropdown, Select } from "antd";
 import { IoMdMore } from "react-icons/io";
 import DataTable from "../components/layouts/Datatable";
 import filterOption from "../helpers/filterOption";
@@ -13,7 +12,24 @@ import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import { fieldSize } from "../data/fieldSize";
 
 const CollectionArea = () => {
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await api.get("/agent/get-employee");
+        const employees = response.data?.employee;
+        const filteredEmp = employees.map((emp) => ({
+          value: emp._id,
+          label: emp.name,
+        }));
+        setEmployees(filteredEmp);
+      } catch (error) {
+        console.error("Error Occurred while fetching Employee");
+        setEmployees([]);
+      }
+    })();
+  }, []);
   const [currentCollectionArea, setCurrentCollectionArea] = useState(null);
+  const [employees, setEmployees] = useState([]);
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [currentUpdateCollectionArea, setCurrentUpdateCollectionArea] =
     useState(null);
@@ -23,16 +39,17 @@ const CollectionArea = () => {
   const [collectionAreaData, setCollectionAreaData] = useState({
     route_name: "",
     route_pincode: "",
+    agent_id: "",
   });
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-const [reloadTrigger, setReloadTrigger] = useState(0);
- 
+  const [reloadTrigger, setReloadTrigger] = useState(0);
+
   const [updateCollectionAreaData, setUpdateCollectionAreaData] = useState({
     route_name: "",
     route_pincode: "",
-
+    agent_id: "",
   });
 
   const [alertConfig, setAlertConfig] = useState({
@@ -47,14 +64,13 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
     setSearchText(value);
   };
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchAreaCollection = async () => {
       try {
         setIsLoading(true);
-        const response = await api.get(
+        const response = await api.get( 
           "/collection-area-request/get-collection-area-data"
         );
-
         setCollectionArea(response.data);
         const collectionAreaData = response?.data.map(
           (collectionArea, index) => {
@@ -63,10 +79,13 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
               id: index + 1,
               name: collectionArea?.route_name,
               pincode: collectionArea?.route_pincode,
+              employee_name: collectionArea?.agent_id?.map(emp=>emp?.name).join(","),
+              employee_phone: collectionArea?.agent_id?.map(emp=>emp?.phone_number).join(","),
+              employee_id: collectionArea?.agent_id?.map(emp=>emp?.employeeCode).join(","),
               action: (
                 <div className="flex justify-center gap-2">
                   <Dropdown
-                   trigger={['click']}
+                    trigger={["click"]}
                     menu={{
                       items: [
                         {
@@ -106,7 +125,7 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
             };
           }
         );
-   
+
         setTableCollectionArea(collectionAreaData);
       } catch (error) {
         console.error("Error fetching collection area data:", error.message);
@@ -116,18 +135,15 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
     };
     fetchAreaCollection();
   }, [reloadTrigger]);
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setCollectionAreaData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
-
-
-
-
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -141,7 +157,7 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
     e.preventDefault();
 
     try {
-      const response = await api.post(
+      await api.post(
         "/collection-area-request/add-collection-area-data",
         collectionAreaData,
         {
@@ -150,6 +166,7 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
           },
         }
       );
+
       setReloadTrigger((prev) => prev + 1);
       setAlertConfig({
         type: "success",
@@ -161,7 +178,8 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
 
       setCollectionAreaData({
         route_name: "",
-        agent_id: [],
+        route_pincode: "",
+        agent_id: "",
       });
     } catch (error) {
       console.error("Error adding user:", error);
@@ -185,13 +203,13 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
     }
   };
 
-
-
-
   const columns = [
     { key: "id", header: "SL. NO" },
     { key: "name", header: "Collection Area Name" },
-    { key: "pincode", header: "pincode"},   
+    { key: "pincode", header: "pincode" },
+    { key: "employee_name", header: "Employee" },
+    { key: "employee_phone", header: "Phone Number" },
+    { key: "employee_id", header: "Employee Id" },
     { key: "action", header: "Action" },
   ];
 
@@ -214,6 +232,7 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
       );
       setCurrentUpdateCollectionArea(response?.data);
       setUpdateCollectionAreaData({
+        agent_id: response?.data?.agent_id,
         route_name: response?.data?.route_name,
         route_pincode: response?.data?.route_pincode,
       });
@@ -264,23 +283,23 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
       });
     } catch (error) {
       console.error("Error updating Collection Area:", error);
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.message
-        ) {
-          setAlertConfig({
-            visibility: true,
-            message: `${error?.response?.data?.message}`,
-            type: "error",
-          });
-        } else {
-          setAlertConfig({
-            visibility: true,
-            message: "An unexpected error occurred. Please try again.",
-            type: "error",
-          });
-        }
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setAlertConfig({
+          visibility: true,
+          message: `${error?.response?.data?.message}`,
+          type: "error",
+        });
+      } else {
+        setAlertConfig({
+          visibility: true,
+          message: "An unexpected error occurred. Please try again.",
+          type: "error",
+        });
+      }
     }
   };
 
@@ -294,13 +313,13 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
             visibility={true}
           />
           <CustomAlertDialog
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-          onClose={() =>
-            setAlertConfig((prev) => ({ ...prev, visibility: false }))
-          }
-        />
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
 
           <div className="flex-grow p-7">
             <div className="mt-6 mb-8">
@@ -311,18 +330,20 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
                   onClick={() => {
                     setShowModal(true);
                   }}
-                  className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
                 >
                   + Add Collection Area
                 </button>
               </div>
             </div>
-            {(tableCollectionArea?.length > 0 && !isLoading) ? (
+            {tableCollectionArea?.length > 0 && !isLoading ? (
               <DataTable
                 catcher="_id"
                 updateHandler={handleUpdateModalOpen}
                 data={filterOption(tableCollectionArea, searchText)}
                 columns={columns}
+                exportedPdfName="Collection Area"
+                exportedFileName="Collection Area.csv"
               />
             ) : (
               <CircularLoader
@@ -353,11 +374,10 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
                   onChange={handleChange}
                   id="name"
                   placeholder="Enter the Collection Area Name"
-             
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                 />
               </div>
-               <div>
+              <div>
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
                   htmlFor="apincode"
@@ -371,16 +391,35 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
                   onChange={handleChange}
                   id="apincode"
                   placeholder="Enter the Collection Area Pincode"
-             
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                 />
               </div>
-              
+              <div>
+                <label
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="apincode"
+                >
+                  Select Employee
+                </label>
+
+                <Select
+                  mode="tags"
+                  size="large"
+                  placeholder="Please select Employee"
+                  onChange={(empIdArr) => {
+                    handleChange({
+                      target: { name: "agent_id", value: empIdArr },
+                    });
+                  }}
+                  style={{ width: "100%" }}
+                  options={employees}
+                />
+              </div>
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Save Collection Area
                 </button>
@@ -388,10 +427,6 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
             </form>
           </div>
         </Modal>
-
-
-
-
 
         <Modal
           isVisible={showModalUpdate}
@@ -417,7 +452,7 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
                   id="rname"
                   placeholder="Enter the Collection Area Name"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                 />
               </div>
               <div>
@@ -434,14 +469,31 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
                   onChange={handleInputChange}
                   id="pincode"
                   placeholder="Enter the Collection Area Pincode"
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                />
+              </div>
+              <div>
+                <label
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                  htmlFor="pincode"
+                >
+                  Select Employee
+                </label>
+                <Select
+                  mode="tags"
+                  size={"large"}
+                  placeholder="Select Employee"
+                  defaultValue={updateCollectionAreaData?.agent_id}
+                  onChange={(arrayElement)=>handleInputChange({target:{name:"agent_id",value:arrayElement}})}
+                  style={{ width: "100%" }}
+                  options={employees}
                 />
               </div>
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Update
                 </button>
@@ -484,13 +536,13 @@ const [reloadTrigger, setReloadTrigger] = useState(0);
                     id="routeName"
                     placeholder="Enter the Collection Area Name"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                 </div>
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Delete
                 </button>

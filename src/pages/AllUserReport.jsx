@@ -16,7 +16,6 @@ const AllUserReport = () => {
   const [groupFilter, setGroupFilter] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
 
   const groupOptions = [...new Set(usersData.map((u) => u.groupName))];
 
@@ -76,7 +75,8 @@ const AllUserReport = () => {
                   userPhone: usrData.phone_number,
                   customerId: usrData.customer_id,
                   collectionArea: usrData.collection_area || "N/A",
-                  collectionExecutive: usrData.collection_executive || "N/A",
+                  collectionExecutive:
+                    usrData?.collection_executive?.join(" | ") || "N/A",
                   amountPaid: totalPaidAmount,
                   paymentsTicket: data.payments.ticket,
                   groupValue: data?.enrollment?.group?.group_value,
@@ -88,10 +88,10 @@ const AllUserReport = () => {
                   reffered_by: data?.enrollment?.agent
                     ? data.enrollment.agent
                     : data?.enrollment?.reffered_customer
-                      ? data.enrollment.reffered_customer
-                      : data?.enrollment?.reffered_lead
-                        ? data.enrollment.reffered_lead
-                        : "N/A",
+                    ? data.enrollment.reffered_customer
+                    : data?.enrollment?.reffered_lead
+                    ? data.enrollment.reffered_lead
+                    : "N/A",
                   payment_type: data?.enrollment?.payment_type,
                   referred_type: data?.enrollment?.referred_type,
                   enrollmentDate: data?.enrollment?.createdAt
@@ -108,21 +108,21 @@ const AllUserReport = () => {
                   balance:
                     groupType === "double"
                       ? groupInstall * auctionCount +
-                      groupInstall -
-                      totalPaidAmount
+                        groupInstall -
+                        totalPaidAmount
                       : totalPayable +
-                      groupInstall +
-                      firstDividentHead -
-                      totalPaidAmount,
+                        groupInstall +
+                        firstDividentHead -
+                        totalPaidAmount,
                   status: data.isPrized === "true" ? "Prized" : "Un Prized",
                   statusDiv:
                     data.isPrized === "true" ? (
-                      <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-5 py-1 rounded-full shadow-sm ">
+                      <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-3 py-1 rounded-full shadow-sm border border-green-300">
                         <span className="font-semibold text-sm">Prized</span>
                       </div>
                     ) : (
-                      <div className="inline-flex items-center  bg-red-100 text-red-800 px-5 py-1 rounded-full shadow-sm ">
-                        <span className="font-semibold text-sm">UnPrized</span>
+                      <div className="inline-flex items-center gap-2 bg-red-100 text-red-800 px-3 py-1 rounded-full shadow-sm border border-red-300">
+                        <span className="font-semibold text-sm">Un Prized</span>
                       </div>
                     ),
                 };
@@ -189,11 +189,11 @@ const AllUserReport = () => {
     { key: "reffered_by", header: "Referred By" },
     { key: "relationshipManager", header: "Relationship Manager" },
     { key: "payment_type", header: "Payment Type" },
-    { key: "amountPaid", header: "Amount Paid" },
     {
       key: "firstInstallment",
       header: "First Installment",
     },
+    { key: "amountPaid", header: "Amount Paid" },
     { key: "totalToBePaid", header: "Amount to be Paid" },
     { key: "balance", header: "Balance" },
     { key: "collectionArea", header: "Collection Area" },
@@ -213,17 +213,16 @@ const AllUserReport = () => {
     { key: "referred_type", header: "Referred Type" },
     { key: "reffered_by", header: "Referred By" },
     { key: "relationshipManager", header: "Relationship Manager" },
-    { key: "amountPaid", header: "Amount Paid" },
     { key: "payment_type", header: "Payment Type" },
-    { key: "totalToBePaid", header: "Amount to be Paid" },
-
     {
       key: "firstInstallment",
       header: "First Installment",
     },
-    { key: "collectionExecutive", header: "Collection Executive" },
-    { key: "collectionArea", header: "Collection Area" },
+    { key: "amountPaid", header: "Amount Paid" },
+    { key: "totalToBePaid", header: "Amount to be Paid" },
     { key: "balance", header: "Balance" },
+    { key: "collectionArea", header: "Collection Area" },
+    { key: "collectionExecutive", header: "Collection Executive" },
     { key: "status", header: "Status" },
   ];
   const filteredTableData = filterOption(
@@ -287,7 +286,6 @@ const AllUserReport = () => {
                         placeholder="--All groups--"
                         onChange={(value) => setGroupFilter(value)}
                         value={groupFilter || undefined}
-                        className="  "
                       >
                         {groupOptions.map((group) => (
                           <Select.Option key={group} value={group}>
@@ -322,27 +320,56 @@ const AllUserReport = () => {
                     </div>
                   </div>
 
-                  {/* <DataTable
-                    data={filterOption(
-                      usersData.filter((u) => {
-                        const matchGroup = groupFilter
-                          ? u.groupName === groupFilter
-                          : true;
-                        const enrollmentDate = new Date(u.enrollmentDate);
-                        const matchFromDate = fromDate
-                          ? enrollmentDate >= new Date(fromDate)
-                          : true;
-                        const matchToDate = toDate
-                          ? enrollmentDate <= new Date(toDate)
-                          : true;
-                        return matchGroup && matchFromDate && matchToDate;
-                      }),
-                      searchText
-                    )}
-                    columns={Auctioncolumns}
-                   
-                    exportedFileName={`CustomerReport.csv`}
-                  /> */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mt-8 mb-8">
+                    <div className="flex flex-col border p-4 rounded shadow">
+                      <span className="text-xl font-bold text-gray-700">
+                        Total Customers
+                      </span>
+                      <span className="text-lg font-bold  text-blue-600">
+                        {totals.totalCustomers}
+                      </span>
+                    </div>
+                    <div className="flex flex-col border p-4 rounded shadow">
+                      <span className="text-xl font-bold text-gray-700">
+                        Total Groups
+                      </span>
+                      <span className="text-lg font-bold  text-green-600">
+                        {totals.totalGroups}
+                      </span>
+                    </div>
+                    <div className="flex flex-col border p-4 rounded shadow">
+                      <span className="text-xl font-bold text-gray-700">
+                        Amount to be Paid
+                      </span>
+                      <span className="text-lg font-bold text-blue-600">
+                        ₹{totals.totalToBePaid}
+                      </span>
+                    </div>
+                    <div className="flex flex-col border p-4 rounded shadow">
+                      <span className="text-xl font-bold text-gray-700">
+                        Total Profit
+                      </span>
+                      <span className="text-lg font-bold text-green-600">
+                        ₹{totals.totalProfit}
+                      </span>
+                    </div>
+                    <div className="flex flex-col border p-4 rounded shadow">
+                      <span className="text-xl font-semibold text-gray-700">
+                        Total Amount Paid
+                      </span>
+                      <span className="text-lg font-bold text-indigo-600">
+                        ₹{totals.totalPaid}
+                      </span>
+                    </div>
+                    <div className="flex flex-col border p-4 rounded shadow">
+                      <span className="text-xl font-bold text-gray-700">
+                        Total Balance
+                      </span>
+                      <span className="text-lg font-bold text-red-600">
+                        ₹{totals.totalBalance}
+                      </span>
+                    </div>
+                  </div>
                   <DataTable
                     data={filteredTableData}
                     columns={Auctioncolumns}
@@ -376,58 +403,6 @@ const AllUserReport = () => {
                     ]}
                     exportedFileName={`CustomerReport.csv`}
                   />
-             
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-                  <div className="flex flex-col border p-4 rounded shadow">
-                    <span className="text-xl font-bold text-gray-700">
-                      Total Customers
-                    </span>
-                    <span className="text-lg font-bold  text-violet-600">
-                      {totals.totalCustomers}
-                    </span>
-                  </div>
-                  <div className="flex flex-col border p-4 rounded shadow">
-                    <span className="text-xl font-bold text-gray-700">
-                      Total Groups
-                    </span>
-                    <span className="text-lg font-bold  text-green-600">
-                      {totals.totalGroups}
-                    </span>
-                  </div>
-                  <div className="flex flex-col border p-4 rounded shadow">
-                    <span className="text-xl font-bold text-gray-700">
-                      Amount to be Paid
-                    </span>
-                    <span className="text-lg font-bold text-violet-600">
-                      ₹{totals.totalToBePaid}
-                    </span>
-                  </div>
-                  <div className="flex flex-col border p-4 rounded shadow">
-                    <span className="text-xl font-bold text-gray-700">
-                      Total Profit
-                    </span>
-                    <span className="text-lg font-bold text-green-600">
-                      ₹{totals.totalProfit}
-                    </span>
-                  </div>
-                  <div className="flex flex-col border p-4 rounded shadow">
-                    <span className="text-xl font-semibold text-gray-700">
-                      Total Amount Paid
-                    </span>
-                    <span className="text-lg font-bold text-indigo-600">
-                      ₹{totals.totalPaid}
-                    </span>
-                  </div>
-                  <div className="flex flex-col border p-4 rounded shadow">
-                    <span className="text-xl font-bold text-gray-700">
-                      Total Balance
-                    </span>
-                    <span className="text-lg font-bold text-red-600">
-                      ₹{totals.totalBalance}
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>

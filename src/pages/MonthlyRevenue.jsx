@@ -46,7 +46,7 @@ const MonthlyRevenue = () => {
       const resMonthly = await api.get("/payment/get-current-month-payment", {
         params: { from_date, to_date },
       });
-      setMonthlyRevenue(resMonthly.data?.totalFilteredPayment || 0);
+      setMonthlyRevenue(resMonthly.data?.monthlyPayment || 0);
 
 
       const resPayments = await api.get("/payment/get-payments-by-dates", {

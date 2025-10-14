@@ -86,6 +86,24 @@ import Analytics from "../pages/Analytics";
 import TotalRevenue from "../pages/TotalRevenue";
 import MonthlyRevenue from "../pages/MonthlyRevenue";
 
+import AuctionBidStatus from "../pages/AuctionBidStatus"
+import AuctionWinnerDocuments from "../pages/AuctionWinnerDocuments";
+import AuctionInformation from "../pages/AuctionInformation";
+import AuctionTermsandCondition from "../pages/AuctionTermsandCondition";
+import CollectionExecutiveReport from "../pages/CollectionExecutiveReport";
+import CustomerWelcomeWhatsappMessage from "../pages/CustomerWelcomeWhatsappMessage";
+import CustomerChitPlanWhatsappMessage from "../pages/CustomerChitPlanWhatsappMessage";
+import Insurance from "../pages/Insurance";
+import CustomerRewards from "../pages/CustomerRewards";
+import EmployeeAttendance from "../pages/EmployeeAttendanceReport"
+import EmployeeMonthlyReport from "../pages/EmployeeMonthlyReport";
+import EmployeeMenu from "../pages/EmployeeMenu"
+import HoldedCustomerReport from "../pages/HoldedCustomerReport"
+import LeadWhatsappWelcomeMessage from "../pages/LeadWhatsappWelcomeMessage";
+import LeadReferredByWhatsappMessage from "../pages/LeadReferredByWhatsappMessage";
+import PayInOutMenu from "../pages/PayInOutMenu";
+import RegistrationFeeReport from "../pages/RegistrationFeeReport";
+import StaffMenu from "../pages/StaffMenu";
 
 import TargetIncentiveReport from "../pages/TargetIncentive";
 import TargetPayOutSalary from "../pages/TargetPayoutSalary";
@@ -153,16 +171,24 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
-    path: "/pay-in-menu",
+ {
+    path: "/payment-in-out-menu/pay-in-menu",
     element: (
       <ProtectedRoute>
         <PayInMenu />
       </ProtectedRoute>
     ),
   },
+   {
+    path: "/payment-in-out-menu",
+    element: (
+      <ProtectedRoute>
+        <PayInOutMenu />
+      </ProtectedRoute>
+    ),
+  },
   {
-    path: "/pay-in-menu/payment",
+    path: "/payment-in-out-menu/pay-in-menu/payment",
     element: (
       <ProtectedRoute>
         <Payment />
@@ -170,7 +196,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "/pay-in-menu/registration-fee",
+    path: "/payment-in-out-menu/pay-in-menu/registration-fee",
     element: (
       <ProtectedRoute>
         <RegistrationFee />
@@ -178,16 +204,16 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
-  {
-    path: "/pay-in-menu/payment-link-menu",
+   {
+    path: "/payment-in-out-menu/pay-in-menu/payment-link-menu",
     element: (
       <ProtectedRoute>
         <PaymentLinkMenu />
       </ProtectedRoute>
     ),
   },
-  {
-    path: "/pay-in-menu/payment-link-menu/chit-payment",
+    {
+    path: "/payment-in-out-menu/pay-in-menu/payment-link-menu/chit-payment",
     element: (
       <ProtectedRoute>
         <IndividualChitPaymentLink />
@@ -196,7 +222,7 @@ const mainRoutes = createBrowserRouter([
   },
 
   {
-    path: "/pay-in-menu/payment-link-menu/registration-chit-payment",
+    path: "/payment-in-out-menu/pay-in-menu/payment-link-menu/registration-chit-payment",
     element: (
       <ProtectedRoute>
         <IndividualRegistrationChitPaymentLink />
@@ -206,7 +232,7 @@ const mainRoutes = createBrowserRouter([
 
 
   {
-    path: "/pay-in-menu/payment-link-menu/chit-bulk-payment",
+    path: "/payment-in-out-menu/pay-in-menu/payment-link-menu/chit-bulk-payment",
     element: (
       <ProtectedRoute>
         <ChitBulkPaymentLink />
@@ -313,19 +339,35 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
-    path: "/staff",
+   {
+    path: "/staff-menu",
     element: (
       <ProtectedRoute>
-        <Staff />
+        <StaffMenu />
       </ProtectedRoute>
     ),
   },
-  {
-    path: "/employee",
+      {
+    path: "/staff-menu/employee-menu",
+    element: (
+      <ProtectedRoute>
+        <EmployeeMenu />
+      </ProtectedRoute>
+    ),
+  },
+   {
+    path: "/staff-menu/employee-menu/employee",
     element: (
       <ProtectedRoute>
         <Employee />
+      </ProtectedRoute>
+    ),
+  },
+    {
+    path: "/staff-menu/employee-menu/add-employee-attendance",
+    element: (
+      <ProtectedRoute>
+        <EmployeeAttendance />
       </ProtectedRoute>
     ),
   },
@@ -387,7 +429,7 @@ const mainRoutes = createBrowserRouter([
   },
 
   {
-    path: "/pay-out-menu",
+    path: "/payment-in-out-menu/pay-out-menu",
     element: (
       <ProtectedRoute>
         <PayOutMenu />
@@ -395,7 +437,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "/general-payment-out/:paymentType",
+    path: "/payment-in-out-menu/general-payment-out/:paymentType",
     element: (
       <ProtectedRoute>
         <GeneralPaymentOut />
@@ -403,15 +445,15 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "/payment-out/commission",
+    path: "/payment-in-out-menu/payment-out/commission",
     element: (
       <ProtectedRoute>
         <PayOutCommission />
       </ProtectedRoute>
     ),
   },
-  {
-    path: "/payment-out/salary",
+ {
+    path: "/payment-in-out-menu/payment-out/salary",
     element: (
       <ProtectedRoute>
         <PayOutSalary />
@@ -419,7 +461,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "/payment-out/petty-Cash",
+    path: "/payment-in-out-menu/payment-out/petty-Cash",
     element: (
       <ProtectedRoute>
         <PayOutPettyCash />
@@ -427,7 +469,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "/payment-out/others",
+    path: "/payment-in-out-menu/payment-out/others",
     element: (
       <ProtectedRoute>
         <PayOutOthers />
@@ -443,7 +485,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "/agent",
+    path: "/staff-menu/agent",
     element: (
       <ProtectedRoute>
         <Agent />
@@ -556,6 +598,10 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+      {
+    path: "/gift-received",
+    element: <CustomerRewards/>
+  },
 
   { path: "customer-view", element: <CustomerView /> },
 
@@ -581,6 +627,11 @@ const mainRoutes = createBrowserRouter([
       { path: "payment-summary", element: <PaymentSummary /> },
       { path: "monthly-install-turnover", element: <MonthlyInstallmentTurnoverReport /> },
 
+      {path: "employee-monthly-report", element: <EmployeeMonthlyReport/>},
+        { path: "holded-customer-report", element: <HoldedCustomerReport /> },
+         { path: "registration-fee-receipt", element: <RegistrationFeeReport /> },
+            { path: "collection-executive", element: <CollectionExecutiveReport /> },
+
       {
         path: "due-report",
         element: <DueReport />,
@@ -589,6 +640,31 @@ const mainRoutes = createBrowserRouter([
       { path: "customer-view", element: <CustomerView /> },
 
     ],
+  },
+    {
+    path: "/target-commission",
+    element: <TargetCommission />,
+  },
+  {
+    path: "/target-commission-incentive",
+    element: <TargetPayOutCommissionIncentive />,
+  },
+  {
+    path: "/target-payout-menu",
+    element: <TargetPayOutMenu />,
+  },
+  {
+    path: "/target-payout-salary",
+    element: <TargetPayOutSalary />,
+  },
+  {
+    path: "/target-incentive",
+    element: <TargetIncentiveReport />,
+  },
+  
+  {
+    path: "/insurance",
+    element: <Insurance/>
   },
   {
     path: "/print/:id",
@@ -617,6 +693,14 @@ const mainRoutes = createBrowserRouter([
       { path: "what-promo", element: <WhatsappPromo /> },
       { path: "bid-winner", element: <BidWinner /> },
       { path: "payment-link", element: <PaymentLink /> },
+       {path: "bid-status", element: <AuctionBidStatus/>},
+      {path: "auction-info", element: <AuctionInformation/>},
+      {path: "winner-document", element: <AuctionWinnerDocuments/>},
+      {path: "auction-terms-condition", element: <AuctionTermsandCondition/>},
+      {path: "lead-welcome-message", element: <LeadWhatsappWelcomeMessage/>},
+      {path: "lead-referredby-message", element: <LeadReferredByWhatsappMessage/>},
+      {path: "customer-welcome-message", element: <CustomerWelcomeWhatsappMessage/>},
+      {path: "customer-chitplan-message", element: <CustomerChitPlanWhatsappMessage/>},
     ],
   },
 ]);

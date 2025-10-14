@@ -63,12 +63,15 @@ export default function Analytics() {
   const [payments, setPayments] = useState([]);
   const [recent, setRecent] = useState([]);
 
-  // Always use current month for calculations
+
   const today = new Date();
-  const currentMonthStart = fmtDate(startOfMonth(today));
-  const currentMonthEnd = fmtDate(endOfMonth(today));
+  const currentMonth = today.getMonth();
+        const currentYear = today.getFullYear();
+  const currentMonthStart = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-01`;
+      const lastDay = new Date(currentYear, currentMonth + 1, 0);
+  const currentMonthEnd = lastDay.toISOString().split("T")[0];
   
-  // For the 12-month aggregation, we'll still show the last 12 months
+ 
   const twelveMonthsAgo = fmtDate(startOfMonth(addMonths(today, -11)));
   const currentDate = fmtDate(today);
 
@@ -89,7 +92,7 @@ export default function Analytics() {
       if (idx >= 0 && idx < labels.length) sums[idx] += Number(p.amount || 0);
     });
     return { labels, sums };
-  }, [payments]); // Removed toDate dependency
+  }, [payments]);
 
   const revenueSplit = useMemo(() => {
     const map = {};
@@ -114,22 +117,28 @@ export default function Analytics() {
       .slice(0, 7);
   }, [payments]);
 
-  const topAgents = useMemo(() => {
-    const map = {};
-    payments.forEach((p) => {
-      const agentName =
-        p?.agent?.full_name ||
-        p?.agent_id?.full_name ||
-        p?.collect_by?.full_name ||
-        p?.collected_by?.full_name ||
-        "Unknown Agent";
-      map[agentName] = (map[agentName] || 0) + Number(p?.amount || 0);
-    });
-    return Object.entries(map)
-      .map(([name, amt]) => ({ name, amt }))
-      .sort((a, b) => b.amt - a.amt)
-      .slice(0, 7);
-  }, [payments]);
+ const topAgents = useMemo(() => {
+  const map = {};
+  payments.forEach((p) => {
+    let agentName =
+      p?.collected_by?.full_name ||
+      p?.agent?.full_name ||
+      p?.agent_id?.full_name ||
+      p?.collect_by?.full_name;
+
+ 
+    if (!agentName && p?.user_id?.full_name) {
+      agentName = p.user_id.full_name;
+    }
+
+    agentName = agentName || "Unknown Agent";
+    map[agentName] = (map[agentName] || 0) + Number(p?.amount || 0);
+  });
+  return Object.entries(map)
+    .map(([name, amt]) => ({ name, amt }))
+    .sort((a, b) => b.amt - a.amt)
+    .slice(0, 7);
+}, [payments]);
 
   const chartOptions = {
     responsive: true,
@@ -523,7 +532,7 @@ export default function Analytics() {
                     </div>
 
                     <div>
-                      <h4 className="font-medium text-gray-700 mb-3">Top Agents</h4>
+                      <h4 className="font-medium text-gray-700 mb-3">Top Users</h4>
                       <div className="h-60">
                         <Bar
                           data={agentsBarData}

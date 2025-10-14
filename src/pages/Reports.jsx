@@ -84,6 +84,10 @@ import { LiaCalculatorSolid } from "react-icons/lia";
 import { GiMoneyStack } from "react-icons/gi";
 import { TbReportSearch } from "react-icons/tb";
 import { MdOutlinePayment } from "react-icons/md";
+import { TbMoneybag } from "react-icons/tb";
+import { RiReceiptLine } from "react-icons/ri";
+
+import { TbUserCancel } from "react-icons/tb";
 
 import { SlCalender } from "react-icons/sl";
 
@@ -111,6 +115,22 @@ const subMenus = [
     link: "/reports/user-report",
     Icon: MdOutlineEmojiPeople,
   },
+
+   {
+    title: "Holded Customers",
+    link: "/reports/holded-customer-report",
+    Icon: TbUserCancel,
+   
+   
+  },
+
+   {
+    title: "Collection Executive Report",
+    link: "/reports/collection-executive",
+    Icon: TbMoneybag,
+    
+  },
+
   {
     title: "Employee Report",
     link: "/reports/employee-report",
@@ -125,6 +145,12 @@ const subMenus = [
     title: "Receipt Report",
     link: "/reports/receipt",
     Icon: MdOutlineReceiptLong,
+  },
+    {
+    title: "Registration Receipt",
+    link: "/reports/registration-fee-receipt",
+    Icon: RiReceiptLine,
+   
   },
   {
     title: "PayOut Report",
@@ -151,6 +177,12 @@ const subMenus = [
   { title: "Sales Report", link: "/reports/sales-report", Icon: FaUserCheck },
    { title: "Payment Summary", link: "/reports/payment-summary", Icon: TbReportSearch },
     {title: "Monthly Installment Turnover", link: "/reports/monthly-install-turnover", Icon: SlCalender },
+
+      {
+    title: "Monthly Attendance Report",
+    link: "/reports/employee-monthly-report",
+    Icon: SlCalender,
+  },
 ];
 
 const Reports = () => {

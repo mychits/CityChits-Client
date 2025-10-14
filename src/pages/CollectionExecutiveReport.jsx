@@ -1,30 +1,25 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import Sidebar from "../components/layouts/Sidebar";
 import api from "../instance/TokenInstance";
-import { MdDelete } from "react-icons/md";
-import { CiEdit } from "react-icons/ci";
 import Modal from "../components/modals/Modal";
-import { BsEye } from "react-icons/bs";
-import UploadModal from "../components/modals/UploadModal";
-import axios from "axios";
-import url from "../data/Url";
 import { Select, Dropdown } from "antd";
 import DataTable from "../components/layouts/Datatable";
 import CustomAlert from "../components/alerts/CustomAlert";
-import EndlessCircularLoader from "../components/loaders/EndlessCircularLoader";
 import CircularLoader from "../components/loaders/CircularLoader";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import { IoMdMore } from "react-icons/io";
 import { Link } from "react-router-dom";
-import { fieldSize } from "../data/fieldSize";
+import {
+  FiFilter,
+  FiCalendar,
+  FiUsers,
+  FiCreditCard,
+} from "react-icons/fi";
 
-const Receipt = () => {
+const CollectionExecutiveReport = () => {
   const [groups, setGroups] = useState([]);
   const [TableDaybook, setTableDaybook] = useState([]);
-  const [selectedGroup, setSelectedGroup] = useState("");
-  const [selectedAuctionGroup, setSelectedAuctionGroup] = useState("");
   const [selectedGroupId, setSelectedGroupId] = useState("");
   const [selectedAuctionGroupId, setSelectedAuctionGroupId] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -54,14 +49,10 @@ const Receipt = () => {
   const [hideAccountType, setHideAccountType] = useState("");
   const [selectedAccountType, setSelectedAccountType] = useState("");
   const [selectedCustomers, setSelectedCustomers] = useState("");
+  const [selectedCollectionExecutive, setSelectedCollectionExecutive] = useState("");
   const [payments, setPayments] = useState([]);
-
-  const [collectionAgent, setCollectionAgent] = useState("");
-  const [collectionAdmin, setCollectionAdmin] = useState("");
-  const [agents, setAgents] = useState([]);
-  const [admins, setAdmins] = useState([]);
-
   const [showAllPaymentModes, setShowAllPaymentModes] = useState(false);
+  const [employees,setEmployees] = useState([]);
   const [formData, setFormData] = useState({
     group_id: "",
     user_id: "",
@@ -71,8 +62,7 @@ const Receipt = () => {
     amount: "",
     pay_type: "cash",
     transaction_id: "",
-    collected_by: collectionAgent,
-    admin_type: collectionAdmin,
+    collection_executive:"",
   });
   const [alertConfig, setAlertConfig] = useState({
     visibility: false,
@@ -80,6 +70,7 @@ const Receipt = () => {
     type: "info",
   });
   const handleModalClose = () => setShowUploadModal(false);
+
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
@@ -96,6 +87,7 @@ const Receipt = () => {
       setShowAllPaymentModes(showPaymentsModes);
     }
   }, []);
+
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
@@ -113,6 +105,27 @@ const Receipt = () => {
     }
   }, []);
   useEffect(() => {
+    (async () => {
+      try {
+        const [emplys] = await Promise.all([
+          api.get("/agent/collection-executive"),
+        
+        ]);
+        const emps = emplys?.data?.collectionExecutive.map((emp) => ({
+          _id: emp?._id?._id,
+          full_name: emp?._id?.name,
+          phone_number: emp?._id?.phone_number,
+          selected_type: "agent_type",
+        }));
+        setEmployees(emps);
+       
+      } catch (error) {
+     
+        setEmployees([]);
+      }
+    })();
+  }, []);
+  useEffect(() => {
     const fetchGroups = async () => {
       try {
         const response = await api.get("/group/get-group-admin");
@@ -123,34 +136,7 @@ const Receipt = () => {
     };
     fetchGroups();
   }, []);
-  useEffect(() => {
-    (async () => {
-      try {
-        const [employees, admins] = await Promise.all([
-          api.get("/agent/get-employee"),
-          api.get("/admin/get-sub-admins"),
-        ]);
-        const emps = employees?.data?.employee.map((emp) => ({
-          _id: emp._id,
-          full_name: emp.name,
-          phone_number: emp.phone_number,
-          selected_type: "agent_type",
-        }));
-        setAgents(emps);
-        const adms = admins?.data?.map((ad) => ({
-          _id: ad?._id,
-          full_name: ad?.name,
-          phone_number: ad?.phoneNumber,
-          selected_type: "admin_type",
-        }));
-        setAdmins(adms);
-        console.log(adms, "adms");
-      } catch (error) {
-        setAdmins([]);
-        setAgents([]);
-      }
-    })();
-  }, []);
+
   useEffect(() => {
     const fetchReceipt = async () => {
       try {
@@ -235,13 +221,11 @@ const Receipt = () => {
   ];
 
   const handleGroupPayment = async (groupId) => {
-    // const groupId = event.target.value;
     setSelectedAuctionGroupId(groupId);
   };
 
   const handleSelectFilter = (value) => {
     setSelectedLabel(value);
-    //const { value } = e.target;
     setShowFilterField(false);
 
     const today = new Date();
@@ -276,6 +260,7 @@ const Receipt = () => {
       setShowFilterField(true);
     }
   };
+
   const formatPayDate = (dateString) => {
     const date = new Date(dateString);
     const options = { day: "numeric", month: "long", year: "numeric" };
@@ -287,7 +272,7 @@ const Receipt = () => {
     const fetchPayments = async () => {
       try {
         setIsLoading(true);
-        const response = await api.get(`/payment/get-report-receipt`, {
+        const response = await api.get(`/payment/collection/report`, {
           params: {
             from_date: selectedFromDate,
             to_date: selectedDate,
@@ -295,8 +280,7 @@ const Receipt = () => {
             userId: selectedCustomers,
             pay_type: selectedPaymentMode,
             account_type: selectedAccountType,
-            collected_by: collectionAgent,
-            admin_type: collectionAdmin,
+            collection_executive:selectedCollectionExecutive
           },
           signal: abortController.signal,
         });
@@ -386,8 +370,7 @@ const Receipt = () => {
     selectedCustomers,
     selectedFromDate,
     selectedAccountType,
-    collectionAgent,
-    collectionAdmin,
+    selectedCollectionExecutive
   ]);
 
   const columns = [
@@ -407,6 +390,7 @@ const Receipt = () => {
       ? [{ key: "account_type", header: "Account Type" }]
       : []),
     { key: "collected_by", header: "Collected By" },
+   
     { key: "action", header: "Action" },
   ];
 
@@ -519,7 +503,7 @@ const Receipt = () => {
 
   return (
     <>
-      <div className="w-screen">
+      <div className="min-w-screen bg-gray-50 min-h-screen">
         <div className="flex mt-30">
           <Navbar
             onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
@@ -530,282 +514,275 @@ const Receipt = () => {
             isVisible={alertConfig.visibility}
             message={alertConfig.message}
           />
-          <div className="flex-grow p-7">
-            <h1 className="text-2xl font-bold">Reports - Receipt</h1>
-            <div className="mt-6 mb-8">
-              <div className="mb-2">
-                <div className="flex justify-start items-center w-full gap-4">
-                  <div className="mb-2">
-                    <label>Filter Option</label>
-                    {/* <select
-                      onChange={handleSelectFilter}
-                      className="border border-gray-300 rounded px-6 shadow-sm outline-none w-full max-w-md"
-                    >
-                      <option value="Today">Today</option>
-                      <option value="Yesterday">Yesterday</option>
-                      <option value="ThisMonth">This Month</option>
-                      <option value="LastMonth">Last Month</option>
-                      <option value="ThisYear">This Year</option>
-                      <option value="Custom">Custom</option>
-                    </select> */}
-                    <Select
-                      showSearch
-                      popupMatchSelectWidth={false}
-                      onChange={handleSelectFilter}
-                      value={selectedLabel}
-                      placeholder="Search Or Select Filter"
-                      filterOption={(input, option) =>
-                        option.children
-                          .toString()
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      className="w-full max-w-xs h-11"
-                    >
-                      {groupOptions.map((time) => (
-                        <Select.Option key={time.value} value={time.value}>
-                          {time.label}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </div>
-                  {showFilterField && (
-                    <div className="flex gap-4">
-                      <div className="mb-2">
-                        <label>From Date</label>
-                        <input
-                          type="date"
-                          value={selectedFromDate}
-                          onChange={(e) => setSelectedFromDate(e.target.value)}
-                          className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full max-w-xs"
-                        />
-                      </div>
-                      <div className="mb-2">
-                        <label>To Date</label>
-                        <input
-                          type="date"
-                          value={selectedDate}
-                          onChange={(e) => setSelectedDate(e.target.value)}
-                          className="border border-gray-300 rounded px-4 py-2 shadow-sm outline-none w-full max-w-xs"
-                        />
-                      </div>
-                    </div>
-                  )}
-                  <div className="mb-2">
-                    <label>Group</label>
-                    {/* <select
-                      value={selectedAuctionGroupId}
-                      onChange={handleGroupPayment}
-                      className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
-                    >
-                      <option value="">All </option>
-                      {groups.map((group) => (
-                        <option key={group._id} value={group._id}>
-                          {group.group_name}
-                        </option>
-                      ))}
-                    </select> */}
-                    <Select
-                      showSearch
-                      popupMatchSelectWidth={false}
-                      value={selectedAuctionGroupId}
-                      onChange={handleGroupPayment}
-                      placeholder="Search Or Select Group"
-                      filterOption={(input, option) =>
-                        option.children
-                          .toString()
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      className="w-full max-w-xs h-11"
-                    >
-                      <Select.Option value={""}>All</Select.Option>
-                      {groups.map((group) => (
-                        <Select.Option key={group._id} value={group._id}>
-                          {group.group_name}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </div>
-                  <div className="mb-2">
-                    <label>Customer</label>
-                    {/* <select
-                      value={selectedCustomers}
-                      onChange={(e) => setSelectedCustomers(e.target.value)}
-                      className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
-                    >
-                      <option value="">All</option>
-                      {filteredUsers.map((group) => (
-                        <option key={group?._id} value={group?._id}>
-                          {group?.full_name} - {group.phone_number}
-                        </option>
-                      ))}
-                    </select> */}
-                    <Select
-                      showSearch
-                      popupMatchSelectWidth={false}
-                      value={selectedCustomers}
-                      filterOption={(input, option) =>
-                        option.children
-                          .toString()
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      placeholder="Search Or Select Customer"
-                      onChange={(groupId) => setSelectedCustomers(groupId)}
-                      className="w-full max-w-xs h-11"
-                      // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
-                    >
-                      <Select.Option value="">All</Select.Option>
-                      {filteredUsers.map((group) => (
-                        <Select.Option key={group?._id} value={group?._id}>
-                          {group?.full_name} - {group.phone_number}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </div>
-                  <div className="mb-2">
-                    <label>Payment Mode</label>
-                    {/* <select
-                      value={selectedPaymentMode}
-                      onChange={(e) => setSelectedPaymentMode(e.target.value)}
-                      className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
-                    >
-                      <option value="">All</option>
-                      <option value="cash">Cash</option>
-                      <option value="online">Online</option>
-                    </select> */}
-                    <Select
-                      value={selectedPaymentMode}
-                      showSearch
-                      placeholder="Search Or Select Payment"
-                      popupMatchSelectWidth={false}
-                      onChange={(groupId) => setSelectedPaymentMode(groupId)}
-                      filterOption={(input, option) =>
-                        option.children
-                          .toString()
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      className="w-full max-w-xs h-11"
-                      // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
-                    >
-                      <Select.Option value="">All</Select.Option>
-                      <Select.Option value="cash">Cash</Select.Option>
-                      <Select.Option value="online">Online</Select.Option>
-                    </Select>
-                  </div>
-                  {showAllPaymentModes && (
-                    <div className="mb-2">
-                      <label>Account Type</label>
+          <div className="flex-grow p-6 lg:p-8">
+            {/* Header Section */}
+            <div className="mb-8 pb-6 border-b border-gray-200">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Collection Executive Report
+              </h1>
+              <p className="text-gray-600 text-sm">
+                View and manage collection reports with advanced filters
+              </p>
+            </div>
 
-                      <Select
-                        value={selectedAccountType}
-                        showSearch
-                        placeholder="Search Or Select Account Type"
-                        popupMatchSelectWidth={false}
-                        onChange={(groupId) => setSelectedAccountType(groupId)}
-                        filterOption={(input, option) =>
-                          option.children
-                            .toString()
-                            .toLowerCase()
-                            .includes(input.toLowerCase())
-                        }
-                        className="w-full max-w-xs h-11"
-                      >
-                        <>
-                          <option value="">Select Account Type</option>
-                          <option value="suspense">Suspense</option>
-                          <option value="credit">Credit</option>
-                          <option value="adjustment">Adjustment</option>
-                          <option value="others">Others</option>
-                        </>
-                      </Select>
-                    </div>
-                  )}
-                  <div className="mb-2">
-                    <label>Select Collection Agent</label>
-
-                    <Select
-                      showSearch
-                      placeholder="Search Or Select Collection Agent"
-                      popupMatchSelectWidth={false}
-                      onChange={(selection) => {
-                        const [id, type] = selection.split("|") || [];
-                        if (type === "admin_type") {
-                          setCollectionAdmin(id);
-                          setCollectionAgent("");
-                        } else if (type === "agent_type") {
-                          setCollectionAgent(id);
-                          setCollectionAdmin("");
-                        } else {
-                          setCollectionAdmin("");
-                          setCollectionAgent("");
-                        }
-                      }}
-                      filterOption={(input, option) =>
-                        option.children
-                          .toString()
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      className="w-full max-w-xs h-11"
-                    >
-                      <Select.Option value="">All</Select.Option>
-                      {[...new Set(agents), ...new Set(admins)].map((dt) => (
-                        <Select.Option key={dt?._id} value={`${dt._id}|${dt.selected_type}`}>
-                          {dt.selected_type === "admin_type"
-                            ? "Admin | "
-                            : "Agent | "}
-                          {dt.full_name} | {dt.phone_number}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </div>
-
-                  <div className="relative overflow-hidden bg-gradient-to-br from-indigo-500 via-white-500 to-blue-500 rounded-2xl shadow-lg p-4 transition-all hover:shadow-2xl hover:scale-[1.02] duration-300">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
-
-                    <div className="relative z-10">
-                      <p className="text-white/80 text-sm font-medium uppercase tracking-wider mb-2">
-                        Total Amount
-                      </p>
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-white text-4xl font-bold">
-                          ₹{payments || 0}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12"></div>
-                  </div>
-                </div>
+            {/* Filters Section */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+              <div className="flex items-center gap-3 mb-6">
+                <FiFilter className="text-blue-600" size={20} />
+                <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
               </div>
-              {filteredAuction && filteredAuction.length > 0 && !isLoading ? (
-                <div className="mt-10">
-                  <DataTable
-                    data={filterOption(TableDaybook, searchText)}
-                    columns={columns}
-                    exportedPdfName={`Receipt Report`}
-                    exportedFileName={`Reports Receipt.csv`}
-                  />
-                  <div className="flex justify-end mt-4 pr-4">
-                    <span className="text-lg font-semibold">
-                      Total Amount: ₹{payments}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {/* Filter Option */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <FiCalendar className="inline mr-2" />
+                    Filter Option
+                  </label>
+                  <Select
+                    showSearch
+                    popupMatchSelectWidth={false}
+                    onChange={handleSelectFilter}
+                    value={selectedLabel}
+                    placeholder="Select Filter"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toString()
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    className="w-full"
+                    size="large"
+                  >
+                    {groupOptions.map((time) => (
+                      <Select.Option key={time.value} value={time.value}>
+                        {time.label}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Collection Executive
+                  </label>
+                  <Select
+                    showSearch
+                    popupMatchSelectWidth={false}
+                    value={selectedCollectionExecutive || null}
+                    filterOption={(input, option) =>
+                      option.children
+                        .toString()
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    placeholder="Select Collection Executive"
+                    onChange={(groupId) => setSelectedCollectionExecutive(groupId)}
+                    className="w-full"
+                    size="large"
+                  >
+                  
+                    {employees.map((group) => (
+                      <Select.Option key={group?._id} value={group?._id}>
+                        {group?.full_name} - {group.phone_number}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+
+                {/* Custom Date Range */}
+                {showFilterField && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        From Date
+                      </label>
+                      <input
+                        type="date"
+                        value={selectedFromDate}
+                        onChange={(e) => setSelectedFromDate(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        To Date
+                      </label>
+                      <input
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* Group Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <FiUsers className="inline mr-2" />
+                    Group
+                  </label>
+                  <Select
+                    showSearch
+                    popupMatchSelectWidth={false}
+                    value={selectedAuctionGroupId}
+                    onChange={handleGroupPayment}
+                    placeholder="Select Group"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toString()
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    className="w-full"
+                    size="large"
+                  >
+                    <Select.Option value={""}>All</Select.Option>
+                    {groups.map((group) => (
+                      <Select.Option key={group._id} value={group._id}>
+                        {group.group_name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Customer
+                  </label>
+                  <Select
+                    showSearch
+                    popupMatchSelectWidth={false}
+                    value={selectedCustomers}
+                    filterOption={(input, option) =>
+                      option.children
+                        .toString()
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    placeholder="Select Customer"
+                    onChange={(groupId) => setSelectedCustomers(groupId)}
+                    className="w-full"
+                    size="large"
+                  >
+                    <Select.Option value="">All</Select.Option>
+                    {filteredUsers.map((group) => (
+                      <Select.Option key={group?._id} value={group?._id}>
+                        {group?.full_name} - {group.phone_number}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+
+                {/* Payment Mode Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <FiCreditCard className="inline mr-2" />
+                    Payment Mode
+                  </label>
+                  <Select
+                    value={selectedPaymentMode}
+                    showSearch
+                    placeholder="Select Payment Mode"
+                    popupMatchSelectWidth={false}
+                    onChange={(groupId) => setSelectedPaymentMode(groupId)}
+                    filterOption={(input, option) =>
+                      option.children
+                        .toString()
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    className="w-full"
+                    size="large"
+                  >
+                    <Select.Option value="">All</Select.Option>
+                    <Select.Option value="cash">Cash</Select.Option>
+                    <Select.Option value="online">Online</Select.Option>
+                  </Select>
+                </div>
+
+                {/* Account Type Filter */}
+                {showAllPaymentModes && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Account Type
+                    </label>
+                    <Select
+                      value={selectedAccountType}
+                      showSearch
+                      placeholder="Select Account Type"
+                      popupMatchSelectWidth={false}
+                      onChange={(groupId) => setSelectedAccountType(groupId)}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      className="w-full"
+                      size="large"
+                    >
+                      <Select.Option value="">All</Select.Option>
+                      <Select.Option value="suspense">Suspense</Select.Option>
+                      <Select.Option value="credit">Credit</Select.Option>
+                      <Select.Option value="adjustment">
+                        Adjustment
+                      </Select.Option>
+                      <Select.Option value="others">Others</Select.Option>
+                    </Select>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-md border border-gray-100 p-6 mb-6 hover:shadow-lg transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col">
+                  <p className="text-sm font-semibold text-gray-500 tracking-wide uppercase">
+                    Total Amount
+                  </p>
+                  <p className="text-4xl font-extrabold text-gray-900 mt-1">
+                    ₹{payments || 0}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Updated as of {new Date().toLocaleDateString()}
+                  </p>
+                </div>
+
+                <div className="relative"></div>
+              </div>
+            </div>
+
+            {/* Data Table Section */}
+            {filteredAuction && filteredAuction.length > 0 && !isLoading ? (
+              <div>
+                <DataTable
+                  data={filterOption(TableDaybook, searchText)}
+                  columns={columns}
+                  exportedPdfName={`Receipt Report`}
+                  exportedFileName={`Collection Executive Report.csv`}
+                />
+                <div className="flex justify-end p-6 border-t border-gray-200 bg-gray-50">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-gray-600">
+                      Total Amount:
+                    </span>
+                    <span className="text-xl font-bold text-gray-900">
+                      ₹{payments}
                     </span>
                   </div>
                 </div>
-              ) : (
-                <div className="mt-10 text-center text-gray-500">
-                  <CircularLoader
-                    isLoading={isLoading}
-                    failure={filteredAuction.length <= 0}
-                    data="Receipt Data"
-                  />
-                </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12">
+                <CircularLoader
+                  isLoading={isLoading}
+                  failure={filteredAuction.length <= 0}
+                  data="Collection Executive Report Data"
+                />
+              </div>
+            )}
           </div>
           <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
             <div className="py-6 px-5 lg:px-8 text-left">
@@ -1228,4 +1205,4 @@ const Receipt = () => {
   );
 };
 
-export default Receipt;
+export default CollectionExecutiveReport;

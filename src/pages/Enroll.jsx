@@ -15,7 +15,6 @@ import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
 import { FiMail } from "react-icons/fi";
-import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 const Enroll = () => {
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
@@ -37,6 +36,7 @@ const Enroll = () => {
   const [agents, setAgents] = useState([]);
   const [removalReason, setRemovalReason] = useState("");
   const date = new Date().toISOString().split("T")[0];
+  const [employees, setEmployees] = useState([]);
   const [thirdPartyEnable, setThirdPartyEnable] = useState({
     email: true,
     whatsapp: true,
@@ -82,11 +82,6 @@ const Enroll = () => {
     blocked_referred_agent: "",
   });
 
-   const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchText(value);
-  };
-
   const [searchText, setSearchText] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState([]);
   const onGlobalSearchChangeHandler = (e) => {
@@ -96,7 +91,7 @@ const Enroll = () => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
-    const adminId = userObj?._id;
+    const adminId = userObj._id;
     if (adminId) {
       setAdmin(userObj._id);
 
@@ -219,14 +214,26 @@ const Enroll = () => {
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-        const response = await api.get("/agent/get-agent");
-        setAgents(response.data);
+        const response = await api.get("/agent/get");
+        setAgents(response.data?.agent);
       } catch (err) {
         console.error("Failed to fetch Leads", err);
       }
     };
     fetchAgents();
   }, []);
+  useEffect( () => {
+    const fetchEmployees = async () => {
+      try{
+        const response = await api.get("/agent/get-employee");
+        setEmployees(response?.data?.employee)
+
+      }catch(error){
+        console.error("failed to fetch employees", error);
+      }
+    }
+    fetchEmployees()
+  }, [])
   useEffect(() => {
     const fetchLeads = async () => {
       try {
@@ -264,7 +271,7 @@ const Enroll = () => {
     return found ? found.value : null;
   }
   const handleAntInputDSelect = (field, value) => {
-    if (field === "referred_type" && value === "Blocked Referral") {
+    if (field === "referred_type" ) {
       setUpdateFormData((prevData) => ({
         ...prevData,
         referred_type: "",
@@ -555,9 +562,9 @@ const Enroll = () => {
         user_id: response.data?.user_id?._id,
         tickets: response.data?.tickets,
         payment_type: response.data?.payment_type,
-        referred_customer: response.data?.referred_customer,
-        agent: response.data?.agent,
-        referred_lead: response.data?.referred_lead,
+        referred_customer: response.data?.referred_customer || "",
+        agent: response.data?.agent || "",
+        referred_lead: response.data?.referred_lead || "",
         referred_type: response.data?.referred_type,
         chit_asking_month: response.data?.chit_asking_month || "",
         blocked_referral: response.data?.blocked_referral || false,
@@ -812,20 +819,17 @@ const Enroll = () => {
   return (
     <>
       <div>
-       <div className="flex mt-20" >
-                 <Sidebar />
-                 <Navbar
-                   onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-                   visibility={true}
-                 />
-                 <CustomAlertDialog
-                   type={alertConfig.type}
-                   isVisible={alertConfig.visibility}
-                   message={alertConfig.message}
-                   onClose={() =>
-                     setAlertConfig((prev) => ({ ...prev, visibility: false }))
-                   }
-                 />
+        <div className="flex mt-20">
+          <Navbar
+            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <Sidebar />
+          <CustomAlert
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+          />
           <div className="flex-grow p-7">
             <h1 className="text-2xl font-semibold">Enrollments</h1>
             <div className="mt-6 mb-8">
@@ -858,7 +862,7 @@ const Enroll = () => {
                 </Select>
                 <button
                   onClick={() => setShowModal(true)}
-                  className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
                 >
                   + Add Enrollment
                 </button>
@@ -904,7 +908,7 @@ const Enroll = () => {
                   Group <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                   placeholder="Select or Search Group"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -934,7 +938,7 @@ const Enroll = () => {
                   Customer <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                   placeholder="Select or Search Customer"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1000,7 +1004,7 @@ const Enroll = () => {
                   Payment Type <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                   placeholder="Select Payment Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1029,7 +1033,7 @@ const Enroll = () => {
                   value={formData.chit_asking_month}
                   onChange={handleChange}
                   placeholder="Enter month number (e.g., 1 for Jan)"
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                 />
               </div>
 
@@ -1038,7 +1042,7 @@ const Enroll = () => {
                   Referred Type <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                   placeholder="Select Referred Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1053,6 +1057,7 @@ const Enroll = () => {
                     "Self Joining",
                     "Customer",
                     "Employee",
+                    "Agent",
                     "Leads",
 
                     "Others",
@@ -1074,7 +1079,7 @@ const Enroll = () => {
                   </label>
 
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
                     placeholder="Select Or Search Referred Customer"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1110,7 +1115,7 @@ const Enroll = () => {
                   </label>
 
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
                     placeholder="Select Or Search Referred Leads"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1134,6 +1139,32 @@ const Enroll = () => {
                   </Select>
                 </div>
               )}
+              {formData.referred_type === "Agent" && (
+                <div className="w-full">
+                  <label className="block mb-2 text-sm font-medium text-gray-900">Select Referred Agent{" "} <span className="text-red-500">*</span></label>
+                  <Select
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                  placeholder="Select or Search Referred Agent"
+                  popupMatchSelectWidth={false}
+                  showSearch
+                  name="agent"
+                  filterOption={(input,option) =>
+                    option.children.toString().toLowerCase().includes(input.toLowerCase())
+                  }
+                  value={formData.agent || undefined}
+                  onChange={(value) => handleAntDSelect("agent", value)}
+                  >
+                    {agents.map((agent) => (
+                      <Select.Option key={agent._id} value={agent._id}>
+                        {agent.name}
+                      </Select.Option>
+                    ))
+
+                  }
+
+                  </Select>
+                </div>
+              )}
               {formData.referred_type === "Employee" && (
                 <div className="w-full">
                   <label
@@ -1145,7 +1176,7 @@ const Enroll = () => {
                   </label>
 
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
                     placeholder="Select Or Search Referred Employee"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1161,9 +1192,9 @@ const Enroll = () => {
                     value={formData?.agent || undefined}
                     onChange={(value) => handleAntDSelect("agent", value)}
                   >
-                    {agents.map((agent) => (
-                      <Select.Option key={agent._id} value={agent._id}>
-                        {agent.name}
+                    {employees.map((employee) => (
+                      <Select.Option key={employee._id} value={employee._id}>
+                        {employee.name}
                       </Select.Option>
                     ))}
                   </Select>
@@ -1188,14 +1219,14 @@ const Enroll = () => {
                     placeholder="Enter the Number of Tickets"
                     required
                     max={availableTicketsAdd.length}
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                   />
                   {errors.no_of_tickets && (
                     <p className="mt-1 text-xs text-red-600">
                       {errors.no_of_tickets}
                     </p>
                   )}
-                  <p className="mt-1 text-xs text-violet  -800 text-center">
+                  <p className="mt-1 text-xs text-blue-800 text-center">
                     Only {availableTicketsAdd.length} tickets left
                   </p>
                 </div>
@@ -1273,12 +1304,12 @@ const Enroll = () => {
                   onClick={handleMultiStep}
                   className={`w-1/4 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors ${
                     loading
-                      ? "bg-violet-400 cursor-not-allowed"
+                      ? "bg-gray-400 cursor-not-allowed"
                       : enrollmentStep === "verify"
-                      ? "bg-violet-600 hover:bg-violet-700"
+                      ? "bg-gray-600 hover:bg-gray-700"
                       : enrollmentStep === "continue"
-                      ? "bg-violet-600 hover:bg-violet-700"
-                      : "bg-violet-700 hover:bg-violet-800"
+                      ? "bg-green-600 hover:bg-green-700"
+                      : "bg-blue-700 hover:bg-blue-800"
                   }`}
                 >
                   {loading
@@ -1425,6 +1456,7 @@ const Enroll = () => {
                     "Self Joining",
                     "Customer",
                     "Employee",
+                    "Agent",
                     "Leads",
                     "Blocked Referral",
                     "Others",
@@ -1468,6 +1500,32 @@ const Enroll = () => {
                         {user.full_name}
                       </Select.Option>
                     ))}
+                  </Select>
+                </div>
+              )}
+              {updateFormData.referred_type === "Agent" && (
+                <div className="w-full">
+                  <label className="block mb-2 text-sm font-medium text-gray-900">Select Referred Agent{" "} <span className="text-red-500">*</span></label>
+                  <Select
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                  placeholder="Select or Search Referred Agent"
+                  popupMatchSelectWidth={false}
+                  showSearch
+                  name="agent"
+                  filterOption={(input,option) =>
+                    option.children.toString().toLowerCase().includes(input.toLowerCase())
+                  }
+                  value={updateFormData.agent || undefined}
+                  onChange={(value) => handleAntInputDSelect("agent", value)}
+                  >
+                    {agents.map((agent) => (
+                      <Select.Option key={agent._id} value={agent._id}>
+                        {agent.name}
+                      </Select.Option>
+                    ))
+
+                  }
+
                   </Select>
                 </div>
               )}
@@ -1531,7 +1589,7 @@ const Enroll = () => {
                     value={updateFormData?.agent || undefined}
                     onChange={(value) => handleAntInputDSelect("agent", value)}
                   >
-                    {agents.map((agent) => (
+                    {employees.map((agent) => (
                       <Select.Option key={agent._id} value={agent._id}>
                         {agent.name}
                       </Select.Option>
@@ -1568,7 +1626,7 @@ const Enroll = () => {
 
               <button
                 type="submit"
-                className="w-full text-white bg-violet-700 hover:bg-violet-800 focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
               >
                 Update
               </button>
@@ -1583,7 +1641,7 @@ const Enroll = () => {
           }}
         >
           <div className="py-6 px-5 lg:px-8 text-left">
-            <h3 className="mb-4 text-xl font-bold text-gray-900"> 
+            <h3 className="mb-4 text-xl font-bold text-gray-900">
               Please Select a Reason for Removal
             </h3>
 

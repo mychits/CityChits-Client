@@ -172,7 +172,7 @@ const Profile = () => {
 
                             <button
                                 onClick={handleUpdate}
-                                className="w-full bg-secondary text-white p-2 rounded-md hover:bg-secondary"
+                                className="w-full bg-violet-500 text-white p-2 rounded-md hover:bg-violet-700"
                             >
                                 Update
                             </button>

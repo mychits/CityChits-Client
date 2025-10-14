@@ -34,7 +34,7 @@ const User = () => {
   const [collectionExecutive, setCollectionExecutive] = useState([]);
 
   const { Panel } = Collapse;
-  
+
   const [alertConfig, setAlertConfig] = useState({
     visibility: false,
     message: "Something went wrong!",
@@ -448,6 +448,7 @@ const User = () => {
     { key: "pincode", header: "Customer Pincode" },
     { key: "collection_area", header: "Area" },
     { key: "approval_status", header: "Approval Status" },
+
     { key: "action", header: "Action" },
   ];
 
@@ -965,517 +966,573 @@ const User = () => {
             </form>
           </div>
         </Modal>
-       <Modal
-  isVisible={showModalUpdate}
-  onClose={() => setShowModalUpdate(false)}
-  className="max-w-4xl w-full"
->
-  <div className="py-6 px-5 lg:px-8 text-left">
-    <h3 className="mb-6 text-2xl font-bold text-gray-900">Update <span className="text-3xl text-custom-violet">{currentUpdateUser?.full_name || "Customer"}’s</span> Information Details</h3>
-
-    <form className="space-y-6" onSubmit={handleUpdate} noValidate>
-      <Collapse
-        bordered={false}
-        defaultActiveKey={['1']}
-        expandIconPosition="end"
-        className="rounded-lg"
-      >
-        {/* === Panel 1: Basic Information === */}
-        <Panel
-          header={<span className="font-semibold text-lg">Basic Information</span>}
-          key="1"
-          className="mb-4 rounded-lg border border-gray-200 p-4 bg-gray-50"
+        <Modal
+          isVisible={showModalUpdate}
+          onClose={() => setShowModalUpdate(false)}
+          className="max-w-4xl w-full"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Title</label>
-              <Select
-                className="w-full"
-                placeholder="Select Title"
-                showSearch
-                value={updateFormData?.title || undefined}
-                onChange={(value) => handleAntInputDSelect("title", value)}
-              >
-                {["Mr", "Ms", "Mrs", "M/S", "Dr"].map((cTitle) => (
-                  <Select.Option key={cTitle} value={cTitle}>{cTitle}</Select.Option>
-                ))}
-              </Select>
-            </div>
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">
-                Full Name <span className="text-red-500">*</span>
-              </label>
-              <Input
-                name="full_name"
-                value={updateFormData?.full_name}
-                onChange={handleInputChange}
-                placeholder="Enter Full Name"
-                className="w-full"
-              />
-              {errors.full_name && <p className="mt-1 text-sm text-red-600">{errors.full_name}</p>}
-            </div>
+          <div className="py-6 px-5 lg:px-8 text-left">
+            <h3 className="mb-6 text-2xl font-bold text-gray-900">Update <span className="text-3xl text-custom-violet">{currentUpdateUser?.full_name || "Customer"}’s</span> Information Details</h3>
 
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Email</label>
-              <Input
-                type="email"
-                name="email"
-                value={updateFormData?.email}
-                onChange={handleInputChange}
-                placeholder="Enter Email"
-                className="w-full"
-              />
-              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
-            </div>
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">
-                Phone Number <span className="text-red-500">*</span>
-              </label>
-              <Input
-                name="phone_number"
-                value={updateFormData?.phone_number}
-                onChange={handleInputChange}
-                placeholder="Enter Phone Number"
-                className="w-full"
-              />
-              {errors.phone_number && <p className="mt-1 text-sm text-red-600">{errors.phone_number}</p>}
-            </div>
+            <form className="space-y-6" onSubmit={handleUpdate} noValidate>
+              <Collapse
+                bordered={false}
+                defaultActiveKey={['1']}
+                expandIconPosition="end"
+                className="rounded-lg"
+              >
+               
+                <Panel
+                  header={<span className="font-semibold text-lg">Basic Information</span>}
+                  key="1"
+                  className="mb-4 rounded-lg border border-gray-200 p-4 bg-gray-50"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Title</label>
+                      <Select
+                        className="w-full"
+                        placeholder="Select Title"
+                        showSearch
+                        value={updateFormData?.title || undefined}
+                        onChange={(value) => handleAntInputDSelect("title", value)}
+                      >
+                        {["Mr", "Ms", "Mrs", "M/S", "Dr"].map((cTitle) => (
+                          <Select.Option key={cTitle} value={cTitle}>{cTitle}</Select.Option>
+                        ))}
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">
+                        Full Name <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        name="full_name"
+                        value={updateFormData?.full_name}
+                        onChange={handleInputChange}
+                        placeholder="Enter Full Name"
+                        className="w-full"
+                      />
+                      {errors.full_name && <p className="mt-1 text-sm text-red-600">{errors.full_name}</p>}
+                    </div>
+
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Email</label>
+                      <Input
+                        type="email"
+                        name="email"
+                        value={updateFormData?.email}
+                        onChange={handleInputChange}
+                        placeholder="Enter Email"
+                        className="w-full"
+                      />
+                      {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+                    </div>
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">
+                        Phone Number <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        name="phone_number"
+                        value={updateFormData?.phone_number}
+                        onChange={handleInputChange}
+                        placeholder="Enter Phone Number"
+                        className="w-full"
+                      />
+                      {errors.phone_number && <p className="mt-1 text-sm text-red-600">{errors.phone_number}</p>}
+                    </div>
+
+
+
+
+
+
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Father Name</label>
+                      <Input
+                        name="father_name"
+                        value={updateFormData?.father_name}
+                        onChange={handleInputChange}
+                        placeholder="Enter Father Name"
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Date of Birth</label>
+                      <Input
+                        type="date"
+                        name="dateofbirth"
+                        value={updateFormData?.dateofbirth || ""}
+                        onChange={handleInputChange}
+                        className="w-full"
+                      />
+                    </div>
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Gender</label>
+                      <Select
+                        className="w-full"
+                        placeholder="Select Gender"
+                        value={updateFormData?.gender || undefined}
+                        onChange={(value) => handleAntInputDSelect("gender", value)}
+                      >
+                        {["Male", "Female"].map((g) => (
+                          <Select.Option key={g} value={g}>{g}</Select.Option>
+                        ))}
+                      </Select>
+                    </div>
+
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Marital Status</label>
+                      <Select
+                        className="w-full"
+                        placeholder="Select"
+                        value={updateFormData?.marital_status || undefined}
+                        onChange={(value) => handleAntInputDSelect("marital_status", value)}
+                      >
+                        {["Married", "Unmarried", "Widow", "Divorced"].map((s) => (
+                          <Select.Option key={s} value={s}>{s}</Select.Option>
+                        ))}
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Referral Name</label>
+                      <Input
+                        name="referral_name"
+                        value={updateFormData?.referral_name}
+                        onChange={handleInputChange}
+                        placeholder="Referral Name"
+                        className="w-full"
+                      />
+                    </div>
+
+
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Alternate Phone</label>
+                      <Input
+                        name="alternate_number"
+                        value={updateFormData?.alternate_number}
+                        onChange={handleInputChange}
+                        placeholder="Alternate Number"
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                </Panel>
+
+             
+                <Panel
+                  header={<span className="font-semibold text-lg">Address & Location</span>}
+                  key="2"
+                  className="mb-4 rounded-lg border border-gray-200 p-4 bg-gray-50"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="md:col-span-2">
+                      <label className="block mb-2 text-sm font-medium text-gray-700">
+                        Address <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        name="address"
+                        value={updateFormData?.address}
+                        onChange={handleInputChange}
+                        placeholder="Enter Address"
+                        className="w-full"
+                      />
+                      {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
+                    </div>
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Village</label>
+                      <Input
+                        name="village"
+                        value={updateFormData?.village}
+                        onChange={handleInputChange}
+                        placeholder="Village"
+                        className="w-full"
+                      />
+                    </div>
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Taluk</label>
+                      <Input
+                        name="taluk"
+                        value={updateFormData?.taluk}
+                        onChange={handleInputChange}
+                        placeholder="Taluk"
+                        className="w-full"
+                      />
+                    </div>
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">District</label>
+                      <Input
+                        name="district"
+                        value={updateFormData?.district}
+                        onChange={handleInputChange}
+                        placeholder="District"
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">State</label>
+                      <Select
+                        className="w-full"
+                        placeholder="Select State"
+                        showSearch
+                        value={updateFormData?.state || undefined}
+                        onChange={(value) => handleAntInputDSelect("state", value)}
+                      >
+                        {["Karnataka", "Maharashtra", "Tamil Nadu"].map((s) => (
+                          <Select.Option key={s} value={s}>{s}</Select.Option>
+                        ))}
+                      </Select>
+                    </div>
+
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">
+                        Pincode <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        name="pincode"
+                        value={updateFormData?.pincode}
+                        onChange={handleInputChange}
+                        placeholder="Enter Pincode"
+                        className="w-full"
+                      />
+                      {errors.pincode && <p className="mt-1 text-sm text-red-600">{errors.pincode}</p>}
+                    </div>
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Nationality</label>
+                      <Select
+                        className="w-full"
+                        placeholder="Select"
+                        value={updateFormData?.nationality || undefined}
+                        onChange={(value) => handleAntInputDSelect("nationality", value)}
+                      >
+                        {["Indian", "Other"].map((n) => (
+                          <Select.Option key={n} value={n}>{n}</Select.Option>
+                        ))}
+                      </Select>
+                    </div>
+
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Collection Area</label>
+                      <Select
+                        className="w-full"
+                        placeholder="Select Area"
+                        showSearch
+                        value={updateFormData?.collection_area || undefined}
+                        onChange={(value) => handleAntInputDSelect("collection_area", value)}
+                      >
+                        {areas.map((area) => (
+                          <Select.Option key={area._id} value={area._id}>
+                            {area.route_name}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Collection Executive</label>
+                      <Select
+                        className="w-full"
+                        placeholder="Select Executive"
+                        showSearch
+                        value={updateFormData?.collection_executive || undefined}
+                        onChange={(value) => handleAntInputDSelect("collection_executive", value)}
+                      >
+                        {collectionExecutive.map((exec) => (
+                          <Select.Option key={exec._id} value={exec._id}>
+                            {`${exec.name} | ${exec.phone_number}`}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </div>
+                  </div>
+                </Panel>
 
            
+                <Panel
+                  header={<span className="font-semibold text-lg">Nominee Details</span>}
+                  key="3"
+                  className="mb-4 rounded-lg border border-gray-200 p-4 bg-gray-50"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Nominee Name</label>
+                      <Input
+                        name="nominee_name"
+                        value={updateFormData?.nominee_name}
+                        onChange={handleInputChange}
+                        placeholder="Nominee Name"
+                        className="w-full"
+                      />
+                    </div>
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Nominee DOB</label>
+                      <Input
+                        type="date"
+                        name="nominee_dateofbirth"
+                        value={updateFormData?.nominee_dateofbirth || ""}
+                        onChange={handleInputChange}
+                        className="w-full"
+                      />
+                    </div>
 
-        
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Relationship</label>
+                      <Select
+                        className="w-full"
+                        placeholder="Select"
+                        value={updateFormData?.nominee_relationship || undefined}
+                        onChange={(value) => handleAntInputDSelect("nominee_relationship", value)}
+                      >
+                        {["Father", "Mother", "Brother/Sister", "Spouse", "Son/Daughter", "Other"].map((r) => (
+                          <Select.Option key={r} value={r}>{r}</Select.Option>
+                        ))}
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Nominee Phone</label>
+                      <Input
+                        name="nominee_phone_number"
+                        value={updateFormData?.nominee_phone_number}
+                        onChange={handleInputChange}
+                        placeholder="Nominee Phone"
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                </Panel>
+
+            
+                <Panel
+                  header={<span className="font-semibold text-lg">Documents & Bank Information</span>}
+                  key="4"
+                  className="rounded-lg border border-gray-200 p-4 bg-gray-50"
+                >
+                  <div className="space-y-8">
+
+                   
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-700">
+                          Aadhar Number <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                          name="adhaar_no"
+                          value={updateFormData?.adhaar_no}
+                          onChange={handleInputChange}
+                          placeholder="Enter Aadhar Number"
+                          className="w-full"
+                        />
+                        {errors.adhaar_no && (
+                          <p className="mt-1 text-sm text-red-600">{errors.adhaar_no}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-700">
+                          PAN Number
+                        </label>
+                        <Input
+                          name="pan_no"
+                          value={updateFormData?.pan_no}
+                          onChange={handleInputChange}
+                          placeholder="Enter PAN Number"
+                          className="w-full"
+                        />
+                        {errors.pan_no && (
+                          <p className="mt-1 text-sm text-red-600">{errors.pan_no}</p>
+                        )}
+                      </div>
+                    </div>
 
            
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Father Name</label>
-              <Input
-                name="father_name"
-                value={updateFormData?.father_name}
-                onChange={handleInputChange}
-                placeholder="Enter Father Name"
-                className="w-full"
-              />
-            </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-700">
+                          Profile Picture
+                        </label>
+                        <input
+                          type="file"
+                          name="profilephoto"
+                          id="profilephoto"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                        />
+                        {updateFormData.profilephoto && typeof updateFormData.profilephoto === "string" && (
+                          <div className="mt-2">
+                            <img
+                              src={updateFormData.profilephoto}
+                              alt="Profile Preview"
+                              className="w-24 h-24 rounded-full object-cover border shadow-sm"
+                            />
+                          </div>
+                        )}
+                      </div>
 
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Date of Birth</label>
-              <Input
-                type="date"
-                name="dateofbirth"
-                value={updateFormData?.dateofbirth || ""}
-                onChange={handleInputChange}
-                className="w-full"
-              />
-            </div>
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Gender</label>
-              <Select
-                className="w-full"
-                placeholder="Select Gender"
-                value={updateFormData?.gender || undefined}
-                onChange={(value) => handleAntInputDSelect("gender", value)}
-              >
-                {["Male", "Female"].map((g) => (
-                  <Select.Option key={g} value={g}>{g}</Select.Option>
-                ))}
-              </Select>
-            </div>
+                 
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-700">
+                          Aadhaar Front
+                        </label>
+                        <input
+                          type="file"
+                          name="aadhar_frontphoto"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                        />
+                        {updateFormData?.aadhar_frontphoto && (
+                          <Link to={updateFormData.aadhar_frontphoto} download className="block mt-2">
+                            <img
+                              src={updateFormData.aadhar_frontphoto}
+                              alt="Aadhaar Front"
+                              className="w-28 h-28 object-cover rounded border shadow-sm"
+                            />
+                          </Link>
+                        )}
+                      </div>
 
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Marital Status</label>
-              <Select
-                className="w-full"
-                placeholder="Select"
-                value={updateFormData?.marital_status || undefined}
-                onChange={(value) => handleAntInputDSelect("marital_status", value)}
-              >
-                {["Married", "Unmarried", "Widow", "Divorced"].map((s) => (
-                  <Select.Option key={s} value={s}>{s}</Select.Option>
-                ))}
-              </Select>
-            </div>
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Referral Name</label>
-              <Input
-                name="referral_name"
-                value={updateFormData?.referral_name}
-                onChange={handleInputChange}
-                placeholder="Referral Name"
-                className="w-full"
-              />
-            </div>
+                    
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-700">
+                          Aadhaar Back
+                        </label>
+                        <input
+                          type="file"
+                          name="aadhar_backphoto"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                        />
+                        {updateFormData?.aadhar_backphoto && (
+                          <Link to={updateFormData.aadhar_backphoto} download className="block mt-2">
+                            <img
+                              src={updateFormData.aadhar_backphoto}
+                              alt="Aadhaar Back"
+                              className="w-28 h-28 object-cover rounded border shadow-sm"
+                            />
+                          </Link>
+                        )}
+                      </div>
+                    </div>
 
-         
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Alternate Phone</label>
-              <Input
-                name="alternate_number"
-                value={updateFormData?.alternate_number}
-                onChange={handleInputChange}
-                placeholder="Alternate Number"
-                className="w-full"
-              />
-            </div>
+ 
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-700">
+                          PAN Front
+                        </label>
+                        <input
+                          type="file"
+                          name="pan_frontphoto"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                        />
+                        {updateFormData?.pan_frontphoto && (
+                          <Link to={updateFormData.pan_frontphoto} download className="block mt-2">
+                            <img
+                              src={updateFormData.pan_frontphoto}
+                              alt="PAN Front"
+                              className="w-28 h-28 object-cover rounded border shadow-sm"
+                            />
+                          </Link>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-700">
+                          PAN Back
+                        </label>
+                        <input
+                          type="file"
+                          name="pan_backphoto"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                        />
+                        {updateFormData?.pan_backphoto && (
+                          <Link to={updateFormData.pan_backphoto} download className="block mt-2">
+                            <img
+                              src={updateFormData.pan_backphoto}
+                              alt="PAN Back"
+                              className="w-28 h-28 object-cover rounded border shadow-sm"
+                            />
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+
+                 
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-700">
+                          Bank Name
+                        </label>
+                        <Input
+                          name="bank_name"
+                          value={updateFormData?.bank_name}
+                          onChange={handleInputChange}
+                          placeholder="Bank Name"
+                          className="w-full"
+                        />
+                      </div>
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-700">
+                          Branch Name
+                        </label>
+                        <Input
+                          name="bank_branch_name"
+                          value={updateFormData?.bank_branch_name}
+                          onChange={handleInputChange}
+                          placeholder="Branch Name"
+                          className="w-full"
+                        />
+                      </div>
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-700">
+                          Account Number
+                        </label>
+                        <Input
+                          name="bank_account_number"
+                          value={updateFormData?.bank_account_number}
+                          onChange={handleInputChange}
+                          placeholder="Account Number"
+                          className="w-full"
+                        />
+                      </div>
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-700">
+                          IFSC Code
+                        </label>
+                        <Input
+                          name="bank_IFSC_code"
+                          value={updateFormData?.bank_IFSC_code}
+                          onChange={handleInputChange}
+                          placeholder="IFSC Code"
+                          className="w-full"
+                        />
+                      </div>
+                    </div>
+
+                  </div>
+                </Panel>
+
+              </Collapse>
+
+              {/* Submit Button */}
+              <div className="flex justify-end pt-4">
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-violet-600 text-white font-medium rounded-lg hover:bg-violet-700 focus:ring-2 focus:ring-violet-300 transition"
+                >
+                  Update Customer
+                </button>
+              </div>
+            </form>
           </div>
-        </Panel>
-
-        {/* === Panel 2: Address & Location === */}
-        <Panel
-          header={<span className="font-semibold text-lg">Address & Location</span>}
-          key="2"
-          className="mb-4 rounded-lg border border-gray-200 p-4 bg-gray-50"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="md:col-span-2">
-              <label className="block mb-2 text-sm font-medium text-gray-700">
-                Address <span className="text-red-500">*</span>
-              </label>
-              <Input
-                name="address"
-                value={updateFormData?.address}
-                onChange={handleInputChange}
-                placeholder="Enter Address"
-                className="w-full"
-              />
-              {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
-            </div>
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Village</label>
-              <Input
-                name="village"
-                value={updateFormData?.village}
-                onChange={handleInputChange}
-                placeholder="Village"
-                className="w-full"
-              />
-            </div>
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Taluk</label>
-              <Input
-                name="taluk"
-                value={updateFormData?.taluk}
-                onChange={handleInputChange}
-                placeholder="Taluk"
-                className="w-full"
-              />
-            </div>
-             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">District</label>
-              <Input
-                name="district"
-                value={updateFormData?.district}
-                onChange={handleInputChange}
-                placeholder="District"
-                className="w-full"
-              />
-            </div>
-
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">State</label>
-              <Select
-                className="w-full"
-                placeholder="Select State"
-                showSearch
-                value={updateFormData?.state || undefined}
-                onChange={(value) => handleAntInputDSelect("state", value)}
-              >
-                {["Karnataka", "Maharashtra", "Tamil Nadu"].map((s) => (
-                  <Select.Option key={s} value={s}>{s}</Select.Option>
-                ))}
-              </Select>
-            </div>
-           
-             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">
-                Pincode <span className="text-red-500">*</span>
-              </label>
-              <Input
-                name="pincode"
-                value={updateFormData?.pincode}
-                onChange={handleInputChange}
-                placeholder="Enter Pincode"
-                className="w-full"
-              />
-              {errors.pincode && <p className="mt-1 text-sm text-red-600">{errors.pincode}</p>}
-            </div>
-               <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Nationality</label>
-              <Select
-                className="w-full"
-                placeholder="Select"
-                value={updateFormData?.nationality || undefined}
-                onChange={(value) => handleAntInputDSelect("nationality", value)}
-              >
-                {["Indian", "Other"].map((n) => (
-                  <Select.Option key={n} value={n}>{n}</Select.Option>
-                ))}
-              </Select>
-            </div>
-
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Collection Area</label>
-              <Select
-                className="w-full"
-                placeholder="Select Area"
-                showSearch
-                value={updateFormData?.collection_area || undefined}
-                onChange={(value) => handleAntInputDSelect("collection_area", value)}
-              >
-                {areas.map((area) => (
-                  <Select.Option key={area._id} value={area._id}>
-                    {area.route_name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </div>
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Collection Executive</label>
-              <Select
-                className="w-full"
-                placeholder="Select Executive"
-                showSearch
-                value={updateFormData?.collection_executive || undefined}
-                onChange={(value) => handleAntInputDSelect("collection_executive", value)}
-              >
-                {collectionExecutive.map((exec) => (
-                  <Select.Option key={exec._id} value={exec._id}>
-                    {`${exec.name} | ${exec.phone_number}`}
-                  </Select.Option>
-                ))}
-              </Select>
-            </div>
-          </div>
-        </Panel>
-
-        {/* === Panel 3: Nominee Details === */}
-        <Panel
-          header={<span className="font-semibold text-lg">Nominee Details</span>}
-          key="3"
-          className="mb-4 rounded-lg border border-gray-200 p-4 bg-gray-50"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Nominee Name</label>
-              <Input
-                name="nominee_name"
-                value={updateFormData?.nominee_name}
-                onChange={handleInputChange}
-                placeholder="Nominee Name"
-                className="w-full"
-              />
-            </div>
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Nominee DOB</label>
-              <Input
-                type="date"
-                name="nominee_dateofbirth"
-                value={updateFormData?.nominee_dateofbirth || ""}
-                onChange={handleInputChange}
-                className="w-full"
-              />
-            </div>
-
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Relationship</label>
-              <Select
-                className="w-full"
-                placeholder="Select"
-                value={updateFormData?.nominee_relationship || undefined}
-                onChange={(value) => handleAntInputDSelect("nominee_relationship", value)}
-              >
-                {["Father", "Mother", "Brother/Sister", "Spouse", "Son/Daughter", "Other"].map((r) => (
-                  <Select.Option key={r} value={r}>{r}</Select.Option>
-                ))}
-              </Select>
-            </div>
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Nominee Phone</label>
-              <Input
-                name="nominee_phone_number"
-                value={updateFormData?.nominee_phone_number}
-                onChange={handleInputChange}
-                placeholder="Nominee Phone"
-                className="w-full"
-              />
-            </div>
-          </div>
-        </Panel>
-
-        {/* === Panel 4: Documents & Bank Info === */}
-        <Panel
-          header={<span className="font-semibold text-lg">Documents & Bank Information</span>}
-          key="4"
-          className="rounded-lg border border-gray-200 p-4 bg-gray-50"
-        >
-          <div className="space-y-6">
-            {/* Aadhaar Photos */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-               <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">
-                Aadhar Number <span className="text-red-500">*</span>
-              </label>
-              <Input
-                name="adhaar_no"
-                value={updateFormData?.adhaar_no}
-                onChange={handleInputChange}
-                placeholder="Enter Aadhar Number"
-                className="w-full"
-              />
-              {errors.adhaar_no && <p className="mt-1 text-sm text-red-600">{errors.adhaar_no}</p>}
-            </div>
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">PAN Number</label>
-              <Input
-                name="pan_no"
-                value={updateFormData?.pan_no}
-                onChange={handleInputChange}
-                placeholder="Enter PAN Number"
-                className="w-full"
-              />
-              {errors.pan_no && <p className="mt-1 text-sm text-red-600">{errors.pan_no}</p>}
-            </div>
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-700">Aadhaar Front</label>
-                <Input
-                  type="file"
-                  name="aadhar_frontphoto"
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  className="w-full"
-                />
-                {updateFormData?.aadhar_frontphoto && (
-                  <Link to={updateFormData.aadhar_frontphoto} download className="block mt-2">
-                    <img
-                      src={updateFormData.aadhar_frontphoto}
-                      alt="Aadhar Front"
-                      className="w-32 h-32 object-cover rounded border mt-2"
-                    />
-                  </Link>
-                )}
-              </div>
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-700">Aadhaar Back</label>
-                <Input
-                  type="file"
-                  name="aadhar_backphoto"
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  className="w-full"
-                />
-                {updateFormData?.aadhar_backphoto && (
-                  <Link to={updateFormData.aadhar_backphoto} download className="block mt-2">
-                    <img
-                      src={updateFormData.aadhar_backphoto}
-                      alt="Aadhar Back"
-                      className="w-32 h-32 object-cover rounded border mt-2"
-                    />
-                  </Link>
-                )}
-              </div>
-            </div>
-
-            {/* PAN Photos */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-700">PAN Front</label>
-                <Input
-                  type="file"
-                  name="pan_frontphoto"
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  className="w-full"
-                />
-                {updateFormData?.pan_frontphoto && (
-                  <Link to={updateFormData.pan_frontphoto} download className="block mt-2">
-                    <img
-                      src={updateFormData.pan_frontphoto}
-                      alt="PAN Front"
-                      className="w-32 h-32 object-cover rounded border mt-2"
-                    />
-                  </Link>
-                )}
-              </div>
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-700">PAN Back</label>
-                <Input
-                  type="file"
-                  name="pan_backphoto"
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  className="w-full"
-                />
-                {updateFormData?.pan_backphoto && (
-                  <Link to={updateFormData.pan_backphoto} download className="block mt-2">
-                    <img
-                      src={updateFormData.pan_backphoto}
-                      alt="PAN Back"
-                      className="w-32 h-32 object-cover rounded border mt-2"
-                    />
-                  </Link>
-                )}
-              </div>
-            </div>
-
-            {/* Bank Info */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-700">Bank Name</label>
-                <Input
-                  name="bank_name"
-                  value={updateFormData?.bank_name}
-                  onChange={handleInputChange}
-                  placeholder="Bank Name"
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-700">Branch Name</label>
-                <Input
-                  name="bank_branch_name"
-                  value={updateFormData?.bank_branch_name}
-                  onChange={handleInputChange}
-                  placeholder="Branch Name"
-                  className="w-full"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-700">Account Number</label>
-                <Input
-                  name="bank_account_number"
-                  value={updateFormData?.bank_account_number}
-                  onChange={handleInputChange}
-                  placeholder="Account Number"
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-700">IFSC Code</label>
-                <Input
-                  name="bank_IFSC_code"
-                  value={updateFormData?.bank_IFSC_code}
-                  onChange={handleInputChange}
-                  placeholder="IFSC Code"
-                  className="w-full"
-                />
-              </div>
-            </div>
-          </div>
-        </Panel>
-      </Collapse>
-
-      {/* Submit Button */}
-      <div className="flex justify-end pt-4">
-        <button
-          type="submit"
-          className="px-6 py-2.5 bg-violet-600 text-white font-medium rounded-lg hover:bg-violet-700 focus:ring-2 focus:ring-violet-300 transition"
-        >
-          Update Customer
-        </button>
-      </div>
-    </form>
-  </div>
-</Modal>
+        </Modal>
 
         <Modal
           isVisible={showModalDelete}

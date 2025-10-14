@@ -193,7 +193,7 @@ const Home = () => {
           },
         });
 
-        setPaymentsPerMonthValue(response?.data?.totalFilteredPayment || 0);
+        setPaymentsPerMonthValue(response?.data?.monthlyPayment || 0);
       } catch (error) {
         console.error("Error fetching monthly payment data:", error);
       }
@@ -251,7 +251,7 @@ const Home = () => {
       iconColor: "text-pink-600",
       borderColor: "border-pink-600",
       ringColor: "ring-pink-500/20",
-      redirect: "/staff",
+      redirect: "/staff-menu",
       key: "4",
     },
     {
@@ -264,7 +264,7 @@ const Home = () => {
       iconColor: "text-purple-600",
       borderColor: "border-purple-600",
       ringColor: "ring-purple-500/20",
-      redirect: "/agent",
+      redirect: "/staff-menu/agent",
       key: "3",
     },
     {
@@ -277,7 +277,7 @@ const Home = () => {
       iconColor: "text-orange-600",
       borderColor: "border-orange-600",
       ringColor: "ring-orange-500/20",
-      redirect: "/employee",
+      redirect: "/staff-menu/employee-menu",
       key: "5",
     },
     {

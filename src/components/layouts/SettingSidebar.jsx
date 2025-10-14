@@ -19,7 +19,8 @@ import { MdAccountBalanceWallet } from "react-icons/md";
 import { RiMoneyRupeeCircleFill } from "react-icons/ri";
 import { CgProfile } from "react-icons/cg";
 import { IoIosHelpCircle } from "react-icons/io";
-
+import { FaGift } from "react-icons/fa6";
+import { BsPersonCheck } from "react-icons/bs";
 const settingMenu = [
   { id: 1, title: "Dashboard", icon: RiDashboardFill, link: "/dashboard" },
   { id: 2, title: "Analytics", icon: SiGoogleanalytics, link: "/analytics" },
@@ -57,12 +58,29 @@ const settingMenu = [
       },
     ],
   },
+
+    {
+    title: "Insurance",
+    icon: IoPeopleOutline,
+    link : "/insurance"
+
+  },
+  {
+    title: "Reward",
+    icon: FaGift,
+    link : "/gift-received"
+  },
   { id: 4, title: "Designations", icon: IoPeopleOutline, link: "/designation" },
   {
     id: 5,
     title: "Administrative Privileges",
     icon: RiAdminLine,
     link: "/administrative-privileges",
+  },
+  {
+    title: "Admin Access Rights",
+    icon: BsPersonCheck,
+    link: "/admin-access-rights",
   },
   {
     id: 6,
