@@ -208,7 +208,7 @@ const { Option } = Select;
 
 //   return (
 //     <button
-//       className="px-4 py-2 bg-blue-600 text-white rounded"
+//       className="px-4 py-2 bg-violet-600 text-white rounded"
 //       onClick={handleSalaryPrint}
 //     >
 //       Print Salary Slip
@@ -367,7 +367,7 @@ const { Option } = Select;
 
 //   return (
 //     <button
-//       className="px-4 py-2 bg-blue-600 text-white rounded"
+//       className="px-4 py-2 bg-violet-600 text-white rounded"
 //       onClick={handleSalaryPrint}
 //     >
 //       Print Salary Slip
@@ -1024,7 +1024,7 @@ body {
   return (
     <div className="flex items-center gap-2">
       <button
-        className="px-4 py-2 bg-blue-600 text-white rounded"
+        className="px-4 py-2 bg-violet-600 text-white rounded"
         onClick={handleSalaryPrint}
       >
         Print Salary Slip

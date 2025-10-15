@@ -131,7 +131,7 @@ const handleEnrollmentRequestPrint = async (id) => {
 
             // Main box
             doc.setDrawColor(0);
-            doc.setFillColor(0, 38, 124); // blue background
+            doc.setFillColor(0, 38, 124); // violet background
             doc.roundedRect(x, y, boxWidth, boxHeight, radius, radius, "FD");
 
             // Center-aligned text inside the box
@@ -281,7 +281,7 @@ const handleEnrollmentRequestPrint = async (id) => {
 
             // Main background box
             doc.setDrawColor(0);
-            doc.setFillColor(0, 38, 124); // Blue
+            doc.setFillColor(0, 38, 124); // violet
             doc.rect(x, y, boxWidth, boxHeight, "FD");
 
             // Render each line, centered
@@ -407,7 +407,7 @@ const handleEnrollmentRequestPrint = async (id) => {
 
             // Main background box
             doc.setDrawColor(0);
-            doc.setFillColor(0, 38, 124); // Blue
+            doc.setFillColor(0, 38, 124); // violet
             doc.rect(x, y, boxWidth, boxHeight, "FD");
 
             // Render each line, centered

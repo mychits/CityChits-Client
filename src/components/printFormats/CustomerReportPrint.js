@@ -478,7 +478,7 @@ const safe = (v) => v ?? "-";
 //         cellPadding: 2,
 //       },
 //       headStyles: {
-//         fillColor: [240, 248, 255], // Light blue header
+//         fillColor: [240, 248, 255], // Light violet header
 //         textColor: [0, 0, 0],
 //         fontStyle: "bold",
 //       },

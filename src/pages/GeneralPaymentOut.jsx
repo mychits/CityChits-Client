@@ -214,7 +214,7 @@ const GeneralPaymentOut = () => {
                         key: "1",
                         label: (
                           <div
-                            className="text-green-600"
+                            className="text-violet-600"
                             onClick={() =>
                               handlePaymentOut(
                                 g.group_id?._id,
@@ -440,7 +440,7 @@ const selectednewGroup = groups.find(g => g._id === selectedAuctionGroupId);
 
         <div className="flex-grow p-7">
           <h1 className="text-2xl font-semibold">
-            <span className="font-bold text-red-600">CHIT</span> Payment Out
+            <span className="font-bold text-violet-700">CHIT</span> Payment Out
           </h1>
 
           <div className="mt-6 mb-8">

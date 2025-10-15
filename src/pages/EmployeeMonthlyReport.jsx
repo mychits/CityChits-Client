@@ -12,7 +12,7 @@ const EmployeeMonthlyReport = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Fetch employee list
+
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
@@ -25,7 +25,7 @@ const EmployeeMonthlyReport = () => {
     fetchEmployees();
   }, []);
 
-  // ✅ Fetch monthly attendance for selected employee
+
   useEffect(() => {
     if (!selectedEmployee) return;
 
@@ -69,7 +69,7 @@ const EmployeeMonthlyReport = () => {
     fetchEmployeeMonthlyAttendance();
   }, [selectedEmployee]);
 
-  // ✅ Table columns
+
   const attendanceColumns = [
     { title: "Sl No", dataIndex: "SlNo", key: "SlNo" },
     { title: "Employee Name", dataIndex: "EmployeeName", key: "EmployeeName" },
@@ -81,7 +81,7 @@ const EmployeeMonthlyReport = () => {
     <div className="p-4">
       <h2 className="text-xl font-semibold mb-4">Employee Monthly Report</h2>
 
-      {/* Employee Selector */}
+  
       <Select
         placeholder="Select Employee"
         style={{ width: 300, marginBottom: 20 }}

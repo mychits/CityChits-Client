@@ -207,7 +207,7 @@ const AuctionReport = () => {
     { key: "amount", header: "Win Amount" },
     { key: "auction_type", header: "Auction Type" },
      { key: "status", header: "Status" },
-    { key: "action", header: "Action" },
+    // { key: "action", header: "Action" },
   ];
 
   const handleUpdateModalOpen = async (groupId) => {

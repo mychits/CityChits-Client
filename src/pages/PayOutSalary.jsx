@@ -14,7 +14,7 @@ import { IoMdMore } from "react-icons/io";
 const PayoutSalary = () => {
   const paymentFor = "salary";
   const [api, contextHolder] = notification.useNotification();
-  const [dateMode, setDateMode] = useState("month"); // "month" or "custom"
+  const [dateMode, setDateMode] = useState("month"); 
   const [showSalaryModal, setShowSalaryModal] = useState(false);
   const [modifyPayment, setModifyPayment] = useState(false);
   const [adminId, setAdminId] = useState("");
@@ -78,13 +78,13 @@ const PayoutSalary = () => {
     return `${year}-${month}-${day}`;
   };
 
-  // Initialize fromMonth and toMonth
+ 
   useEffect(() => {
     setFromMonth(currentMonth);
     setToMonth(currentMonth);
   }, []);
 
-  // Auto-update from_date / to_date when month range changes
+
   useEffect(() => {
     if (dateMode === "month" && fromMonth && toMonth) {
       const [fromYear, fromMon] = fromMonth.split("-").map(Number);
@@ -188,7 +188,7 @@ const PayoutSalary = () => {
           from_date: newFromDate,
           to_date: newToDate,
         }));
-        // Also update month fields if in month mode
+  
         if (dateMode === "month") {
           const joinDate = new Date(joining || todayStr);
           const fm = `${joinDate.getFullYear()}-${String(joinDate.getMonth() + 1).padStart(2, "0")}`;
@@ -269,17 +269,44 @@ const PayoutSalary = () => {
     }
   };
 
+  // useEffect(() => {
+  //   const user = localStorage.getItem("user");
+  //   console.log(user)
+  //   const userObj = JSON.parse(user);
+  //   console.log(userObj,"hello")
+  //   setAdminId(userObj?._id);
+  //   setAdminName(userObj?.name || "");
+    
+  //   if (userObj?.admin_access_right_id?.access_permissions?.edit_payment) {
+  //     setModifyPayment(
+  //       userObj?.admin_access_right_id?.access_permissions?.edit_payment === "true"
+  //     );
+  //   }
+  // }, []);
+
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    const userObj = JSON.parse(user);
-    setAdminId(userObj._id);
-    setAdminName(userObj.name || "");
+  try {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) return;
+
+    const parsedUser = typeof storedUser === "string" ? JSON.parse(storedUser) : storedUser;
+    const userObj = typeof parsedUser === "string" ? JSON.parse(parsedUser) : parsedUser;
+
+   console.info(userObj,"hello")
+
+    setAdminId(userObj?._id || "");
+    setAdminName(userObj?.name || userObj?.full_name || userObj?.username || "Admin");
+
+    console.info(userObj?.name)
+
     if (userObj?.admin_access_right_id?.access_permissions?.edit_payment) {
-      setModifyPayment(
-        userObj.admin_access_right_id.access_permissions.edit_payment === "true"
-      );
+      setModifyPayment(userObj.admin_access_right_id.access_permissions.edit_payment === "true");
     }
-  }, []);
+  } catch (error) {
+    console.error("Error reading user from localStorage:", error);
+  }
+}, []);
+
 
   useEffect(() => {
     if (alertConfig.visibility && alertConfig.noReload) {
@@ -444,14 +471,14 @@ const PayoutSalary = () => {
                     setShowSalaryModal(true);
                     resetForm();
                   }}
-                  className="ml-4 bg-blue-900 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition duration-200 flex items-center"
+                  className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200 flex items-center"
                 >
                   <span className="mr-2">+</span> Salary Payment
                 </button>
               </Tooltip>
             </div>
             <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4 text-blue-800 border-b pb-2">Salary Payments</h2>
+              <h2 className="text-xl font-semibold mb-4 text-violet-800 border-b pb-2">Salary Payments</h2>
               {salaryPayments.length > 0 ? (
                 <DataTable
                   data={salaryPayments}
@@ -480,7 +507,7 @@ const PayoutSalary = () => {
             <div className="bg-gradient-to-br from-slate-50 to-slate-100 py-6 px-6 lg:px-8 text-left max-h-[90vh] my-2">
               <div className="mb-6 pb-4 border-b border-slate-200">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-violet-600 flex items-center justify-center">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -544,7 +571,6 @@ const PayoutSalary = () => {
                       </div>
                     </div>
 
-                    {/* Month Range Toggle & Inputs */}
                     <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
                       <h4 className="text-sm font-semibold text-gray-800 mb-4">Salary Period</h4>
 
@@ -552,7 +578,7 @@ const PayoutSalary = () => {
                         <label className="inline-flex items-center cursor-pointer">
                           <input
                             type="radio"
-                            className="form-radio text-blue-600"
+                            className="form-radio text-violet-600"
                             checked={dateMode === "month"}
                             onChange={() => setDateMode("month")}
                           />
@@ -561,7 +587,7 @@ const PayoutSalary = () => {
                         <label className="inline-flex items-center cursor-pointer">
                           <input
                             type="radio"
-                            className="form-radio text-blue-600"
+                            className="form-radio text-violet-600"
                             checked={dateMode === "custom"}
                             onChange={() => setDateMode("custom")}
                           />
@@ -569,7 +595,7 @@ const PayoutSalary = () => {
                         </label>
                       </div>
 
-                      {/* Month Range Inputs */}
+                  
                       {dateMode === "month" && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
@@ -578,7 +604,7 @@ const PayoutSalary = () => {
                               type="month"
                               value={fromMonth}
                               onChange={(e) => setFromMonth(e.target.value)}
-                              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                             />
                           </div>
                           <div>
@@ -588,13 +614,13 @@ const PayoutSalary = () => {
                               value={toMonth}
                               min={fromMonth}
                               onChange={(e) => setToMonth(e.target.value)}
-                              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                             />
                           </div>
                         </div>
                       )}
 
-                      {/* Custom Date Inputs */}
+                  
                       {dateMode === "custom" && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
@@ -605,7 +631,7 @@ const PayoutSalary = () => {
                               value={salaryForm.from_date}
                               max={new Date().toISOString().split("T")[0]}
                               onChange={handleSalaryChange}
-                              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-gray-900"
                             />
                             {errors.from_date && (
                               <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
@@ -621,7 +647,7 @@ const PayoutSalary = () => {
                               value={salaryForm.to_date}
                               max={new Date().toISOString().split("T")[0]}
                               onChange={handleSalaryChange}
-                              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-gray-900"
                             />
                             {errors.to_date && (
                               <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
@@ -632,7 +658,7 @@ const PayoutSalary = () => {
                         </div>
                       )}
 
-                      {/* Calculate Button */}
+
                       {salaryForm.from_date && salaryForm.to_date && (
                         <div className="text-right mt-4">
                           <button
@@ -657,15 +683,15 @@ const PayoutSalary = () => {
                       )}
                     </div>
 
-                    {/* Calculated Salary Highlight */}
+
                     {calculatedSalary && (
-                      <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-300 shadow-sm">
-                        <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-2">Total Payable Amount</p>
-                        <p className="text-3xl font-bold text-blue-900">₹{calculatedSalary}</p>
+                      <div className="bg-gradient-to-r from-violet-50 to-violet-100 rounded-xl p-5 border border-violet-300 shadow-sm">
+                        <p className="text-xs font-semibold text-violet-700 uppercase tracking-wider mb-2">Total Payable Amount</p>
+                        <p className="text-3xl font-bold text-violet-900">₹{calculatedSalary}</p>
                       </div>
                     )}
 
-                    {/* Salary Breakdown Section */}
+
                     {salaryCalculationDetails && (
                       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                         <div className="bg-gradient-to-r from-slate-100 to-slate-50 px-5 py-3 border-b border-slate-200">
@@ -763,7 +789,7 @@ const PayoutSalary = () => {
                           name="pay_date"
                           value={salaryForm.pay_date}
                           onChange={handleSalaryChange}
-                          className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                          className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-gray-900"
                           disabled={!modifyPayment}
                         />
                       </div>
@@ -773,7 +799,7 @@ const PayoutSalary = () => {
                           name="pay_type"
                           value={salaryForm.pay_type}
                           onChange={handleSalaryChange}
-                          className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
+                          className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-gray-900 bg-white"
                         >
                           <option value="cash">Cash</option>
                           <option value="online">Online Transfer</option>
@@ -797,7 +823,7 @@ const PayoutSalary = () => {
                           name="transaction_id"
                           value={salaryForm.transaction_id}
                           onChange={handleSalaryChange}
-                          className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                          className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-gray-900"
                           placeholder="Enter transaction ID"
                         />
                       </div>
@@ -809,16 +835,16 @@ const PayoutSalary = () => {
                         name="note"
                         value={salaryForm.note}
                         onChange={handleSalaryChange}
-                        className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 resize-none"
+                        className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-gray-900 resize-none"
                         rows="3"
                         placeholder="Add any additional notes..."
                       />
                     </div>
 
-                    <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-300 shadow-sm">
-                      <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-2">Disbursed By</p>
-                      <p className="text-lg font-bold text-blue-900 flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold">
+                    <div className="bg-gradient-to-r from-violet-50 to-violet-100 rounded-xl p-5 border border-violet-300 shadow-sm">
+                      <p className="text-xs font-semibold text-violet-700 uppercase tracking-wider mb-2">Disbursed By</p>
+                      <p className="text-lg font-bold text-violet-900 flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-violet-500 flex items-center justify-center text-white text-sm font-bold">
                           {adminName?.charAt(0).toUpperCase()}
                         </div>
                         {adminName}
@@ -836,7 +862,7 @@ const PayoutSalary = () => {
                       <button
                         type="submit"
                         disabled={isLoading}
-                        className="px-6 mb-10 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+                        className="px-6 mb-10 py-2.5 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
                       >
                         {isLoading ? (
                           <>

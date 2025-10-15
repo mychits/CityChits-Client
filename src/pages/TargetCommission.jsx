@@ -399,7 +399,7 @@ const TargetCommission = () => {
 
           <div className="mt-11 mb-8">
             <div className="mb-2">
-              <div className="flex justify-center items-center w-full gap-4 bg-blue-50 p-2 w-30 h-40 rounded-3xl border   space-x-2">
+              <div className="flex justify-center items-center w-full gap-4 bg-violet-50 p-2 w-30 h-40 rounded-3xl border   space-x-2">
                 <div className="mb-2">
                   <label className="block text-lg text-gray-500 text-center font-semibold mb-2">
                     Agent
@@ -463,10 +463,10 @@ const TargetCommission = () => {
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                           <Link
                             to="/target-commission"
-                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-violet-500 hover:text-violet-600 transition-colors"
                           >
                             <DollarOutlined
-                              className="text-blue-500"
+                              className="text-violet-500"
                               size={30}
                             />
                             Commission Report
@@ -474,10 +474,10 @@ const TargetCommission = () => {
 
                           <Link
                             to="/target-incentive"
-                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-violet-500 hover:text-violet-600 transition-colors"
                           >
                             <FileTextOutlined
-                              className="text-blue-500"
+                              className="text-violet-500"
                               size={30}
                             />
                             Incentive Report
@@ -485,17 +485,17 @@ const TargetCommission = () => {
 
                           <Link
                             to="/target-commission-incentive"
-                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-violet-500 hover:text-violet-600 transition-colors"
                           >
-                            <MdPayments className="text-blue-500" size={30} />
+                            <MdPayments className="text-violet-500" size={30} />
                             Commission or Incentive Payout
                           </Link>
 
                           <Link
                             to="/target-payout-salary"
-                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-violet-500 hover:text-violet-600 transition-colors"
                           >
-                            <FaMoneyBill className="text-blue-500" size={30} />
+                            <FaMoneyBill className="text-violet-500" size={30} />
                             Salary Payout
                           </Link>
                         </div>
@@ -715,8 +715,8 @@ const TargetCommission = () => {
 
                       {/* ADDED: Commission breakdown for clarity */}
                       <div className="col-span-3">
-                        <div className="bg-blue-50 p-3 rounded">
-                          <p className="text-sm font-medium text-blue-800">
+                        <div className="bg-violet-50 p-3 rounded">
+                          <p className="text-sm font-medium text-violet-800">
                             Commission Breakdown:
                           </p>
                           <ul className="list-disc pl-5 text-sm text-gray-700 mt-1">
@@ -859,7 +859,7 @@ const TargetCommission = () => {
                       </button>
                       <button
                         type="submit"
-                        className="px-4 py-2 bg-blue-600 text-white rounded"
+                        className="px-4 py-2 bg-violet-600 text-white rounded"
                       >
                         Save Payment
                       </button>

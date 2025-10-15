@@ -262,7 +262,7 @@ import { useLocation } from "react-router-dom";
 //                   });
 //                   setCurrentTask(null);
 //                 }}
-//                 className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+//                 className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
 //               >
 //                 + Add Task
 //               </button>
@@ -404,7 +404,7 @@ import { useLocation } from "react-router-dom";
 
 //             <button
 //               type="submit"
-//               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+//               className="bg-violet-600 text-white px-4 py-2 rounded hover:bg-violet-700"
 //             >
 //               Save Task
 //             </button>
