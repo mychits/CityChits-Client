@@ -6,7 +6,7 @@ const api = axios.create({
 
   	// baseURL: "http://localhost:3000/api", 
 
-      baseURL: "https://citychit-prod-node.onrender.com/",
+      baseURL: "https://citychit-prod-node.onrender.com/api",
 });
 
 
