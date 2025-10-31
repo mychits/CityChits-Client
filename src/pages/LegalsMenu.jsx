@@ -1,48 +1,23 @@
+import { Link } from "react-router-dom";
 import Navbar from "../components/layouts/Navbar";
 import Sidebar from "../components/layouts/Sidebar";
-import { Banknote, Briefcase, TicketCheck, MoreHorizontal, ChevronRight, Zap, Shield, UserCheck, Sparkles, CreditCard, Receipt, Link, IndianRupee, FileText } from "lucide-react";
-import { Link as RouterLink } from "react-router-dom";
+import { Users, Briefcase, ChevronRight, Zap, Shield, UserCheck, Sparkles } from "lucide-react";
+import { FaHandshake } from "react-icons/fa";
 
-const PayInMenu = () => {
-  const paymentInMenuCategories = [
+const LegalsMenu = () => {
+  const legalsCategories = [
     {
-      id: "#1",
-      title: "Registration Fee",
-      description: "Manage customer registration fee for joining Chit group records",
-      icon: FileText,
+      id: 1,
+      title: "Guarantor",
+      description: "Manage guarantor information and documentation",
+      icon: FaHandshake,
       gradient: "from-violet-500 via-purple-500 to-pink-500",
       bgGradient: "from-violet-50 via-purple-50 to-pink-50",
-      href: "/payment-menu/payment-in-out-menu/pay-in-menu/registration-fee",
-      stats: "Registration-Fee Information",
+      href: "/legals-menu/guarantor",
+      stats: "Active Guarantors",
       secondaryIcon: Shield,
       iconColor: "text-violet-600",
       bgColor: "bg-violet-100"
-    },
-    {
-      id: "#2",
-      title: "Chit Payment",
-      description: "Manage customer chit payment transaction information",
-      icon: IndianRupee,
-      gradient: "from-purple-500 via-indigo-500 to-blue-500",
-      bgGradient: "from-purple-50 via-indigo-50 to-blue-50",
-      href: "/payment-menu/payment-in-out-menu/pay-in-menu/payment",
-      stats: "Chit Payment Information",
-      secondaryIcon: UserCheck,
-      iconColor: "text-purple-600",
-      bgColor: "bg-purple-100"
-    },
-    {
-      id: "#3",
-      title: "Payment Links",
-      description: "Manage customer chit payment link transaction information",
-      icon: Link,
-      gradient: "from-indigo-500 via-blue-500 to-cyan-500",
-      bgGradient: "from-indigo-50 via-blue-50 to-cyan-50",
-      href: "/payment-menu/payment-in-out-menu/pay-in-menu/payment-link-menu",
-      stats: "Payment Link Information",
-      secondaryIcon: CreditCard,
-      iconColor: "text-indigo-600",
-      bgColor: "bg-indigo-100"
     },
   ];
 
@@ -68,25 +43,25 @@ const PayInMenu = () => {
                 <div className="relative group">
                   <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-purple-600 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
                   <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-2xl">
-                    <Banknote className="w-8 h-8 text-white" />
+                    <FaHandshake className="w-8 h-8 text-white" />
                   </div>
                 </div>
                 <div>
                   <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 bg-clip-text text-transparent">
-                    Payment-In Management
+                    Legal Management
                   </h1>
-                  <p className="text-slate-600 mt-1 text-lg">Manage and view payment-in information and transactions</p>
+                  <p className="text-slate-600 mt-1 text-lg">Manage and organize guarantor information and documentation</p>
                 </div>
               </div>
             </div>
 
           
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-              {paymentInMenuCategories.map((category) => {
+              {legalsCategories.map((category) => {
                 const Icon = category.icon;
                 const SecondaryIcon = category.secondaryIcon;
                 return (
-                  <RouterLink key={category.id} to={category.href} className="group">
+                  <Link key={category.id} to={category.href} className="group">
                     <div className="relative h-full overflow-hidden rounded-3xl bg-white/80 backdrop-blur-xl border border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-700 transform hover:-translate-y-2">
                     
                       <div className="absolute inset-0 rounded-3xl bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-700 p-[2px]">
@@ -138,12 +113,13 @@ const PayInMenu = () => {
                         </div>
                       </div>
                     </div>
-                  </RouterLink>
+                  </Link>
                 );
               })}
             </div>
 
-    
+            
+            
      
             <div className="relative p-8 bg-gradient-to-br from-violet-50 via-purple-50 to-pink-50 rounded-3xl border border-white/50 shadow-2xl overflow-hidden">
        
@@ -163,13 +139,10 @@ const PayInMenu = () => {
                     <Sparkles className="w-5 h-5 text-violet-500 animate-pulse" />
                   </h3>
                   <p className="text-slate-700 leading-relaxed">
-                    Use the Registration-Fee directory to manage Registration-Fee transaction details and view payment in information all in one place.
+                    Use the Legal directory to manage Guarantor Information, update guarantor details and documentation all in one place.
                   </p>
                   <p className="text-slate-700 leading-relaxed mt-2">
-                    Use the Chit Payment directory to manage Chit Payment transaction details and view payment in information all in one place.
-                  </p>
-                  <p className="text-slate-700 leading-relaxed mt-2">
-                    Use the Payment Link directory to manage Payment Link transaction details and view payment in information all in one place.
+                    Keep your legal records organized and easily accessible for compliance and reference purposes.
                   </p>
                 </div>
               </div>
@@ -221,4 +194,4 @@ const PayInMenu = () => {
   );
 };
 
-export default PayInMenu;
+export default LegalsMenu;

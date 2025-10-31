@@ -331,7 +331,7 @@ const HardTransfer = () => {
             <Button size="large" onClick={() => setShowModal(false)}>
               Cancel
             </Button>
-            <Button size="large" type="primary" className="bg-custom-violet" onClick={handleTransfer}>
+            <Button size="large" type="primary" onClick={handleTransfer}>
               Submit
             </Button>
           </Space>
@@ -403,7 +403,7 @@ const HardTransfer = () => {
                   height: "52px",
                   fontSize: "16px",
                   fontWeight: "500",
-                  backgroundColor: "#6E30CF",
+                  backgroundColor: "#1e40af",
                 }}
               >
                 Check Total Amount Paid

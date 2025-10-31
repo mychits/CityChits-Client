@@ -24,10 +24,6 @@ const FilterGroups = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [reloadTrigger, setReloadTrigger] = useState(0);
 
-
-
-
-
   const [updatingGroups, setUpdatingGroups] = useState(new Set());
 
   const [filterGroup, setFilterGroup] = useState("");
@@ -40,11 +36,6 @@ const FilterGroups = () => {
     message: "Something went wrong!",
     type: "info",
   });
-
-  const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchText(value);
-  };
 
   const [formData, setFormData] = useState({
     group_name: "",
@@ -62,6 +53,7 @@ const FilterGroups = () => {
     reg_fee: "",
     filter_group: "",
     createdAt: "",
+    app_display_vacany_seat: "",
   });
   const [errors, setErrors] = useState({});
   const [updateFormData, setUpdateFormData] = useState({
@@ -79,6 +71,7 @@ const FilterGroups = () => {
     incentives: "",
     reg_fee: "",
     filter_group: "",
+    app_display_vacany_seat: "",
   });
 
   const groupOptions = [
@@ -88,9 +81,10 @@ const FilterGroups = () => {
     { value: "Vacant Groups", label: "Vacant Groups" },
   ];
 
-  const groupType = [{ value: "divident", label: "Divident Group" },
-  { value: "double", label: "Double Group" },
-  ]
+  const groupType = [
+    { value: "divident", label: "Divident Group" },
+    { value: "double", label: "Double Group" },
+  ];
   const handleAntDSelect = (field, value) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -164,6 +158,7 @@ const FilterGroups = () => {
           installment: group?.group_install,
           members: group?.group_members,
           filter_group: group?.filter_group,
+          app_display_vacany_seat: group?.app_display_vacany_seat,
           date: group?.createdAt?.split("T")[0],
           action: (
             <div className="flex justify-center gap-2">
@@ -175,7 +170,7 @@ const FilterGroups = () => {
               </button> */}
 
               <Dropdown
-                trigger={['click']}
+                trigger={["click"]}
                 menu={{
                   items: [
                     {
@@ -271,6 +266,9 @@ const FilterGroups = () => {
     ) {
       newErrors.group_install =
         "Group Installment Amount must be greater than zero (no symbols).";
+    }
+    if (!data.app_display_vacany_seat) {
+      newErrors.app_display_vacany_seat = "Please Enter App Display Vacany Seat";
     }
 
     if (!data.group_members) {
@@ -415,6 +413,7 @@ const FilterGroups = () => {
           maximum_bid: "",
           commission: "",
           filter_group: "",
+          app_display_vacany_seat: "",
         });
       } else {
         console.log(errors);
@@ -459,6 +458,7 @@ const FilterGroups = () => {
         commission: response?.data?.commission,
         incentives: response?.data?.incentives,
         reg_fee: response?.data?.reg_fee,
+        app_display_vacany_seat: response?.data?.app_display_vacany_seat,
         filter_group: response?.data?.filter_group,
       });
       setShowModalUpdate(true);
@@ -534,7 +534,7 @@ const FilterGroups = () => {
     { key: "value", header: "Group Value" },
     { key: "installment", header: "Group Installment" },
     { key: "members", header: "Group Members" },
-    { key: "filter_group", header: "Filter Groups" },
+    { key: "app_display_vacany_seat", header: "App Display Vacany Seat" },
     { key: "action", header: "Action" },
   ];
 
@@ -555,38 +555,35 @@ const FilterGroups = () => {
         />
         <div className="flex mt-20">
           <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
 
           <div className="flex-grow p-7">
-            <h1 className="text-2xl text-center font-semibold">Filter Groups</h1>
-            <div className="mb-10">
+            <h1 className="text-2xl text-center font-semibold">
+              Mobile Access Groups
+            </h1>
+            {/* <div className="mb-10">
               <label className="font-bold text-xl mb-2">Search or Filter Group</label>
               <div className="flex justify-between items-center w-full mt-6">
-                <Select
-                  placeholder="Filter by Group"
-                  value={filterGroup}
-                  popupMatchSelectWidth={false}
-                  showSearch
-                  className="w-full  h-14 max-w-md"
-                  filterOption={(input, option) =>
-                    option?.label
-                      .toString()
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  onChange={(value) => setFilterGroup(value)}
-                  options={[
-                    { value: "", label: "All Groups" },
-                    ...groupOptions,
-                  ]}
-                />
+              <Select
+                placeholder="Filter by Group"
+                value={filterGroup}
+                popupMatchSelectWidth={false}
+                      showSearch
+                      className="w-full  h-14 max-w-md"
+                      filterOption={(input, option) =>
+                        option?.label
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                onChange={(value) => setFilterGroup(value)}
+                options={[
+                  { value: "", label: "All Groups" }, 
+                  ...groupOptions, 
+                ]}
+              />
               </div>
-            </div>
+            </div> */}
             <div className="mt-6 mb-8">
-
               <div className="flex justify-between items-center w-full">
                 <h1 className="text-2xl content-center font-semibold"></h1>
 
@@ -624,26 +621,14 @@ const FilterGroups = () => {
           <div className="py-6 px-5 lg:px-8 text-left">
             <h3 className="mb-4 text-xl font-bold text-gray-900">Add Group</h3>
             <form className="space-y-6" onSubmit={handleSubmit} noValidate>
-              <div className="w-full">
+              {/* <div className="w-full">
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
                   htmlFor="filter"
                 >
                   Filter Groups <span className="text-red-500 ">*</span>
                 </label>
-                {/* <select
-                  name="filter_group"
-                  id="filter"
-                  value={formData.filter_group}
-                  onChange={handleChange}
-                  required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                >
-                  <option value="">Select Filter Groups</option>
-                  <option value="AllGroups">All Groups</option>
-                  <option value="NewGroups">New Groups</option>
-                  <option value="OngoingGroups">Ongoing Groups</option>
-                </select> */}
+           
 
                 <Select
                   className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
@@ -665,7 +650,7 @@ const FilterGroups = () => {
                     </Select.Option>
                   ))}
                 </Select>
-              </div>
+              </div> */}
               <div>
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
@@ -689,51 +674,65 @@ const FilterGroups = () => {
                   </p>
                 )}
               </div>
+              <div className="flex flex-row justify-between space-x-4">
+                <div className="w-1/2">
+                  <label
+                    className="block mb-2 text-sm font-medium text-gray-900"
+                    htmlFor="category"
+                  >
+                    Group Type <span className="text-red-500 ">*</span>
+                  </label>
 
-              <div className="w-full">
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="category"
-                >
-                  Group Type <span className="text-red-500 ">*</span>
-                </label>
-                {/* <select
-                  name="group_type"
-                  id="category"
-                  value={formData.group_type}
-                  onChange={handleChange}
-                  required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                >
-                  <option value="">Select Group Type</option>
-                  <option value="divident">Divident Group</option>
-                  <option value="double">Double Group</option>
-                </select> */}
-                <Select
-                  className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
-                  placeholder="Select Group Type"
-                  popupMatchSelectWidth={false}
-                  showSearch
-                  name="group_type"
-                  filterOption={(input, option) =>
-                    option.children.toLowerCase().includes(input.toLowerCase())
-                  }
-                  value={formData?.group_type || undefined}
-                  onChange={(value) =>
-                    handleAntDSelect("group_type", value)
-                  }
-                >
-                  {groupType.map((option) => (
-                    <Select.Option key={option.value} value={option.value}>
-                      {option.label}
-                    </Select.Option>
-                  ))}
-                </Select>
-                {errors.group_type && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.group_type}
-                  </p>
-                )}
+                  <Select
+                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                    placeholder="Select Group Type"
+                    popupMatchSelectWidth={false}
+                    showSearch
+                    name="group_type"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    value={formData?.group_type || undefined}
+                    onChange={(value) => handleAntDSelect("group_type", value)}
+                  >
+                    {groupType.map((option) => (
+                      <Select.Option key={option.value} value={option.value}>
+                        {option.label}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                  {errors.group_type && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.group_type}
+                    </p>
+                  )}
+                </div>
+                <div className="w-1/2">
+                  <label
+                    className="block mb-2 text-sm font-medium text-gray-900"
+                    htmlFor="date"
+                  >
+                    App Display Vacany Seat{" "}
+                    <span className="text-red-500 ">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    name="app_display_vacany_seat"
+                    value={formData.app_display_vacany_seat}
+                    onChange={handleChange}
+                    id="text"
+                    placeholder="Enter App Display Vacany Seat"
+                    required
+                    className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  />
+                  {errors.app_display_vacany_seat && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.app_display_vacany_seat}
+                    </p>
+                  )}
+                </div>
               </div>
               <div className="flex flex-row justify-between space-x-4">
                 <div className="w-1/2">
@@ -1003,14 +1002,14 @@ const FilterGroups = () => {
               Update Group
             </h3>
             <form className="space-y-6" onSubmit={handleUpdate} noValidate>
-              <div className="w-full">
+              {/* <div className="w-full">
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
                   htmlFor="filter"
                 >
                   Filter Groups <span className="text-red-500 ">*</span>
                 </label>
-
+              
                 <Select
                   className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                   placeholder="Select Filter Groups"
@@ -1031,7 +1030,7 @@ const FilterGroups = () => {
                     </Select.Option>
                   ))}
                 </Select>
-              </div>
+              </div> */}
               <div>
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
@@ -1055,50 +1054,66 @@ const FilterGroups = () => {
                   </p>
                 )}
               </div>
-              <div className="w-full">
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="category"
-                >
-                  Group Type <span className="text-red-500 ">*</span>
-                </label>
-                {/* <select
-                  name="group_type"
-                  value={updateFormData.group_type || ""}
-                  onChange={handleInputChange}
-                  id="category"
-                  required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                >
-                  <option value="">Select Group Type</option>
-                  <option value="divident">Dividend Group</option>
-                  <option value="double">Double Group</option>
-                </select> */}
-                <Select
-                  className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
-                  placeholder="Select Group Type"
-                  popupMatchSelectWidth={false}
-                  showSearch
-                  name="group_type"
-                  filterOption={(input, option) =>
-                    option.children.toLowerCase().includes(input.toLowerCase())
-                  }
-                  value={updateFormData?.group_type || undefined}
-                  onChange={(value) =>
-                    handleAntInputDSelect("group_type", value)
-                  }
-                >
-                  {groupType.map((option) => (
-                    <Select.Option key={option.value} value={option.value}>
-                      {option.label}
-                    </Select.Option>
-                  ))}
-                </Select>
-                {errors.group_type && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.group_type}
-                  </p>
-                )}
+              <div className="flex flex-row justify-between space-x-4">
+                <div className="w-1/2">
+                  <label
+                    className="block mb-2 text-sm font-medium text-gray-900"
+                    htmlFor="category"
+                  >
+                    Group Type <span className="text-red-500 ">*</span>
+                  </label>
+                  <Select
+                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                    placeholder="Select Group Type"
+                    popupMatchSelectWidth={false}
+                    showSearch
+                    name="group_type"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    value={updateFormData?.group_type || undefined}
+                    onChange={(value) =>
+                      handleAntInputDSelect("group_type", value)
+                    }
+                  >
+                    {groupType.map((option) => (
+                      <Select.Option key={option.value} value={option.value}>
+                        {option.label}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                  {errors.group_type && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.group_type}
+                    </p>
+                  )}
+                </div>
+                <div className="w-1/2">
+                  <label
+                    className="block mb-2 text-sm font-medium text-gray-900"
+                    htmlFor="date"
+                  >
+                    App Display Vacany Seat{" "}
+                    <span className="text-red-500 ">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    name="app_display_vacany_seat"
+                    value={updateFormData.app_display_vacany_seat}
+                    onChange={handleInputChange}
+                    id="text"
+                    placeholder="Enter App Display Vacany Seat"
+                    required
+                    className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  />
+                  {errors.app_display_vacany_seat && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.app_display_vacany_seat}
+                    </p>
+                  )}
+                </div>
               </div>
 
               <div className="flex flex-row justify-between space-x-4">

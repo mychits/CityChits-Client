@@ -282,8 +282,8 @@ const CommissionPayout = () => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
-    setAdminId(userObj?._id);
-    setAdminName(userObj?.full_name || userObj?.name || "");
+    setAdminId(userObj._id);
+    setAdminName(userObj.full_name || userObj.name || "");
     if (userObj?.admin_access_right_id?.access_permissions?.edit_payment) {
       setModifyPayment(
         userObj.admin_access_right_id.access_permissions.edit_payment === "true"

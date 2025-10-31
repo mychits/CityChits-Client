@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import Navbar from "../components/layouts/Navbar";
-import SettingSidebar from "../components/layouts/SettingSidebar";
+import Sidebar from "../components/layouts/Sidebar";
 import api from "../instance/TokenInstance";
 import DataTable from "../components/layouts/Datatable";
 import { Dropdown, Drawer } from "antd";
@@ -9,13 +9,7 @@ import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import Loader from "../components/loaders/CircularLoader";
 import { Collapse } from "antd";
 import { Link } from "react-router-dom";
-import {
-  FileTextOutlined,
-  DollarOutlined,
-  UserOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
-import { BiRupee } from "react-icons/bi";
+import { FileTextOutlined, DollarOutlined } from "@ant-design/icons";
 import { FaMoneyBill } from "react-icons/fa";
 import { MdPayments } from "react-icons/md";
 const today = new Date();
@@ -397,29 +391,6 @@ const Target = () => {
     }));
   };
 
-  const handleDeleteTarget = async (id) => {
-    try {
-      await api.patch(`/target/agent/${id}`, { deleted: true });
-
-      setAlertConfig({
-        visibility: true,
-        message: "Target deleted successfully",
-        type: "success",
-      });
-      setReload((prev) => prev + 1);
-    } catch (err) {
-      console.error("Delete failed", err);
-      setAlertConfig({
-        visibility: true,
-        message: "Delete failed. Please try again.",
-        type: "error",
-      });
-    } finally {
-      setTimeout(() => {
-        setAlertConfig((prev) => ({ ...prev, visibility: false }));
-      }, 4000);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -486,7 +457,7 @@ const Target = () => {
     <>
       <div className="flex mt-20">
         <Navbar visibility={true} />
-        <SettingSidebar />
+        <Sidebar />
         <CustomAlertDialog
           type={alertConfig.type}
           isVisible={alertConfig.visibility}
@@ -526,7 +497,7 @@ const Target = () => {
                       children: (
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                           <Link
-                            to="/target-commission"
+                            to="/reports/target-commission"
                             className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-violet-500 hover:text-violet-600 transition-colors"
                           >
                             <DollarOutlined
@@ -537,7 +508,7 @@ const Target = () => {
                           </Link>
 
                           <Link
-                            to="/target-incentive"
+                            to="/reports/target-incentive"
                             className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-violet-500 hover:text-violet-600 transition-colors"
                           >
                             <FileTextOutlined

@@ -36,6 +36,11 @@ const Daybook = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [receiptNo, setReceiptNo] = useState("");
   const [paymentMode, setPaymentMode] = useState("cash");
+    const [onlinePayments, setOnlinePayments] = useState([]);
+  const [cashPayments, setCashPayments] = useState([]);
+  const [totalCustomers, setTotalCustomers] = useState([]);
+  const [totalCashPaymentsCount, setCashPaymentsCount] = useState(0);
+const [totalOnlinePaymentsCount, setOnlinePaymentsCount] = useState(0);
   const today = new Date();
   const todayString = today.toISOString().split("T")[0];
   const [selectedDate, setSelectedDate] = useState(todayString);
@@ -62,6 +67,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
     amount: "",
     pay_type: "cash",
     transaction_id: "",
+    collection_time: "",
   });
  useEffect(() => {
     const user = localStorage.getItem("user");
@@ -258,6 +264,33 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
             0
           );
           setPayments(totalAmount || 0);
+          const totalCash = paymentData
+            .filter((row) => row.pay_type?.toLowerCase() === "cash")
+            .reduce((sum, row) => sum + Number(row.amount || 0), 0);
+            setCashPayments(totalCash || 0);
+          console.info(totalCash, "cash");
+
+          const totalOnline = paymentData
+            .filter((row) => row.pay_type?.toLowerCase() === "online")
+            .reduce((sum, row) => sum + Number(row.amount || 0), 0);
+            setOnlinePayments(totalOnline || 0);
+          
+          const totalCustomers = new Set(
+          paymentData.map((row) => row?.user_id?.full_name || row.name)
+        ).size;
+        setTotalCustomers?.(totalCustomers); // Optional state if you have one
+
+        //  Count: Total Online Payments
+        const totalOnlineCount = paymentData.filter(
+          (row) => row.pay_type?.toLowerCase() === "online"
+        ).length;
+        setOnlinePaymentsCount?.(totalOnlineCount); // Optional state
+
+        //  Count: Total Cash Payments
+        const totalCashCount = paymentData.filter(
+          (row) => row.pay_type?.toLowerCase() === "cash"
+        ).length;
+        setCashPaymentsCount?.(totalCashCount);
           const formattedData = response.data.map((group, index) => ({
             _id: group._id,
             id: index + 1,
@@ -273,6 +306,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
             transaction_date:group?.createdAt?.split("T")?.[0],
             mode: group?.pay_type,
             account_type: group?.account_type,
+            collection_time: group?.collection_time,
             collected_by:
               group?.collected_by?.name ||
               group?.admin_type?.admin_name ||
@@ -339,6 +373,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
      ...(hideAccountType
     ? [{ key: "account_type", header: "Account Type" }]: []),
     { key: "collected_by", header: "Collected By" },
+    {key: "collection_time", header: "Collection Time"},
     { key: "action", header: "Action" },
   ];
 
@@ -485,17 +520,12 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                           .toString()
                           .toLowerCase()
                           .includes(input.toLowerCase())
-                          
-                          
                       }
-                      className="w-full   max-w-xs h-11"
-                     
-                      
+                      className="w-full max-w-xs h-11"
                     >
                       {dayGroup.map((time) => (
-                        <Select.Option key={time.value} value={time.value} >
+                        <Select.Option key={time.value} value={time.value}>
                           {time.label}
-                        
                         </Select.Option>
                       ))}
                     </Select>
@@ -526,7 +556,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                           .toLowerCase()
                           .includes(input.toLowerCase())
                       }
-                      className="w-full   max-w-xs h-11"
+                      className="w-full max-w-xs h-11"
                     >
                       <Select.Option value={""}>All</Select.Option>
                       {groups.map((group) => (
@@ -550,7 +580,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                       }
                       placeholder="Search Or Select Customer"
                       onChange={(groupId) => setSelectedCustomers(groupId)}
-                      className="w-full   max-w-xs h-11"
+                      className="w-full max-w-xs h-11"
                     // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
                     >
                       <Select.Option value="">All</Select.Option>
@@ -575,12 +605,14 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                           .toLowerCase()
                           .includes(input.toLowerCase())
                       }
-                      className="w-full   max-w-xs h-11"
+                      className="w-full max-w-xs h-11"
                     // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
                     >
                       <Select.Option value="">All</Select.Option>
                       <Select.Option value="cash">Cash</Select.Option>
                       <Select.Option value="online">Online</Select.Option>
+                      <Select.Option value="Payment Link">Payment Link</Select.Option>
+                      <Select.Option value="Transfer">Transfer</Select.Option>
                       </Select>
                   </div>
                   {showAllPaymentModes && (
@@ -598,7 +630,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                           .toLowerCase()
                           .includes(input.toLowerCase())
                       }
-                      className="w-full  max-w-xs h-11"
+                      className="w-full max-w-xs h-11"
                     // className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
                     >
                      
@@ -637,6 +669,7 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                   <DataTable
                     data={filterOption(TableDaybook, searchText)}
                     columns={columns}
+                    exportedPdfName={`Daybook Report`}
                     exportedFileName={`Daybook-${TableDaybook.length > 0
                         ? TableDaybook[0].name +
                         " to " +
@@ -780,6 +813,8 @@ const [showAllPaymentModes,setShowAllPaymentModes] = useState(false);
                     >
                       <option value="cash">Cash</option>
                       <option value="online">Online</option>
+                      <option value="Payment Link">Payment Link</option>
+                      <option value="Transfer">Transfer</option>
                     </select>
                   </div>
                 </div>

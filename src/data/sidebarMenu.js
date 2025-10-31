@@ -34,6 +34,8 @@ import { GrUserSettings } from "react-icons/gr";
 import { GiTakeMyMoney } from "react-icons/gi";
 import { PiCalculatorBold } from "react-icons/pi";
 import { FaMobileAlt } from "react-icons/fa";
+import { MdAccountBalanceWallet } from "react-icons/md";
+import { LuTarget } from "react-icons/lu";
 
 
 
@@ -68,78 +70,93 @@ const sidebarMenu = [
 		activeColor: "custom-blue",
 	},
 	{
-  id: "$4-main",
-  title: "Customers",
-  icon: IoIosPersonAdd,
-  activeColor: "custom-yellow",
-  submenu: true,
-  submenuItems: [
-    {
-      id: "$4",
-      title: "All Customers",
-      icon: IoIosPersonAdd,
-      link: "/user",
-    },
-    {
-      id: "&*&",
-      title: "Unverified Customers",
-      icon: MdCancel,
-      link: "/un-approved-customer",
-    },
-  ],
-},
+    id: ids.three,
+    title: "Customers",
+    icon: IoIosPersonAdd ,
+   link: "/customer-menu",
+    // submenu: true,
+    // submenuItems: [
+    //   {
+    //     id: "$101#",
+    //     title: "Customers",
+    //     icon: <IoIosPersonAdd size={20} />,
+    //     link: "/user",
+    //   },
+    //   {
+    //     id: "&*&",
+    //     title: "Unverified Customers",
+    //     icon: <MdCancel size={25} />,
+    //     link: "/un-approved-customer",
+    //   },
+    // ],
+    
+  },
+	{
+		id: "$4",
+		title: "Enrollments ",
+		icon: FaPeopleArrows,
+		link: "/enroll-menu",	
+		//  submenu: true,
+		// submenuItems: [
+		//   {
+		//     id: "$101#%",
+		//     title: "Enrollments",
+		//     icon: <FaPeopleArrows size={20} />,
+		//     link: "/enrollment",
+		//   },
+		//   {
+		//     id: "$83",
+		//     title: "Mobile Enrollments",
+		//     icon: <FaMobileAlt size={25} />,
+		//     link: "/mobile-app-enroll",
+		//   },
+		// ],
+	},
 
-	
-{
-  id: "$5-main",
-  title: "Enrollments",
-  icon: FaPeopleArrows,
-  activeColor: "primary",
-  submenu: true,
-  submenuItems: [
-    {
-      id: "$5",
-      title: "All Enrollments",
-      icon: FaPeopleArrows,
-      link: "/enrollment",
-    },
-    {
-      id: "$83",
-      title: "Mobile Enrollments",
-      icon: FaMobileAlt,
-      link: "/mobile-app-enroll",
-    },
-  ],
-},
 
-{
-  id: "$legal-main",
-  title: "Legals",
-  icon: FaUserLock, 
-  activeColor: "primary",
-  submenu: true,
-  submenuItems: [
-    {
-      id: "$67",
-      title: "Guarantor",
-      icon: FaHandshake,
-      link: "/guarantor",
-    },
-  ],
-},
+  {
+    id: "$9856",
+    title: "Legals ",
+    icon: FaHandshake,
+    link: "/legals-menu"
+//      submenu: true,
+//     submenuItems: [
+//   {
+//     id: "$67",
+//     title: "Guarantor ",
+//     icon: <FaHandshake />,
+//     link: "/guarantor",
+//   },
+// ],
+  },
 
-{
-    id: ids.seven,
-    title: "Staff",
-    icon: GiRoundTable,
-    link: "/staff-menu"
-},
+	{
+		id: ids.seven,
+		title: "Staff",
+		icon: GiRoundTable,
+		link: "/staff-menu"
+	},
 	{
 		id: "$18",
 		title: "Tasks",
 		icon: FaClipboardList,
 		link: "/task",
 	},
+
+	 {
+      title: "Target Management",
+      icon: LuTarget,
+     // submenu: true,
+      link: "/target-menu"
+      // submenuItems: [
+      //   {
+      //     title: "Target",
+      //     icon: <TbTargetArrow />,
+      //     link: "/target",
+      //   },
+      // ],
+    },
+
 	{
 		id: "$7",
 		title: "Leads",
@@ -149,26 +166,26 @@ const sidebarMenu = [
 	},
 
 
-{
-  id: "$services-main",
-  title: "Other Services",
-  icon: GiTakeMyMoney, 
-  activeColor: "primary",
-  submenu: true,
-  submenuItems: [
-    {
-      id: "$8",
-      title: "Loans",
-      icon: GiTakeMyMoney,
-      link: "/loan",
-    },
-    {
-      id: "$9",
-      title: "Pigme",
-      icon: PiCalculatorBold,
-      link: "/pigme",
-    },
-  ],
+  {
+    id: "$7865",
+    title: "Other Services",
+    icon: GiTakeMyMoney,
+   link: "/other-service-menu",
+//     submenu: true,
+//     submenuItems: [
+//   {
+//     id: "$8",
+//     title: "Loans",
+//     icon: <GiTakeMyMoney size={20} />,
+//     link: "/loan",
+//   },
+//   {
+//     id: "$9",
+//     title: "Pigme",
+//     icon: <PiCalculatorBold size={20} />,
+//     link: "/pigme",
+//   },
+// ],
 },
 
 
@@ -179,13 +196,36 @@ const sidebarMenu = [
 		link: "/auction",
 		activeColor: "primary",
 	},
-	{
-		id: "",
-		title: "Payments",
-		icon: TbCoinRupeeFilled,
-		 link: "/payment-in-out-menu"
-	
-	},
+ {
+    id: "$#S",
+    title: "Accounts",
+    icon: MdAccountBalanceWallet,
+    link: "/payment-menu/"
+   // submenu: true,
+   // submenuItems: [
+     // {
+        // id: "&^$1",
+        // title: "Payments ",
+        // icon: <BsCash size={20} />,
+        // link: "/payment-in-out-menu"
+        // submenu: true,
+        // submenuItems: [
+        //   {
+        //     id: "&^$2",
+        //     title: "Pay-In ",
+        //     icon: <TbReceiptRupee size={20} />,
+        //     link: "/pay-in-menu",
+        //   },
+        //   {
+        //     id: "&^$3",
+        //     title: "Pay-Out ",
+        //     icon: <RiMoneyRupeeCircleLine size={20} />,
+        //     link: "/pay-out-menu",
+        //   },
+        // ],
+     // },
+  //  ],
+  },
 	{
 		id: "$10",
 		title: "Reports",
@@ -229,22 +269,22 @@ const sidebarMenu = [
 					// },
 				],
 			},
-			{
-				id: "#2",
-				title: "Groups",
-				icon: MdOutlineGroups,
-				hider: true,
-				newTab: true,
-				submenu: true,
-				submenuItems: [
-					{
-						id: ids.sixteen,
-						title: "Mobile Access Groups",
-						icon: FaFilter,
-						link: "/filter-groups",
-					},
-				],
-			},
+			// {
+			// 	id: "#2",
+			// 	title: "Groups",
+			// 	icon: MdOutlineGroups,
+			// 	hider: true,
+			// 	newTab: true,
+			// 	submenu: true,
+			// 	submenuItems: [
+			// 		{
+			// 			id: ids.sixteen,
+			// 			title: "Mobile Access Groups",
+			// 			icon: FaFilter,
+			// 			link: "/filter-groups",
+			// 		},
+			// 	],
+			// },
 			{
 				id: "#3",
 				title: "Employee",

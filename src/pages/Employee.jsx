@@ -314,8 +314,8 @@ const Employee = () => {
     if (data.deductions && data.deductions.length > 0) {
       for (let i = 0; i < data.deductions.length; i++) {
         const amount = parseFloat(data.deductions[i].deduction_amount);
-        if (isNaN(amount) || amount <= 0) {
-          newErrors[`deduction_amount_${i}`] = "Deduction amount must be greater than 0";
+        if (isNaN(amount) ) {
+          newErrors[`deduction_amount_${i}`] = "Deduction amount must be digit";
         }
       }
     }
@@ -670,7 +670,7 @@ const Employee = () => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                  className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
                 >
                   + Add Employee
                 </button>

@@ -8,7 +8,7 @@ import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import { useMemo } from "react";
 
-const DueReport = () => {
+const OutstandingReport = () => {
   const [searchText, setSearchText] = useState("");
   const [screenLoading, setScreenLoading] = useState(true);
   const [auctionTableData, setAuctionTableData] = useState([]);
@@ -118,7 +118,7 @@ const DueReport = () => {
                   totalToBePaid: totalToBePaid,
                   relationshipManager:
                     data?.enrollment?.relationship_manager?.name || "N/A",
-                  collectionExecutive: usrData.collection_executive || "N/A",
+                  collectionExecutive:  usrData?.collection_executive?.join(" | ") || "N/A",
                   collectionArea: usrData.collection_area || "N/A",
                   referred_type: data?.enrollment?.referred_type,
                   reffered_by: data?.enrollment?.agent
@@ -276,7 +276,7 @@ const DueReport = () => {
           </div>
         ) : (
           <div className="flex-grow p-7">
-            <h1 className="text-2xl font-bold text-center">Reports - Due</h1>
+            <h1 className="text-2xl font-bold text-center">Reports - Outstanding</h1>
 
             <div className="mt-6 mb-8">
               <div className="mt-6 mb-8">
@@ -332,7 +332,7 @@ const DueReport = () => {
                       <span className="text-xl font-bold text-gray-700">
                         Total Customers
                       </span>
-                      <span className="text-lg font-bold  text-blue-600">
+                      <span className="text-lg font-bold  text-violet-600">
                         {totals.totalCustomers}
                       </span>
                     </div>
@@ -348,7 +348,7 @@ const DueReport = () => {
                       <span className="text-xl font-bold text-gray-700">
                         Amount to be Paid
                       </span>
-                      <span className="text-lg font-bold text-blue-600">
+                      <span className="text-lg font-bold text-violet-600">
                         ₹{totals.totalToBePaid}
                       </span>
                     </div>
@@ -446,4 +446,4 @@ const DueReport = () => {
   );
 };
 
-export default DueReport;
+export default OutstandingReport;

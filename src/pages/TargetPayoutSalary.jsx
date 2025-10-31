@@ -270,12 +270,12 @@ const TargetPayOutSalary = () => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
-    setAdminId(userObj?._id);
-    setAdminName(userObj?.name || "");
+    setAdminId(userObj._id);
+    setAdminName(userObj.name || "");
 
     if (userObj?.admin_access_right_id?.access_permissions?.edit_payment) {
       setModifyPayment(
-        userObj?.admin_access_right_id?.access_permissions?.edit_payment === "true"
+        userObj.admin_access_right_id.access_permissions.edit_payment === "true"
       );
     }
   }, []);
@@ -379,7 +379,7 @@ const TargetPayOutSalary = () => {
         {contextHolder}
         <div className="flex mt-20">
           <Navbar visibility={true} />
-          <SettingSidebar />
+          <Sidebar />
           <CustomAlert
             type={alertConfig.type}
             isVisible={alertConfig.visibility}

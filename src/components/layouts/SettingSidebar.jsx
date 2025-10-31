@@ -82,54 +82,65 @@ const settingMenu = [
     icon: BsPersonCheck,
     link: "/admin-access-rights",
   },
-  {
-    id: 6,
-    title: "Target Management",
-    icon: LuTarget,
-    submenu: true,
-    submenuItems: [
+  // {
+  //   id: 6,
+  //   title: "Target Management",
+  //   icon: LuTarget,
+  //   submenu: true,
+  //   submenuItems: [
+  //     {
+  //       id: "6-1",
+  //       title: "Target",
+  //       icon: TbTargetArrow,
+  //       link: "/target",
+  //     },
+  //     {
+  //       id: "6-2",
+  //       title: "Reports",
+  //       icon: BsFileBarGraph,
+  //       submenu: true,
+  //       submenuItems: [
+  //         {
+  //           id: "6-2-1",
+  //           title: "Commission Report",
+  //           icon: TbGraph,
+  //           link: "/target-commission",
+  //         },
+  //         {
+  //           id: "6-2-2",
+  //           title: "Incentive Report",
+  //           icon: TbGraphFilled,
+  //           link: "/target-incentive",
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       id: "6-3",
+  //       title: "Accounts",
+  //       icon: MdAccountBalanceWallet,
+  //       submenu: true,
+  //       submenuItems: [
+  //         {
+  //           id: "6-3-1",
+  //           title: "PayOut Menu",
+  //           icon: RiMoneyRupeeCircleFill,
+  //           link: "/target-payout-menu",
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
+
       {
-        id: "6-1",
-        title: "Target",
-        icon: TbTargetArrow,
-        link: "/target",
-      },
-      {
-        id: "6-2",
-        title: "Reports",
-        icon: BsFileBarGraph,
-        submenu: true,
-        submenuItems: [
-          {
-            id: "6-2-1",
-            title: "Commission Report",
-            icon: TbGraph,
-            link: "/target-commission",
-          },
-          {
-            id: "6-2-2",
-            title: "Incentive Report",
-            icon: TbGraphFilled,
-            link: "/target-incentive",
-          },
-        ],
-      },
-      {
-        id: "6-3",
-        title: "Accounts",
-        icon: MdAccountBalanceWallet,
-        submenu: true,
-        submenuItems: [
-          {
-            id: "6-3-1",
-            title: "PayOut Menu",
-            icon: RiMoneyRupeeCircleFill,
-            link: "/target-payout-menu",
-          },
-        ],
-      },
-    ],
-  },
+  title: "Penalty Management",
+  icon: RiMoneyRupeeCircleFill,
+  submenu: true,
+  submenuItems: [
+    { title: "Penalty Settings", icon: TiSpanner, link: "/penalty-settings" },
+    { title: "Penalty Monitor", icon: TbGraph, link: "/penalty-monitor" },
+  ],
+},
+
   { id: 7, title: "Profile", icon: CgProfile, link: "/profile" },
   { id: 8, title: "Help & Support", icon: IoIosHelpCircle, link: "/help" },
 ];

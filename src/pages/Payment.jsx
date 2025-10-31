@@ -93,7 +93,7 @@ const Payment = () => {
         key: "3",
         label: (
           <div
-            className="text-violet-600 "
+            className="text-green-600 "
             onClick={() => handleViewModalOpen(group._id)}
           >
             View
@@ -141,6 +141,7 @@ const Payment = () => {
     cheque_date: "",
     cheque_bank_name: "",
     cheque_bank_branch: "",
+    collection_time: "",
   });
   const [updateFormData, setUpdateFormData] = useState({
     amount: "",
@@ -228,6 +229,7 @@ const Payment = () => {
               amount: group.amount,
               date: formatPayDate(group.pay_date),
               transaction_date: formatPayDate(group.createdAt),
+              collection_time: group?.collection_time,
               collected_by:
                 group?.collected_by?.name ||
                 group?.admin_type?.admin_name ||
@@ -465,6 +467,7 @@ const Payment = () => {
     { key: "receipt", header: "Receipt" },
     { key: "amount", header: "Amount" },
     {key: "pay_type", header: "Payment Type"},
+    {key: "collection_time", header: "Collection Time"},
     { key: "collected_by", header: "Collected By" },
     { key: "action", header: "Action" }
   );
@@ -905,13 +908,13 @@ const Payment = () => {
                     <div>
                       <button
                         onClick={() => setShowModal(true)}
-                        className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                        className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
                       >
                         + Add Payment
                       </button>
                       <button
                         onClick={() => setShowUploadModal(true)}
-                        className="ml-4 bg-violet-300 text-black px-4 py-2 rounded shadow-md hover:bg-violet-400 transition duration-200"
+                        className="ml-4 bg-yellow-300 text-black px-4 py-2 rounded shadow-md hover:bg-yellow-400 transition duration-200"
                       >
                         Upload Excel
                       </button>
@@ -963,7 +966,7 @@ const Payment = () => {
                   <button
                     onClick={fetchLastThreeTransactions}
                     value="Last Three transaction"
-                    className="flex items-center gap-2 bg-violet-500 hover:bg-violet-600 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-200 font-medium"
+                    className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-200 font-medium"
                   >
                     <FaReceipt className="text-lg" />
                     <span>Last 3 Transactions</span>
@@ -1384,7 +1387,7 @@ const Payment = () => {
 
                   <div className="flex flex-col items-center p-4 max-w-full bg-white rounded-lg shadow-sm space-y-4">
                     <div className="flex items-center space-x-1">
-                      <FaWhatsappSquare color="violet" className="w-8 h-8" />
+                      <FaWhatsappSquare color="green" className="w-8 h-8" />
                       <h2 className="text-md font-semibold text-gray-800">
                         WhatsApp
                       </h2>
@@ -1394,7 +1397,7 @@ const Payment = () => {
                       <input
                         type="checkbox"
                         checked={whatsappEnable}
-                        className="text-violet-500 checked:ring-2  checked:ring-violet-700 rounded-full w-4 h-4"
+                        className="text-green-500 checked:ring-2  checked:ring-green-700 rounded-full w-4 h-4"
                       />
                       <span className="text-gray-700 text-sm">
                         Send Via Whatsapp

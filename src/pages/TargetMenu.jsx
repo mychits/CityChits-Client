@@ -2,33 +2,22 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/layouts/Navbar";
 import Sidebar from "../components/layouts/Sidebar";
 import { Users, Briefcase, ChevronRight,Zap  } from "lucide-react";
-import { SlCalender } from "react-icons/sl";
+import { TbTargetArrow } from "react-icons/tb";
 
-const StaffMenu = () => {
-  const staffCategories = [
-   
+const TargetMenu = () => {
+  const targetCategories = [
     {
-      id: 2,
-      title: "Add/Update Employee",
-      description: "Manage employee records, roles and assignments",
-      icon: <Briefcase className="w-8 h-8" />,
-      color: "from-violet-600 to-violet-700",
-      lightColor: "bg-violet-50",
-      borderColor: "border-violet-200",
-      href: "/staff-menu/employee-menu/employee",
-      stats: "Active Employees",
-    },
-     {
       id: 1,
-      title: "Attendance",
-      description: "Manage Employee Attendance records",
-      icon: <SlCalender className="w-8 h-8" />,
-      color: "from-green-600 to-green-700",
-      lightColor: "bg-green-50",
-      borderColor: "border-green-200",
-      href: "/staff-menu/employee-menu/add-employee-attendance",
-      stats: "Attendance Information",
+      title: "Add/Edit Targets",
+      description: "Manage and update Employee Targets",
+      icon: <TbTargetArrow className="w-8 h-8" />,
+      color: "from-blue-600 to-blue-700",
+      lightColor: "bg-blue-50",
+      borderColor: "border-blue-200",
+      href: "/target-menu/target",
+      stats: "Employee Target Information",
     },
+   
   ];
 
   return (
@@ -40,15 +29,15 @@ const StaffMenu = () => {
           <div className="p-8">
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-gray-900">
-                Employee Management
+                Target Management
               </h2>
               <p className="text-gray-600 mt-2">
-                Manage Attendance and organize your team members
+                Manage and track employee targets
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-              {staffCategories.map((category) => (
+              {targetCategories.map((category) => (
                 <Link key={category.id} to={category.href} className="group">
                   <div
                     className={`relative h-full overflow-hidden rounded-xl bg-white border ${category.borderColor} shadow-md hover:shadow-lg transition-all duration-300`}
@@ -92,15 +81,14 @@ const StaffMenu = () => {
                 </Link>
               ))}
             </div>
-              <div className="mt-16 p-8 bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl border border-violet-100">
+              <div className="mt-16 p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <Zap className="w-6 h-6 text-violet-600 mt-1" />
+                <Zap className="w-6 h-6 text-blue-600 mt-1" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">Quick Tips</h3>
-                <p className="text-slate-700">Use the Employee directory to manage personnel, update employee information and Provide Designation all in one place. </p>
-                <p className="text-slate-700">Use the Attendance directory to manage attendance, update and submit attendance information. </p>
+                <p className="text-slate-700">Use the Target Directory to manage employee targets and update target information all in one place.</p>
               </div>
             </div>
           </div>
@@ -111,4 +99,4 @@ const StaffMenu = () => {
   );
 };
 
-export default StaffMenu;
+export default TargetMenu;

@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import imageInput from "../../assets/images/myChits.png";
+import imageInput from "../../assets/images/mychits.png";
 
 //const safe = (val) => (val == null || val === "" ? "-" : String(val).trim());
 
@@ -478,7 +478,7 @@ const safe = (v) => v ?? "-";
 //         cellPadding: 2,
 //       },
 //       headStyles: {
-//         fillColor: [240, 248, 255], // Light violet header
+//         fillColor: [240, 248, 255], // Light blue header
 //         textColor: [0, 0, 0],
 //         fontStyle: "bold",
 //       },

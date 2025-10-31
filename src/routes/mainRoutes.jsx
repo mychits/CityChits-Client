@@ -113,11 +113,24 @@ import TargetPayOutMenu from "../pages/TargetPayOutMenu";
 
 import MonthlyInstallmentTurnoverReport from "../pages/MonthlyInstallmentTurnoverReport";
 
+import CustomerLoanReport from "../pages/CustomerLoanReport";
+import CollectionAreaReport from "../pages/CollectionAreaReport";
+import EnrollmentMenu from "../pages/EnrollmentView";
+import OtherServicesMenu from "../pages/OtherServicesMenu";
+import LegalsMenu from "../pages/LegalsMenu";
+import OutstandingReport from "../pages/OutstandingReport";
+import PaymentMenu from "../pages/PaymentMenu";
+import PayoutSalaryReport from "../pages/PayoutSalaryReport";
+import PenaltySettings from "../pages/PenaltySettings";
+import PenaltyMonitor from "../pages/PenaltyMonitor";
+import TargetMenu from "../pages/TargetMenu";
+import UserMenu from "../pages/UserMenu"
+
 import Register from "../pages/Register";
 import IndividualChitPaymentLink from "../pages/IndividualChitPaymentLink";
 import IndividualRegistrationChitPaymentLink from "../pages/IndividualRegistrationChitPaymentLink";
 
-import DueReport from "../pages/DueReport";
+// import DueReport from "../pages/DueReport";
 
 const mainRoutes = createBrowserRouter([
   {
@@ -171,24 +184,131 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
- {
-    path: "/payment-in-out-menu/pay-in-menu",
+
+   {
+    path: "/customer-menu/user",
     element: (
       <ProtectedRoute>
-        <PayInMenu />
+        <User />
       </ProtectedRoute>
     ),
   },
-   {
-    path: "/payment-in-out-menu",
+
+    {
+    path: "/customer-menu/un-approved-customer",
     element: (
       <ProtectedRoute>
-        <PayInOutMenu />
+        <UnApprovedCustomer />
+      </ProtectedRoute>
+    ),
+  },
+
+   {
+   path: "/target-menu",
+   element: (
+   <ProtectedRoute>
+    <TargetMenu/>
+   </ProtectedRoute>
+   ),
+  },
+
+
+
+      {
+    path:"/penalty-settings",
+    element:<PenaltySettings/>
+  },
+
+   {
+    path:"/penalty-monitor",
+    element:<PenaltyMonitor/>
+  },
+
+
+       {
+    path: "/other-service-menu/",
+    element: (
+      <ProtectedRoute>
+        <OtherServicesMenu />
+      </ProtectedRoute>
+    ),
+  },
+
+   {
+    path: "/other-service-menu/loan",
+    element: (
+      <ProtectedRoute>
+        <Loan />
       </ProtectedRoute>
     ),
   },
   {
-    path: "/payment-in-out-menu/pay-in-menu/payment",
+    path: "/other-service-menu/pigme",
+    element: (
+      <ProtectedRoute>
+        <Pigme />
+      </ProtectedRoute>
+    ),
+  },
+
+  {
+    path: "/enroll-menu/mobile-app-enroll",
+    element: (
+      <ProtectedRoute>
+        <MobileAppEnroll />
+      </ProtectedRoute>
+    ),
+  },
+   {
+    path: "/enroll-menu/enrollment",
+    element: (
+      <ProtectedRoute>
+        <Enroll />
+      </ProtectedRoute>
+    ),
+  },
+
+  {
+    path: "/enroll-menu",
+    element: (<ProtectedRoute>
+        <EnrollmentMenu/>
+      </ProtectedRoute>),
+  },
+   
+    {
+    path: "/target-menu/target",
+    element: (
+      <ProtectedRoute>
+        <Target />
+      </ProtectedRoute>
+    ),
+  },
+
+  
+
+    {
+    path: "/legals-menu",
+    element: <LegalsMenu />,
+  },
+
+    {
+    path: "/legals-menu/guarantor",
+    element: <Guarantor />,
+  },
+
+  
+
+
+   {
+    path: "/payment-menu",
+    element: (
+      <ProtectedRoute>
+        <PaymentMenu />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/payment-menu/payment",
     element: (
       <ProtectedRoute>
         <Payment />
@@ -196,43 +316,115 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "/payment-in-out-menu/pay-in-menu/registration-fee",
+    path: "/payment-menu/payment-in-out-menu/pay-out-menu",
+    element: (
+      <ProtectedRoute>
+        <PayOutMenu />
+      </ProtectedRoute>
+    ),
+  },
+    
+  {
+    path: "/payment-menu/payment-in-out-menu/pay-in-menu",
+    element: (
+      <ProtectedRoute>
+        <PayInMenu />
+      </ProtectedRoute>
+    ),
+  },
+
+  {
+    path: "/payment-menu/payment-in-out-menu",
+    element: (
+      <ProtectedRoute>
+        <PayInOutMenu />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/payment-menu/payment-in-out-menu/pay-in-menu/payment",
+    element: (
+      <ProtectedRoute>
+        <Payment />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/payment-menu/payment-in-out-menu/pay-in-menu/registration-fee",
     element: (
       <ProtectedRoute>
         <RegistrationFee />
       </ProtectedRoute>
     ),
   },
-
-   {
-    path: "/payment-in-out-menu/pay-in-menu/payment-link-menu",
+  {
+    path: "/payment-menu/payment-in-out-menu/pay-in-menu/payment-link-menu",
     element: (
       <ProtectedRoute>
         <PaymentLinkMenu />
       </ProtectedRoute>
     ),
   },
+  {
+    path: "/payment-menu/payment-in-out-menu/general-payment-out/:paymentType",
+    element: (
+      <ProtectedRoute>
+        <GeneralPaymentOut />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/payment-menu/payment-in-out-menu/payment-out/commission",
+    element: (
+      <ProtectedRoute>
+        <PayOutCommission />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/payment-menu/payment-in-out-menu/payment-out/salary",
+    element: (
+      <ProtectedRoute>
+        <PayOutSalary />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/payment-menu/payment-in-out-menu/payment-out/petty-Cash",
+    element: (
+      <ProtectedRoute>
+        <PayOutPettyCash />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/payment-menu/payment-in-out-menu/payment-out/others",
+    element: (
+      <ProtectedRoute>
+        <PayOutOthers />
+      </ProtectedRoute>
+    ),
+  },
+
+
     {
-    path: "/payment-in-out-menu/pay-in-menu/payment-link-menu/chit-payment",
+    path: "/payment-menu/payment-in-out-menu/pay-in-menu/payment-link-menu/chit-payment",
     element: (
       <ProtectedRoute>
         <IndividualChitPaymentLink />
       </ProtectedRoute>
     ),
   },
-
   {
-    path: "/payment-in-out-menu/pay-in-menu/payment-link-menu/registration-chit-payment",
+    path: "/payment-menu/payment-in-out-menu/pay-in-menu/payment-link-menu/registration-chit-payment",
     element: (
       <ProtectedRoute>
         <IndividualRegistrationChitPaymentLink />
       </ProtectedRoute>
     ),
   },
-
-
   {
-    path: "/payment-in-out-menu/pay-in-menu/payment-link-menu/chit-bulk-payment",
+    path: "/payment-menu/payment-in-out-menu/pay-in-menu/payment-link-menu/chit-bulk-payment",
     element: (
       <ProtectedRoute>
         <ChitBulkPaymentLink />
@@ -598,6 +790,15 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+
+   {
+    path: "/customer-menu",
+    element: (
+      <ProtectedRoute>
+        <UserMenu />
+      </ProtectedRoute>
+    ),
+  },
       {
     path: "/gift-received",
     element: <CustomerRewards/>
@@ -631,16 +832,36 @@ const mainRoutes = createBrowserRouter([
         { path: "holded-customer-report", element: <HoldedCustomerReport /> },
          { path: "registration-fee-receipt", element: <RegistrationFeeReport /> },
             { path: "collection-executive", element: <CollectionExecutiveReport /> },
+                {path: "collection-area-report", element: <CollectionAreaReport />},
+                
+     {path: "payout-salary-report", element: <PayoutSalaryReport/>},
 
+      {path: "customer-loan-report", element: <CustomerLoanReport/>},
       {
-        path: "due-report",
-        element: <DueReport />,
+        path: "outstanding-report",
+        element: <OutstandingReport />,
       },
+
+        {
+    path: "target-incentive",
+    element: <TargetIncentiveReport />,
+  },
+    {
+    path: "target-commission",
+    element: <TargetCommission />,
+  },
+
+      // {
+      //   path: "due-report",
+      //   element: <DueReport />,
+      // },
 
       { path: "customer-view", element: <CustomerView /> },
 
     ],
   },
+
+  
     {
     path: "/target-commission",
     element: <TargetCommission />,
