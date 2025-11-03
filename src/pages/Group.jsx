@@ -10,7 +10,7 @@ import CustomAlert from "../components/alerts/CustomAlert";
 import CircularLoader from "../components/loaders/CircularLoader";
 import Navbar from "../components/layouts/Navbar";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
-import Fuse from "fuse.js"; 
+import Fuse from "fuse.js";
 const { Option } = Select;
 
 const formatDateISO = (date) => {
@@ -33,8 +33,8 @@ const Group = () => {
     startDateTo: "",
   });
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentPageRelated, setCurrentPageRelated] = useState(1); 
-  const relatedResultsPerPage = 8; 
+  const [currentPageRelated, setCurrentPageRelated] = useState(1);
+  const relatedResultsPerPage = 8;
   const [showModal, setShowModal] = useState(false);
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false);
@@ -116,7 +116,7 @@ const Group = () => {
   const onGlobalSearchChangeHandler = (e) => {
     setSearchText(e.target.value);
     setCurrentPage(1);
-    setCurrentPageRelated(1); 
+    setCurrentPageRelated(1);
   };
 
   const handleFilterChange = (e) => {
@@ -345,7 +345,7 @@ const Group = () => {
     relatedMatches = results
       .filter((r) => r.score > 0.05)
       .map((r) => r.item)
-      .filter((item) => item !== exactMatch); 
+      .filter((item) => item !== exactMatch);
   }
 
 
@@ -392,7 +392,7 @@ const Group = () => {
 
     return (
       <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
- 
+
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap items-baseline gap-2 mb-1">
             <h3 className="text-lg font-semibold text-gray-800 truncate">{group.group_name}</h3>
@@ -411,7 +411,7 @@ const Group = () => {
           </div>
         </div>
 
-     
+
         <div className="grid grid-cols-3 gap-3 w-full sm:w-auto sm:flex-none text-center">
           <div className="bg-gradient-to-br from-purple-50 to-indigo-50 px-3 py-2 rounded-lg border border-purple-100">
             <p className="text-sm font-bold text-purple-800">{group.group_members}</p>
@@ -458,7 +458,7 @@ const Group = () => {
         </Menu.Item>
       </Menu>
     );
-    
+
     return (
       <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden hover:-translate-y-1 border border-gray-100">
         <div className="h-2 bg-gradient-to-r from-purple-500 to-indigo-500"></div>
@@ -474,7 +474,7 @@ const Group = () => {
               </button>
             </Dropdown>
           </div>
-          
+
           <div className="grid grid-cols-3 gap-3 mb-4">
             <div className="text-center p-2 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-lg border border-purple-100">
               <p className="text-lg font-bold text-purple-800">{group.group_members}</p>
@@ -493,7 +493,7 @@ const Group = () => {
               <p className="text-xs text-gray-600">Chit Amount</p>
             </div>
           </div>
-          
+
           <div className="space-y-2 text-sm text-gray-700">
             <div className="flex justify-between">
               <span className="text-gray-500">Period:</span>
@@ -542,11 +542,10 @@ const Group = () => {
               <button
                 key={pageNum}
                 onClick={() => setCurrentPageRelated(pageNum)}
-                className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                  currentPageRelated === pageNum
+                className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${currentPageRelated === pageNum
                     ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white"
                     : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
-                }`}
+                  }`}
               >
                 {pageNum}
               </button>
@@ -609,11 +608,10 @@ const Group = () => {
             <button
               key={num}
               onClick={() => setCurrentPage(num)}
-              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                currentPage === num
+              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${currentPage === num
                   ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white"
                   : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
-              }`}
+                }`}
             >
               {num}
             </button>
@@ -641,438 +639,7 @@ const Group = () => {
     );
   };
 
-  const AddGroupModal = () => (
-    <Modal isVisible={showModal} onClose={() => setShowModal(false)} borderColor="purple-600">
-      <div className="py-6 px-5 lg:px-8 text-left">
-        <h3 className="mb-5 text-xl font-bold text-purple-700">Add New Group</h3>
-        <form className="space-y-5" onSubmit={handleSubmit} noValidate>
-          <InputField
-            name="group_name"
-            label="Group Name"
-            value={formData.group_name}
-            onChange={handleChange}
-            error={errors.group_name}
-          />
-          <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">Group Type</label>
-            <Select
-              showSearch
-              placeholder="Select Group Type"
-              value={formData.group_type || undefined}
-              onChange={(v) => handleAntSelectChange("group_type", v)}
-              className="w-full"
-              filterOption={(input, option) =>
-                option.children.toLowerCase().includes(input.toLowerCase())
-              }
-            >
-              <Option value="divident">Dividend</Option>
-              <Option value="double">Double</Option>
-            </Select>
-            {errors.group_type && <p className="text-red-500 text-sm mt-1">{errors.group_type}</p>}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField
-              name="group_value"
-              label="Group Value"
-              value={formData.group_value}
-              onChange={handleChange}
-              error={errors.group_value}
-              type="number"
-            />
-            <InputField
-              name="group_install"
-              label="Installment"
-              value={formData.group_install}
-              onChange={handleChange}
-              error={errors.group_install}
-              type="number"
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField
-              name="group_members"
-              label="Members"
-              value={formData.group_members}
-              onChange={handleChange}
-              error={errors.group_members}
-              type="number"
-            />
-            <InputField
-              name="group_duration"
-              label="Duration (months)"
-              value={formData.group_duration}
-              onChange={handleChange}
-              error={errors.group_duration}
-              type="number"
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <InputField
-                name="reg_fee"
-                label="Registration Fee"
-                value={formData.reg_fee}
-                onChange={handleChange}
-                error={errors.reg_fee}
-                type="number"
-              />
-            </div>
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900">
-                Relationship Manager
-              </label>
-              <Select
-                showSearch
-                placeholder="Select Relationship Manager"
-                value={formData.relationship_manager || undefined}
-                onChange={(v) => handleAntSelectChange("relationship_manager", v)}
-                className="w-full"
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().includes(input.toLowerCase())
-                }
-              >
-                {(Array.isArray(employees) ? employees : []).map((emp) => (
-                  <Option key={emp?._id} value={emp?._id}>
-                    {emp?.name} | {emp?.phone_number}
-                  </Option>
-                ))}
-              </Select>
-              {errors.relationship_manager && (
-                <p className="text-red-500 text-sm mt-1">{errors.relationship_manager}</p>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField
-              name="start_date"
-              label="Start Date"
-              type="date"
-              value={formData.start_date}
-              onChange={handleChange}
-              error={errors.start_date}
-            />
-            <InputField
-              name="end_date"
-              label="End Date"
-              type="date"
-              value={formData.end_date}
-              onChange={handleChange}
-              error={errors.end_date}
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField
-              name="minimum_bid"
-              label="Min Bid %"
-              value={formData.minimum_bid}
-              onChange={handleChange}
-              error={errors.minimum_bid}
-              type="number"
-            />
-            <InputField
-              name="maximum_bid"
-              label="Max Bid %"
-              value={formData.maximum_bid}
-              onChange={handleChange}
-              error={errors.maximum_bid}
-              type="number"
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <InputField
-              name="commission"
-              label="Agent Commission %"
-              value={formData.commission}
-              onChange={handleChange}
-              type="number"
-            />
-            <InputField
-              name="group_commission"
-              label="Company Commission %"
-              value={formData.group_commission}
-              onChange={handleChange}
-              type="number"
-            />
-            <InputField
-              name="incentives"
-              label="Employee Incentives %"
-              value={formData.incentives}
-              onChange={handleChange}
-              type="number"
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <InputField
-              name="daily_installment"
-              label="Daily Installment"
-              value={formData.daily_installment}
-              onChange={handleChange}
-              error={errors.daily_installment}
-              type="number"
-            />
-            <InputField
-              name="weekly_installment"
-              label="Weekly Installment"
-              value={formData.weekly_installment}
-              onChange={handleChange}
-              error={errors.weekly_installment}
-              type="number"
-            />
-            <InputField
-              name="monthly_installment"
-              label="Monthly Installment"
-              value={formData.monthly_installment}
-              onChange={handleChange}
-              error={errors.monthly_installment}
-              type="text"
-            />
-          </div>
-          <div className="w-full flex justify-end">
-            <button
-              type="submit"
-              className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-md"
-            >
-              Save Group
-            </button>
-          </div>
-        </form>
-      </div>
-    </Modal>
-  );
 
-  const UpdateGroupModal = () => (
-    <Modal
-      isVisible={showModalUpdate}
-      onClose={() => setShowModalUpdate(false)}
-      borderColor="purple-600"
-    >
-      <div className="py-6 px-5 lg:px-8 text-left">
-        <h3 className="mb-5 text-xl font-bold text-purple-700">Update Group</h3>
-        <form className="space-y-5" onSubmit={handleUpdate} noValidate>
-          <InputField
-            name="group_name"
-            label="Group Name"
-            value={updateFormData.group_name}
-            onChange={handleUpdateInputChange}
-            error={errors.group_name}
-          />
-          <div>
-            <label className="block mb-2 text-sm font-medium text-gray-900">Group Type</label>
-            <Select
-              showSearch
-              placeholder="Select Group Type"
-              value={updateFormData.group_type || undefined}
-              onChange={(v) => handleAntUpdateSelectChange("group_type", v)}
-              className="w-full"
-            >
-              <Option value="divident">Dividend</Option>
-              <Option value="double">Double</Option>
-            </Select>
-            {errors.group_type && <p className="text-red-500 text-sm mt-1">{errors.group_type}</p>}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField
-              name="group_value"
-              label="Group Value"
-              value={updateFormData.group_value}
-              onChange={handleUpdateInputChange}
-              error={errors.group_value}
-              type="number"
-            />
-            <InputField
-              name="group_install"
-              label="Installment"
-              value={updateFormData.group_install}
-              onChange={handleUpdateInputChange}
-              error={errors.group_install}
-              type="number"
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField
-              name="group_members"
-              label="Members"
-              value={updateFormData.group_members}
-              onChange={handleUpdateInputChange}
-              error={errors.group_members}
-              type="number"
-            />
-            <InputField
-              name="group_duration"
-              label="Duration (months)"
-              value={updateFormData.group_duration}
-              onChange={handleUpdateInputChange}
-              error={errors.group_duration}
-              type="number"
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <InputField
-                name="reg_fee"
-                label="Registration Fee"
-                value={updateFormData.reg_fee}
-                onChange={handleUpdateInputChange}
-                error={errors.reg_fee}
-                type="number"
-              />
-            </div>
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900">
-                Relationship Manager
-              </label>
-              <Select
-                showSearch
-                placeholder="Select Relationship Manager"
-                value={updateFormData.relationship_manager || undefined}
-                onChange={(v) => handleAntUpdateSelectChange("relationship_manager", v)}
-                className="w-full"
-              >
-                {(Array.isArray(employees) ? employees : []).map((emp) => (
-                  <Option key={emp?._id} value={emp._id}>
-                    {emp?.name} | {emp?.phone_number}
-                  </Option>
-                ))}
-              </Select>
-              {errors.relationship_manager && (
-                <p className="text-red-500 text-sm mt-1">{errors.relationship_manager}</p>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField
-              name="start_date"
-              label="Start Date"
-              type="date"
-              value={updateFormData.start_date}
-              onChange={handleUpdateInputChange}
-              error={errors.start_date}
-            />
-            <InputField
-              name="end_date"
-              label="End Date"
-              type="date"
-              value={updateFormData.end_date}
-              onChange={handleUpdateInputChange}
-              error={errors.end_date}
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField
-              name="minimum_bid"
-              label="Min Bid %"
-              value={updateFormData.minimum_bid}
-              onChange={handleUpdateInputChange}
-              error={errors.minimum_bid}
-              type="number"
-            />
-            <InputField
-              name="maximum_bid"
-              label="Max Bid %"
-              value={updateFormData.maximum_bid}
-              onChange={handleUpdateInputChange}
-              error={errors.maximum_bid}
-              type="number"
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <InputField
-              name="commission"
-              label="Agent Commission %"
-              value={updateFormData.commission}
-              onChange={handleUpdateInputChange}
-              type="number"
-            />
-            <InputField
-              name="group_commission"
-              label="Company Commission %"
-              value={updateFormData.group_commission}
-              onChange={handleUpdateInputChange}
-              type="number"
-            />
-            <InputField
-              name="incentives"
-              label="Employee Incentives %"
-              value={updateFormData.incentives}
-              onChange={handleUpdateInputChange}
-              type="number"
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <InputField
-              name="daily_installment"
-              label="Daily Installment"
-              value={updateFormData.daily_installment}
-              onChange={handleUpdateInputChange}
-              error={errors.daily_installment}
-              type="number"
-            />
-            <InputField
-              name="weekly_installment"
-              label="Weekly Installment"
-              value={updateFormData.weekly_installment}
-              onChange={handleUpdateInputChange}
-              error={errors.weekly_installment}
-              type="number"
-            />
-            <InputField
-              name="monthly_installment"
-              label="Monthly Installment"
-              value={updateFormData.monthly_installment}
-              onChange={handleUpdateInputChange}
-              error={errors.monthly_installment}
-              type="text"
-            />
-          </div>
-          <div className="w-full flex justify-end">
-            <button
-              type="submit"
-              className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-md"
-            >
-              Save Changes
-            </button>
-          </div>
-        </form>
-      </div>
-    </Modal>
-  );
-
-  const DeleteGroupModal = () => (
-    <Modal
-      isVisible={showModalDelete}
-      onClose={() => setShowModalDelete(false)}
-      borderColor="red-600"
-    >
-      <div className="py-6 px-5 lg:px-8 text-left">
-        <h3 className="mb-4 text-xl font-bold text-gray-900">Delete Group</h3>
-        <p className="mb-4 text-sm text-gray-700">
-          To confirm deletion, type the group name{" "}
-          <strong className="text-red-600">{currentGroup?.group_name}</strong> below and press Delete.
-        </p>
-        <input
-          type="text"
-          value={deletionGroupName}
-          onChange={(e) => setDeletionGroupName(e.target.value)}
-          className="bg-white border border-gray-300 rounded-lg w-full p-2.5 mb-4"
-          placeholder="Type exact group name to confirm"
-        />
-        <div className="flex justify-end gap-2">
-          <button 
-            onClick={() => setShowModalDelete(false)} 
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
-          >
-            Cancel
-          </button>
-          <button 
-            onClick={handleDeleteGroup} 
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </Modal>
-  );
 
   const renderGroups = (groupsToRender) => {
     if (viewMode === "grid") {
@@ -1118,11 +685,10 @@ const Group = () => {
                 <div className="flex bg-white rounded-lg p-1 shadow-sm border border-gray-200">
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`p-2 rounded-md flex items-center gap-1 transition-colors ${
-                      viewMode === "grid"
+                    className={`p-2 rounded-md flex items-center gap-1 transition-colors ${viewMode === "grid"
                         ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-sm"
                         : "text-gray-600 hover:text-gray-900"
-                    }`}
+                      }`}
                     title="Grid View"
                   >
                     <MdGridView />
@@ -1130,11 +696,10 @@ const Group = () => {
                   </button>
                   <button
                     onClick={() => setViewMode("list")}
-                    className={`p-2 rounded-md flex items-center gap-1 transition-colors ${
-                      viewMode === "list"
+                    className={`p-2 rounded-md flex items-center gap-1 transition-colors ${viewMode === "list"
                         ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-sm"
                         : "text-gray-600 hover:text-gray-900"
-                    }`}
+                      }`}
                     title="List View"
                   >
                     <MdViewList />
@@ -1167,7 +732,7 @@ const Group = () => {
                   {showFilters ? <MdClose /> : <MdFilterList />}
                 </button>
               </div>
-              
+
               <div className={`p-4 ${showFilters ? 'block' : 'hidden sm:block'}`}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                   <div>
@@ -1302,7 +867,7 @@ const Group = () => {
                     )}
                   </div>
                 </div>
-                
+
                 <div className="flex flex-col sm:flex-row gap-3">
                   <div className="flex-1 relative">
                     <MdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -1390,9 +955,435 @@ const Group = () => {
           </main>
         </div>
       </div>
-      <AddGroupModal />
-      <UpdateGroupModal />
-      <DeleteGroupModal />
+      {/* Add Group Modal */}
+      <Modal isVisible={showModal} onClose={() => setShowModal(false)} borderColor="purple-600">
+        <div className="py-6 px-5 lg:px-8 text-left">
+          <h3 className="mb-5 text-xl font-bold text-purple-700">Add New Group</h3>
+          <form className="space-y-5" onSubmit={handleSubmit} noValidate>
+            <InputField
+              name="group_name"
+              label="Group Name"
+              value={formData.group_name}
+              onChange={handleChange}
+              error={errors.group_name}
+            />
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700">Group Type</label>
+              <Select
+                showSearch
+                placeholder="Select Group Type"
+                value={formData.group_type || undefined}
+                onChange={(v) => handleAntSelectChange("group_type", v)}
+                className="w-full"
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().includes(input.toLowerCase())
+                }
+              >
+                <Option value="divident">Dividend</Option>
+                <Option value="double">Double</Option>
+              </Select>
+              {errors.group_type && <p className="text-red-500 text-sm mt-1">{errors.group_type}</p>}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField
+                name="group_value"
+                label="Group Value"
+                value={formData.group_value}
+                onChange={handleChange}
+                error={errors.group_value}
+                type="number"
+              />
+              <InputField
+                name="group_install"
+                label="Installment"
+                value={formData.group_install}
+                onChange={handleChange}
+                error={errors.group_install}
+                type="number"
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField
+                name="group_members"
+                label="Members"
+                value={formData.group_members}
+                onChange={handleChange}
+                error={errors.group_members}
+                type="number"
+              />
+              <InputField
+                name="group_duration"
+                label="Duration (months)"
+                value={formData.group_duration}
+                onChange={handleChange}
+                error={errors.group_duration}
+                type="number"
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <InputField
+                  name="reg_fee"
+                  label="Registration Fee"
+                  value={formData.reg_fee}
+                  onChange={handleChange}
+                  error={errors.reg_fee}
+                  type="number"
+                />
+              </div>
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-900">
+                  Relationship Manager
+                </label>
+                <Select
+                  showSearch
+                  placeholder="Select Relationship Manager"
+                  value={formData.relationship_manager || undefined}
+                  onChange={(v) => handleAntSelectChange("relationship_manager", v)}
+                  className="w-full"
+                  filterOption={(input, option) =>
+                    option.children.toLowerCase().includes(input.toLowerCase())
+                  }
+                >
+                  {(Array.isArray(employees) ? employees : []).map((emp) => (
+                    <Option key={emp?._id} value={emp?._id}>
+                      {emp?.name} | {emp?.phone_number}
+                    </Option>
+                  ))}
+                </Select>
+                {errors.relationship_manager && (
+                  <p className="text-red-500 text-sm mt-1">{errors.relationship_manager}</p>
+                )}
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField
+                name="start_date"
+                label="Start Date"
+                type="date"
+                value={formData.start_date}
+                onChange={handleChange}
+                error={errors.start_date}
+              />
+              <InputField
+                name="end_date"
+                label="End Date"
+                type="date"
+                value={formData.end_date}
+                onChange={handleChange}
+                error={errors.end_date}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField
+                name="minimum_bid"
+                label="Min Bid %"
+                value={formData.minimum_bid}
+                onChange={handleChange}
+                error={errors.minimum_bid}
+                type="number"
+              />
+              <InputField
+                name="maximum_bid"
+                label="Max Bid %"
+                value={formData.maximum_bid}
+                onChange={handleChange}
+                error={errors.maximum_bid}
+                type="number"
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <InputField
+                name="commission"
+                label="Agent Commission %"
+                value={formData.commission}
+                onChange={handleChange}
+                type="number"
+              />
+              <InputField
+                name="group_commission"
+                label="Company Commission %"
+                value={formData.group_commission}
+                onChange={handleChange}
+                type="number"
+              />
+              <InputField
+                name="incentives"
+                label="Employee Incentives %"
+                value={formData.incentives}
+                onChange={handleChange}
+                type="number"
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <InputField
+                name="daily_installment"
+                label="Daily Installment"
+                value={formData.daily_installment}
+                onChange={handleChange}
+                error={errors.daily_installment}
+                type="number"
+              />
+              <InputField
+                name="weekly_installment"
+                label="Weekly Installment"
+                value={formData.weekly_installment}
+                onChange={handleChange}
+                error={errors.weekly_installment}
+                type="number"
+              />
+              <InputField
+                name="monthly_installment"
+                label="Monthly Installment"
+                value={formData.monthly_installment}
+                onChange={handleChange}
+                error={errors.monthly_installment}
+                type="text"
+              />
+            </div>
+            <div className="w-full flex justify-end">
+              <button
+                type="submit"
+                className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-md"
+              >
+                Save Group
+              </button>
+            </div>
+          </form>
+        </div>
+      </Modal>
+
+      {/* Update Group Modal */}
+      <Modal
+        isVisible={showModalUpdate}
+        onClose={() => setShowModalUpdate(false)}
+        borderColor="purple-600"
+      >
+        <div className="py-6 px-5 lg:px-8 text-left">
+          <h3 className="mb-5 text-xl font-bold text-purple-700">Update Group</h3>
+          <form className="space-y-5" onSubmit={handleUpdate} noValidate>
+            <InputField
+              name="group_name"
+              label="Group Name"
+              value={updateFormData.group_name}
+              onChange={handleUpdateInputChange}
+              error={errors.group_name}
+            />
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-900">Group Type</label>
+              <Select
+                showSearch
+                placeholder="Select Group Type"
+                value={updateFormData.group_type || undefined}
+                onChange={(v) => handleAntUpdateSelectChange("group_type", v)}
+                className="w-full"
+              >
+                <Option value="divident">Dividend</Option>
+                <Option value="double">Double</Option>
+              </Select>
+              {errors.group_type && <p className="text-red-500 text-sm mt-1">{errors.group_type}</p>}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField
+                name="group_value"
+                label="Group Value"
+                value={updateFormData.group_value}
+                onChange={handleUpdateInputChange}
+                error={errors.group_value}
+                type="number"
+              />
+              <InputField
+                name="group_install"
+                label="Installment"
+                value={updateFormData.group_install}
+                onChange={handleUpdateInputChange}
+                error={errors.group_install}
+                type="number"
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField
+                name="group_members"
+                label="Members"
+                value={updateFormData.group_members}
+                onChange={handleUpdateInputChange}
+                error={errors.group_members}
+                type="number"
+              />
+              <InputField
+                name="group_duration"
+                label="Duration (months)"
+                value={updateFormData.group_duration}
+                onChange={handleUpdateInputChange}
+                error={errors.group_duration}
+                type="number"
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <InputField
+                  name="reg_fee"
+                  label="Registration Fee"
+                  value={updateFormData.reg_fee}
+                  onChange={handleUpdateInputChange}
+                  error={errors.reg_fee}
+                  type="number"
+                />
+              </div>
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-900">
+                  Relationship Manager
+                </label>
+                <Select
+                  showSearch
+                  placeholder="Select Relationship Manager"
+                  value={updateFormData.relationship_manager || undefined}
+                  onChange={(v) => handleAntUpdateSelectChange("relationship_manager", v)}
+                  className="w-full"
+                >
+                  {(Array.isArray(employees) ? employees : []).map((emp) => (
+                    <Option key={emp?._id} value={emp._id}>
+                      {emp?.name} | {emp?.phone_number}
+                    </Option>
+                  ))}
+                </Select>
+                {errors.relationship_manager && (
+                  <p className="text-red-500 text-sm mt-1">{errors.relationship_manager}</p>
+                )}
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField
+                name="start_date"
+                label="Start Date"
+                type="date"
+                value={updateFormData.start_date}
+                onChange={handleUpdateInputChange}
+                error={errors.start_date}
+              />
+              <InputField
+                name="end_date"
+                label="End Date"
+                type="date"
+                value={updateFormData.end_date}
+                onChange={handleUpdateInputChange}
+                error={errors.end_date}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField
+                name="minimum_bid"
+                label="Min Bid %"
+                value={updateFormData.minimum_bid}
+                onChange={handleUpdateInputChange}
+                error={errors.minimum_bid}
+                type="number"
+              />
+              <InputField
+                name="maximum_bid"
+                label="Max Bid %"
+                value={updateFormData.maximum_bid}
+                onChange={handleUpdateInputChange}
+                error={errors.maximum_bid}
+                type="number"
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <InputField
+                name="commission"
+                label="Agent Commission %"
+                value={updateFormData.commission}
+                onChange={handleUpdateInputChange}
+                type="number"
+              />
+              <InputField
+                name="group_commission"
+                label="Company Commission %"
+                value={updateFormData.group_commission}
+                onChange={handleUpdateInputChange}
+                type="number"
+              />
+              <InputField
+                name="incentives"
+                label="Employee Incentives %"
+                value={updateFormData.incentives}
+                onChange={handleUpdateInputChange}
+                type="number"
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <InputField
+                name="daily_installment"
+                label="Daily Installment"
+                value={updateFormData.daily_installment}
+                onChange={handleUpdateInputChange}
+                error={errors.daily_installment}
+                type="number"
+              />
+              <InputField
+                name="weekly_installment"
+                label="Weekly Installment"
+                value={updateFormData.weekly_installment}
+                onChange={handleUpdateInputChange}
+                error={errors.weekly_installment}
+                type="number"
+              />
+              <InputField
+                name="monthly_installment"
+                label="Monthly Installment"
+                value={updateFormData.monthly_installment}
+                onChange={handleUpdateInputChange}
+                error={errors.monthly_installment}
+                type="text"
+              />
+            </div>
+            <div className="w-full flex justify-end">
+              <button
+                type="submit"
+                className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-md"
+              >
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </Modal>
+
+      {/* Delete Group Modal */}
+      <Modal
+        isVisible={showModalDelete}
+        onClose={() => setShowModalDelete(false)}
+        borderColor="red-600"
+      >
+        <div className="py-6 px-5 lg:px-8 text-left">
+          <h3 className="mb-4 text-xl font-bold text-gray-900">Delete Group</h3>
+          <p className="mb-4 text-sm text-gray-700">
+            To confirm deletion, type the group name{" "}
+            <strong className="text-red-600">{currentGroup?.group_name}</strong> below and press Delete.
+          </p>
+          <input
+            type="text"
+            value={deletionGroupName}
+            onChange={(e) => setDeletionGroupName(e.target.value)}
+            className="bg-white border border-gray-300 rounded-lg w-full p-2.5 mb-4"
+            placeholder="Type exact group name to confirm"
+          />
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => setShowModalDelete(false)}
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDeleteGroup}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 };
