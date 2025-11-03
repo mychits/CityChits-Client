@@ -91,9 +91,9 @@ const Enroll = () => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
-    const adminId = userObj._id;
+    const adminId = userObj?._id;
     if (adminId) {
-      setAdmin(userObj._id);
+      setAdmin(userObj?._id);
 
       setFormData((prev) => ({ ...prev, created_by: adminId }));
     } else {

@@ -141,14 +141,14 @@ const PayOutReport = () => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
-    setAdminName(userObj.name || "");
+    setAdminName(userObj?.name || "");
 
     if (
       userObj &&
-      userObj.admin_access_right_id?.access_permissions?.edit_payment
+      userObj?.admin_access_right_id?.access_permissions?.edit_payment
     ) {
       const isModify =
-        userObj.admin_access_right_id?.access_permissions?.edit_payment ===
+        userObj?.admin_access_right_id?.access_permissions?.edit_payment ===
         "true"
           ? true
           : false;
