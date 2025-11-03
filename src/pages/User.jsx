@@ -142,19 +142,11 @@ const User = () => {
           customer_id: group.customer_id,
           collection_area: group.collection_area?.route_name,
           approval_status:
-            group.approval_status === "true" ? (
-              <div className="inline-block px-3 py-1 text-sm font-medium text-green-800 bg-green-100 rounded-full shadow-sm">
-                Approved
-              </div>
-            ) : group.approval_status === "false" ? (
-              <div className="inline-block px-3 py-1 text-sm font-medium text-red-800 bg-red-100 rounded-full shadow-sm">
-                Pending
-              </div>
-            ) : (
-              <div className="inline-block px-3 py-1 text-sm font-medium text-green-800 bg-green-100  rounded-full shadow-sm">
-                Approved
-              </div>
-            ),
+        group.approval_status === "true"
+              ? "Approved"
+              : group.approval_status === "false"
+              ? "Pending"
+              : "Approved",
           action: (
             <div className="flex justify-center gap-2">
               <Dropdown
@@ -956,9 +948,11 @@ if (!data.collection_area) {
                       </Select.Option>
                     ))}
                   </Select>
-                   {errors.collection_area && (
-                  <p className="mt-2 text-sm text-red-600">{errors.collection_area}</p>
-                )}
+                    {errors.collection_area && (
+                    <p className="mt-2 text-sm text-red-600">
+                      {errors.collection_area}
+                    </p>
+                  )}
                 </div>
 
               
