@@ -4,14 +4,16 @@ import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import sidebarMenu from "../../data/sidebarMenu";
 import Navbar from "./Navbar";
 import { NavLink, useLocation } from "react-router-dom";
+import { TbArrowsLeftDown } from "react-icons/tb";
+
 
 
 const Sidebar = ({
   navSearchBarVisibility = false,
   navbarVisibility = true,
-  onGlobalSearchChangeHandler = () => {},
+  onGlobalSearchChangeHandler = () => { },
   showMobileSidebar = false,
-  setShowMobileSidebar = () => {},
+  setShowMobileSidebar = () => { },
 }) => {
   const [open, setOpen] = useState(true);
   const [showArrowLeft, setShowArrowLeft] = useState(false);
@@ -40,19 +42,16 @@ const Sidebar = ({
       />
       {navbarVisibility && (
         <div
-          className={`bg-violet-50 mt-2 p-5 pt-7 fixed md:static  transition-all duration-300 ${
-            open ? "w-64" : "w-28"
-          } ${!navbarVisibility ? "hidden" : ""} ${
-            showMobileSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-          }`}
+          className={`bg-violet-50 mt-2 p-5 pt-7 fixed md:static  transition-all duration-300 ${open ? "w-64" : "w-28"
+            } ${!navbarVisibility ? "hidden" : ""} ${showMobileSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+            }`}
           onMouseEnter={() => setShowArrowLeft(true)}
           onMouseLeave={() => setShowArrowLeft(false)}
         >
           {showArrowLeft && (
             <BsArrowLeftShort
-              className={`bg-white text-custom-violet text-3xl rounded-full absolute z-20 -right-3 top-20 border border-custom-violet cursor-pointer ${
-                !open && "rotate-180"
-              }`}
+              className={`bg-white text-custom-violet text-3xl rounded-full absolute z-20 -right-3 top-20 border border-custom-violet cursor-pointer ${!open && "rotate-180"
+                }`}
               onClick={() => setOpen(!open)}
             />
           )}
@@ -73,10 +72,9 @@ const Sidebar = ({
                       }
                     }}
                     className={({ isActive }) =>
-                      `flex items-center gap-x-4 p-3 rounded-xl shadow-sm transition-all duration-200 ${
-                        isActive && !menu.submenu
-                          ? "bg-violet-500 text-white"
-                          : "bg-white text-gray-700 hover:bg-violet-200"
+                      `flex items-center gap-x-4 p-3 rounded-xl shadow-sm transition-all duration-200 ${isActive && !menu.submenu
+                        ? "bg-violet-500 text-white"
+                        : "bg-white text-gray-700 hover:bg-violet-200"
                       } ${menu.spacing ? "mt-6" : ""}`
                     }
                   >
@@ -84,9 +82,8 @@ const Sidebar = ({
                       <menu.icon />
                     </span>
                     <span
-                      className={`text-base font-medium flex-1 ${
-                        !open && "hidden"
-                      }`}
+                      className={`text-base font-medium flex-1 ${!open && "hidden"
+                        }`}
                     >
                       {menu.title}
                     </span>
@@ -117,10 +114,9 @@ const Sidebar = ({
                                 }
                               }}
                               className={({ isActive }) =>
-                                `p-2 pl-5 rounded-lg shadow-sm text-sm flex items-center transition-all duration-200 ${
-                                  isActive
-                                    ? "bg-custom-violet text-white"
-                                    : "bg-white text-gray-600 hover:bg-purple-100"
+                                `p-2 pl-5 rounded-lg shadow-sm text-sm flex items-center transition-all duration-200 ${isActive
+                                  ? "bg-custom-violet text-white"
+                                  : "bg-white text-gray-600 hover:bg-purple-100"
                                 }`
                               }
                             >
@@ -144,10 +140,9 @@ const Sidebar = ({
                                     to={subSubItem.link}
                                     end
                                     className={({ isActive }) =>
-                                      `p-2 pl-6 rounded-lg shadow-sm text-sm flex items-center transition-all duration-200 ${
-                                        isActive
-                                          ? "bg-custom-violet text-white"
-                                          : "bg-white text-gray-600 hover:bg-purple-100"
+                                      `p-2 pl-6 rounded-lg shadow-sm text-sm flex items-center transition-all duration-200 ${isActive
+                                        ? "bg-custom-violet text-white"
+                                        : "bg-white text-gray-600 hover:bg-purple-100"
                                       }`
                                     }
                                   >
@@ -170,8 +165,11 @@ const Sidebar = ({
               );
             })}
           </ul>
-              
+
+
+
         </div>
+
       )}
 
       {showMobileSidebar && (
@@ -180,6 +178,17 @@ const Sidebar = ({
           onClick={() => setShowMobileSidebar(false)}
         ></div>
       )}
+
+
+      <div
+        className="fixed bottom-6 right-6 bg-violet-300 text-white p-3 rounded-xl shadow-lg 
+             hover:bg-violet-700 active:scale-95 transition-all duration-300 cursor-pointer 
+             z-[9999] animate-bounce"
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      >
+        <TbArrowsLeftDown className="text-2xl rotate-90" />
+      </div>
+
     </>
   );
 };

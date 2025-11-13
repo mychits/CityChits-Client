@@ -135,6 +135,7 @@ const TotalRevenue = () => {
         <main className="flex-grow p-4 md:p-6">
           {/* Sticky Header Section */}
           <div className="mb-6 bg-white shadow-sm rounded-lg p-4 border-b border-gray-200">
+            
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               {/* Title + Metric */}
               <div className="flex items-center gap-4">

@@ -524,7 +524,7 @@ const Daybook = () => {
             <div className="flex-grow ">
               {/* Header Section */}
                <div className="mb-8">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent p-2">
+              <h1 className="text-4xl font-bold bg-custom-violet bg-clip-text text-transparent p-2">
                 Reports - Daybook
               </h1>
               <p className="text-gray-600 mt-2">

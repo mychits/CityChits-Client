@@ -1174,6 +1174,11 @@ const CustomerView = () => {
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
                         {[
                           {
+                            label: "TOTAL GROUPS",
+                            value: TableAuctions ? [...new Set(TableAuctions.map(item => item.group_id))].length || 0 : 0, // Calculate unique groups
+                            icon: <FiUsers className="text-violet-600" />, // Or use a different icon if preferred, e.g., <FiFolder className="text-violet-600" />
+                          },
+                          {
                             label: "TOTAL TICKETS",
                             value: TableAuctions?.length || 0,
                             icon: <FiUsers className="text-violet-600" />,
@@ -1579,8 +1584,8 @@ const CustomerView = () => {
                               </h3>
                               <span
                                 className={`text-xs font-medium px-2 py-0.5 rounded-full ${percent === 100
-                                    ? "bg-green-100 text-green-700"
-                                    : "bg-blue-100 text-blue-700"
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-blue-100 text-blue-700"
                                   }`}
                               >
                                 {percent}%
@@ -1613,8 +1618,8 @@ const CustomerView = () => {
                                 <a
                                   href={group.aadhar_frontphoto}
                                   download={`${group.customer_name || "Customer"}_Aadhaar_Front${group.aadhar_frontphoto.split(".").pop()
-                                      ? "." + group.aadhar_frontphoto.split(".").pop()
-                                      : ""
+                                    ? "." + group.aadhar_frontphoto.split(".").pop()
+                                    : ""
                                     }`}
                                   target="_blank"
                                   rel="noopener noreferrer"
@@ -1634,8 +1639,8 @@ const CustomerView = () => {
                                 <a
                                   href={group.aadhar_backphoto}
                                   download={`${group.customer_name || "Customer"}_Aadhaar_Back${group.aadhar_backphoto.split(".").pop()
-                                      ? "." + group.aadhar_backphoto.split(".").pop()
-                                      : ""
+                                    ? "." + group.aadhar_backphoto.split(".").pop()
+                                    : ""
                                     }`}
                                   target="_blank"
                                   rel="noopener noreferrer"
@@ -1663,8 +1668,8 @@ const CustomerView = () => {
                                 <a
                                   href={group.pan_frontphoto}
                                   download={`${group.customer_name || "Customer"}_PAN_Front${group.pan_frontphoto.split(".").pop()
-                                      ? "." + group.pan_frontphoto.split(".").pop()
-                                      : ""
+                                    ? "." + group.pan_frontphoto.split(".").pop()
+                                    : ""
                                     }`}
                                   target="_blank"
                                   rel="noopener noreferrer"
@@ -1684,8 +1689,8 @@ const CustomerView = () => {
                                 <a
                                   href={group.pan_backphoto}
                                   download={`${group.customer_name || "Customer"}_PAN_Back${group.pan_backphoto.split(".").pop()
-                                      ? "." + group.pan_backphoto.split(".").pop()
-                                      : ""
+                                    ? "." + group.pan_backphoto.split(".").pop()
+                                    : ""
                                     }`}
                                   target="_blank"
                                   rel="noopener noreferrer"
