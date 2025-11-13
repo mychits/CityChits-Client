@@ -130,6 +130,10 @@ import Register from "../pages/Register";
 import IndividualChitPaymentLink from "../pages/IndividualChitPaymentLink";
 import IndividualRegistrationChitPaymentLink from "../pages/IndividualRegistrationChitPaymentLink";
 
+import UnApprovedCustomerReport from "../pages/UnApprovedCustomerReport";
+import PaymentReport from "../pages/PaymentReport";
+import PigmySummaryReport from "../pages/PigmySummaryReport";
+
 // import DueReport from "../pages/DueReport";
 
 const mainRoutes = createBrowserRouter([
@@ -185,7 +189,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
-   {
+  {
     path: "/customer-menu/user",
     element: (
       <ProtectedRoute>
@@ -194,7 +198,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
-    {
+  {
     path: "/customer-menu/un-approved-customer",
     element: (
       <ProtectedRoute>
@@ -203,29 +207,29 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
-   {
-   path: "/target-menu",
-   element: (
-   <ProtectedRoute>
-    <TargetMenu/>
-   </ProtectedRoute>
-   ),
+  {
+    path: "/target-menu",
+    element: (
+      <ProtectedRoute>
+        <TargetMenu />
+      </ProtectedRoute>
+    ),
   },
 
 
 
-      {
-    path:"/penalty-settings",
-    element:<PenaltySettings/>
+  {
+    path: "/penalty-settings",
+    element: <PenaltySettings />
   },
 
-   {
-    path:"/penalty-monitor",
-    element:<PenaltyMonitor/>
+  {
+    path: "/penalty-monitor",
+    element: <PenaltyMonitor />
   },
 
 
-       {
+  {
     path: "/other-service-menu/",
     element: (
       <ProtectedRoute>
@@ -234,7 +238,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
-   {
+  {
     path: "/other-service-menu/loan",
     element: (
       <ProtectedRoute>
@@ -259,7 +263,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-   {
+  {
     path: "/enroll-menu/enrollment",
     element: (
       <ProtectedRoute>
@@ -271,11 +275,11 @@ const mainRoutes = createBrowserRouter([
   {
     path: "/enroll-menu",
     element: (<ProtectedRoute>
-        <EnrollmentMenu/>
-      </ProtectedRoute>),
+      <EnrollmentMenu />
+    </ProtectedRoute>),
   },
-   
-    {
+
+  {
     path: "/target-menu/target",
     element: (
       <ProtectedRoute>
@@ -284,22 +288,22 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
-  
 
-    {
+
+  {
     path: "/legals-menu",
     element: <LegalsMenu />,
   },
 
-    {
+  {
     path: "/legals-menu/guarantor",
     element: <Guarantor />,
   },
 
-  
 
 
-   {
+
+  {
     path: "/payment-menu",
     element: (
       <ProtectedRoute>
@@ -323,7 +327,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-    
+
   {
     path: "/payment-menu/payment-in-out-menu/pay-in-menu",
     element: (
@@ -407,7 +411,7 @@ const mainRoutes = createBrowserRouter([
   },
 
 
-    {
+  {
     path: "/payment-menu/payment-in-out-menu/pay-in-menu/payment-link-menu/chit-payment",
     element: (
       <ProtectedRoute>
@@ -531,7 +535,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-   {
+  {
     path: "/staff-menu",
     element: (
       <ProtectedRoute>
@@ -539,7 +543,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-      {
+  {
     path: "/staff-menu/employee-menu",
     element: (
       <ProtectedRoute>
@@ -547,7 +551,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-   {
+  {
     path: "/staff-menu/employee-menu/employee",
     element: (
       <ProtectedRoute>
@@ -555,7 +559,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-    {
+  {
     path: "/staff-menu/employee-menu/add-employee-attendance",
     element: (
       <ProtectedRoute>
@@ -644,7 +648,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
- {
+  {
     path: "/payment-in-out-menu/payment-out/salary",
     element: (
       <ProtectedRoute>
@@ -791,7 +795,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
-   {
+  {
     path: "/customer-menu",
     element: (
       <ProtectedRoute>
@@ -799,9 +803,9 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-      {
+  {
     path: "/gift-received",
-    element: <CustomerRewards/>
+    element: <CustomerRewards />
   },
 
   { path: "customer-view", element: <CustomerView /> },
@@ -828,28 +832,32 @@ const mainRoutes = createBrowserRouter([
       { path: "payment-summary", element: <PaymentSummary /> },
       { path: "monthly-install-turnover", element: <MonthlyInstallmentTurnoverReport /> },
 
-      {path: "employee-monthly-report", element: <EmployeeMonthlyReport/>},
-        { path: "holded-customer-report", element: <HoldedCustomerReport /> },
-         { path: "registration-fee-receipt", element: <RegistrationFeeReport /> },
-            { path: "collection-executive", element: <CollectionExecutiveReport /> },
-                {path: "collection-area-report", element: <CollectionAreaReport />},
-                
-     {path: "payout-salary-report", element: <PayoutSalaryReport/>},
+      { path: "employee-monthly-report", element: <EmployeeMonthlyReport /> },
+      { path: "holded-customer-report", element: <HoldedCustomerReport /> },
+      { path: "registration-fee-receipt", element: <RegistrationFeeReport /> },
+      { path: "collection-executive", element: <CollectionExecutiveReport /> },
+      { path: "collection-area-report", element: <CollectionAreaReport /> },
 
-      {path: "customer-loan-report", element: <CustomerLoanReport/>},
+      { path: "pigmy-summary-report", element: <PigmySummaryReport /> },
+      { path: "unverified-customer-report", element: <UnApprovedCustomerReport /> },
+      { path: "payment-report", element: <PaymentReport /> },
+
+      { path: "payout-salary-report", element: <PayoutSalaryReport /> },
+
+      { path: "customer-loan-report", element: <CustomerLoanReport /> },
       {
         path: "outstanding-report",
         element: <OutstandingReport />,
       },
 
-        {
-    path: "target-incentive",
-    element: <TargetIncentiveReport />,
-  },
-    {
-    path: "target-commission",
-    element: <TargetCommission />,
-  },
+      {
+        path: "target-incentive",
+        element: <TargetIncentiveReport />,
+      },
+      {
+        path: "target-commission",
+        element: <TargetCommission />,
+      },
 
       // {
       //   path: "due-report",
@@ -861,8 +869,8 @@ const mainRoutes = createBrowserRouter([
     ],
   },
 
-  
-    {
+
+  {
     path: "/target-commission",
     element: <TargetCommission />,
   },
@@ -882,10 +890,10 @@ const mainRoutes = createBrowserRouter([
     path: "/target-incentive",
     element: <TargetIncentiveReport />,
   },
-  
+
   {
     path: "/insurance",
-    element: <Insurance/>
+    element: <Insurance />
   },
   {
     path: "/print/:id",
@@ -914,14 +922,14 @@ const mainRoutes = createBrowserRouter([
       { path: "what-promo", element: <WhatsappPromo /> },
       { path: "bid-winner", element: <BidWinner /> },
       { path: "payment-link", element: <PaymentLink /> },
-       {path: "bid-status", element: <AuctionBidStatus/>},
-      {path: "auction-info", element: <AuctionInformation/>},
-      {path: "winner-document", element: <AuctionWinnerDocuments/>},
-      {path: "auction-terms-condition", element: <AuctionTermsandCondition/>},
-      {path: "lead-welcome-message", element: <LeadWhatsappWelcomeMessage/>},
-      {path: "lead-referredby-message", element: <LeadReferredByWhatsappMessage/>},
-      {path: "customer-welcome-message", element: <CustomerWelcomeWhatsappMessage/>},
-      {path: "customer-chitplan-message", element: <CustomerChitPlanWhatsappMessage/>},
+      { path: "bid-status", element: <AuctionBidStatus /> },
+      { path: "auction-info", element: <AuctionInformation /> },
+      { path: "winner-document", element: <AuctionWinnerDocuments /> },
+      { path: "auction-terms-condition", element: <AuctionTermsandCondition /> },
+      { path: "lead-welcome-message", element: <LeadWhatsappWelcomeMessage /> },
+      { path: "lead-referredby-message", element: <LeadReferredByWhatsappMessage /> },
+      { path: "customer-welcome-message", element: <CustomerWelcomeWhatsappMessage /> },
+      { path: "customer-chitplan-message", element: <CustomerChitPlanWhatsappMessage /> },
     ],
   },
 ]);

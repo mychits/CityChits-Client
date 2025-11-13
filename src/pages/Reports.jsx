@@ -26,6 +26,9 @@ import { SlCalender } from "react-icons/sl";
 import { MdOutlinePending } from "react-icons/md";
 import { HiOutlineBanknotes } from "react-icons/hi2";
 import { useState, useMemo } from "react";
+import { MdOutlinePayments } from "react-icons/md";
+import { MdCancel } from "react-icons/md";
+import { BsCalculator } from "react-icons/bs";
 
 const GlobalSearchChangeHandler = (e) => {
   const { value } = e.target;
@@ -38,7 +41,7 @@ const subMenus = [
     link: "/reports/daybook", 
     Icon: FaCalendarDays,
     category: "General",
-    color: "from-blue-500 to-blue-600",
+    color: "from-violet-500 to-violet-600",
   },
   { 
     title: "Group Report", 
@@ -68,6 +71,14 @@ const subMenus = [
     category: "Customer",
     color: "from-rose-500 to-rose-600",
   },
+     {
+    id:"&*DD",
+    title: "Pigmy Summary Report",
+    link: "/reports/pigmy-summary-report",
+    Icon: BsCalculator ,
+    category: "Customer",
+    color: "from-violet-500 to-violet-600",
+  },
   {
     id:"7",
     title: "Customer Loan Report",
@@ -89,6 +100,22 @@ const subMenus = [
     Icon: TbMoneybag,
     category: "Finance",
     color: "from-emerald-500 to-emerald-600",
+  },
+      {
+    id:"27",
+    title: "Unverified Customer Report",
+    link: "/reports/unverified-customer-report",
+    category: "Customer",
+   Icon: MdCancel,
+   color: "from-violet-500 to-violet-600",
+  },
+     {
+     id:"&&%",
+    title: "Payment Report",
+    link: "/reports/payment-report",
+    Icon: MdOutlinePayments ,
+    category: "Reports",
+    color: "from-yellow-500 to-pink-600",
   },
   {
     id:"10",
@@ -195,7 +222,7 @@ const subMenus = [
     link: "/reports/employee-monthly-report",
     Icon: SlCalender,
     category: "Employee",
-    color: "from-blue-600 to-blue-700",
+    color: "from-violet-600 to-violet-700",
   },
   {
     id:"24",
@@ -256,7 +283,7 @@ const Reports = () => {
                         placeholder="Search reports..."
                         value={searchText}
                         onChange={(e) => setSearchText(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                       />
                       <svg
                         className="absolute left-3 top-2.5 h-5 w-5 text-gray-400"
@@ -281,7 +308,7 @@ const Reports = () => {
                         onClick={() => setSelectedCategory(category)}
                         className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                           selectedCategory === category
-                            ? "bg-blue-600 text-white"
+                            ? "bg-violet-600 text-white"
                             : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                         }`}
                       >
@@ -307,7 +334,7 @@ const Reports = () => {
                           <Icon className="text-xl" />
                         </div>
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+                      <h3 className="text-lg font-semibold text-gray-800 group-hover:text-violet-600 transition-colors">
                         {title}
                       </h3>
                       <div className="mt-4 flex items-center text-sm text-gray-500">

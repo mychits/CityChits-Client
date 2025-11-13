@@ -611,7 +611,7 @@ useEffect(() => {
                 isPrized: group?.enrollment?.isPrized===true ? "Prized" :"Un Prized" || "N/A",
               };
             })
-            .filter((item) => item !== null);
+            .filter((item) => item !== null).filter((item) => item.customer_status === "Active");
 
           setTableAuctions(formattedData);
           setCommission(0);

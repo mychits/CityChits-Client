@@ -209,7 +209,7 @@ const AuctionTermsandCondition = () => {
         ) : (
           <div className="flex-grow p-7">
             <h1 className="text-2xl font-bold text-center">
-              Auction Bid Winner
+              Auction Terms and Condition
             </h1>
             {contextHolder}
             <div className="mt-6 mb-8">

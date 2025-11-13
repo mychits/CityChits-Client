@@ -388,10 +388,11 @@ export default function Analytics() {
             message={alertConfig.message}
           />
           <div className="flex mt-20">
-            <Sidebar
-              navSearchBarVisibility={true}
-              onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            />
+            <Sidebar />
+        <Navbar
+          onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
+          visibility={true}
+        />
             <div className="flex-grow p-7">
               <Navbar />
               <div className="animate-pulse space-y-6">
@@ -421,10 +422,11 @@ export default function Analytics() {
 
         <div className="flex mt-20">
           {/* Sidebar */}
-          <Sidebar
-            navSearchBarVisibility={true}
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-          />
+           <Sidebar />
+        <Navbar
+          onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
+          visibility={true}
+        />
 
           {/* Main Content */}
           <div className="flex-grow p-7">

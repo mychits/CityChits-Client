@@ -154,7 +154,7 @@ const User = () => {
                     className={`text-xs font-semibold ${
                       group.percentage === 100
                         ? "text-green-600"
-                        : "text-violet-600"
+                        : "text-indigo-600"
                     }`}
                   >
                     {group.percentage}%

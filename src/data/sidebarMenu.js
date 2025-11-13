@@ -345,7 +345,7 @@ const sidebarMenu = [
 				id: "#1",
 				title: "Gold Admin",
 				newTab: true,
-				link: "http://gold-admin-web.s3-website.eu-north-1.amazonaws.com/",
+				link: "http://prod-new-gold-chit.s3-website.eu-north-1.amazonaws.com/",
 				activeColor: "primary",
 			}, // External link
 			{

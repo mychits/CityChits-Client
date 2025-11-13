@@ -229,7 +229,7 @@ const DueMessage = () => {
   ];
 
   return (
-    <div className="w-screen">
+    <div className="">
       <div className="flex mt-30">
         <Navbar
           onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}

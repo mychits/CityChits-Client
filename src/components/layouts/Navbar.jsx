@@ -50,7 +50,7 @@ const Navbar = ({
         >
           <img src={CityChits} alt="Logo" className="h-10 sm:h-12 w-auto" />
           <span className="hidden sm:block font-extrabold text-2xl bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Demo Rider
+            My Chits
           </span>
         </button>
 

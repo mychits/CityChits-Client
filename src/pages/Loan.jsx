@@ -4,7 +4,7 @@ import Sidebar from "../components/layouts/Sidebar";
 import Modal from "../components/modals/Modal";
 import api from "../instance/TokenInstance";
 import DataTable from "../components/layouts/Datatable";
-import CustomAlert from "../components/alerts/CustomAlert";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import { Input, Select, Dropdown } from "antd";
 import { IoMdMore } from "react-icons/io";
 import Navbar from "../components/layouts/Navbar";
@@ -12,9 +12,10 @@ import filterOption from "../helpers/filterOption";
 import { FaCalculator } from "react-icons/fa";
 import CircularLoader from "../components/loaders/CircularLoader";
 import { fieldSize } from "../data/fieldSize";
-import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 const Loan = () => {
   const [users, setUsers] = useState([]);
+  const [agents, setAgents] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [borrowers, setBorrowers] = useState([]);
   const [tableBorrowers, setTableBorrowers] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -25,7 +26,7 @@ const Loan = () => {
   const [currentUpdateBorrower, setCurrentUpdateBorrower] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const GlobalSearchChangeHandler = (e) => {
+  const onGlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
@@ -45,6 +46,10 @@ const Loan = () => {
     start_date: "",
     end_date: "",
     note: "",
+    referred_customer: "",
+    referred_employee: "",
+    referred_agent: "",
+    referred_type: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -57,8 +62,11 @@ const Loan = () => {
     start_date: "",
     end_date: "",
     note: "",
+    referred_customer: "",
+    referred_employee: "",
+    referred_agent: "",
+    referred_type: "",
   });
-
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -74,6 +82,30 @@ const Loan = () => {
     };
     fetchCustomers();
   }, [reloadTrigger]);
+
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        const response = await api.get("/agent/get");
+        setAgents(response.data?.agent);
+      } catch (err) {
+        console.error("Failed to fetch Leads", err);
+      }
+    };
+    fetchAgents();
+  }, []);
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const response = await api.get("/agent/get-employee");
+        setEmployees(response?.data?.employee);
+      } catch (error) {
+        console.error("failed to fetch employees", error);
+      }
+    };
+    fetchEmployees();
+  }, []);
+
   useEffect(() => {
     const fetchBorrowers = async () => {
       try {
@@ -93,10 +125,21 @@ const Loan = () => {
           start_date: borrower?.start_date?.split("T")[0],
           end_date: borrower?.end_date?.split("T")[0],
           note: borrower?.note,
+          referred_type: borrower?.referred_type,
+          referred_by:
+            borrower?.referred_employee?.name &&
+            borrower?.referred_employee?.phone_number
+              ? `${borrower.referred_employee.name} | ${borrower?.referred_employee?.phone_number}`
+              : borrower?.referred_agent?.name
+    ? `${borrower.referred_agent.name} | ${borrower.referred_agent.phone_number}`
+              : borrower?.referred_customer?.full_name &&
+                borrower?.referred_customer?.phone_number
+              ? `${borrower.referred_customer.full_name} | ${borrower?.referred_customer?.phone_number}`
+              : "N/A",
           action: (
             <div className="flex justify-center gap-2" key={borrower._id}>
               <Dropdown
-                trigger={['click']}
+                trigger={["click"]}
                 menu={{
                   items: [
                     {
@@ -206,7 +249,6 @@ const Loan = () => {
     e.preventDefault();
     const isValid = validateForm("addBorrower");
     try {
-
       if (isValid) {
         const response = await api.post("/loans/add-borrower", formData, {
           headers: {
@@ -231,14 +273,16 @@ const Loan = () => {
           start_date: "",
           end_date: "",
           note: "",
+          referred_customer: "",
+          referred_employee: "",
+          referred_agent: "",
+          referred_type: "",
         });
       }
     } catch (error) {
       console.error("Error adding Borrower:", error);
     }
   };
-
-
 
   const handleDeleteModalOpen = async (borrowerId) => {
     try {
@@ -266,6 +310,10 @@ const Loan = () => {
         start_date: formattedStartDate,
         end_date: formattedEndDate,
         note: response?.data?.note,
+        referred_employee: response?.data?.referred_employee?._id  || "",
+        referred_customer: response?.data?.referred_customer?._id  || "",
+        referred_agent: response?.data?.referred_agent?._id || "",
+        referred_type: response?.data?.referred_type || "",
       });
       setShowModalUpdate(true);
       setErrors({});
@@ -329,6 +377,8 @@ const Loan = () => {
     { key: "service_charges", header: "Service Charges" },
     { key: "start_date", header: "Start Date" },
     { key: "end_date", header: "Due Date" },
+     { key: "referred_type", header: "Referred Type" },
+    { key: "referred_by", header: "Referred By" },
     { key: "note", header: "Note" },
     { key: "action", header: "Action" },
   ];
@@ -336,24 +386,22 @@ const Loan = () => {
   return (
     <>
       <div>
-        <div className="flex mt-20" >
+        <Navbar
+          visibility={true}
+          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+        />
+        <CustomAlertDialog
+          type={alertConfig.type}
+          isVisible={alertConfig.visibility}
+          message={alertConfig.message}
+          onClose={() =>
+            setAlertConfig((prev) => ({ ...prev, visibility: false }))
+          }
+        />
+        <div className="flex mt-20">
           <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
-          <CustomAlertDialog
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-            onClose={() =>
-              setAlertConfig((prev) => ({ ...prev, visibility: false }))
-            }
-          />
 
-
-          <div className="flex-grow p-7 w-8 ">
-            {/* Header section */}
+          <div className="flex-grow p-7">
             <div className="mt-6 mb-8">
               <div className="flex justify-between items-center w-full">
                 <h1 className="text-2xl font-semibold">Loans</h1>
@@ -362,41 +410,30 @@ const Loan = () => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                  className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
                 >
                   + Add Loan
                 </button>
               </div>
             </div>
 
-            {/* Table or Loader */}
-            {tableBorrowers?.length > 0 && !isLoading ? (
+            {tableBorrowers.length > 0 && !isLoading ? (
               <DataTable
                 catcher="_id"
                 updateHandler={handleUpdateModalOpen}
                 data={filterOption(tableBorrowers, searchText)}
                 columns={columns}
-                selectionColor="custom-violet"
-                exportedFileName={`Groups-${tableBorrowers.length > 0
-                    ? tableBorrowers[0].date +
-                    " to " +
-                    tableBorrowers[tableBorrowers.length - 1].date
-                    : "empty"
-                  }.csv`}
-                iconName="Loans"
-                clickableIconName="Add Loan"
+                exportedPdfName="Loans"
+                exportedFileName={`Loans.csv`}
               />
             ) : (
               <CircularLoader
                 isLoading={isLoading}
-                failure={tableBorrowers.length <= 0}
                 data="Loan Data"
+                failure={tableBorrowers?.length <= 0}
               />
             )}
           </div>
-
-
-
         </div>
         <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
           <div className="py-6 px-5 lg:px-8 text-left">
@@ -407,7 +444,7 @@ const Loan = () => {
                   className="block mb-2 text-sm font-medium text-gray-900"
                   htmlFor="borrower_name"
                 >
-                  Borrower Name  <span className="text-red-500 ">*</span>
+                  Borrower Name <span className="text-red-500 ">*</span>
                 </label>
                 {/* <select
                   name="borrower"
@@ -415,7 +452,7 @@ const Loan = () => {
                   value={formData.borrower}
                   onChange={handleChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="" selected hidden>
                     Select Borrower Name
@@ -437,13 +474,11 @@ const Loan = () => {
                       .includes(input.toLowerCase())
                   }
                   value={formData?.borrower || undefined}
-                  onChange={(value) =>
-                    handleAntDSelect("borrower", value)
-                  }
+                  onChange={(value) => handleAntDSelect("borrower", value)}
                 >
                   {users.map((user) => (
                     <Select.Option key={user._id} value={user._id}>
-                      {user.full_name}
+                     {user.customer_id} | {user.full_name} | {user.phone_number} 
                     </Select.Option>
                   ))}
                 </Select>
@@ -458,7 +493,7 @@ const Loan = () => {
                     className="block mb-2 text-sm font-medium text-gray-900"
                     htmlFor="loan_amount"
                   >
-                    Loan Amount  <span className="text-red-500 ">*</span>
+                    Loan Amount <span className="text-red-500 ">*</span>
                   </label>
                   <Input
                     type="number"
@@ -529,7 +564,8 @@ const Loan = () => {
                     className="block mb-2 text-sm font-medium text-gray-900"
                     htmlFor="daily_payment_amount"
                   >
-                    Daily Payment Amount  <span className="text-red-500 ">*</span>
+                    Daily Payment Amount{" "}
+                    <span className="text-red-500 ">*</span>
                   </label>
                   <Input
                     type="number"
@@ -555,7 +591,7 @@ const Loan = () => {
                     className="block mb-2 text-sm font-medium text-gray-900"
                     htmlFor="start_date"
                   >
-                    Start Date  <span className="text-red-500 ">*</span>
+                    Start Date <span className="text-red-500 ">*</span>
                   </label>
                   <Input
                     type="date"
@@ -597,6 +633,143 @@ const Loan = () => {
                   )}
                 </div>
               </div>
+              <div className="flex flex-row justify-between space-x-4">
+                <div className="w-full">
+                  <label className="block mb-2 text-sm font-semibold text-gray-800">
+                    Referred Type <span className="text-red-500">*</span>
+                  </label>
+                  <Select
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
+                    placeholder="Select Referred Type"
+                    popupMatchSelectWidth={false}
+                    showSearch
+                    name="referred_type"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    value={formData?.referred_type || undefined}
+                    onChange={(value) =>
+                      handleAntDSelect("referred_type", value)
+                    }
+                  >
+                    {[
+                      "Self Joining",
+                      "Customer",
+                      "Employee",
+                      "Agent",
+                      "Others",
+                    ].map((refType) => (
+                      <Select.Option key={refType} value={refType}>
+                        {refType}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+                {formData.referred_type === "Customer" && (
+                  <div className="w-full">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="category"
+                    >
+                      Select Referred Customer{" "}
+                      <span className="text-red-500 ">*</span>
+                    </label>
+
+                    <Select
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
+                      placeholder="Select Or Search Referred Customer"
+                      popupMatchSelectWidth={false}
+                      showSearch
+                      name="referred_customer"
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      value={formData?.referred_customer || undefined}
+                      onChange={(value) =>
+                        handleAntDSelect("referred_customer", value)
+                      }
+                    >
+                      {users.map((user) => (
+                        <Select.Option key={user._id} value={user._id}>
+                          {user.full_name} |{" "}
+                          {user.phone_number ? user.phone_number : "No Number"}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                )}
+                {formData.referred_type === "Agent" && (
+                  <div className="w-full">
+                    <label className="block mb-2 text-sm font-medium text-gray-900">
+                      Select Referred Agent{" "}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <Select
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
+                      placeholder="Select or Search Referred Agent"
+                      popupMatchSelectWidth={false}
+                      showSearch
+                      name="referred_agent"
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      value={formData.referred_agent || undefined}
+                      onChange={(value) =>
+                        handleAntDSelect("referred_agent", value)
+                      }
+                    >
+                      {agents.map((agent) => (
+                        <Select.Option key={agent._id} value={agent._id}>
+                          {agent.name} | {agent.phone_number}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                )}
+                {formData.referred_type === "Employee" && (
+                  <div className="w-full">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="category"
+                    >
+                      Select Referred Employee{" "}
+                      <span className="text-red-500 ">*</span>
+                    </label>
+
+                    <Select
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
+                      placeholder="Select Or Search Referred Employee"
+                      popupMatchSelectWidth={false}
+                      showSearch
+                      name="referred_employee"
+                      filterOption={(input, option) => {
+                        if (!option || !option.children) return false; // Ensure option and children exist
+
+                        return option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase());
+                      }}
+                      value={formData?.referred_employee || undefined}
+                      onChange={(value) => handleAntDSelect("referred_employee", value)}
+                    >
+                      {employees.map((employee) => (
+                        <Select.Option key={employee._id} value={employee._id}>
+                          {employee.name} | {employee.phone_number}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                )}
+              </div>
               <div>
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
@@ -629,7 +802,7 @@ const Loan = () => {
                 <button
                   type="submit"
                   className="w-1/4 text-white bg-violet-700 hover:bg-violet-800
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
                 >
                   Save Loan
                 </button>
@@ -659,7 +832,7 @@ const Loan = () => {
                   value={updateFormData.borrower}
                   onChange={handleChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="" selected hidden>
                     Select Borrower Name
@@ -681,9 +854,7 @@ const Loan = () => {
                       .includes(input.toLowerCase())
                   }
                   value={updateFormData?.borrower || undefined}
-                  onChange={(value) =>
-                    handleAntInputDSelect("borrower", value)
-                  }
+                  onChange={(value) => handleAntInputDSelect("borrower", value)}
                 >
                   {users.map((user) => (
                     <Select.Option key={user._id} value={user._id}>
@@ -773,7 +944,8 @@ const Loan = () => {
                     className="block mb-2 text-sm font-medium text-gray-900"
                     htmlFor="daily_payment_amount"
                   >
-                    Daily Payment Amount <span className="text-red-500 ">*</span>
+                    Daily Payment Amount{" "}
+                    <span className="text-red-500 ">*</span>
                   </label>
                   <Input
                     type="number"
@@ -840,6 +1012,145 @@ const Loan = () => {
                     </p>
                   )}
                 </div>
+              </div>
+              <div className="flex flex-row justify-between space-x-4">
+                <div className="w-full">
+                  <label className="block mb-2 text-sm font-semibold text-gray-800">
+                    Referred Type <span className="text-red-500">*</span>
+                  </label>
+                  <Select
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
+                    placeholder="Select Referred Type"
+                    popupMatchSelectWidth={false}
+                    showSearch
+                    name="referred_type"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    value={updateFormData?.referred_type || undefined}
+                    onChange={(value) =>
+                      handleAntInputDSelect("referred_type", value)
+                    }
+                  >
+                    {[
+                      "Self Joining",
+                      "Customer",
+                      "Employee",
+                      "Agent",
+                      "Others",
+                    ].map((refType) => (
+                      <Select.Option key={refType} value={refType}>
+                        {refType}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+                {updateFormData.referred_type === "Customer" && (
+                  <div className="w-full">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="category"
+                    >
+                      Select Referred Customer{" "}
+                      <span className="text-red-500 ">*</span>
+                    </label>
+
+                    <Select
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
+                      placeholder="Select Or Search Referred Customer"
+                      popupMatchSelectWidth={false}
+                      showSearch
+                      name="referred_customer"
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      value={updateFormData?.referred_customer || undefined}
+                      onChange={(value) =>
+                        handleAntInputDSelect("referred_customer", value)
+                      }
+                    >
+                      {users.map((user) => (
+                        <Select.Option key={user._id} value={user._id}>
+                          {user.full_name} |{" "}
+                          {user.phone_number ? user.phone_number : "No Number"}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                )}
+                {updateFormData.referred_type === "Agent" && (
+                  <div className="w-full">
+                    <label className="block mb-2 text-sm font-medium text-gray-900">
+                      Select Referred Agent{" "}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <Select
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
+                      placeholder="Select or Search Referred Agent"
+                      popupMatchSelectWidth={false}
+                      showSearch
+                      name="referred_agent"
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      value={updateFormData.referred_agent || undefined}
+                      onChange={(value) =>
+                        handleAntInputDSelect("referred_agent", value)
+                      }
+                    >
+                      {agents.map((agent) => (
+                        <Select.Option key={agent._id} value={agent._id}>
+                          {agent.name} | {agent.phone_number}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                )}
+                {updateFormData.referred_type === "Employee" && (
+                  <div className="w-full">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="category"
+                    >
+                      Select Referred Employee{" "}
+                      <span className="text-red-500 ">*</span>
+                    </label>
+
+                    <Select
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
+                      placeholder="Select Or Search Referred Employee"
+                      popupMatchSelectWidth={false}
+                      showSearch
+                      name="referred_employee"
+                      filterOption={(input, option) => {
+                        if (!option || !option.children) return false; // Ensure option and children exist
+
+                        return option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase());
+                      }}
+                      value={updateFormData?.referred_employee || undefined}
+                      onChange={(value) =>
+                        handleAntInputDSelect("referred_employee", value)
+                      }
+                    >
+                      {employees.map((employee) => (
+                        <Select.Option key={employee._id} value={employee._id}>
+                          {employee.name} | {employee.phone_number}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                )}
               </div>
               <div>
                 <label
@@ -909,7 +1220,8 @@ const Loan = () => {
                     <span className="text-primary font-bold">
                       {currentBorrower?.borrower?.full_name}
                     </span>{" "}
-                    to confirm deletion. <span className="text-red-500 ">*</span>
+                    to confirm deletion.{" "}
+                    <span className="text-red-500 ">*</span>
                   </label>
                   <Input
                     type="text"

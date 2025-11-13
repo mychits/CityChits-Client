@@ -215,6 +215,7 @@ const DueEmail = () => {
 
   const Auctioncolumns = [
     { key: "sl_no", header: "SL. NO" },
+     { key: "checkBoxs", header: "Select User" },
     { key: "userName", header: "Customer Name" },
     { key: "userPhone", header: "Phone Number" },
     { key: "customerId", header: "Customer Id" },
@@ -225,12 +226,12 @@ const DueEmail = () => {
     { key: "totalToBePaid", header: "Amount to be Paid" },
     { key: "amountPaid", header: "Paid Amount" },
     { key: "balance", header: "Balance" },
-    { key: "checkBoxs", header: "Select User" },
+   
   ];
 
   return (
-    <div className="w-screen">
-      <div className="flex mt-30">
+    <div className="">
+      <div className=" mt-30">
         <Navbar
           onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
           visibility={true}

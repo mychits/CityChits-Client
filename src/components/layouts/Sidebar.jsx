@@ -170,12 +170,13 @@ const Sidebar = ({
               );
             })}
           </ul>
+              
         </div>
       )}
 
       {showMobileSidebar && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          className="fixed  inset-0 bg-black bg-opacity-50 z-30 md:hidden"
           onClick={() => setShowMobileSidebar(false)}
         ></div>
       )}

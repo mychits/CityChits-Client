@@ -192,7 +192,7 @@ const WhatsappAdd = () => {
 
   return (
     <>
-      <div className="w-screen">
+      <div className="">
         <div className=" flex mt-20">
           {/* <Sidebar /> */}
            <CustomAlertDialog

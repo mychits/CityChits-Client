@@ -590,8 +590,8 @@ const WhatsappPromo = () => {
 
   return (
     <>
-      <div className="w-screen">
-        <div className="flex mt-20">
+      <div className="">
+        <div className=" mt-20">
           <CustomAlertDialog
             type={alertConfig.type}
             isVisible={alertConfig.visibility}

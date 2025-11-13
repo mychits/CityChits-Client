@@ -207,8 +207,8 @@ const AuctionBidStatus = () => {
   ];
 
   return (
-    <div className="w-screen">
-      <div className="flex mt-30">
+    <div className="">
+      <div className=" mt-30">
         <Navbar
           onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
           visibility={true}

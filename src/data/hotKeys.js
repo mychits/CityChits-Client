@@ -16,7 +16,7 @@ const hotkeys = [
     title:"User Report"
   },
   {
-    key:"$5",path: "/reports/all-customer-report",
+    key:"$5",path: "/reports/all-user-report",
     title:"All Customer Report"
 
   },

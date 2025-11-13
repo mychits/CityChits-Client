@@ -21,6 +21,13 @@ const QuickSearch = () => {
   const [tableEmployees, setTableEmployees] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false); 
+  const [apiLoaders, setApiLoaders] = useState({
+    users: false,
+    leads: false,
+    agents: false,
+    employees: false
+  });
+  
   const [reloadTrigger, setReloadTrigger] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [activeFilters, setActiveFilters] = useState([]);
@@ -35,7 +42,7 @@ const QuickSearch = () => {
     { id: "1", filterName: "ID", key: "customer_id" },
     { id: "2", filterName: "Name", key: "name" },
     { id: "3", filterName: "Phone", key: "phone_number" },
-    { id: "7", filterName: "Type", key: "customer_status" },
+    // { id: "7", filterName: "Type", key: "customer_status" },
   ];
 
   const searchableKeys = activeFilters.length > 0
@@ -44,10 +51,21 @@ const QuickSearch = () => {
 
   const combinedData = [...tableUsers, ...tableLeads, ...tableAgents, ...tableEmployees];
 
+  // Function to update loading state
+  const updateApiLoader = (apiName, loading) => {
+    setApiLoaders(prev => ({
+      ...prev,
+      [apiName]: loading
+    }));
+  };
+
+  // Check if any API is still loading
+  const isAnyApiLoading = Object.values(apiLoaders).some(loading => loading);
+
   useEffect(() => {
     const fetchUsers = async () => {
+      updateApiLoader('users', true);
       try {
-        setIsLoading(true);
         const response = await api.get("/user/get-user");
         const formatted = response.data.map((u, i) => ({
           _id: u._id,
@@ -63,6 +81,8 @@ const QuickSearch = () => {
         setTableUsers(formatted);
       } catch (error) {
         console.error("Error fetching users:", error);
+      } finally {
+        updateApiLoader('users', false);
       }
     };
     fetchUsers();
@@ -70,6 +90,7 @@ const QuickSearch = () => {
 
   useEffect(() => {
     const fetchLeads = async () => {
+      updateApiLoader('leads', true);
       try {
         const response = await api.get("/lead/get-lead");
         const formatted = response.data.map((l, i) => ({
@@ -92,6 +113,8 @@ console.log (formatted,"hello")
 
       } catch (error) {
         console.error("Error fetching leads:", error);
+      } finally {
+        updateApiLoader('leads', false);
       }
     };
     fetchLeads();
@@ -99,6 +122,7 @@ console.log (formatted,"hello")
 
   useEffect(() => {
     const fetchAgents = async () => {
+      updateApiLoader('agents', true);
       try {
         const response = await api.get("/agent/get");
         const formatted = (response.data?.agent || []).map((a, i) => ({
@@ -116,6 +140,8 @@ console.log (formatted,"hello")
         setTableAgents(formatted);
       } catch (error) {
         console.error("Error fetching agents:", error);
+      } finally {
+        updateApiLoader('agents', false);
       }
     };
     fetchAgents();
@@ -123,6 +149,7 @@ console.log (formatted,"hello")
 
   useEffect(() => {
     const fetchEmployees = async () => {
+      updateApiLoader('employees', true);
       try {
         const response = await api.get("/agent/get-employee");
         const formatted = (response.data?.employee || []).map((e, i) => ({
@@ -141,7 +168,7 @@ console.log (formatted,"hello")
       } catch (error) {
         console.error("Error fetching employees:", error);
       } finally {
-        setIsLoading(false);
+        updateApiLoader('employees', false);
       }
     };
     fetchEmployees();
@@ -161,36 +188,36 @@ console.log (formatted,"hello")
     },
     { dataIndex: "name", title: "Name", key: "name", width: 180 },
     { dataIndex: "phone_number", title: "Phone", key: "phone_number", width: 140 },
-    {
-      dataIndex: "customer_status",
-      title: "Status",
-      key: "customer_status",
-      width: 100,
-      render: (text, record) => { 
-        if (!record) {
-          return <Tag color="default">Invalid</Tag>;
-        }
+    // {
+    //   dataIndex: "customer_status",
+    //   title: "Status",
+    //   key: "customer_status",
+    //   width: 100,
+    //   render: (text, record) => { 
+    //     if (!record) {
+    //       return <Tag color="default">Invalid</Tag>;
+    //     }
 
-        let statusText = "Unknown"; 
-        let color = "default";
+    //     let statusText = "Unknown"; 
+    //     let color = "default";
 
-        if (record.isCustomer) {
-          statusText = record.customer_status || "Active";
-          color = record.customer_status?.toLowerCase() === "active" ? "red" : "green";
-        } else if (record.isLead) {
-          statusText = "Active";
-          color = "green";
-        } else if (record.isAgent) {
-          statusText = "Active";
-          color = "green";
-        } else if (record.isEmployee) {
-          statusText = "Active";
-          color = "green";
-        }
+    //     if (record.isCustomer) {
+    //       statusText = record.customer_status || "Active";
+    //       color = record.customer_status?.toLowerCase() === "active" ? "red" : "green";
+    //     } else if (record.isLead) {
+    //       statusText = "Active";
+    //       color = "green";
+    //     } else if (record.isAgent) {
+    //       statusText = "Active";
+    //       color = "green";
+    //     } else if (record.isEmployee) {
+    //       statusText = "Active";
+    //       color = "green";
+    //     }
 
-        return <Tag color={color}>{statusText}</Tag>;
-      },
-    },
+    //     return <Tag color={color}>{statusText}</Tag>;
+    //   },
+    // },
     {
       key: "action",
       width: 100,
@@ -235,7 +262,7 @@ console.log (formatted,"hello")
   };
 
   const renderSearchResults = (tabKey) => {
-    if (isLoading) {
+    if (isAnyApiLoading) {
       return (
         <div className="flex justify-center py-12">
           <CircularLoader isLoading={true} failure={false} data="Records" />

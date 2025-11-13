@@ -155,22 +155,22 @@ const CustomerView = () => {
   };
   const [selectedFile, setSelectedFile] = useState(null);
   const handleUploadPhoto = async () => {
-  if (!selectedFile) return;
-  const formData = new FormData();
-  formData.append("profilephoto", selectedFile);
-  try {
-    const { data } = await api.put(`/user/update-user/${group._id}`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    message.success("Profile photo updated successfully!");
-    if (data?.profilephoto) {
-      setGroup((prev) => ({ ...prev, profilephoto: data.profilephoto }));
+    if (!selectedFile) return;
+    const formData = new FormData();
+    formData.append("profilephoto", selectedFile);
+    try {
+      const { data } = await api.put(`/user/update-user/${group._id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      message.success("Profile photo updated successfully!");
+      if (data?.profilephoto) {
+        setGroup((prev) => ({ ...prev, profilephoto: data.profilephoto }));
+      }
+    } catch (err) {
+      console.error("Upload failed:", err);
+      message.error("Failed to upload photo");
     }
-  } catch (err) {
-    console.error("Upload failed:", err);
-    message.error("Failed to upload photo");
-  }
-};
+  };
 
   const StatBox = ({ label, value, icon, trend, isPositive }) => (
     <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
@@ -311,24 +311,24 @@ const CustomerView = () => {
       fetchAllEnrollments();
     }
   }, [userId]);
-useEffect(() => {
-  if (userId) {
-    setIsLoadingPayment(true);
-    api.get(`/payments`, {
-      params: {
-        customerId: userId,
-        _sort: "date",
-        _order: "desc",
-        _limit: 1,
-      },
-    })
-      .then(({ data }) => {
-        setLastPayments(data);
-        setIsLoadingPayment(false);
+  useEffect(() => {
+    if (userId) {
+      setIsLoadingPayment(true);
+      api.get(`/payments`, {
+        params: {
+          customerId: userId,
+          _sort: "date",
+          _order: "desc",
+          _limit: 1,
+        },
       })
-      .catch(() => setIsLoadingPayment(false));
-  }
-}, [userId]);
+        .then(({ data }) => {
+          setLastPayments(data);
+          setIsLoadingPayment(false);
+        })
+        .catch(() => setIsLoadingPayment(false));
+    }
+  }, [userId]);
 
   useEffect(() => {
     if (!userId) return;
@@ -1174,7 +1174,7 @@ useEffect(() => {
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
                         {[
                           {
-                            label: "TOTAL GROUPS",
+                            label: "TOTAL TICKETS",
                             value: TableAuctions?.length || 0,
                             icon: <FiUsers className="text-violet-600" />,
                           },
@@ -1267,7 +1267,7 @@ useEffect(() => {
                             value: ` ${(Totalpaid || 0).toLocaleString("en-IN")}`,
                             icon: <BsCurrencyRupee className="text-violet-600" />,
                           },
-                            {
+                          {
                             label: " TOTAL BALANCE",
                             value: ` ${(NetTotalprofit && Totalpaid) ? Number(NetTotalprofit - Totalpaid).toLocaleString("en-IN") : 0}`,
                             icon: <BsCurrencyRupee className="text-violet-600" />,
@@ -1277,7 +1277,7 @@ useEffect(() => {
                             value: ` ${(Totalprofit || 0).toLocaleString("en-IN")}`,
                             icon: <BsCurrencyRupee className="text-violet-600" />,
                           },
-                        
+
                           // {
                           //   label: "LATEST PAYMENT",
                           //   value: isLoadingPayment
@@ -1287,7 +1287,7 @@ useEffect(() => {
                           //       : 0,  
                           //        icon: <BsCurrencyRupee className="text-violet-600" />,
                           // },
-                          
+
                           // {
                           //   label: "LATEST PAYMENT DATE",
                           //   value: isLoadingPayment
@@ -1297,26 +1297,26 @@ useEffect(() => {
                           //       : 0,
                           //   icon: <SlCalender className="text-violet-600" />,
                           // },
-{
-  label: "LATEST PAYMENT",
-  value: isLoadingPayment ? (
-    <CircularLoader color="text-violet-600" size="sm" />
-  ) : lastPayment?.amount || lastPayment?.date ? (
-    <div className="flex flex-col items-start gap-0.5">
-      <span className="font-bold text-gray-900 text-lg">
-        ₹{(lastPayment.amount || 0).toLocaleString("en-IN")}
-      </span>
-      <span className="font-bold text-gray-900 text-lg mt-1">
-        {lastPayment.date
-          ? new Date(lastPayment.date).toLocaleDateString("en-GB")
-          : "—"}
-      </span>
-    </div>
-  ) : (
-    "—"
-  ),
-  icon: <BsCurrencyRupee className="text-violet-600" />,
-},
+                          {
+                            label: "LATEST PAYMENT",
+                            value: isLoadingPayment ? (
+                              <CircularLoader color="text-violet-600" size="sm" />
+                            ) : lastPayment?.amount || lastPayment?.date ? (
+                              <div className="flex flex-col items-start gap-0.5">
+                                <span className="font-bold text-gray-900 text-lg">
+                                  ₹{(lastPayment.amount || 0).toLocaleString("en-IN")}
+                                </span>
+                                <span className="font-bold text-gray-900 text-lg mt-1">
+                                  {lastPayment.date
+                                    ? new Date(lastPayment.date).toLocaleDateString("en-GB")
+                                    : "—"}
+                                </span>
+                              </div>
+                            ) : (
+                              "—"
+                            ),
+                            icon: <BsCurrencyRupee className="text-violet-600" />,
+                          },
                           {
                             label: "LATEST DISBURSEMENT",
                             value: detailsLoading
@@ -1541,173 +1541,168 @@ useEffect(() => {
                   </div>
                 )}
 
-{activeTab === "docs" && (
-  <div className="space-y-6">
-    {/* Aadhaar & PAN Numbers */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <InfoBox
-        label="Aadhaar Number"
-        value={group.adhaar_no}
-        icon={<FiFileText />}
-      />
-      <InfoBox
-        label="PAN Number"
-        value={group.pan_no}
-        icon={<FiFileText />}
-      />
-    </div>
+                {activeTab === "docs" && (
+                  <div className="space-y-6">
+                    {/* Aadhaar & PAN Numbers */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <InfoBox
+                        label="Aadhaar Number"
+                        value={group.adhaar_no}
+                        icon={<FiFileText />}
+                      />
+                      <InfoBox
+                        label="PAN Number"
+                        value={group.pan_no}
+                        icon={<FiFileText />}
+                      />
+                    </div>
 
-    {/* Progress + Documents Side by Side */}
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Document Completion */}
-      {(() => {
-        const docs = [
-          group.aadhar_frontphoto,
-          group.aadhar_backphoto,
-          group.pan_frontphoto,
-          group.pan_backphoto,
-        ];
-        const uploaded = docs.filter((doc) => doc && doc !== "null").length;
-        const total = docs.length;
-        const percent = Math.round((uploaded / total) * 100);
+                    {/* Progress + Documents Side by Side */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* Document Completion */}
+                      {(() => {
+                        const docs = [
+                          group.aadhar_frontphoto,
+                          group.aadhar_backphoto,
+                          group.pan_frontphoto,
+                          group.pan_backphoto,
+                        ];
+                        const uploaded = docs.filter((doc) => doc && doc !== "null").length;
+                        const total = docs.length;
+                        const percent = Math.round((uploaded / total) * 100);
 
-        return (
-          <div className="bg-white border rounded-lg p-4 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-semibold text-gray-800">
-                Document Completion
-              </h3>
-              <span
-                className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                  percent === 100
-                    ? "bg-green-100 text-green-700"
-                    : "bg-blue-100 text-blue-700"
-                }`}
-              >
-                {percent}%
-              </span>
-            </div>
-            <Progress percent={percent} showInfo={false} />
-            <p className="text-xs text-gray-500 mt-1">
-              {uploaded} of {total} documents uploaded
-            </p>
-          </div>
-        );
-      })()}
+                        return (
+                          <div className="bg-white border rounded-lg p-4 shadow-sm">
+                            <div className="flex items-center justify-between mb-2">
+                              <h3 className="text-sm font-semibold text-gray-800">
+                                Document Completion
+                              </h3>
+                              <span
+                                className={`text-xs font-medium px-2 py-0.5 rounded-full ${percent === 100
+                                    ? "bg-green-100 text-green-700"
+                                    : "bg-blue-100 text-blue-700"
+                                  }`}
+                              >
+                                {percent}%
+                              </span>
+                            </div>
+                            <Progress percent={percent} showInfo={false} />
+                            <p className="text-xs text-gray-500 mt-1">
+                              {uploaded} of {total} documents uploaded
+                            </p>
+                          </div>
+                        );
+                      })()}
 
-      {/* Collapsible Aadhaar & PAN */}
-      <Collapse
-        accordion
-        bordered={false}
-        className="bg-white border rounded-lg shadow-sm"
-      >
-        {/* Aadhaar Section */}
-        <Collapse.Panel
-          header={<span className="font-medium text-gray-800">Aadhaar Documents</span>}
-          key="1"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Aadhaar Front */}
-            <div>
-              <p className="text-xs font-medium text-gray-600">Front</p>
-              {group.aadhar_frontphoto ? (
-                <a
-                  href={group.aadhar_frontphoto}
-                  download={`${group.customer_name || "Customer"}_Aadhaar_Front${
-                    group.aadhar_frontphoto.split(".").pop()
-                      ? "." + group.aadhar_frontphoto.split(".").pop()
-                      : ""
-                  }`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  Aadhaar Front Document
-                </a>
-              ) : (
-                <p className="text-gray-400 italic text-xs">Not uploaded</p>
-              )}
-            </div>
+                      {/* Collapsible Aadhaar & PAN */}
+                      <Collapse
+                        accordion
+                        bordered={false}
+                        className="bg-white border rounded-lg shadow-sm"
+                      >
+                        {/* Aadhaar Section */}
+                        <Collapse.Panel
+                          header={<span className="font-medium text-gray-800">Aadhaar Documents</span>}
+                          key="1"
+                        >
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Aadhaar Front */}
+                            <div>
+                              <p className="text-xs font-medium text-gray-600">Front</p>
+                              {group.aadhar_frontphoto ? (
+                                <a
+                                  href={group.aadhar_frontphoto}
+                                  download={`${group.customer_name || "Customer"}_Aadhaar_Front${group.aadhar_frontphoto.split(".").pop()
+                                      ? "." + group.aadhar_frontphoto.split(".").pop()
+                                      : ""
+                                    }`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-blue-600 hover:underline"
+                                >
+                                  Aadhaar Front Document
+                                </a>
+                              ) : (
+                                <p className="text-gray-400 italic text-xs">Not uploaded</p>
+                              )}
+                            </div>
 
-            {/* Aadhaar Back */}
-            <div>
-              <p className="text-xs font-medium text-gray-600">Back</p>
-              {group.aadhar_backphoto ? (
-                <a
-                  href={group.aadhar_backphoto}
-                  download={`${group.customer_name || "Customer"}_Aadhaar_Back${
-                    group.aadhar_backphoto.split(".").pop()
-                      ? "." + group.aadhar_backphoto.split(".").pop()
-                      : ""
-                  }`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  Aadhaar Back Document
-                </a>
-              ) : (
-                <p className="text-gray-400 italic text-xs">Not uploaded</p>
-              )}
-            </div>
-          </div>
-        </Collapse.Panel>
+                            {/* Aadhaar Back */}
+                            <div>
+                              <p className="text-xs font-medium text-gray-600">Back</p>
+                              {group.aadhar_backphoto ? (
+                                <a
+                                  href={group.aadhar_backphoto}
+                                  download={`${group.customer_name || "Customer"}_Aadhaar_Back${group.aadhar_backphoto.split(".").pop()
+                                      ? "." + group.aadhar_backphoto.split(".").pop()
+                                      : ""
+                                    }`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-blue-600 hover:underline"
+                                >
+                                  Aadhaar Back Document
+                                </a>
+                              ) : (
+                                <p className="text-gray-400 italic text-xs">Not uploaded</p>
+                              )}
+                            </div>
+                          </div>
+                        </Collapse.Panel>
 
-        {/* PAN Section */}
-        <Collapse.Panel
-          header={<span className="font-medium text-gray-800">PAN Documents</span>}
-          key="2"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* PAN Front */}
-            <div>
-              <p className="text-xs font-medium text-gray-600">Front</p>
-              {group.pan_frontphoto ? (
-                <a
-                  href={group.pan_frontphoto}
-                  download={`${group.customer_name || "Customer"}_PAN_Front${
-                    group.pan_frontphoto.split(".").pop()
-                      ? "." + group.pan_frontphoto.split(".").pop()
-                      : ""
-                  }`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  PAN Front Document
-                </a>
-              ) : (
-                <p className="text-gray-400 italic text-xs">Not uploaded</p>
-              )}
-            </div>
+                        {/* PAN Section */}
+                        <Collapse.Panel
+                          header={<span className="font-medium text-gray-800">PAN Documents</span>}
+                          key="2"
+                        >
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* PAN Front */}
+                            <div>
+                              <p className="text-xs font-medium text-gray-600">Front</p>
+                              {group.pan_frontphoto ? (
+                                <a
+                                  href={group.pan_frontphoto}
+                                  download={`${group.customer_name || "Customer"}_PAN_Front${group.pan_frontphoto.split(".").pop()
+                                      ? "." + group.pan_frontphoto.split(".").pop()
+                                      : ""
+                                    }`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-blue-600 hover:underline"
+                                >
+                                  PAN Front Document
+                                </a>
+                              ) : (
+                                <p className="text-gray-400 italic text-xs">Not uploaded</p>
+                              )}
+                            </div>
 
-            {/* PAN Back */}
-            <div>
-              <p className="text-xs font-medium text-gray-600">Back</p>
-              {group.pan_backphoto ? (
-                <a
-                  href={group.pan_backphoto}
-                  download={`${group.customer_name || "Customer"}_PAN_Back${
-                    group.pan_backphoto.split(".").pop()
-                      ? "." + group.pan_backphoto.split(".").pop()
-                      : ""
-                  }`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  PAN Back Document
-                </a>
-              ) : (
-                <p className="text-gray-400 italic text-xs">Not uploaded</p>
-              )}
-            </div>
-          </div>
-        </Collapse.Panel>
-      </Collapse>
-    </div>
-  </div>
-)}
+                            {/* PAN Back */}
+                            <div>
+                              <p className="text-xs font-medium text-gray-600">Back</p>
+                              {group.pan_backphoto ? (
+                                <a
+                                  href={group.pan_backphoto}
+                                  download={`${group.customer_name || "Customer"}_PAN_Back${group.pan_backphoto.split(".").pop()
+                                      ? "." + group.pan_backphoto.split(".").pop()
+                                      : ""
+                                    }`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-blue-600 hover:underline"
+                                >
+                                  PAN Back Document
+                                </a>
+                              ) : (
+                                <p className="text-gray-400 italic text-xs">Not uploaded</p>
+                              )}
+                            </div>
+                          </div>
+                        </Collapse.Panel>
+                      </Collapse>
+                    </div>
+                  </div>
+                )}
 
                 {activeTab === "groups" && (
                   <div className="flex flex-wrap gap-2">
@@ -1906,7 +1901,7 @@ useEffect(() => {
                     className="h-2 rounded-full bg-violet-600"
                   ></div>
                 </div>
-              </div>  
+              </div>
             </div>
           </Modal>
         )}

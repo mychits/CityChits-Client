@@ -712,6 +712,7 @@ const EmployeeMonthlyReport = () => {
           day: rec?.date
             ? new Date(rec.date).toLocaleDateString("en-US", { weekday: "short" })
             : "",
+          Note: rec?.note || "",
           status: rec?.status || "",
         }));
         setAttendanceData(formatted);
@@ -761,6 +762,7 @@ const EmployeeMonthlyReport = () => {
     { header: "Date", key: "date" },
     { header: "Time", key: "time" },
     { header: "Day", key: "day" },
+    {header: "Note", key: "Note"},
     {
       header: "Status",
       key: "status",

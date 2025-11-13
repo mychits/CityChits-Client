@@ -36,6 +36,7 @@ const Home = () => {
   const [passwordInput, setPasswordInput] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoadingVerify, setIsLoadingVerify] = useState(false);
+  const [showRevenue, setShowRevenue] = useState(false);
 
   const GlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
@@ -68,6 +69,13 @@ const Home = () => {
         setShowPasswordPrompt(false);
         setPasswordInput("");
         setErrorMsg("");
+        
+        // Special handling for revenue pages
+        if (selectedRedirect === "/total-revenue" || selectedRedirect === "/monthly-revenue") {
+          setShowRevenue(true);
+          setTimeout(() => setShowRevenue(false), 30000); // Hide after 30 seconds
+        }
+        
         navigate(selectedRedirect);
       }
     } catch (err) {
@@ -201,6 +209,14 @@ const Home = () => {
     fetchMonthlyPayments();
   }, [reloadTrigger]);
 
+  // Function to mask revenue values
+  const getMaskedValue = (value) => {
+    if (showRevenue) {
+      return value.toLocaleString();
+    }
+    return "•••••";
+  };
+
   const cardData = [
     {
       icon: MdGroupWork,
@@ -241,19 +257,19 @@ const Home = () => {
       redirect: "/enrollment",
       key: "8",
     },
-    {
-      icon: FaUserLock,
-      title: "Staff Management",
-      value: staffs.length,
-      subtitle: "Administrative personnel",
-      color: "from-pink-500 to-pink-600",
-      iconBg: "bg-pink-100",
-      iconColor: "text-pink-600",
-      borderColor: "border-pink-600",
-      ringColor: "ring-pink-500/20",
-      redirect: "/staff-menu",
-      key: "4",
-    },
+    // {
+    //   icon: FaUserLock,
+    //   title: "Staff Management",
+    //   value: staffs.length,
+    //   subtitle: "Administrative personnel",
+    //   color: "from-pink-500 to-pink-600",
+    //   iconBg: "bg-pink-100",
+    //   iconColor: "text-pink-600",
+    //   borderColor: "border-pink-600",
+    //   ringColor: "ring-pink-500/20",
+    //   redirect: "/staff-menu",
+    //   key: "4",
+    // },
     {
       icon: FaUserLock,
       title: "Agents",
@@ -283,7 +299,7 @@ const Home = () => {
     {
       icon: MdOutlinePayments,
       title: "Total Revenue",
-      value: `${paymentsValue.toLocaleString()}`,
+      value: `${getMaskedValue(paymentsValue)}`,
       subtitle: "All-time earnings",
       color: "from-emerald-500 to-emerald-600",
       iconBg: "bg-emerald-100",
@@ -296,7 +312,7 @@ const Home = () => {
     {
       icon: SlCalender,
       title: "Monthly Revenue",
-      value: `${paymentsPerMonthValue.toLocaleString()}`,
+      value: `${getMaskedValue(paymentsPerMonthValue)}`,
       subtitle: "Current billing cycle",
       color: "from-sky-500 to-sky-600",
       iconBg: "bg-sky-100",

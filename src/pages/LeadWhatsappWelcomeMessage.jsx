@@ -348,8 +348,8 @@ const handleSelectFilter = (value) => {
   ];
 
   return (
-    <div className="w-screen">
-      <div className="flex mt-30">
+    <div className="">
+      <div className=" mt-30">
         <Navbar
           onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
           visibility={true}
@@ -388,7 +388,7 @@ const handleSelectFilter = (value) => {
                     </Select>
                   </div>
 
-                  <div className="flex flex-col space-y-2 mb-5">
+                  <div className="flex flex-col space-y-1 mb-8 mt-6">
                     <label className="font-medium">Select Date Filter</label>
                     <select
                       className="border p-2 rounded text-sm"

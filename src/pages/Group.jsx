@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "../components/layouts/Sidebar";
 import Modal from "../components/modals/Modal";
 import api from "../instance/TokenInstance";
+import DataTable from "../components/layouts/Datatable"; // Import DataTable
 import { Dropdown, Menu, Select } from "antd";
 import { IoMdMore } from "react-icons/io";
 import { MdLibraryAdd, MdViewList, MdGridView, MdClose, MdSearch, MdFilterList } from "react-icons/md";
@@ -11,6 +12,8 @@ import CircularLoader from "../components/loaders/CircularLoader";
 import Navbar from "../components/layouts/Navbar";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import Fuse from "fuse.js";
+import handleEnrollmentRequestPrint from "../components/printFormats/enrollmentRequestPrint"; // Import print utility
+
 const { Option } = Select;
 
 const formatDateISO = (date) => {
@@ -22,6 +25,7 @@ const formatDateISO = (date) => {
 
 const Group = () => {
   const [groups, setGroups] = useState([]);
+  const [TableGroups, setTableGroups] = useState([]); // State for DataTable compatible data
   const [employees, setEmployees] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -71,7 +75,7 @@ const Group = () => {
     message: "",
     type: "info",
   });
-  const [viewMode, setViewMode] = useState("grid");
+  const [viewMode, setViewMode] = useState("grid"); // Added 'table' as a possible view mode
 
   useEffect(() => {
     const getEmployees = async () => {
@@ -103,15 +107,89 @@ const Group = () => {
         setIsLoading(true);
         const res = await api.get("/group/get-group-admin");
         setGroups(res.data || []);
+
+        // Prepare data for DataTable
+        const formattedData = res.data.map((group, index) => ({
+          id: index + 1,
+          _id: group._id,
+          group_name: group.group_name,
+          group_type: group.group_type,
+          group_value: group.group_value,
+          group_install: group.group_install,
+          group_members: group.group_members,
+          group_duration: group.group_duration,
+          reg_fee: group.reg_fee,
+          relationship_manager: group.relationship_manager?.name || "N/A", // Access nested property
+          start_date: group.start_date ? new Date(group.start_date).toLocaleDateString() : "N/A",
+          end_date: group.end_date ? new Date(group.end_date).toLocaleDateString() : "N/A",
+          minimum_bid: group.minimum_bid,
+          maximum_bid: group.maximum_bid,
+          commission: group.commission,
+          group_commission: group.group_commission,
+          incentives: group.incentives,
+          daily_installment: group.daily_installment,
+          weekly_installment: group.weekly_installment,
+          monthly_installment: group.monthly_installment,
+          action: (
+            <div className="flex justify-center gap-2">
+              <Dropdown
+                trigger={["click"]}
+                menu={{
+                  items: [
+                    {
+                      key: "1",
+                      label: (
+                        <div
+                          className="text-blue-600"
+                          onClick={() => handleUpdateModalOpen(group._id)}
+                        >
+                          Edit
+                        </div>
+                      ),
+                    },
+                    {
+                      key: "2",
+                      label: (
+                        <div
+                          className="text-red-600"
+                          onClick={() => handleDeleteModalOpen(group._id)}
+                        >
+                          Delete
+                        </div>
+                      ),
+                    },
+                    {
+                      key: "3",
+                      label: (
+                        <div
+                          onClick={() => handleShareClick(group._id)}
+                          className="text-green-600"
+                        >
+                          Share Link
+                        </div>
+                      ),
+                    },
+                  ],
+                }}
+                placement="bottomLeft"
+              >
+                <IoMdMore className="text-bold" />
+              </Dropdown>
+            </div>
+          ),
+        }));
+        setTableGroups(formattedData);
+
       } catch (err) {
         console.error("Error fetching groups", err);
         setGroups([]);
+        setTableGroups([]); // Ensure TableGroups is also cleared on error
       } finally {
         setIsLoading(false);
       }
     };
     fetchGroups();
-  }, [reloadTrigger]);
+  }, [reloadTrigger]); // Include reloadTrigger to refetch data when it changes
 
   const onGlobalSearchChangeHandler = (e) => {
     setSearchText(e.target.value);
@@ -181,6 +259,7 @@ const Group = () => {
       parseFloat(data.maximum_bid) < parseFloat(data.minimum_bid)
     )
       newErrors.maximum_bid = "Maximum Bid cannot be less than Minimum Bid";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -195,7 +274,7 @@ const Group = () => {
       });
       setAlertConfig({ visibility: true, message: "Group added successfully", type: "success" });
       setShowModal(false);
-      setReloadTrigger((p) => p + 1);
+      setReloadTrigger((p) => p + 1); // Trigger refetch
       setFormData({
         group_name: "",
         group_type: "",
@@ -262,7 +341,7 @@ const Group = () => {
       await api.put(`/group/update-group/${currentUpdateGroup._id}`, updateFormData);
       setAlertConfig({ visibility: true, message: "Group updated successfully", type: "success" });
       setShowModalUpdate(false);
-      setReloadTrigger((p) => p + 1);
+      setReloadTrigger((p) => p + 1); // Trigger refetch
     } catch (err) {
       console.error("Error updating group", err);
       setAlertConfig({ visibility: true, message: "Failed to update group", type: "error" });
@@ -295,7 +374,7 @@ const Group = () => {
       await api.delete(`/group/delete-group/${currentGroup._id}`);
       setAlertConfig({ visibility: true, message: "Group deleted successfully", type: "success" });
       setShowModalDelete(false);
-      setReloadTrigger((p) => p + 1);
+      setReloadTrigger((p) => p + 1); // Trigger refetch
       setCurrentGroup(null);
     } catch (err) {
       console.error("Error deleting group", err);
@@ -325,6 +404,7 @@ const Group = () => {
   });
 
   const isSearching = searchText.trim() !== "";
+
   let exactMatch = null;
   let relatedMatches = [];
   if (isSearching) {
@@ -348,16 +428,40 @@ const Group = () => {
       .filter((item) => item !== exactMatch);
   }
 
-
   const currentGroupsPerPage = viewMode === "list" ? 6 : 8;
   const indexOfLastRelated = currentPageRelated * relatedResultsPerPage;
   const indexOfFirstRelated = indexOfLastRelated - relatedResultsPerPage;
   const currentRelatedMatches = relatedMatches.slice(indexOfFirstRelated, indexOfLastRelated);
   const totalRelatedPages = Math.ceil(relatedMatches.length / relatedResultsPerPage);
+
   const indexOfLastGroup = currentPage * currentGroupsPerPage;
   const indexOfFirstGroup = indexOfLastGroup - currentGroupsPerPage;
   const currentGroups = preFilteredGroups.slice(indexOfFirstGroup, indexOfLastGroup);
   const totalPages = Math.ceil(preFilteredGroups.length / currentGroupsPerPage);
+
+  // Define columns for DataTable
+  const columns = [
+    { key: "id", header: "SL. NO" },
+    { key: "group_name", header: "Group Name" },
+    { key: "group_type", header: "Group Type" },
+    { key: "group_value", header: "Group Value" },
+    { key: "group_install", header: "Installment" },
+    { key: "group_members", header: "Members" },
+    { key: "group_duration", header: "Duration (months)" },
+    { key: "reg_fee", header: "Registration Fee" },
+    { key: "relationship_manager", header: "Relationship Manager" },
+    { key: "start_date", header: "Start Date" },
+    { key: "end_date", header: "End Date" },
+    { key: "minimum_bid", header: "Min Bid %" },
+    { key: "maximum_bid", header: "Max Bid %" },
+    { key: "commission", header: "Agent Commission %" },
+    { key: "group_commission", header: "Company Commission %" },
+    { key: "incentives", header: "Employee Incentives %" },
+    { key: "daily_installment", header: "Daily Installment" },
+    { key: "weekly_installment", header: "Weekly Installment" },
+    { key: "monthly_installment", header: "Monthly Installment" },
+    { key: "action", header: "Action" },
+  ];
 
   const InputField = ({ name, label, value, onChange, error, type = "text", placeholder }) => (
     <div className="w-full">
@@ -374,7 +478,6 @@ const Group = () => {
     </div>
   );
 
-
   const GroupRow = ({ group }) => {
     const menu = (
       <Menu>
@@ -389,10 +492,8 @@ const Group = () => {
         </Menu.Item>
       </Menu>
     );
-
     return (
       <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap items-baseline gap-2 mb-1">
             <h3 className="text-lg font-semibold text-gray-800 truncate">{group.group_name}</h3>
@@ -410,8 +511,6 @@ const Group = () => {
             </p>
           </div>
         </div>
-
-
         <div className="grid grid-cols-3 gap-3 w-full sm:w-auto sm:flex-none text-center">
           <div className="bg-gradient-to-br from-purple-50 to-indigo-50 px-3 py-2 rounded-lg border border-purple-100">
             <p className="text-sm font-bold text-purple-800">{group.group_members}</p>
@@ -430,8 +529,6 @@ const Group = () => {
             <p className="text-xs text-gray-600">Chit</p>
           </div>
         </div>
-
-
         <div className="flex-shrink-0">
           <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
             <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
@@ -442,7 +539,6 @@ const Group = () => {
       </div>
     );
   };
-
 
   const GroupCard = ({ group }) => {
     const menu = (
@@ -458,7 +554,6 @@ const Group = () => {
         </Menu.Item>
       </Menu>
     );
-
     return (
       <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden hover:-translate-y-1 border border-gray-100">
         <div className="h-2 bg-gradient-to-r from-purple-500 to-indigo-500"></div>
@@ -474,7 +569,6 @@ const Group = () => {
               </button>
             </Dropdown>
           </div>
-
           <div className="grid grid-cols-3 gap-3 mb-4">
             <div className="text-center p-2 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-lg border border-purple-100">
               <p className="text-lg font-bold text-purple-800">{group.group_members}</p>
@@ -493,7 +587,6 @@ const Group = () => {
               <p className="text-xs text-gray-600">Chit Amount</p>
             </div>
           </div>
-
           <div className="space-y-2 text-sm text-gray-700">
             <div className="flex justify-between">
               <span className="text-gray-500">Period:</span>
@@ -513,6 +606,45 @@ const Group = () => {
         </div>
       </div>
     );
+  };
+
+  const renderGroups = (groupsToRender) => {
+    if (viewMode === "grid") {
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {groupsToRender.map((g) => (
+            <GroupCard key={g._id} group={g} />
+          ))}
+        </div>
+      );
+    } else if (viewMode === "list") {
+      return (
+        <div className="space-y-4">
+          {groupsToRender.map((g) => (
+            <GroupRow key={g._id} group={g} />
+          ))}
+        </div>
+      );
+    } else { // Table view
+      // Filter TableGroups based on preFilteredGroups to maintain consistency with search/filter
+      const filteredTableGroups = TableGroups.filter(tableGroup => 
+        preFilteredGroups.some(filteredGroup => filteredGroup._id === tableGroup._id)
+      );
+
+
+
+      return (
+        <DataTable
+          catcher="_id" // Use the unique ID field
+          data={filteredTableGroups} // Pass the data for the current page if handling pagination externally
+          columns={columns}
+          exportedPdfName="Groups" // Name for the exported PDF
+          exportedFileName={`Groups.csv`} // Name for the exported CSV
+          // pagination={true} // Enable if DataTable handles pagination internally
+          // totalRecords={filteredTableGroups.length} // Pass total count if using DataTable's pagination
+        />
+      );
+    }
   };
 
   const RelatedPagination = () => {
@@ -583,6 +715,7 @@ const Group = () => {
     if (endPage - startPage + 1 < maxVisiblePages)
       startPage = Math.max(1, endPage - maxVisiblePages + 1);
     for (let i = startPage; i <= endPage; i++) pageNumbers.push(i);
+
     return (
       <div className="flex justify-center items-center gap-2 mt-6">
         <button
@@ -639,28 +772,6 @@ const Group = () => {
     );
   };
 
-
-
-  const renderGroups = (groupsToRender) => {
-    if (viewMode === "grid") {
-      return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {groupsToRender.map((g) => (
-            <GroupCard key={g._id} group={g} />
-          ))}
-        </div>
-      );
-    } else {
-      return (
-        <div className="space-y-4">
-          {groupsToRender.map((g) => (
-            <GroupRow key={g._id} group={g} />
-          ))}
-        </div>
-      );
-    }
-  };
-
   return (
     <>
       <div className="flex mt-20">
@@ -681,14 +792,15 @@ const Group = () => {
             <div className="mb-6 mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <h3 className="text-2xl font-bold text-gray-800">Groups</h3>
               <div className="flex items-center gap-3">
-                {/* View Toggle Buttons */}
+                {/* View Toggle Buttons - Added Table View */}
                 <div className="flex bg-white rounded-lg p-1 shadow-sm border border-gray-200">
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`p-2 rounded-md flex items-center gap-1 transition-colors ${viewMode === "grid"
+                    className={`p-2 rounded-md flex items-center gap-1 transition-colors ${
+                      viewMode === "grid"
                         ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-sm"
                         : "text-gray-600 hover:text-gray-900"
-                      }`}
+                    }`}
                     title="Grid View"
                   >
                     <MdGridView />
@@ -696,14 +808,27 @@ const Group = () => {
                   </button>
                   <button
                     onClick={() => setViewMode("list")}
-                    className={`p-2 rounded-md flex items-center gap-1 transition-colors ${viewMode === "list"
+                    className={`p-2 rounded-md flex items-center gap-1 transition-colors ${
+                      viewMode === "list"
                         ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-sm"
                         : "text-gray-600 hover:text-gray-900"
-                      }`}
+                    }`}
                     title="List View"
                   >
                     <MdViewList />
                     <span className="hidden sm:inline">List</span>
+                  </button>
+                  <button
+                    onClick={() => setViewMode("table")} // Add table view toggle
+                    className={`p-2 rounded-md flex items-center gap-1 transition-colors ${
+                      viewMode === "table"
+                        ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-sm"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                    title="Table View"
+                  >
+                    <MdViewList /> 
+                    <span className="hidden sm:inline">Table</span>
                   </button>
                 </div>
                 <button
@@ -717,7 +842,6 @@ const Group = () => {
                 </button>
               </div>
             </div>
-
             {/* Search and Filter Section */}
             <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 border-b border-gray-200 flex items-center justify-between">
@@ -732,7 +856,6 @@ const Group = () => {
                   {showFilters ? <MdClose /> : <MdFilterList />}
                 </button>
               </div>
-
               <div className={`p-4 ${showFilters ? 'block' : 'hidden sm:block'}`}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                   <div>
@@ -867,7 +990,6 @@ const Group = () => {
                     )}
                   </div>
                 </div>
-
                 <div className="flex flex-col sm:flex-row gap-3">
                   <div className="flex-1 relative">
                     <MdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -898,7 +1020,6 @@ const Group = () => {
                 </div>
               </div>
             </div>
-
             {/* Content Section */}
             {isLoading ? (
               <div className="py-12">
@@ -938,7 +1059,7 @@ const Group = () => {
               </>
             ) : (
               <>
-                {currentGroups.length > 0 ? (
+                {groups.length > 0 ? (
                   renderGroups(currentGroups)
                 ) : (
                   <div className="col-span-full p-12 bg-white rounded-xl shadow-sm text-center text-gray-600">
@@ -949,7 +1070,7 @@ const Group = () => {
                     </div>
                   </div>
                 )}
-                <Pagination />
+                {viewMode !== 'table' && <Pagination />} {/* Hide pagination for table view if DataTable handles it */}
               </>
             )}
           </main>
@@ -1152,7 +1273,6 @@ const Group = () => {
           </form>
         </div>
       </Modal>
-
       {/* Update Group Modal */}
       <Modal
         isVisible={showModalUpdate}
@@ -1348,7 +1468,6 @@ const Group = () => {
           </form>
         </div>
       </Modal>
-
       {/* Delete Group Modal */}
       <Modal
         isVisible={showModalDelete}
