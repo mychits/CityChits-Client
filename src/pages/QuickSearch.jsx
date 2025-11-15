@@ -20,14 +20,17 @@ const QuickSearch = () => {
   const [tableAgents, setTableAgents] = useState([]);
   const [tableEmployees, setTableEmployees] = useState([]);
 
-  const [isLoading, setIsLoading] = useState(false); 
+  const [selectedExactMatch, setSelectedExactMatch] = useState(null);
+
+
+  const [isLoading, setIsLoading] = useState(false);
   const [apiLoaders, setApiLoaders] = useState({
     users: false,
     leads: false,
     agents: false,
     employees: false
   });
-  
+
   const [reloadTrigger, setReloadTrigger] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [activeFilters, setActiveFilters] = useState([]);
@@ -104,12 +107,12 @@ const QuickSearch = () => {
           collection_area: l.group_id?.group_name || "—",
           customer_status: "Active",
           isLead: true,
-          
+
         }));
-        
+
         setTableLeads(formatted);
-     
-console.log (formatted,"hello")
+
+        console.log(formatted, "hello")
 
       } catch (error) {
         console.error("Error fetching leads:", error);
@@ -119,6 +122,11 @@ console.log (formatted,"hello")
     };
     fetchLeads();
   }, [reloadTrigger]);
+
+  useEffect(() => {
+    setSelectedExactMatch(null);
+  }, [searchText]);
+
 
   useEffect(() => {
     const fetchAgents = async () => {
@@ -285,7 +293,7 @@ console.log (formatted,"hello")
             scroll={{ x: "max-content" }}
             columns={columns}
             dataSource={dataSource}
-            rowKey="_id" 
+            rowKey="_id"
             size="middle"
           />
         </div>
@@ -299,8 +307,17 @@ console.log (formatted,"hello")
     });
 
     const results = fuse.search(searchText);
-    const exactMatches = results.filter(r => r.score <= 0.05).map(r => r.item);
-    const relatedMatches = results.filter(r => r.score > 0.05).map(r => r.item);
+    let exactMatches = results.filter(r => r.score <= 0.05).map(r => r.item);
+    let relatedMatches = results.filter(r => r.score > 0.05).map(r => r.item);
+
+
+    if (selectedExactMatch) {
+      exactMatches = [selectedExactMatch];
+      relatedMatches = relatedMatches.filter(
+        (item) => item._id !== selectedExactMatch._id
+      );
+    }
+
 
     if (results.length === 0) {
       return (
@@ -353,7 +370,16 @@ console.log (formatted,"hello")
               dataSource={relatedMatches}
               rowKey="_id"
               size="middle"
+              onRow={(record) => ({
+                onClick: () => {
+                  setSelectedExactMatch(record);
+                }
+              })}
+              rowClassName={() =>
+                "cursor-pointer hover:bg-violet-50 transition-all"
+              }
             />
+
           </div>
         )}
       </div>
@@ -415,11 +441,10 @@ console.log (formatted,"hello")
                     >
                       <button
                         onClick={() => handleFilterToggle(filter.id)}
-                        className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-all ${
-                          isActive
+                        className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-all ${isActive
                             ? "bg-violet-600 text-white shadow"
                             : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
-                        }`}
+                          }`}
                       >
                         {filter.filterName}
                       </button>

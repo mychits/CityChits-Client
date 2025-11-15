@@ -8,7 +8,7 @@ import { HiX } from "react-icons/hi";
 import { BiMenu } from "react-icons/bi";
 import { AiOutlineLogout } from "react-icons/ai";
 import hotkeys from "../../data/hotKeys";
-import CityChits from "../../assets/images/CityChits.png";
+import CityChits from "../../assets/images/mychits.png";
 
 const Navbar = ({
   onGlobalSearchChangeHandler = () => {},
@@ -50,7 +50,7 @@ const Navbar = ({
         >
           <img src={CityChits} alt="Logo" className="h-10 sm:h-12 w-auto" />
           <span className="hidden sm:block font-extrabold text-2xl bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            My Chits
+            My Chits New
           </span>
         </button>
 

@@ -1211,54 +1211,13 @@ const CustomerView = () => {
                             icon: <FiUser className="text-violet-600" />,
                           },
 
-                          {
+                       {
                             label: "APPROVAL STATUS",
-                            value: group?.approval_status === "true" ? (
-                              <div className="flex flex-col items-start">
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full border border-green-200">
-                                  <FiCheckCircle size={14} className="text-green-600" />
-                                  Approved
-                                </span>
-                                {group.approved_by && (
-                                  <span className="text-xs text-gray-600 mt-1.5">
-                                    by {group.approved_by}
-                                  </span>
-                                )}
-                              </div>
-                            ) : (
-                              <div className="flex flex-col items-start">
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 text-amber-800 text-xs font-semibold rounded-full border border-amber-300">
-                                  <FiXCircle size={14} className="text-amber-600" />
-                                  Pending Approval
-                                </span>
-                                <button
-                                  onClick={async () => {
-                                    try {
-                                      const loggedInUser = JSON.parse(localStorage.getItem("user"));
-                                      const response = await api.put(`/user/update-user/${group?._id}`, {
-                                        approval_status: "true",
-                                        approved_by: loggedInUser?.full_name || loggedInUser?.email,
-                                      });
-                                      if (response.status === 200) {
-                                        message.success("Customer approved successfully!");
-                                        setGroup((prev) => ({
-                                          ...prev,
-                                          approval_status: "true",
-                                          approved_by: loggedInUser?.full_name || loggedInUser?.email,
-                                        }));
-                                      }
-                                    } catch (err) {
-                                      console.error("Failed to approve customer:", err);
-                                      message.error("Failed to approve customer");
-                                    }
-                                  }}
-                                  className="mt-2 text-xs font-medium text-violet-600 hover:text-violet-800 underline-offset-2 hover:underline focus:outline-none focus:ring-1 focus:ring-violet-400 rounded"
-                                  aria-label="Approve this customer"
-                                >
-                                  Approve now
-                                </button>
-                              </div>
-                            ),
+                            value: group?.approval_status === "true"
+                              ? "Approved"
+                              : group?.approval_status === "false"
+                              ? "Pending"
+                              : "Approved", 
                             icon: <FiCheckCircle className="text-violet-600" />,
                           },
 
@@ -1776,7 +1735,7 @@ const CustomerView = () => {
                         <select
                           value={EnrollGroupId.groupId ? `${EnrollGroupId.groupId}|${EnrollGroupId.ticket}` : ""}
                           onChange={handleEnrollGroup}
-                          className="w-1/5 border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                          className="w-1/5 border border-gray-300 rounded-lg px-7 py-2.5 shadow-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                         >
                           <option value="">Select Group | Ticket</option>
                           {filteredAuction.map((group) =>
