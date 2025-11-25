@@ -4,7 +4,7 @@ import Sidebar from "../components/layouts/Sidebar";
 import API from "../instance/TokenInstance";
 import Modal from "../components/modals/Modal";
 import DataTable from "../components/layouts/Datatable";
-import CustomAlert from "../components/alerts/CustomAlert";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import CircularLoader from "../components/loaders/CircularLoader";
 import Navbar from "../components/layouts/Navbar";
 import { Select, Tooltip, notification } from "antd";
@@ -31,7 +31,11 @@ const TargetPayOutSalary = () => {
     incentiveAmount: "₹0.00",
     incentivePercent: "0%",
   });
-
+  const onGlobalSearchChangeHandler = (e) => {
+    setSearchText(e.target.value);
+    setCurrentPage(1);
+    setCurrentPageRelated(1);
+  };
   const [agents, setAgents] = useState([]);
   const [salaryPayments, setSalaryPayments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -378,14 +382,17 @@ const TargetPayOutSalary = () => {
       <div>
         {contextHolder}
         <div className="flex mt-20">
-          <Navbar visibility={true} />
-          <Sidebar />
-          <CustomAlert
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-            noReload={alertConfig.noReload}
-          />
+           <Sidebar />
+        <Navbar
+          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+          visibility={true}
+        />
+        <CustomAlertDialog
+          type={alertConfig.type}
+          isVisible={alertConfig.visibility}
+          message={alertConfig.message}
+          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
+        />
           <div className="flex-grow p-7">
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-semibold">

@@ -2,7 +2,7 @@ import Navbar from "../components/layouts/Navbar";
 import Sidebar from "../components/layouts/Sidebar";
 import { Banknote, Briefcase, TicketCheck, MoreHorizontal, ChevronRight, Zap, Shield, UserCheck, Sparkles, CreditCard, Receipt, Link, IndianRupee, FileText } from "lucide-react";
 import { Link as RouterLink } from "react-router-dom";
-
+import { HiCurrencyRupee } from "react-icons/hi2";
 const PayInMenu = () => {
   const paymentInMenuCategories = [
     {
@@ -23,21 +23,38 @@ const PayInMenu = () => {
       title: "Chit Payment",
       description: "Manage customer chit payment transaction information",
       icon: IndianRupee,
-      gradient: "from-purple-500 via-indigo-500 to-blue-500",
-      bgGradient: "from-purple-50 via-indigo-50 to-blue-50",
+      gradient: "from-purple-500 via-indigo-500 to-violet-500",
+      bgGradient: "from-purple-50 via-indigo-50 to-violet-50",
       href: "/payment-menu/payment-in-out-menu/pay-in-menu/payment",
       stats: "Chit Payment Information",
       secondaryIcon: UserCheck,
       iconColor: "text-purple-600",
       bgColor: "bg-purple-100"
     },
+
+      
+      {
+      id: "#",
+     title: "Suspense Payments",
+      description: "Manage customer Suspense chit payment transaction.",
+      icon: IndianRupee,
+      gradient: "from-purple-500 via-indigo-500 to-violet-500",
+      bgGradient: "from-purple-50 via-indigo-50 to-violet-50",
+      href:"/payment-menu/payment-in-out-menu/pay-in-menu/suspense-payments",
+      stats: "Chit Payment Information",
+      secondaryIcon: UserCheck,
+      iconColor: "text-purple-600",
+      bgColor: "bg-purple-100"
+    },
+     
+    
     {
       id: "#3",
       title: "Payment Links",
       description: "Manage customer chit payment link transaction information",
       icon: Link,
-      gradient: "from-indigo-500 via-blue-500 to-cyan-500",
-      bgGradient: "from-indigo-50 via-blue-50 to-cyan-50",
+      gradient: "from-indigo-500 via-violet-500 to-cyan-500",
+      bgGradient: "from-indigo-50 via-violet-50 to-cyan-50",
       href: "/payment-menu/payment-in-out-menu/pay-in-menu/payment-link-menu",
       stats: "Payment Link Information",
       secondaryIcon: CreditCard,
@@ -50,13 +67,13 @@ const PayInMenu = () => {
     <div className="flex mt-20">
       <div className="flex min-h-screen w-full relative overflow-hidden">
       
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-gray-50">
+        {/* <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-gray-50">
           <div className="absolute inset-0">
             <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
             <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
             <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
           </div>
-        </div>
+        </div> */}
 
         <Sidebar />
         <div className="flex-1 relative">

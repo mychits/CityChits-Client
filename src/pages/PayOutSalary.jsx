@@ -1223,7 +1223,7 @@ import Sidebar from "../components/layouts/Sidebar";
 import API from "../instance/TokenInstance";
 import Modal from "../components/modals/Modal";
 import DataTable from "../components/layouts/Datatable";
-import CustomAlert from "../components/alerts/CustomAlert";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import CircularLoader from "../components/loaders/CircularLoader";
 import Navbar from "../components/layouts/Navbar";
 import { Select, Tooltip, notification, Dropdown, Input } from "antd";
@@ -1317,7 +1317,11 @@ const PayoutSalary = () => {
   const handleAddOtherPayment = () => {
     setOtherPaymentsList([...otherPaymentsList, { reason: "", amount: "" }]);
   };
-
+  const onGlobalSearchChangeHandler = (e) => {
+    setSearchText(e.target.value);
+    setCurrentPage(1);
+    setCurrentPageRelated(1);
+  };
   const handleOtherPaymentChange = (index, field, value) => {
     const updated = [...otherPaymentsList];
     updated[index][field] = value;
@@ -1983,13 +1987,16 @@ const PayoutSalary = () => {
     <>
       {contextHolder}
       <div className="flex mt-20">
-        <Navbar visibility={true} />
-        <Sidebar />
-        <CustomAlert
+         <Sidebar />
+        <Navbar
+          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+          visibility={true}
+        />
+        <CustomAlertDialog
           type={alertConfig.type}
           isVisible={alertConfig.visibility}
           message={alertConfig.message}
-          noReload={alertConfig.noReload}
+          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
         />
 
         <div className="flex-grow p-7">

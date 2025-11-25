@@ -93,7 +93,11 @@ const Target = () => {
   const formatToYearMonth = (year, month) => {
     return `${year}-${String(month).padStart(2, "0")}`;
   };
-
+  const onGlobalSearchChangeHandler = (e) => {
+    setSearchText(e.target.value);
+    setCurrentPage(1);
+    setCurrentPageRelated(1);
+  };
   const getMonthDateRange = (dateString) => {
     const { year, month } = parseDate(dateString);
     const startDate = new Date(year, parseInt(month) - 1, 1);
@@ -456,15 +460,16 @@ const Target = () => {
   return (
     <>
       <div className="flex mt-20">
-        <Navbar visibility={true} />
         <Sidebar />
+        <Navbar
+          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+          visibility={true}
+        />
         <CustomAlertDialog
           type={alertConfig.type}
           isVisible={alertConfig.visibility}
           message={alertConfig.message}
-          onClose={() => {
-            setAlertConfig((prev) => ({ ...prev, visibility: false }));
-          }}
+          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
         />
 
         <div className="flex-grow p-6">

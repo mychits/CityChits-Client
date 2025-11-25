@@ -134,6 +134,14 @@ import UnApprovedCustomerReport from "../pages/UnApprovedCustomerReport";
 import PaymentReport from "../pages/PaymentReport";
 import PigmySummaryReport from "../pages/PigmySummaryReport";
 
+import ChitAskingMonthReport from "../pages/ChitAskingMonthReport";
+import  SalaryRemainingReport from "../pages/SalaryRemainingReport";
+import AdminApprovalMenu from "../pages/AdminApprovalsMenu";
+import SuspensePayments from "../pages/SuspensePayments";
+import InActiveUserReport from "../pages/InActiveUserReport";
+import NonConvertedLead from "../pages/NonConvertedLead";
+import ConvertedLead from "../pages/ConvertedLead";
+
 // import DueReport from "../pages/DueReport";
 
 const mainRoutes = createBrowserRouter([
@@ -197,7 +205,14 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+ {
+    path: "/approval-menu",
+    element: (<ProtectedRoute>
+      <AdminApprovalMenu/>
+      </ProtectedRoute>
+      ),
 
+  },
   {
     path: "/customer-menu/un-approved-customer",
     element: (
@@ -206,7 +221,14 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-
+   {
+    path: "/approval-menu/un-approved-customer",
+    element: (
+      <ProtectedRoute>
+        <UnApprovedCustomer />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: "/target-menu",
     element: (
@@ -257,6 +279,14 @@ const mainRoutes = createBrowserRouter([
 
   {
     path: "/enroll-menu/mobile-app-enroll",
+    element: (
+      <ProtectedRoute>
+        <MobileAppEnroll />
+      </ProtectedRoute>
+    ),
+  },
+     {
+    path: "/approval-menu/mobile-app-enroll",
     element: (
       <ProtectedRoute>
         <MobileAppEnroll />
@@ -358,6 +388,14 @@ const mainRoutes = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <RegistrationFee />
+      </ProtectedRoute>
+    ),
+  },
+     {
+    path: "/payment-menu/payment-in-out-menu/pay-in-menu/suspense-payments",
+    element: (
+      <ProtectedRoute>
+        <SuspensePayments />
       </ProtectedRoute>
     ),
   },
@@ -823,6 +861,7 @@ const mainRoutes = createBrowserRouter([
       { path: "auction-report", element: <AuctionReport /> },
       { path: "lead-report", element: <LeadReport /> },
       { path: "user-report", element: <UserReport /> },
+      { path: "inactive-user-report", element: <InActiveUserReport /> },
       { path: "all-user-report", element: <AllUserReport /> },
       { path: "loan-report", element: <LoanReport /> },
       { path: "pigme-report", element: <PigmeReport /> },
@@ -849,7 +888,7 @@ const mainRoutes = createBrowserRouter([
         path: "outstanding-report",
         element: <OutstandingReport />,
       },
-
+ {path: "chit-asking-month-report", element: <ChitAskingMonthReport/>},
       {
         path: "target-incentive",
         element: <TargetIncentiveReport />,
@@ -858,6 +897,9 @@ const mainRoutes = createBrowserRouter([
         path: "target-commission",
         element: <TargetCommission />,
       },
+ {path: "salary-remaining", element: <SalaryRemainingReport/>},
+    {path: "non-converted-lead-report", element: <NonConvertedLead/>},
+   {path: "converted-lead-report", element: <ConvertedLead/>},
 
       // {
       //   path: "due-report",

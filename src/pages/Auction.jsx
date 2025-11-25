@@ -10,7 +10,7 @@ import { BsEye } from "react-icons/bs";
 import { Dropdown } from "antd";
 import DataTable from "../components/layouts/Datatable";
 import { EyeIcon } from "lucide-react";
-import CustomAlert from "../components/alerts/CustomAlert";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import Navbar from "../components/layouts/Navbar";
 import { Select } from "antd";
 import { IoMdMore } from "react-icons/io";
@@ -468,17 +468,17 @@ const Auction = () => {
     <>
       <div>
         <div className="flex mt-20">
-          <Navbar
-            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-            visibility={true}
-          />
           <Sidebar />
-
-          <CustomAlert
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-          />
+        <Navbar
+          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+          visibility={true}
+        />
+        <CustomAlertDialog
+          type={alertConfig.type}
+          isVisible={alertConfig.visibility}
+          message={alertConfig.message}
+          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
+        />
           <div className="flex-grow p-7">
             <h1 className="text-2xl font-semibold">Auctions</h1>
             <div className="mt-6 mb-8">

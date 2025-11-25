@@ -6,7 +6,7 @@ import Sidebar from "../components/layouts/Sidebar";
 import API from "../instance/TokenInstance";
 import Modal from "../components/modals/Modal";
 import DataTable from "../components/layouts/Datatable";
-import CustomAlert from "../components/alerts/CustomAlert";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import CircularLoader from "../components/loaders/CircularLoader";
 import Navbar from "../components/layouts/Navbar";
 import { Select, Tooltip, notification } from "antd";
@@ -101,7 +101,11 @@ const TargetPayOutCommissionIncentive = () => {
       console.error("Agent fetch error", err);
     }
   };
-
+ const onGlobalSearchChangeHandler = (e) => {
+    setSearchText(e.target.value);
+    setCurrentPage(1);
+    setCurrentPageRelated(1);
+  };
   const formatDate = (date) => {
     if (!date) return "";
     if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
@@ -853,14 +857,17 @@ const TargetPayOutCommissionIncentive = () => {
       <div>
         {contextHolder}
         <div className="flex mt-20">
-          <Navbar visibility={true} />
-          <Sidebar />
-          <CustomAlert
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-            noReload={alertConfig.noReload}
-          />
+            <Sidebar />
+        <Navbar
+          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+          visibility={true}
+        />
+        <CustomAlertDialog
+          type={alertConfig.type}
+          isVisible={alertConfig.visibility}
+          message={alertConfig.message}
+          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
+        />
           <div className="flex-grow p-7">
             <div className="flex flex-col md:flex-row justify-between items-center mb-4">
               <h1 className="text-2xl font-semibold mb-4 md:mb-0">

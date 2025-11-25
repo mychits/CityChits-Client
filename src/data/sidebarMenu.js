@@ -37,7 +37,7 @@ import { FaMobileAlt } from "react-icons/fa";
 import { MdAccountBalanceWallet } from "react-icons/md";
 import { LuTarget } from "react-icons/lu";
 
-
+import { FaExclamationTriangle } from "react-icons/fa";
 
 const sidebarMenu = [
 	{
@@ -188,7 +188,12 @@ const sidebarMenu = [
 // ],
 },
 
-
+ {
+    id: "$2564",
+    title: "Approvals",
+    icon: FaExclamationTriangle,
+    link: "/approval-menu",
+  },
 	{
 		id: "$8",
 		title: "Auctions ",

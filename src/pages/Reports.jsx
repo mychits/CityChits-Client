@@ -29,7 +29,7 @@ import { useState, useMemo } from "react";
 import { MdOutlinePayments } from "react-icons/md";
 import { MdCancel } from "react-icons/md";
 import { BsCalculator } from "react-icons/bs";
-
+import { MdCalendarMonth } from "react-icons/md";
 const GlobalSearchChangeHandler = (e) => {
   const { value } = e.target;
   setSearchText(value);
@@ -232,6 +232,40 @@ const subMenus = [
     Icon: HiOutlineBanknotes,
     color: "from-indigo-600 to-indigo-700",
   },
+
+      {
+    id:"28",
+    title: "Remaining Salary Report",
+    link: "/reports/salary-remaining",
+    category: "Employee",
+   Icon: MdCancel,
+   color: "from-violet-500 to-violet-600",
+  },
+     {
+    id:"29",
+    title: "Chit Asking Month Report",
+    link: "/reports/chit-asking-month-report",
+    category: "Customer",
+   Icon: MdCalendarMonth,
+   color: "from-violet-500 to-violet-600",
+  },
+     {
+    id:"30",
+    title: "Non Converted Lead Report",
+    link: "/reports/non-converted-lead-report",
+    category: "Customer",
+   Icon: MdCalendarMonth,
+   color: "from-violet-500 to-violet-600",
+  },
+    {
+    id:"30",
+    title: "Converted Lead Report",
+    link: "/reports/converted-lead-report",
+    category: "Customer",
+   Icon: MdCalendarMonth,
+   color: "from-violet-500 to-violet-600",
+  },
+
 ];
 
 const Reports = () => {

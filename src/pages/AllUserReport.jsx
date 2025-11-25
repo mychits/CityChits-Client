@@ -78,6 +78,7 @@ const AllUserReport = () => {
                   collectionExecutive:
                     usrData?.collection_executive?.join(" | ") || "N/A",
                   amountPaid: totalPaidAmount,
+                  firstInstallmentStatus:(Number(totalPaidAmount) - Number(firstInstallment))>0 ? "Paid":"Not Paid",
                   paymentsTicket: data.payments.ticket,
                   groupValue: data?.enrollment?.group?.group_value,
                   groupName: data.enrollment.group.group_name,
@@ -87,10 +88,10 @@ const AllUserReport = () => {
 
                   reffered_by: data?.enrollment?.agent
                     ? data.enrollment.agent
-                    : data?.enrollment?.reffered_customer
-                    ? data.enrollment.reffered_customer
+                    : data?.enrollment?.referred_customer
+                    ? data?.enrollment?.referred_customer
                     : data?.enrollment?.reffered_lead
-                    ? data.enrollment.reffered_lead
+                    ? data?.enrollment?.reffered_lead
                     : "N/A",
                   payment_type: data?.enrollment?.payment_type,
                   referred_type: data?.enrollment?.referred_type,
@@ -114,6 +115,7 @@ const AllUserReport = () => {
                         groupInstall +
                         firstDividentHead -
                         totalPaidAmount,
+                  chit_asking_month: data?.enrollment?.chit_asking_month || "N/A",
                   status: data.isPrized === "true" ? "Prized" : "Un Prized",
                   statusDiv:
                     data.isPrized === "true" ? (
@@ -187,11 +189,16 @@ const AllUserReport = () => {
 
     { key: "referred_type", header: "Referred Type" },
     { key: "reffered_by", header: "Referred By" },
+    {key: "chit_asking_month", header: "Chit Asking Month"},
     { key: "relationshipManager", header: "Relationship Manager" },
     { key: "payment_type", header: "Payment Type" },
     {
       key: "firstInstallment",
       header: "First Installment",
+    },
+    {
+      key:"firstInstallmentStatus",
+      header:"First Installment Status"
     },
     { key: "amountPaid", header: "Amount Paid" },
     { key: "totalToBePaid", header: "Amount to be Paid" },
@@ -325,7 +332,7 @@ const AllUserReport = () => {
                       <span className="text-xl font-bold text-gray-700">
                         Total Customers
                       </span>
-                      <span className="text-lg font-bold  text-blue-600">
+                      <span className="text-lg font-bold  text-violet-600">
                         {totals.totalCustomers}
                       </span>
                     </div>
@@ -341,7 +348,7 @@ const AllUserReport = () => {
                       <span className="text-xl font-bold text-gray-700">
                         Amount to be Paid
                       </span>
-                      <span className="text-lg font-bold text-blue-600">
+                      <span className="text-lg font-bold text-violet-600">
                         ₹{totals.totalToBePaid}
                       </span>
                     </div>

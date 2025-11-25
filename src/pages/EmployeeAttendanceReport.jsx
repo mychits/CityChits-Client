@@ -1829,7 +1829,11 @@ const EmployeeAttendanceReport = () => {
   return { total, present, absent, approved, pending };
 }, [tableAttendanceData]);
 
-
+  const onGlobalSearchChangeHandler = (e) => {
+    setSearchText(e.target.value);
+    setCurrentPage(1);
+    setCurrentPageRelated(1);
+  };
   const fetchAttendanceReport = async (date) => {
   setScreenLoading(true);
   try {
@@ -2117,18 +2121,16 @@ const filteredAttendance = useMemo(() => {
   return (
     <div className="w-screen bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
       <div className="flex">
+      <Sidebar />
         <Navbar
-          onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
+          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
           visibility={true}
         />
-        <Sidebar />
         <CustomAlertDialog
           type={alertConfig.type}
           isVisible={alertConfig.visibility}
           message={alertConfig.message}
-          onClose={() =>
-            setAlertConfig((prev) => ({ ...prev, visibility: false }))
-          }
+          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
         />
           <div className="flex-grow p-8 mt-20">
             {/* Header Section */}

@@ -38,13 +38,13 @@ const PayInOutMenu = () => {
     <div className="flex mt-20">
       <div className="flex min-h-screen w-full relative overflow-hidden">
       
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-gray-50">
+        {/* <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-gray-50">
           <div className="absolute inset-0">
             <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
             <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
             <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
           </div>
-        </div>
+        </div> */}
 
         <Sidebar />
         <div className="flex-1 relative">

@@ -648,19 +648,17 @@ const Employee = () => {
     <>
       <div>
         <div className="flex mt-20">
-          <Navbar
-            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-            visibility={true}
-          />
-          <Sidebar />
-          <CustomAlertDialog
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-            onClose={() =>
-              setAlertConfig((prev) => ({ ...prev, visibility: false }))
-            }
-          />
+         <Sidebar />
+        <Navbar
+          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+          visibility={true}
+        />
+        <CustomAlertDialog
+          type={alertConfig.type}
+          isVisible={alertConfig.visibility}
+          message={alertConfig.message}
+          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
+        />
           <div className="flex-grow p-7">
             <div className="mt-6 mb-8">
               <div className="flex justify-between items-center w-full">

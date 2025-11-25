@@ -4,187 +4,590 @@ import html2canvas from "html2canvas";
 import { BiPrinter } from "react-icons/bi";
 import { useParams } from "react-router-dom";
 import api from "../instance/TokenInstance";
-import mychitsLogo from "../assets/images/mychits.png"; 
+import mychitsLogo from "../assets/images/mychits.png";
+import "../css/BasicPrintReceipt.css"
+
+// const ReceiptComponent = () => {
+//   const { id } = useParams();
+//   const [payment, setPayment] = useState({});
+//   const [loading, setLoading] = useState(true);
+//   const [printFormat, setPrintFormat] = useState('vertical'); // 'vertical' or 'horizontal'
+
+//   useEffect(() => {
+//     const fetchPayment = async () => {
+//       if (!id) return;
+//       try {
+//         setLoading(true);
+//         const response = await api.get(`/payment/get-payment-by-id/${id}`);
+//         setPayment(response.data || {});
+//       } catch (error) {
+//         console.error("Error fetching data:", error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchPayment();
+//   }, [id]);
+
+//   const formatPayDate = (dateString) => {
+//     if (!dateString) return "N/A";
+//     const d = new Date(dateString);
+//     return d.toLocaleDateString("en-IN", {
+//       day: "2-digit",
+//       month: "short",
+//       year: "numeric",
+//     });
+//   };
+
+//   const handlePrint = async () => {
+//     if (printFormat === 'vertical') {
+//       window.print();
+//     } else if (printFormat === 'horizontal'){
+     
+//       window.print();
+//     }
+//   };
+
+//   // Vertical Receipt Component
+//   const VerticalReceiptSection = ({ copyType }) => (
+//     <div className="pro-receipt">
+//       <div className="pro-header">
+//         <div className="pro-left">
+//           <img src={mychitsLogo} className="pro-logo" alt="" />
+//           <div>
+//             <h2 className="pro-company">MY CHITS</h2>
+//             <p className="pro-address">
+//               No.11/36-25, Kathriguppe Main Road,
+//               <br />
+//               Bangalore - 560085 | 9483900777
+//             </p>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="pro-title">PAYMENT RECEIPT</div>
+
+//       <div className="pro-box">
+//         <div className="pro-row">
+//           <div className="pro-item">
+//             <span className="lbl">Receipt No:</span>
+//             <span>{payment.receipt_no || payment.old_receipt_no}</span>
+//           </div>
+//           <div className="pro-item">
+//             <span className="lbl">Date:</span>
+//             <span>{formatPayDate(payment.pay_date)}</span>
+//           </div>
+//         </div>
+
+//         <div className="pro-row">
+//           <div className="pro-item">
+//             <span className="lbl">Name:</span>
+//             <span>{payment?.user_id?.full_name}</span>
+//           </div>
+//           <div className="pro-item">
+//             <span className="lbl">Mobile:</span>
+//             <span>{payment?.user_id?.phone_number}</span>
+//           </div>
+//         </div>
+
+//         <div className="pro-row">
+//           <div className="pro-item">
+//             <span className="lbl">Group:</span>
+//             <span>{payment?.group_id?.group_name}</span>
+//           </div>
+//           <div className="pro-item">
+//             <span className="lbl">Ticket:</span>
+//             <span>{payment?.ticket}</span>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="pro-amount-box">
+//         <span className="lbl">Received Amount:</span>
+//         <span className="val">₹ {payment?.amount}</span>
+//       </div>
+
+//       <div className="pro-box">
+//         <div className="pro-row">
+//           <div className="pro-item">
+//             <span className="lbl">Payment Mode:</span>
+//             <span>{payment?.pay_type}</span>
+//           </div>
+//           <div className="pro-item">
+//             <span className="lbl">Collected By:</span>
+//             <span>{payment?.collected_by?.name || "Admin"}</span>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="pro-footer">
+//         <div className="sign">Authorized Signature</div>
+//       </div>
+
+//       <div className="pro-type-box">{copyType} Copy</div>
+//     </div>
+//   );
+
+//   // Horizontal Receipt Component
+//   const HorizontalReceiptSection = ({ copyType }) => (
+//     <div className="pro-receipt">
+//       <div className="pro-header">
+//         <div className="pro-center">
+//           <img src={mychitsLogo} className="pro-logo" />
+//           <div>
+//             <h2 className="pro-company">MY CHITS</h2>
+//             <p className="pro-address">
+//               No.11/36-25, 2nd Main, Kathriguppe Main Road,<br />
+//               Bangalore - 560085 | 9483900777
+//             </p>
+//           </div>
+//         </div>
+       
+//       </div>
+
+//       <div className="pro-title">PAYMENT RECEIPT</div>
+
+//       <div className="pro-box">
+//         <div className="pro-row">
+//           <div className="pro-item">
+//             <span className="lbl">Receipt No:</span>
+//             <span>{payment.receipt_no || payment.old_receipt_no}</span>
+//           </div>
+
+//           <div className="pro-item">
+//             <span className="lbl">Name:</span>
+//             <span>{payment?.user_id?.full_name}</span>
+//           </div>
+
+//           <div className="pro-item">
+//             <span className="lbl">Date:</span>
+//             <span>{formatPayDate(payment.pay_date)}</span>
+//           </div>
+//         </div>
+
+//         <div className="pro-row">
+//           <div className="pro-item">
+//             <span className="lbl">Mobile:</span>
+//             <span>{payment?.user_id?.phone_number}</span>
+//           </div>
+
+//           <div className="pro-item">
+//             <span className="lbl">Group:</span>
+//             <span>{payment?.group_id?.group_name}</span>
+//           </div>
+
+//           <div className="pro-item">
+//             <span className="lbl">Ticket:</span>
+//             <span>{payment?.ticket}</span>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="pro-amount-box">
+//         <span className="lbl">Received Amount:</span>
+//         <span className="val">₹ {payment?.amount}</span>
+//       </div>
+
+//       <div className="pro-box">
+//         <div className="pro-row">
+//           <div className="pro-item">
+//             <span className="lbl">Payment Mode:</span>
+//             <span>{payment?.pay_type}</span>
+//           </div>
+
+//           <div className="pro-item">
+//             <span className="lbl">Collected By:</span>
+//             <span>{payment?.collected_by?.name || "Admin"}</span>
+//           </div>
+
+//           {/* <div className="pro-item">
+//             <span className="lbl">Total:</span>
+//             <span>₹ {payment?.amount}</span>
+//           </div> */}
+//         </div>
+//       </div>
+       
+
+//       <div className="pro-footer">
+//         <div className="sign">Authorized Signature</div>
+//       </div>
+//       <div className="pro-type-box">{copyType} Copy</div>
+//     </div>
+//   );
+
+//   if (loading)
+//     return (
+//       <div className="loading-container">
+//         <div className="loading-spinner"></div>
+//         <p>Loading receipt details...</p>
+//       </div>
+//     );
+
+//   return (
+//     <div className="receipt-container">
+//       <div className="print-options-container">
+//         <div className="print-button-container">
+//           <button onClick={handlePrint} className="print-button">
+//             <BiPrinter size={20} /> Print Receipt
+//           </button>
+//         </div>
+        
+//         <div className="format-selector">
+//           <label className="radio-label">
+//             <input
+//               type="radio"
+//               value="vertical"
+//               checked={printFormat === 'vertical'}
+//               onChange={() => setPrintFormat('vertical')}
+//             />
+//             Format 1
+//           </label>
+//           <label className="radio-label">
+//             <input
+//               type="radio"
+//               value="horizontal"
+//               checked={printFormat === 'horizontal'}
+//               onChange={() => setPrintFormat('horizontal')}
+//             />
+//             Format 2
+//           </label>
+//         </div>
+//       </div>
+
+//       {printFormat === 'vertical' ? (
+//         // Vertical Format
+//         <div className="vertical-format">
+//           {/* EXACT HALF-A4 SECTION */}
+//           <div className="receipt-wrapper">
+//             <div className="side-by-side">
+//               <VerticalReceiptSection copyType="Duplicate" />
+//               <VerticalReceiptSection copyType="Customer" />
+//             </div>
+//           </div>
+
+//           {/* EMPTY REMAINING 50% A4 */}
+//           <div className="a4-bottom-empty"></div>
+//         </div>
+//       ) : (
+//         // Horizontal Format
+//         <div id="receipt-to-print" className="receipt-wrapper horizontal-format">
+//           <HorizontalReceiptSection copyType="Duplicate" />
+//           <HorizontalReceiptSection copyType="Customer" />
+//           <div className="a4-bottom-empty"></div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
 
 const ReceiptComponent = () => {
-    const { id } = useParams()
-    const [payment, setPayment] = useState({});
+  const { id } = useParams();
+  const [payment, setPayment] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [printFormat, setPrintFormat] = useState('vertical'); // 'vertical' or 'horizontal'
 
-    useEffect(() => {
-        const fetchPayment = async () => {
-            try {
-                const response = await api.get(`/payment/get-payment-by-id/${id}`);
-                if (response.data) {
-                    console.log(response.data);
-                    setPayment(response.data);
-                } else {
-                    setPayment({});
-                }
-            } catch (error) {
-                console.error("Error fetching payment data:", error);
-                setPayment({});
-            }
-        };
-
-        fetchPayment();
-    }, [id]);
-
-    useEffect(() => {
-        console.log(payment);
-    }, [payment]);
-
-    const formatPayDate = (dateString) => {
-        const date = new Date(dateString);
-        const options = { day: 'numeric', month: 'short', year: 'numeric' };
-        return date.toLocaleDateString('en-US', options);
+  useEffect(() => {
+    const fetchPayment = async () => {
+      if (!id) return;
+      try {
+        setLoading(true);
+        const response = await api.get(`/payment/get-payment-by-id/${id}`);
+        setPayment(response.data || {});
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchPayment();
+  }, [id]);
 
-    const handlePrint = async () => {
-        const receiptElement = document.getElementById("receipt");
-        const canvas = await html2canvas(receiptElement, { scale: 2 });
-        const imgData = canvas.toDataURL("image/png");
+  const formatPayDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const d = new Date(dateString);
+    return d.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
 
-        const pdf = new jsPDF("portrait", "mm", "a4");
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-
-        pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight);
-        pdf.save("Receipt.pdf");
+  // Function to convert number to words
+  const numberToWords = (num) => {
+    if (num === 0) return "Zero";
+    
+    const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
+    const tens = ["", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+    const twenties = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+    
+    const numToWords = (n) => {
+      if (n < 10) return ones[n];
+      if (n < 20) return tens[n - 10];
+      if (n < 100) return twenties[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+      if (n < 1000) return ones[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + numToWords(n % 100) : "");
+      if (n < 100000) return numToWords(Math.floor(n / 1000)) + " Thousand" + (n % 1000 ? " " + numToWords(n % 1000) : "");
+      if (n < 10000000) return numToWords(Math.floor(n / 100000)) + " Lakh" + (n % 100000 ? " " + numToWords(n % 100000) : "");
+      return numToWords(Math.floor(n / 10000000)) + " Crore" + (n % 10000000 ? " " + numToWords(n % 10000000) : "");
     };
+    
+    return numToWords(num);
+  };
 
-    return (
-        <div align="center" style={{ marginTop: "80px" }}>
-            <button
-                onClick={handlePrint}
-                className="border border-violet-400 text-white px-4 py-2 mb-5 rounded-md shadow hover:border-violet-700 transition duration-200 mt-4"
-            >
-                <BiPrinter color="violet" />
-            </button>
-            <div
-                id="receipt"
-                style={{
-                    width: "210mm",
-                    height: "297mm",
-                    padding: "10mm",
-                    border: "1px solid #ddd",
-                    backgroundColor: "#fff",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    gap: "10mm",
-                }}
-            >
-                <div
-                    style={{
-                        width: "48%",
-                        border: "1px solid #ddd",
-                        borderRadius: "8px",
-                        padding: "15px",
-                        boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-                    }}
-                >    <img
-  src={mychitsLogo}
-  alt="Company Logo"
-  width="40"
-  style={{ margin: "0 auto 8px", display: "block" }}
-/>
-                    <h2 style={{ textAlign: "center", margin: 0 }}>MY CHITS</h2>
-                    <p style={{ textAlign: "center", fontSize: "12px", margin: "5px 0" }}>
-                        No.11/36-25, 2nd Main, Kathriguppe Main Road,
-                        <br />
-                        Bangalore, 560085 9483900777
-                    </p>
-                    <hr />
-                    <h3 style={{ textAlign: "center", margin: "5px 0" }}>Receipt</h3>
-                    <div style={{ textAlign: "start" }}>
-                        <p>Receipt No: {payment.receipt_no ? payment.receipt_no : payment.old_receipt_no}</p>
-                        <p>Date: {formatPayDate(payment.pay_date)}</p>
-                        <div style={{marginTop:"4px"}}></div>
-                        <p>Name: {payment?.user_id?.full_name}</p>
-                        <p>Mobile No: {payment?.user_id?.phone_number}</p>
-                        <div style={{marginTop:"4px"}}></div>
-                        <p>Group: {payment?.group_id?.group_name}</p>
-                        <p>Ticket: {payment?.ticket}</p>
-                    </div>
-                    <div
-                        style={{
-                            textAlign: "center",
-                            fontWeight: "bold",
-                            border: "1px solid #000",
-                            padding: "10px",
-                            margin: "10px 0",
-                        }}
-                    >
-                        Received Amount | Rs.{payment?.amount}
-                    </div>
-                    <div style={{ textAlign: "start" }}>
-                        <p>Mode: {payment?.pay_type}</p>
-                        <p>Total: Rs.{payment?.amount}</p>
-                        <p>Collected by: {payment?.collected_by?.name || "Admin"}</p>
-                    </div>
-                    <div style={{marginTop:"4px"}}></div>
-                    <p>Customer Copy</p>
-                </div>
+  const handlePrint = async () => {
+    if (printFormat === 'vertical') {
+      window.print();
+    } else if (printFormat === 'horizontal'){
+      window.print();
+    }
+  };
 
-                {/* Right Section */}
-                <div
-                    style={{
-                        width: "48%",
-                        border: "1px solid #ddd",
-                        borderRadius: "8px",
-                        padding: "15px",
-                        boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-                    }}
-                >
-                     <img
-  src={mychitsLogo}
-  alt="Company Logo"
-  width="40"
-  style={{ margin: "0 auto 8px", display: "block" }}
-/>
-                    <h2 style={{ textAlign: "center", margin: 0 }}>MY CHITS</h2>
-                    <p style={{ textAlign: "center", fontSize: "12px", margin: "5px 0" }}>
-                        No.11/36-25, 2nd Main, Kathriguppe Main Road,
-                        <br />
-                        Bangalore, 560085 9483900777
-                    </p>
-                    <hr />
-                    <h3 style={{ textAlign: "center", margin: "5px 0" }}>Receipt</h3>
-                    <div style={{ textAlign: "start" }}>
-                        <p>Receipt No: {payment.receipt_no ? payment.receipt_no : payment.old_receipt_no}</p>
-                        <p>Date: {formatPayDate(payment.pay_date)}</p>
-                        <div style={{marginTop:"4px"}}></div>
-                        <p>Name: {payment?.user_id?.full_name}</p>
-                        <p>Mobile No: {payment?.user_id?.phone_number}</p>
-                        <div style={{marginTop:"4px"}}></div>
-                        <p>Group: {payment?.group_id?.group_name}</p>
-                        <p>Ticket: {payment?.ticket}</p>
-                    </div>
-                    <div
-                        style={{
-                            textAlign: "center",
-                            fontWeight: "bold",
-                            border: "1px solid #000",
-                            padding: "10px",
-                            margin: "10px 0",
-                        }}
-                    >
-                        Received Amount | Rs.{payment?.amount}
-                    </div>
-                    <div style={{ textAlign: "start" }}>
-                        <p>Mode: {payment?.pay_type}</p>
-                        <p>Total: Rs.{payment?.amount}</p>
-                        <p>Collected by: {payment?.collected_by?.name || "Admin"}</p>
-                    </div>
-                    <div style={{marginTop:"4px"}}></div>
-                    <p>Admin Copy</p>
-                </div>
-            </div>
-
-            {/* Print Button */}
-
+  // Vertical Receipt Component
+  const VerticalReceiptSection = ({ copyType }) => (
+    <div className="pro-receipt">
+      <div className="pro-header">
+        <div className="pro-left">
+          <img src={mychitsLogo} className="pro-logo" alt="" />
+          <div>
+            <h2 className="pro-company">MY CHITS</h2>
+            <p className="pro-address">
+              No.11/36-25, Kathriguppe Main Road,
+              <br />
+              Bangalore - 560085 | 9483900777
+            </p>
+          </div>
         </div>
+      </div>
+
+      <div className="pro-title">PAYMENT RECEIPT</div>
+
+      <div className="pro-box">
+        <div className="pro-row">
+          <div className="pro-item">
+            <span className="lbl">Receipt No:</span>
+            <span>{payment.receipt_no || payment.old_receipt_no}</span>
+          </div>
+          <div className="pro-item">
+            <span className="lbl">Date:</span>
+            <span>{formatPayDate(payment.pay_date)}</span>
+          </div>
+        </div>
+
+        <div className="pro-row">
+          <div className="pro-item">
+            <span className="lbl">Name:</span>
+            <span>{payment?.user_id?.full_name}</span>
+          </div>
+          <div className="pro-item">
+            <span className="lbl">Mobile:</span>
+            <span>{payment?.user_id?.phone_number}</span>
+          </div>
+        </div>
+
+        <div className="pro-row">
+          <div className="pro-item">
+            <span className="lbl">Group:</span>
+            <span>{payment?.group_id?.group_name}</span>
+          </div>
+          <div className="pro-item">
+            <span className="lbl">Ticket:</span>
+            <span>{payment?.ticket}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="pro-amount-box">
+        <span className="lbl">Received Amount:</span>
+        <span className="val">₹ {payment?.amount}</span>
+      </div>
+
+      <div className="pro-box">
+        <div className="pro-row">
+          <div className="pro-item">
+            <span className="lbl">Payment Mode:</span>
+            <span>{payment?.pay_type}</span>
+          </div>
+          <div className="pro-item">
+            <span className="lbl">Collected By:</span>
+            <span>{payment?.collected_by?.name || "Admin"}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="pro-footer-container-vertical">
+        <div className="pro-type-box">{copyType} Copy</div>
+        <div className="pro-footer">
+          <div className="sign">Authorized Signature</div>
+        </div>
+        
+      </div>
+
+    </div>
+  );
+
+  // Horizontal Receipt Component
+  const HorizontalReceiptSection = ({ copyType }) => (
+    <div className="pro-receipt">
+      <div className="pro-header">
+        <div className="pro-center">
+          <img src={mychitsLogo} className="pro-logo" />
+          <div>
+            <h2 className="pro-company">MY CHITS</h2>
+            <p className="pro-address">
+              No.11/36-25, 2nd Main, Kathriguppe Main Road,<br />
+              Bangalore - 560085 | 9483900777
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="pro-title">PAYMENT RECEIPT</div>
+
+      <div className="pro-box">
+        <div className="pro-row">
+          <div className="pro-item">
+            <span className="lbl">Receipt No:</span>
+            <span>{payment.receipt_no || payment.old_receipt_no}</span>
+          </div>
+
+          <div className="pro-item">
+            <span className="lbl">Name:</span>
+            <span>{payment?.user_id?.full_name}</span>
+          </div>
+
+          <div className="pro-item">
+            <span className="lbl">Date:</span>
+            <span>{formatPayDate(payment.pay_date)}</span>
+          </div>
+        </div>
+
+        <div className="pro-row">
+          <div className="pro-item">
+            <span className="lbl">Mobile:</span>
+            <span>{payment?.user_id?.phone_number}</span>
+          </div>
+
+          <div className="pro-item">
+            <span className="lbl">Group:</span>
+            <span>{payment?.group_id?.group_name}</span>
+          </div>
+
+          <div className="pro-item">
+            <span className="lbl">Ticket:</span>
+            <span>{payment?.ticket}</span>
+          </div>
+        </div>
+      </div>
+
+      
+
+      <div className="pro-box">
+        <div className="pro-row">
+          <div className="pro-item">
+            <span className="lbl">Payment Mode:</span>
+            <span>{payment?.pay_type}</span>
+          </div>
+
+          <div className="pro-item">
+            <span className="lbl">Collected By:</span>
+            <span>{payment?.collected_by?.name || "Admin"}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="pro-amount-box">
+        <span className="lbl">Received Amount:</span>
+        <span className="val">₹ {payment?.amount}</span>
+      </div>
+
+      {/* Amount in Words */}
+      <div className="pro-amount-words">
+        <span className="lbl">Amount in Words:</span>
+        <span className="val">{numberToWords(payment?.amount || 0)} Rupees Only</span>
+      </div>
+
+      <div className="pro-footer-container">
+        <div className="pro-type-box">{copyType} Copy</div>
+        <div className="pro-footer">
+          <div className="sign">Authorized Signature</div>
+        </div>
+        
+      </div>
+    </div>
+  );
+
+  if (loading)
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading receipt details...</p>
+      </div>
     );
+
+  return (
+    <div className="receipt-container">
+      <div className="print-options-container">
+        <div className="print-button-container">
+          <button onClick={handlePrint} className="print-button">
+            <BiPrinter size={20} /> Print Receipt
+          </button>
+        </div>
+        
+        <div className="format-selector">
+          <label className="radio-label">
+            <input
+              type="radio"
+              value="vertical"
+              checked={printFormat === 'vertical'}
+              onChange={() => setPrintFormat('vertical')}
+            />
+            Format 1
+          </label>
+          <label className="radio-label">
+            <input
+              type="radio"
+              value="horizontal"
+              checked={printFormat === 'horizontal'}
+              onChange={() => setPrintFormat('horizontal')}
+            />
+            Format 2
+          </label>
+        </div>
+      </div>
+
+      {printFormat === 'vertical' ? (
+        // Vertical Format
+        <div className="vertical-format">
+          {/* EXACT HALF-A4 SECTION */}
+          <div className="receipt-wrapper">
+            <div className="side-by-side">
+              <VerticalReceiptSection copyType="Duplicate" />
+              <VerticalReceiptSection copyType="Customer" />
+            </div>
+          </div>
+
+          {/* EMPTY REMAINING 50% A4 */}
+          <div className="a4-bottom-empty"></div>
+        </div>
+      ) : (
+        // Horizontal Format
+        <div id="receipt-to-print" className="receipt-wrapper horizontal-format">
+          <HorizontalReceiptSection copyType="Duplicate" />
+          <div className="cut-line"></div>
+          <HorizontalReceiptSection copyType="Customer" />
+          <div className="a4-bottom-empty"></div>
+        </div>
+      )}
+    </div>
+  );
 };
+
+
+
+
+
+
+
+
+
 
 export default ReceiptComponent;

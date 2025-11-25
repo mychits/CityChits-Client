@@ -386,20 +386,19 @@ const Loan = () => {
   return (
     <>
       <div>
+       
+        <div className="flex mt-20">
+            <Sidebar />
         <Navbar
-          visibility={true}
           onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+          visibility={true}
         />
         <CustomAlertDialog
           type={alertConfig.type}
           isVisible={alertConfig.visibility}
           message={alertConfig.message}
-          onClose={() =>
-            setAlertConfig((prev) => ({ ...prev, visibility: false }))
-          }
+          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
         />
-        <div className="flex mt-20">
-          <Sidebar />
 
           <div className="flex-grow p-7">
             <div className="mt-6 mb-8">

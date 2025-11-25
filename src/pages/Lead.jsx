@@ -36,7 +36,7 @@ const Lead = () => {
   const whatsappEnable = true;
   const [leadShowModal, setLeadShowModal] = useState(false);
   const [selectedLeadData, setSelectedLeadData] = useState(null);
-  const GlobalSearchChangeHandler = (e) => {
+  const onGlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
@@ -50,6 +50,7 @@ const Lead = () => {
     const groupId = event.target.value;
     setSelectedGroup(groupId);
   };
+
   const [formData, setFormData] = useState({
     lead_name: "",
     lead_phone: "",
@@ -60,6 +61,7 @@ const Lead = () => {
     lead_needs: "",
     note: "",
   });
+
   const [updateFormData, setUpdateFormData] = useState({
     lead_name: "",
     lead_phone: "",
@@ -75,6 +77,7 @@ const Lead = () => {
     const fetchGroups = async () => {
       try {
         const response = await api.get("/group/get-group-admin");
+
         setGroups(response.data);
       } catch (error) {
         console.error("Error fetching group data:", error);
@@ -82,14 +85,16 @@ const Lead = () => {
     };
     fetchGroups();
   }, [reloadTrigger]);
-  const handleAssignTask = (leadId, leadTypeName) => {
-    navigate("/task", { state: { leadId, leadTypeName } });
-  }
+
+    const handleAssignTask = (leadId, leadTypeName) => {
+  navigate("/task", { state: { leadId , leadTypeName } }); //  pass leadId
+}
+
   useEffect(() => {
     const fetchLeads = async () => {
       try {
         setIsLoading(true);
-        const response = await api.get("/lead/get-lead");
+        const response = await api.get("/lead/non-converted");
         setLeads(response.data);
         const formattedData = response.data.map((group, index) => ({
           _id: group._id,
@@ -100,15 +105,14 @@ const Lead = () => {
           lead_needs: group?.lead_needs,
           group_id: group?.group_id?.group_name,
           date: group?.createdAt.split("T")[0],
-          lead_type: group?.lead_type,
+          lead_type: group.lead_type,
           note: group?.note,
-          leadCode: group?.leadCode, 
           lead_type_name:
-            group.lead_type === "customer"
-              ? group?.lead_customer?.full_name
-              : group?.lead_type === "agent" || group?.lead_type === "employee"
-                ? group?.lead_agent?.name
-                : "",
+  group.lead_type === "customer"
+    ? group?.lead_customer?.full_name
+    : group.lead_type === "agent" || group.lead_type === "employee"
+      ? group?.lead_agent?.name
+      : "",
           action: (
             <div className="flex justify-center gap-2">
               <Dropdown
@@ -129,6 +133,7 @@ const Lead = () => {
                     {
                       key: "2",
                       label: (
+                       
                         <Tooltip title="Lead to Customer">
                           <div
                             className="text-purple-900 cursor-pointer font-bold"
@@ -141,11 +146,11 @@ const Lead = () => {
                         </Tooltip>
                       ),
                     },
-                    {
+                     {
                       key: "3",
                       label: (
                         <div
-                          className="text-blue-600"
+                          className="text-violet-600"
                           onClick={() => handleAssignTask(group._id, group.lead_type_name)}
                         >
                           Assign Task
@@ -181,6 +186,7 @@ const Lead = () => {
     };
     fetchLeads();
   }, [reloadTrigger]);
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -192,6 +198,7 @@ const Lead = () => {
     };
     fetchUsers();
   }, [reloadTrigger]);
+
   // useEffect(() => {
   //   const fetchAgents = async () => {
   //     try {
@@ -203,7 +210,7 @@ const Lead = () => {
   //   };
   //   fetchAgents();
   // }, [reloadTrigger]);
-  useEffect(() => {
+   useEffect(() => {
     const fetchAgent = async () => {
       try {
         const response = await api.get("/agent/get");
@@ -225,17 +232,20 @@ const Lead = () => {
     };
     fetchEmployee();
   }, [reloadTrigger]);
+
   const handleAntDSelect = (field, value) => {
     setFormData((prevData) => ({
       ...prevData,
       [field]: value,
     }));
+
     setErrors((prevErrors) => ({
       ...prevErrors,
       [field]: "",
     }));
   };
-  const handleSoftRemove = async (leadId) => {
+
+   const handleSoftRemove = async (leadId) => {
     try {
       await api.put(`/lead/soft-delete-lead/${leadId}`);
       setReloadTrigger((prev) => prev + 1);
@@ -253,11 +263,13 @@ const Lead = () => {
       });
     }
   };
+
   const handleAntInputDSelect = (field, value) => {
     setUpdateFormData((prevData) => ({
       ...prevData,
       [field]: value,
     }));
+
     setErrors((prevErrors) => ({ ...prevErrors, [field]: "" }));
   };
   const handleChange = (e) => {
@@ -274,38 +286,48 @@ const Lead = () => {
     if (!data.lead_name.toString().trim()) {
       newErrors.lead_name = "Lead Name is required";
     }
+
     if (!data.lead_phone) {
       newErrors.lead_phone = "Phone Number is required";
     } else if (!/^[6-9]\d{9}$/.test(data.lead_phone)) {
       newErrors.lead_phone = "Invalid phone number (must be 10 digits)";
     }
+
     if (!data.lead_profession) {
       newErrors.lead_profession = "Profession is required";
     }
+
     if (!data.lead_type) {
       newErrors.lead_type = "Lead Source Type is required";
     }
+
     if (data.lead_type === "customer" && !data.lead_customer) {
       newErrors.lead_customer = "Customer selection is required";
     }
+
     if (data.lead_type === "agent" && !data.lead_agent) {
       newErrors.lead_agent = "Agent selection is required";
     }
-    if (data.lead_type === "employee" && !data.lead_agent) {
+     if (data.lead_type === "employee" && !data.lead_agent) {
       newErrors.lead_agent = "Agent selection is required";
     }
     if (!data.lead_needs.toString()) {
       newErrors.lead_needs = "Lead Needs and Goals is required";
     }
+
     //   if (!data.note?.toString().trim()) {
     //   newErrors.note = "Note Field is Mandatory";
     // }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const isValid = validateForm("addLead");
+
     try {
       if (isValid) {
         setShowModal(false);
@@ -320,6 +342,7 @@ const Lead = () => {
           message: "Lead added successfully",
           type: "success",
         });
+
         setFormData({
           lead_name: "",
           lead_phone: "",
@@ -341,9 +364,11 @@ const Lead = () => {
       });
     }
   };
+
   const filteredGroups = groups.filter((group) =>
     group.group_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
   const handleDeleteModalOpen = async (groupId) => {
     try {
       const response = await api.get(`/lead/get-lead-by-id/${groupId}`);
@@ -353,9 +378,11 @@ const Lead = () => {
       console.error("Error fetching lead:", error);
     }
   };
+
   const handleUpdateModalOpen = async (groupId) => {
     try {
       const response = await api.get(`/lead/get-lead-by-id/${groupId}`);
+
       const groupData = response.data;
       setCurrentUpdateGroup(response.data);
       setUpdateFormData({
@@ -375,6 +402,7 @@ const Lead = () => {
       console.error("Error fetching group:", error);
     }
   };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUpdateFormData((prevData) => ({
@@ -383,6 +411,7 @@ const Lead = () => {
     }));
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
+
   const handleDeleteGroup = async () => {
     if (currentGroup) {
       try {
@@ -400,46 +429,62 @@ const Lead = () => {
       }
     }
   };
+
   const regex = {
-    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,      // Validates email format
-    pincode: /^\d{6}$/,                       // Validates 6 digits for pincode
-    adhaar: /^\d{12}$/                        // Validates 12 digits for Aadhar number
-  };
+  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,      // Validates email format
+  pincode: /^\d{6}$/,                       // Validates 6 digits for pincode
+  adhaar: /^\d{12}$/                        // Validates 12 digits for Aadhar number
+};
+
   const validateConvertToCustomer = (data) => {
     const newErrors = {};
+
     if (!data.full_name?.trim()) {
       newErrors.full_name = "Full name is required";
     }
+
     if (!data.phone_number || !/^[6-9]\d{9}$/.test(data.phone_number)) {
       newErrors.phone_number = "Valid phone number is required";
     }
+
+
+
     if (!data.password) {
       newErrors.password = "Password is required";
     }
+
     if (!data.pincode || !regex.pincode.test(data.pincode)) {
       newErrors.pincode = "Invalid pincode (6 digits required)";
     }
+
     if (!data.adhaar_no || !regex.adhaar.test(data.adhaar_no)) {
       newErrors.adhaar_no = "Invalid Aadhar number (12 digits required)";
     }
-    if (data.pan_no && data.pan_no.trim().length !== 10) {
-      newErrors.pan_no = "Invalid PAN format (e.g., ABCDE1234F)";
-    }
+
+   if (data.pan_no && data.pan_no.trim().length !== 10) {
+  newErrors.pan_no = "Invalid PAN format (e.g., ABCDE1234F)";
+}
+
     if (!data.address || data.address.trim().length < 3) {
       newErrors.address = "Address should be at least 3 characters";
     }
+
     if (!data.no_of_tickets) {
       newErrors.no_of_tickets = "Number of Tickets is required";
     }
+
     if (!data.payment_type) {
       newErrors.payment_type = "Payment type is required";
     }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
     const isValid = validateForm();
+
     try {
       if (isValid) {
         await api.put(
@@ -458,9 +503,9 @@ const Lead = () => {
       console.error("Error updating group:", error);
     }
   };
+
   const columns = [
     { key: "id", header: "SL. NO" },
-    { key: "leadCode", header: "Lead ID" }, 
     { key: "name", header: "Lead Name" },
     { key: "phone", header: "Lead Phone Number" },
     { key: "profession", header: "Lead Profession" },
@@ -472,8 +517,10 @@ const Lead = () => {
     { key: "note", header: "Note" },
     { key: "action", header: "Action" },
   ];
-  const handleConvertCustomerSubmit = async (e) => {
+
+   const handleConvertCustomerSubmit = async (e) => {
     e.preventDefault();
+
     const valid = validateConvertToCustomer(formData);
     console.log(valid);
     if (!valid) return;
@@ -483,6 +530,7 @@ const Lead = () => {
           "/lead/convert-lead-to-customer",
           formData
         );
+
         setAlertConfig({
           type: "success",
           message: response.data.message || "Lead converted successfully",
@@ -514,17 +562,19 @@ const Lead = () => {
       });
     }
   };
+
   const handleOpenConvertCustomerModal = async (leadId) => {
     try {
       const { data } = await api.get(
         `/lead/get-lead-to-customer-by-id/${leadId}`
       );
+
       setFormData({
         full_name: data?.lead_name || "",
         phone_number: data?.lead_phone || "",
-        lead_profession: data?.lead_profession || "", 
-        group_id: data?.group_id?._id || "", 
-        lead_type: data?.lead_type || "", 
+        lead_profession: data?.lead_profession || "", //  Ensure added
+        group_id: data?.group_id?._id || "", //  Ensure added
+        lead_type: data?.lead_type || "", //  Ensure added
         lead_agent: data?.lead_agent?._id || "",
         email: "",
         password: "",
@@ -539,6 +589,7 @@ const Lead = () => {
         payment_type: data?.payment_type || "",
         no_of_tickets: data?.no_of_tickets || "",
       });
+
       setLeadShowModal(true);
     } catch (error) {
       console.error("Error opening convert modal:", error);
@@ -549,23 +600,23 @@ const Lead = () => {
       });
     }
   };
+
   return (
     <>
       <div>
-        <div className="flex mt-20" >
-          <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
-          <CustomAlertDialog
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-            onClose={() =>
-              setAlertConfig((prev) => ({ ...prev, visibility: false }))
-            }
-          />
+        <div className="flex mt-20">
+            <Sidebar />
+        <Navbar
+          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+          visibility={true}
+        />
+        <CustomAlertDialog
+          type={alertConfig.type}
+          isVisible={alertConfig.visibility}
+          message={alertConfig.message}
+          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
+        />
+
           <div className="flex-grow p-7">
             <div className="mt-6 mb-8 ">
               <div className="flex justify-between items-center w-full ">
@@ -575,12 +626,13 @@ const Lead = () => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                  className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
                 >
                   + Add Lead
                 </button>
               </div>
             </div>
+
             {TableGroups.length > 0 && !isLoading ? (
               <DataTable
                 updateHandler={handleUpdateModalOpen}
@@ -596,12 +648,9 @@ const Lead = () => {
                 exportedFileName={`Leads.csv`}
               />
             ) : (
-              <CircularLoader
-                isLoading={isLoading}
-                failure={TableGroups.length <= 0}
-                data="Leads Data"
-              />
+              <CircularLoader />
             )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {/* {filteredGroups.length === 0 ? (
                 <div className="flex justify-center items-center h-64">
@@ -720,6 +769,7 @@ const Lead = () => {
                     Lead Work/Profession{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
+                 
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Lead Work/Profession "
@@ -754,7 +804,7 @@ const Lead = () => {
                   className="block mb-2 text-sm font-medium text-gray-900"
                   htmlFor="category"
                 >
-                  Group <span className="text-red-500 ">*</span>
+                  Group
                 </label>
                 {/* <select
                   name="group_id"
@@ -762,7 +812,7 @@ const Lead = () => {
                   value={formData.group_id}
                   onChange={handleChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="">Select Group</option>
                   {groups.map((group) => (
@@ -797,6 +847,7 @@ const Lead = () => {
                 >
                   Lead Source Type <span className="text-red-500 ">*</span>
                 </label>
+           
                 <Select
                   className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                   placeholder="Select Lead Source Type "
@@ -836,6 +887,7 @@ const Lead = () => {
                     >
                       Customers
                     </label>
+                  
                     <Select
                       className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       placeholder="Select Or Search Customer"
@@ -867,6 +919,7 @@ const Lead = () => {
                   </div>
                 </>
               )}
+
               {formData.lead_type === "agent" && (
                 <>
                   <div className="w-full">
@@ -876,6 +929,7 @@ const Lead = () => {
                     >
                       Agent
                     </label>
+                  
                     <Select
                       className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       placeholder="Select Or Search Agent"
@@ -916,6 +970,7 @@ const Lead = () => {
                     >
                       Employee
                     </label>
+                   
                     <Select
                       className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       placeholder="Select Or Search Employee"
@@ -965,6 +1020,7 @@ const Lead = () => {
                   className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
               </div>
+
               <div className="w-full">
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
@@ -978,7 +1034,7 @@ const Lead = () => {
                   value={formData.lead_needs}
                   onChange={handleChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="">Select Lead Needs and Goals</option>
                   <option value="savings">Savings</option>
@@ -1015,6 +1071,7 @@ const Lead = () => {
                     WhatsApp
                   </h2>
                 </div>
+
                 <div className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -1024,11 +1081,12 @@ const Lead = () => {
                   <span className="text-gray-700">Send Via Whatsapp</span>
                 </div>
               </div>
+
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
                   className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
-                                focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Save Lead
                 </button>
@@ -1047,6 +1105,7 @@ const Lead = () => {
             <h3 className="mb-4 text-xl font-bold text-gray-900">
               Update Lead
             </h3>
+
             <form className="space-y-6" onSubmit={handleUpdate} noValidate>
               <div>
                 <label
@@ -1103,6 +1162,7 @@ const Lead = () => {
                     Lead Work/Profession{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
+                 
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Lead Work/Profession "
@@ -1145,7 +1205,7 @@ const Lead = () => {
                   value={updateFormData.group_id}
                   onChange={handleInputChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="">Select Group</option>
                   {groups.map((group) => (
@@ -1186,7 +1246,7 @@ const Lead = () => {
                   value={updateFormData.lead_type}
                   onChange={handleInputChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="">Select Lead Source Type</option>
                   <option value="social">Social Media</option>
@@ -1241,7 +1301,7 @@ const Lead = () => {
                       value={updateFormData.lead_customer}
                       onChange={handleInputChange}
                       required
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     >
                       <option value="">Select Customer</option>
                       {users.map((user) => (
@@ -1296,7 +1356,7 @@ const Lead = () => {
                       value={updateFormData.lead_agent}
                       onChange={handleInputChange}
                       required
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     >
                       <option value="">Select Agent</option>
                       {agents.map((agent) => (
@@ -1344,6 +1404,7 @@ const Lead = () => {
                     >
                       Employee
                     </label>
+                  
                     <Select
                       className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       placeholder="Select Or Search Employee"
@@ -1404,7 +1465,7 @@ const Lead = () => {
                   value={updateFormData.lead_needs}
                   onChange={handleInputChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="">Select Lead Needs and Goals</option>
                   <option value="savings">Savings</option>
@@ -1438,6 +1499,7 @@ const Lead = () => {
                   </p>
                 )}
               </div>
+
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
@@ -1507,6 +1569,7 @@ const Lead = () => {
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
+               
                 </div>
               </div>
               <div className="flex flex-row justify-between space-x-4">
@@ -1542,6 +1605,7 @@ const Lead = () => {
                     Lead Work/Profession{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
+
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Lead Work/Profession "
@@ -1578,6 +1642,7 @@ const Lead = () => {
                 >
                   Group
                 </label>
+
                 <Select
                   className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                   placeholder="Select Group "
@@ -1607,6 +1672,7 @@ const Lead = () => {
                 >
                   Lead Source Type <span className="text-red-500 ">*</span>
                 </label>
+
                 <Select
                   className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                   placeholder="Select or Search Lead Source Type "
@@ -1646,6 +1712,7 @@ const Lead = () => {
                     >
                       Customers
                     </label>
+
                     <Select
                       className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       placeholder="Select Or Search Customers"
@@ -1686,6 +1753,7 @@ const Lead = () => {
                     >
                       Agents
                     </label>
+
                     <Select
                       className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                       placeholder="Select or Search Agent "
@@ -1840,6 +1908,7 @@ const Lead = () => {
                     </p>
                   )}
                 </div>
+
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
@@ -1912,6 +1981,7 @@ const Lead = () => {
                     Lead Needs and Goals{" "}
                     <span className="text-red-500 ">*</span>
                   </label>
+
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select or Search Lead Needs and Goals "
@@ -1993,7 +2063,7 @@ const Lead = () => {
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-                  focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Delete
                 </button>
@@ -2005,4 +2075,5 @@ const Lead = () => {
     </>
   );
 };
+
 export default Lead;

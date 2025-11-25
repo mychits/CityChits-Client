@@ -5,14 +5,13 @@ import api from "../instance/TokenInstance";
 import { fieldSize } from "../data/fieldSize";
 import Modal from "../components/modals/Modal";
 import DataTable from "../components/layouts/Datatable";
-
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import { FaWhatsappSquare } from "react-icons/fa";
 import { Select, Dropdown, notification } from "antd";
 import { IoMdMore } from "react-icons/io";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
-import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 const MobileAppEnroll = () => {
      const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
@@ -38,14 +37,59 @@ const MobileAppEnroll = () => {
     message: "Something went wrong!",
     type: "info",
   });
-
-   const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchText(value);
-  };
-
   const [isExistingEnrollment, setIsExistingEnrollment] = useState(false);
   const [admin, setAdmin] = useState("");
+      const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = String(today.getMonth() + 1).padStart(2, "0");
+    const currentYearMonth = `${currentYear}-${currentMonth}`;
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = `0${date.getMonth() + 1}`.slice(-2);
+      const day = `0${date.getDate()}`.slice(-2);
+      return `${year}-${month}-${day}`;
+    }
+
+     const parseDate = (dateString) => {
+    const [year, month] = dateString.split("-");
+    return {
+      year,
+      month: String(parseInt(month)).padStart(2, "0"),
+      monthName: monthNames[parseInt(month) - 1],
+    };
+  };
+
+  const formatToYearMonth = (year, month) => {
+    return `${year}-${String(month).padStart(2, "0")}`;
+  };
+
+  const getMonthDateRange = (dateString) => {
+    const { year, month } = parseDate(dateString);
+    const startDate = new Date(year, parseInt(month) - 1, 1);
+    const endDate = new Date(year, parseInt(month), 0);
+
+    return {
+      from_date: formatDate(startDate),
+      to_date: formatDate(endDate),
+    };
+  };
+  
+    const [selectedDate, setSelectedDate] = useState("");
+  
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
   const [formData, setFormData] = useState({
     group_id: "",
     user_id: "",
@@ -79,7 +123,7 @@ const MobileAppEnroll = () => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
-    const adminId = userObj?._id;
+    const adminId = userObj._id;
     if (adminId) {
       setAdmin(userObj._id);
     } else {
@@ -154,10 +198,10 @@ const MobileAppEnroll = () => {
                       key: "3",
                       label: (
                         <div
-                          className="text-violet-800"
+                          className="text-violet-600"
                           onClick={() => handleEnrollClick(item)}
                         >
-                          Enroll
+                          Approve
                         </div>
                       ),
                     },
@@ -222,7 +266,7 @@ const MobileAppEnroll = () => {
         user_id,
         payment_type,
         referred_type,
-        chit_asking_month: Number(chit_asking_month),
+        chit_asking_month: formData.chit_asking_month,
         referred_customer,
         referred_lead,
         agent,
@@ -389,8 +433,7 @@ const MobileAppEnroll = () => {
               : response.data?.referred_lead
               ? "Leads"
               : ""),
-          chit_asking_month:
-            response?.data?.chit_asking_month ?? prev.chit_asking_month,
+         
         }));
 
         let selectedBy = "Unknown";
@@ -650,20 +693,18 @@ const MobileAppEnroll = () => {
   return (
     <>
       <div>
-       <div className="flex mt-20" >
-          <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
-          <CustomAlertDialog
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-            onClose={() =>
-              setAlertConfig((prev) => ({ ...prev, visibility: false }))
-            }
-          />
+        <div className="flex mt-20">
+            <Sidebar />
+        <Navbar
+          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+          visibility={true}
+        />
+        <CustomAlertDialog
+          type={alertConfig.type}
+          isVisible={alertConfig.visibility}
+          message={alertConfig.message}
+          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
+        />
           <div className="flex-grow p-7">
             <h1 className="text-2xl font-semibold mb-16">Mobile App Enrollments</h1>
             <div className="mb-20">
@@ -791,17 +832,22 @@ const MobileAppEnroll = () => {
                 </Select>
               </div>
 
-              <div className="w-full">
-                <label className="block mb-2 text-sm font-medium text-gray-900">
+              <div>
+                <label className="block mb-2 text-sm font-semibold text-gray-800">
                   Chit Asking Month
                 </label>
                 <input
-                  type="number"
-                  name="chit_asking_month"
-                  value={formData.chit_asking_month}
-                  onChange={handleChange}
-                  placeholder="Enter month number (e.g., 1 for Jan)"
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  type="month"
+                  className="p-2 border rounded w-full"
+                  value={selectedDate}
+                  onChange={(e) => {
+                    setSelectedDate(e.target.value);
+                    setFormData((prev) => ({
+                      ...prev,
+                      chit_asking_month: e.target.value, // <-- FIX
+                    }));
+                  }}
+                  max={formatToYearMonth(currentYear, currentMonth)}
                 />
               </div>
 
@@ -903,7 +949,7 @@ const MobileAppEnroll = () => {
                   >
                     {leads.map((lead) => (
                       <Select.Option key={lead._id} value={lead._id}>
-                        {lead.lead_name}
+                        {lead.lead_name} | {lead.lead_phone}
                       </Select.Option>
                     ))}
                   </Select>
@@ -938,7 +984,7 @@ const MobileAppEnroll = () => {
                   >
                     {agents.map((agent) => (
                       <Select.Option key={agent._id} value={agent._id}>
-                        {agent.name}
+                        {agent.name} | {agent.phone_number}
                       </Select.Option>
                     ))}
                   </Select>
@@ -1013,11 +1059,11 @@ const MobileAppEnroll = () => {
                   onClick={handleMultiStep}
                   className={`w-1/4 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center ${
                     loading
-                      ? "bg-violet-400 cursor-not-allowed"
+                      ? "bg-gray-400 cursor-not-allowed"
                       : enrollmentStep === "verify"
-                      ? "bg-violet-600 hover:bg-violet-700"
+                      ? "bg-gray-600 hover:bg-gray-700"
                       : enrollmentStep === "continue"
-                      ? "bg-violet-600 hover:bg-violet-700"
+                      ? "bg-green-600 hover:bg-green-700"
                       : "bg-violet-700 hover:bg-violet-800"
                     }`}
                 >
