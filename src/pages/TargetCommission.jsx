@@ -407,7 +407,7 @@
 //           {/* Filter Card */}
 //           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8">
 //             <h2 className="text-lg font-semibold text-gray-800 mb-6">Report Filters</h2>
-            
+
 //             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
 //               {/* Agent Select */}
 //               <div className="flex flex-col">
@@ -464,7 +464,7 @@
 //                     value={tempSelectedMonth || ""}
 //                     max={currentMonth}
 //                     onChange={handleTempMonthChange}
-//                     className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 h-11"
+//                     className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-11"
 //                   />
 //                 </div>
 //               ) : (
@@ -478,7 +478,7 @@
 //                       value={tempFromDate || ""}
 //                       max={tempToDate || currentMonth}
 //                       onChange={(e) => setTempFromDate(e.target.value)}
-//                       className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 h-11"
+//                       className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-11"
 //                     />
 //                   </div>
 //                   <div className="flex flex-col">
@@ -491,7 +491,7 @@
 //                       min={tempFromDate || ""}
 //                       max={currentMonth}
 //                       onChange={(e) => setTempToDate(e.target.value)}
-//                       className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 h-11"
+//                       className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-11"
 //                     />
 //                   </div>
 //                 </>
@@ -502,7 +502,7 @@
 //             <div className="flex justify-end">
 //               <button
 //                 onClick={applyFilter}
-//                 className="px-8 py-2.5 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors font-semibold shadow-sm"
+//                 className="px-8 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-sm"
 //               >
 //                 Generate Report
 //               </button>
@@ -530,24 +530,24 @@
 //                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 //                           <Link
 //                             to="/target-menu/target"
-//                             className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group"
+//                             className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
 //                           >
-//                             <FiTarget className="text-violet-600 group-hover:scale-110 transition-transform" size={24} />
-//                             <span className="font-medium text-gray-700 group-hover:text-violet-600">Set Target</span>
+//                             <FiTarget className="text-blue-600 group-hover:scale-110 transition-transform" size={24} />
+//                             <span className="font-medium text-gray-700 group-hover:text-blue-600">Set Target</span>
 //                           </Link>
 //                           <Link
 //                             to="/reports/target-incentive"
-//                             className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group"
+//                             className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
 //                           >
-//                             <FileTextOutlined className="text-violet-600 group-hover:scale-110 transition-transform text-lg" />
-//                             <span className="font-medium text-gray-700 group-hover:text-violet-600">Incentive Report</span>
+//                             <FileTextOutlined className="text-blue-600 group-hover:scale-110 transition-transform text-lg" />
+//                             <span className="font-medium text-gray-700 group-hover:text-blue-600">Incentive Report</span>
 //                           </Link>
 //                           <Link
 //                             to="/target-commission-incentive"
-//                             className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group"
+//                             className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
 //                           >
-//                             <MdPayments className="text-violet-600 group-hover:scale-110 transition-transform" size={24} />
-//                             <span className="font-medium text-gray-700 group-hover:text-violet-600">Payout</span>
+//                             <MdPayments className="text-blue-600 group-hover:scale-110 transition-transform" size={24} />
+//                             <span className="font-medium text-gray-700 group-hover:text-blue-600">Payout</span>
 //                           </Link>
 //                         </div>
 //                       ),
@@ -627,7 +627,7 @@
 //                       <hr className="my-6" />
 //                     </>
 //                   )}
-                  
+
 //                   {/* Summary Section */}
 //                   <h3 className="text-lg font-semibold text-gray-800 mb-4">Commission Summary</h3>
 //                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -639,12 +639,12 @@
 //                         className="w-full bg-transparent text-2xl font-bold text-green-700 mt-2 border-0"
 //                       />
 //                     </div>
-//                     <div className="bg-gradient-to-br from-violet-50 to-violet-100 border border-violet-200 rounded-lg p-4">
+//                     <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
 //                       <label className="text-xs font-semibold text-gray-600 uppercase">Net Commission (1% each)</label>
 //                       <input
 //                         value={commissionTotalDetails?.total_actual || "-"}
 //                         readOnly
-//                         className="w-full bg-transparent text-2xl font-bold text-violet-700 mt-2 border-0"
+//                         className="w-full bg-transparent text-2xl font-bold text-blue-700 mt-2 border-0"
 //                       />
 //                     </div>
 //                     <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4">
@@ -683,9 +683,9 @@
 //                     </div>
 
 //                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-//                       <div className="bg-gradient-to-br from-violet-50 to-violet-100 border border-violet-200 rounded-lg p-4">
+//                       <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
 //                         <label className="text-xs font-semibold text-gray-600 uppercase">Target Set</label>
-//                         <p className="text-2xl font-bold text-violet-700 mt-2">
+//                         <p className="text-2xl font-bold text-blue-700 mt-2">
 //                           {`${targetData.target?.toLocaleString("en-IN")}`}
 //                         </p>
 //                       </div>
@@ -712,11 +712,11 @@
 //                       </div>
 //                     </div>
 
-//                     <div className="bg-violet-50 border border-violet-200 rounded-lg p-5">
-//                       <p className="text-sm font-semibold text-violet-800 mb-3">Commission Breakdown</p>
+//                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-5">
+//                       <p className="text-sm font-semibold text-blue-800 mb-3">Commission Breakdown</p>
 //                       <ul className="space-y-2">
 //                         <li className="text-sm text-gray-700 flex items-center gap-2">
-//                           <span className="w-2 h-2 bg-violet-600 rounded-full"></span>
+//                           <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
 //                           <span>Up to target (0.5%): {(Math.min(targetData.achieved, targetData.target) * 0.005).toLocaleString("en-IN", {
 //                             minimumFractionDigits: 2,
 //                             maximumFractionDigits: 2,
@@ -877,7 +877,7 @@
 //                     name="pay_date"
 //                     value={commissionForm.pay_date}
 //                     onChange={handleCommissionChange}
-//                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500"
+//                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
 //                   />
 //                 </div>
 //                 <div>
@@ -899,7 +899,7 @@
 //                     name="pay_type"
 //                     value={commissionForm.pay_type}
 //                     onChange={handleCommissionChange}
-//                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500"
+//                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
 //                   >
 //                     <option value="cash">Cash</option>
 //                     <option value="online">Online</option>
@@ -917,7 +917,7 @@
 //                       name="transaction_id"
 //                       value={commissionForm.transaction_id}
 //                       onChange={handleCommissionChange}
-//                       className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500"
+//                       className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
 //                     />
 //                     {errors.transaction_id && (
 //                       <p className="text-red-500 text-sm mt-1">
@@ -934,7 +934,7 @@
 //                     name="note"
 //                     value={commissionForm.note}
 //                     onChange={handleCommissionChange}
-//                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"
+//                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
 //                     rows="3"
 //                   />
 //                 </div>
@@ -948,7 +948,7 @@
 //                   </button>
 //                   <button
 //                     type="submit"
-//                     className="px-6 py-2.5 bg-violet-600 text-white rounded-lg font-semibold hover:bg-violet-700 transition-colors"
+//                     className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
 //                   >
 //                     Save Payment
 //                   </button>
@@ -1033,7 +1033,8 @@ const TargetCommission = () => {
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
     const firstDay = `${year}-${String(month).padStart(2, "0")}-01`;
-    const lastDay = new Date(year, month, 0).toISOString().split("T")[0];
+    const lastday1 = new Date(year, month, 0).getDate();
+    const lastDay = `${year}-${month}-${String(lastday1).padStart(2, "0")}`;
     setTempFromDate(firstDay);
     setTempToDate(lastDay);
   }, []);
@@ -1104,20 +1105,20 @@ const TargetCommission = () => {
           params,
         }
       );
-        const commissionData =res.data?.grossCommissionInfo?.map(enrollment=>({
-        user_name:enrollment?.user_id?.full_name || "N/A",
-        phone_number:enrollment?.user_id?.phone_number || "N/A",
-        group_name:enrollment?.group_id?.group_name || "N/A",
-        group_value:enrollment?.group_id?.group_value || "N/A",
-        group_commission:enrollment?.group_id?.commission || "N/A",
-        group_ticket:enrollment?.tickets || "N/A",
-        enrollment_date:enrollment?.createdAt?.split("T")?.[0], 
-        total_paid_amount:enrollment?.total_paid_amount || "0",
-        group_monthly_installment:enrollment?.group_id?.monthly_installment || "N/A",
+      const commissionData = res.data?.grossCommissionInfo?.map(enrollment => ({
+        user_name: enrollment?.user_id?.full_name || "N/A",
+        phone_number: enrollment?.user_id?.phone_number || "N/A",
+        group_name: enrollment?.group_id?.group_name || "N/A",
+        group_value: enrollment?.group_id?.group_value || "N/A",
+        group_commission: enrollment?.group_id?.commission || "N/A",
+        group_ticket: enrollment?.tickets || "N/A",
+        enrollment_date: enrollment?.createdAt?.split("T")?.[0],
+        total_paid_amount: enrollment?.total_paid_amount || "0",
+        group_monthly_installment: enrollment?.group_id?.monthly_installment || "N/A",
 
 
       }));
-      setGrossCommissionData( commissionData|| []);
+      setGrossCommissionData(commissionData || []);
       setGrossCommissionSummary(res.data.grossCommissionSummary || {
         total_gross_commission_value: 0,
         total_gross_group_value: 0,
@@ -1298,7 +1299,8 @@ const TargetCommission = () => {
     if (selectedMonth) {
       const [year, month] = selectedMonth.split("-");
       const firstDay = `${year}-${month}-01`;
-      const lastDay = new Date(year, month, 0).toISOString().split("T")[0];
+      const lastday1 = new Date(year, month, 0).getDate();
+      const lastDay = `${year}-${month}-${String(lastday1).padStart(2, "0")}`;
       setTempFromDate(firstDay);
       setTempToDate(lastDay);
     }
@@ -1322,7 +1324,10 @@ const TargetCommission = () => {
       setSelectedMonth(tempSelectedMonth);
       const [year, month] = tempSelectedMonth.split("-");
       startDate = `${year}-${month}-01`;
-      endDate = new Date(year, month, 0).toISOString().split("T")[0];
+
+      const lastDay = new Date(year, month, 0).getDate();
+      endDate = `${year}-${month}-${String(lastDay).padStart(2, "0")}`;
+
     } else {
       startDate = tempFromDate;
       endDate = tempToDate;
@@ -1330,7 +1335,7 @@ const TargetCommission = () => {
     setAgentLoading(true);
     setLoading(true);
     setIsFilterApplied(true);
-    
+
     try {
       // Always fetch both reports regardless of active tab
       if (selectedEmployeeId === "ALL") {
@@ -1406,7 +1411,7 @@ const TargetCommission = () => {
     phone_number: item.user_id?.phone_number || "N/A",
     group_name: item.group_id?.group_name || "N/A",
     enollment_date: item.createdAt?.split("T")?.[0]
-   || "N/A",
+      || "N/A",
   }));
 
   const columns = [
@@ -1423,7 +1428,7 @@ const TargetCommission = () => {
     { key: "commission_released", header: "Commission Released" },
   ];
 
-         
+
   const grossCommissionColumns = [
     { key: "user_name", header: "Customer Name" },
     { key: "phone_number", header: "Phone Number" },
@@ -1434,7 +1439,7 @@ const TargetCommission = () => {
     { key: "group_monthly_installment", header: "First Installment Amount" },
     { key: "group_commission", header: "Commission Percentage" },
     { key: "total_paid_amount", header: "Total Paid" },
-    
+
   ];
 
 
@@ -1455,7 +1460,7 @@ const TargetCommission = () => {
             </h1>
             <p className="text-gray-600 mt-2">Track and manage agent commissions and performance</p>
           </div>
-          
+
           {/* Filter Card */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8">
             <h2 className="text-lg font-semibold text-gray-800 mb-6">Report Filters</h2>
@@ -1513,7 +1518,7 @@ const TargetCommission = () => {
                     value={tempSelectedMonth || ""}
                     max={currentMonth}
                     onChange={handleTempMonthChange}
-                    className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 h-11"
+                    className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-11"
                   />
                 </div>
               ) : (
@@ -1527,7 +1532,7 @@ const TargetCommission = () => {
                       value={tempFromDate || ""}
                       max={tempToDate || currentMonth}
                       onChange={(e) => setTempFromDate(e.target.value)}
-                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 h-11"
+                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-11"
                     />
                   </div>
                   <div className="flex flex-col">
@@ -1540,7 +1545,7 @@ const TargetCommission = () => {
                       min={tempFromDate || ""}
                       max={currentMonth}
                       onChange={(e) => setTempToDate(e.target.value)}
-                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 h-11"
+                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-11"
                     />
                   </div>
                 </>
@@ -1556,7 +1561,7 @@ const TargetCommission = () => {
               </button>
             </div>
           </div>
-          
+
           {agentLoading ? (
             <div className="flex justify-center py-20">
               <CircularLoader isLoading={true} />
@@ -1568,35 +1573,35 @@ const TargetCommission = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <Link
                     to="/target-menu/target"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group"
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
                   >
-                    <FiTarget className="text-violet-600 group-hover:scale-110 transition-transform" size={24} />
-                    <span className="font-medium text-gray-700 group-hover:text-violet-600">Set Target</span>
+                    <FiTarget className="text-blue-600 group-hover:scale-110 transition-transform" size={24} />
+                    <span className="font-medium text-gray-700 group-hover:text-blue-600">Set Target</span>
                   </Link>
                   <Link
                     to="/reports/target-incentive"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group"
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
                   >
-                    <FileTextOutlined className="text-violet-600 group-hover:scale-110 transition-transform text-lg" />
-                    <span className="font-medium text-gray-700 group-hover:text-violet-600">Incentive Report</span>
+                    <FileTextOutlined className="text-blue-600 group-hover:scale-110 transition-transform text-lg" />
+                    <span className="font-medium text-gray-700 group-hover:text-blue-600">Incentive Report</span>
                   </Link>
-                  <Link
+                  {/* <Link
                     to="/target-commission-incentive"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group"
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
                   >
-                    <MdPayments className="text-violet-600 group-hover:scale-110 transition-transform" size={24} />
-                    <span className="font-medium text-gray-700 group-hover:text-violet-600">Incentive / Commission Payout</span>
-                  </Link>
+                    <MdPayments className="text-blue-600 group-hover:scale-110 transition-transform" size={24} />
+                    <span className="font-medium text-gray-700 group-hover:text-blue-600">Incentive / Commission Payout</span>
+                  </Link> */}
                   <Link
-                    to="/payment-menu/payment-in-out-menu/payment-out/salary"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group"
+                    to="/payment-menu/payment-in-out-menu/payment-out/salary-payment"
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
                   >
-                    <FaMoneyBill className="text-violet-600 group-hover:scale-110 transition-transform" size={24} />
-                    <span className="font-medium text-gray-700 group-hover:text-violet-600">Salary Payout</span>
+                    <FaMoneyBill className="text-blue-600 group-hover:scale-110 transition-transform" size={24} />
+                    <span className="font-medium text-gray-700 group-hover:text-blue-600">Salary Payout</span>
                   </Link>
                 </div>
               </div>
-              
+
               {/* Tabbed View for Reports */}
               <Tabs activeKey={activeTab} onChange={setActiveTab}>
                 {/* Commission Report Tab */}
@@ -1659,13 +1664,34 @@ const TargetCommission = () => {
                               />
                             </div>
                           </div>
-                          <div>
-                            <label className="text-xs font-semibold text-gray-600 uppercase">Address</label>
-                            <input
-                              value={selectedEmployeeDetails.address || "-"}
-                              readOnly
-                              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-gray-50 text-gray-900 font-medium mt-1"
-                            />
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div>
+                              <label className="text-xs font-semibold text-gray-600 uppercase">
+                                Address
+                              </label>
+                              <input
+                                value={selectedEmployeeDetails?.address || "-"}
+                                readOnly
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-gray-50 text-gray-900 font-medium mt-1"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="text-xs font-semibold text-gray-600 uppercase">
+                                Joining Date
+                              </label>
+                              <input
+                                value={
+                                  selectedEmployeeDetails?.joining_date
+                                    ? selectedEmployeeDetails.joining_date.split(
+                                        "T"
+                                      )[0]
+                                    : "-"
+                                }
+                                readOnly
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-gray-50 text-gray-900 font-medium mt-1"
+                              />
+                            </div>
                           </div>
                           <hr className="my-6" />
                         </>
@@ -1681,12 +1707,12 @@ const TargetCommission = () => {
                             className="w-full bg-transparent text-2xl font-bold text-green-700 mt-2 border-0"
                           />
                         </div>
-                        <div className="bg-gradient-to-br from-violet-50 to-violet-100 border border-violet-200 rounded-lg p-4">
+                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
                           <label className="text-xs font-semibold text-gray-600 uppercase">Net Commission (1% each)</label>
                           <input
                             value={commissionTotalDetails?.total_actual || "-"}
                             readOnly
-                            className="w-full bg-transparent text-2xl font-bold text-violet-700 mt-2 border-0"
+                            className="w-full bg-transparent text-2xl font-bold text-blue-700 mt-2 border-0"
                           />
                         </div>
                         <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4">
@@ -1697,14 +1723,14 @@ const TargetCommission = () => {
                             className="w-full bg-transparent text-2xl font-bold text-purple-700 mt-2 border-0"
                           />
                         </div>
-                        <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-4">
+                        {/* <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-4">
                           <label className="text-xs font-semibold text-gray-600 uppercase">Net Groups</label>
                           <input
                             value={commissionTotalDetails?.total_groups || "-"}
                             readOnly
                             className="w-full bg-transparent text-2xl font-bold text-orange-700 mt-2 border-0"
                           />
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   )}
@@ -1723,9 +1749,9 @@ const TargetCommission = () => {
                           )}
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                          <div className="bg-gradient-to-br from-violet-50 to-violet-100 border border-violet-200 rounded-lg p-4">
+                          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
                             <label className="text-xs font-semibold text-gray-600 uppercase">Target Set</label>
-                            <p className="text-2xl font-bold text-violet-700 mt-2">
+                            <p className="text-2xl font-bold text-blue-700 mt-2">
                               {`${targetData.target?.toLocaleString("en-IN")}`}
                             </p>
                           </div>
@@ -1738,7 +1764,7 @@ const TargetCommission = () => {
                           <div className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 rounded-lg p-4">
                             <label className="text-xs font-semibold text-gray-600 uppercase">Difference</label>
                             <p className="text-2xl font-bold text-amber-700 mt-2">
-                              {`${(targetData.difference?? "0")?.toLocaleString("en-IN")}`}
+                              {`${(targetData.difference ?? "0")?.toLocaleString("en-IN")}`}
                             </p>
                           </div>
                           <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-lg p-4">
@@ -1751,11 +1777,11 @@ const TargetCommission = () => {
                             </p>
                           </div>
                         </div>
-                        <div className="bg-violet-50 border border-violet-200 rounded-lg p-5">
-                          <p className="text-sm font-semibold text-violet-800 mb-3">Commission Breakdown</p>
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-5">
+                          <p className="text-sm font-semibold text-blue-800 mb-3">Commission Breakdown</p>
                           <ul className="space-y-2">
                             <li className="text-sm text-gray-700 flex items-center gap-2">
-                              <span className="w-2 h-2 bg-violet-600 rounded-full"></span>
+                              <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
                               <span>Up to target (0.5%): {(Math.min(targetData.achieved, targetData.target) * 0.005).toLocaleString("en-IN", {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2,
@@ -1810,61 +1836,53 @@ const TargetCommission = () => {
                           isFilterApplied
                             ? dateSelectionMode === "month"
                               ? new Date(`${selectedMonth}-01`).toLocaleString(
-                                  "default",
-                                  {
-                                    month: "long",
-                                    year: "numeric",
-                                  }
-                                )
+                                "default",
+                                {
+                                  month: "long",
+                                  year: "numeric",
+                                }
+                              )
                               : `${new Date(
-                                  tempFromDate
-                                ).toLocaleDateString()} - ${new Date(
-                                  tempToDate
-                                ).toLocaleDateString()}`
+                                tempFromDate
+                              ).toLocaleDateString()} - ${new Date(
+                                tempToDate
+                              ).toLocaleDateString()}`
                             : "-",
                           `${targetData?.target?.toLocaleString("en-IN") || "0"}`,
                           `${targetData?.achieved?.toLocaleString("en-IN") || "0"}`,
-                          `${
-                            targetData?.remaining?.toLocaleString("en-IN") || "0"
+                          `${targetData?.remaining?.toLocaleString("en-IN") || "0"
                           }`,
-                          `${
-                            targetData?.targetCommission?.toLocaleString("en-IN", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            }) || "0.00"
+                          `${targetData?.targetCommission?.toLocaleString("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }) || "0.00"
                           }`,
-                          `${
-                            commissionTotalDetails?.actual_business?.toLocaleString(
-                              "en-IN"
-                            ) || "0"
+                          `${commissionTotalDetails?.actual_business?.toLocaleString(
+                            "en-IN"
+                          ) || "0"
                           }`,
-                          `${
-                            commissionTotalDetails?.total_actual?.toLocaleString(
-                              "en-IN"
-                            ) || "0"
+                          `${commissionTotalDetails?.total_actual?.toLocaleString(
+                            "en-IN"
+                          ) || "0"
                           }`,
-                          `${
-                            commissionTotalDetails?.expected_business?.toLocaleString(
-                              "en-IN"
-                            ) || "0"
+                          `${commissionTotalDetails?.expected_business?.toLocaleString(
+                            "en-IN"
+                          ) || "0"
                           }`,
-                          `${
-                            commissionTotalDetails?.total_estimated?.toLocaleString(
-                              "en-IN"
-                            ) || "0"
+                          `${commissionTotalDetails?.total_estimated?.toLocaleString(
+                            "en-IN"
+                          ) || "0"
                           }`,
                           commissionTotalDetails?.total_customers || "0",
                           commissionTotalDetails?.total_groups || "0",
                         ]}
-                        exportedFileName={`CommissionReport-${
-                          selectedEmployeeDetails?.name || "all"
-                        }-${
-                          isFilterApplied
+                        exportedFileName={`CommissionReport-${selectedEmployeeDetails?.name || "all"
+                          }-${isFilterApplied
                             ? dateSelectionMode === "month"
                               ? selectedMonth
                               : `${tempFromDate}_to_${tempToDate}`
                             : "unfiltered"
-                        }.csv`}
+                          }.csv`}
                       />
                     </div>
                   ) : (
@@ -1878,7 +1896,7 @@ const TargetCommission = () => {
                     )
                   )}
                 </TabPane>
-                
+
                 {/* Gross Incentive Report Tab */}
                 <TabPane tab="Gross Commission Report" key="gross-incentive">
                   {/* Gross Incentive Summary Section */}
@@ -1894,12 +1912,12 @@ const TargetCommission = () => {
                             className="w-full bg-transparent text-2xl font-bold text-green-700 mt-2 border-0"
                           />
                         </div>
-                        <div className="bg-gradient-to-br from-violet-50 to-violet-100 border border-violet-200 rounded-lg p-4">
+                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
                           <label className="text-xs font-semibold text-gray-600 uppercase">Gross Commission Value</label>
                           <input
                             value={grossCommissionSummary.total_gross_commission_value?.toLocaleString("en-IN") || "-"}
                             readOnly
-                            className="w-full bg-transparent text-2xl font-bold text-violet-700 mt-2 border-0"
+                            className="w-full bg-transparent text-2xl font-bold text-blue-700 mt-2 border-0"
                           />
                         </div>
                         <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4">
@@ -1913,7 +1931,7 @@ const TargetCommission = () => {
                       </div>
                     </div>
                   )}
-                  
+
                   {/* Data Table */}
                   {loading ? (
                     <div className="flex justify-center py-20">
@@ -1943,31 +1961,29 @@ const TargetCommission = () => {
                           isFilterApplied
                             ? dateSelectionMode === "month"
                               ? new Date(`${selectedMonth}-01`).toLocaleString(
-                                  "default",
-                                  {
-                                    month: "long",
-                                    year: "numeric",
-                                  }
-                                )
+                                "default",
+                                {
+                                  month: "long",
+                                  year: "numeric",
+                                }
+                              )
                               : `${new Date(
-                                  tempFromDate
-                                ).toLocaleDateString()} - ${new Date(
-                                  tempToDate
-                                ).toLocaleDateString()}`
+                                tempFromDate
+                              ).toLocaleDateString()} - ${new Date(
+                                tempToDate
+                              ).toLocaleDateString()}`
                             : "-",
                           `${grossCommissionSummary.total_gross_group_value?.toLocaleString("en-IN") || "0"}`,
                           `${grossCommissionSummary.total_gross_incentive_value?.toLocaleString("en-IN") || "0"}`,
                           `${grossCommissionSummary.total_gross_enrollments || "0"}`,
                         ]}
-                        exportedFileName={`GrossIncentiveReport-${
-                          selectedEmployeeDetails?.name || "all"
-                        }-${
-                          isFilterApplied
+                        exportedFileName={`GrossIncentiveReport-${selectedEmployeeDetails?.name || "all"
+                          }-${isFilterApplied
                             ? dateSelectionMode === "month"
                               ? selectedMonth
                               : `${tempFromDate}_to_${tempToDate}`
                             : "unfiltered"
-                        }.csv`}
+                          }.csv`}
                       />
                     </div>
                   ) : (
@@ -1984,8 +2000,8 @@ const TargetCommission = () => {
               </Tabs>
             </>
           )}
-          
-        
+
+
         </div>
       </div>
     </div>

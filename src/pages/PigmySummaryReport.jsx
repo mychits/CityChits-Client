@@ -48,6 +48,7 @@ const PigmySummaryReport = () => {
           slNo: index + 1,
           pigmyIds: pigmy?.pigme_id || "N/A",
           Duration: pigmy?.duration || "N/A",
+          amount: pigmy?.payable_amount || "N/A",
           referredType: pigmy?.referred_type || "N/A",
           referredBy: pigmy?.referred_employee
             ? pigmy?.referred_employee?.name
@@ -157,9 +158,11 @@ const PigmySummaryReport = () => {
     { key: "pigmyIds", header: "Pigmy ID" },
     { key: "pigmyStartDate", header: "Start Date" },
     { key: "Duration", header: "Duration (months)" },
+    {key: "amount", header: "Daily Pay"},
+    {key: "totalpigmyAmount", header: "Amount Paid"},
     { key: "referredType", header: "Referred Type" },
     { key: "referredBy", header: "Referred By" },
-    { key: "totalpigmyAmount", header: "Total Paid Amount" },
+  
   ];
 
   const StatCard = ({ icon: Icon, label, value, color, suffix = "" }) => (
@@ -184,8 +187,8 @@ const PigmySummaryReport = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="">
+      <div className="max-w-screen">
         {/* Header Section */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
@@ -227,7 +230,7 @@ const PigmySummaryReport = () => {
                 label="Average Duration"
                 value={summaryStats.avgDuration}
                 suffix="months"
-                color="bg-gradient-to-br from-violet-500 to-violet-600"
+                color="bg-gradient-to-br from-blue-500 to-blue-600"
               />
               <StatCard
                 icon={Users}
@@ -376,7 +379,7 @@ const PigmySummaryReport = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden p-2">
+            <div className="max-w-screen">
               <DataTable
                 columns={PigmyReportColumns}
                 data={filteredPigmyReport}

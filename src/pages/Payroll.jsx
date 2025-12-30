@@ -11,10 +11,9 @@ import filterOption from "../helpers/filterOption";
 import { fieldSize } from "../data/fieldSize";
 import CircularLoader from "../components/loaders/CircularLoader";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
-const Employee = () => {
-  const [users, setUsers] = useState([]);
+import { numberToIndianWords } from "../helpers/numberToIndianWords";
+const Payroll = () => {
   const [TableEmployees, setTableEmployees] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [showModalUpdate, setShowModalUpdate] = useState(false);
@@ -59,9 +58,22 @@ const Employee = () => {
     emergency_contact_person: "",
     emergency_contact_number: [""],
     total_allocated_leaves: "2",
-
-
-
+    earnings: {
+      basic: 0,
+      hra: 0,
+      travel_allowance: 0,
+      medical_allowance: 0,
+      basket_of_benifits: 0,
+      performance_bonus: 0,
+      other_allowances: 0,
+      conveyance: 0,
+    },
+    deductions: {
+      income_tax: 0,
+      esi: 0,
+      epf: 0,
+      professional_tax: 0,
+    },
   });
   const [updateFormData, setUpdateFormData] = useState({
     name: "",
@@ -83,16 +95,30 @@ const Employee = () => {
     emergency_contact_person: "",
     emergency_contact_number: [""],
     total_allocated_leaves: "2",
-
-
+    earnings: {
+      basic: 0,
+      hra: 0,
+      travel_allowance: 0,
+      medical_allowance: 0,
+      basket_of_benifits: 0,
+      performance_bonus: 0,
+      other_allowances: 0,
+      conveyance: 0,
+    },
+    deductions: {
+      income_tax: 0,
+      esi: 0,
+      epf: 0,
+      professional_tax: 0,
+    },
   });
   useEffect(() => {
     const fetchEmployeeProfile = async () => {
       try {
         setIsLoading(true);
-        const response = await api.get("/agent/get-additional-employee-info");
+        const response = await api.get("/employee");
         const employeeData = response.data?.employee || [];
-        setUsers(employeeData);
+
         const formattedData = employeeData.map((group, index) => ({
           _id: group?._id,
           id: index + 1,
@@ -104,7 +130,7 @@ const Employee = () => {
           action: (
             <div className="flex justify-center gap-2">
               <Dropdown
-                trigger={['click']}
+                trigger={["click"]}
                 menu={{
                   items: [
                     {
@@ -166,6 +192,8 @@ const Employee = () => {
     setSelectedManagerTitle(title);
     setFormData((prev) => ({
       ...prev,
+      deductions: { ...prev.deductions },
+      earnings: { ...prev.earnings },
       managerId,
       managerTitle: title,
     }));
@@ -176,34 +204,46 @@ const Employee = () => {
     }));
   };
 
-  const handleAntDSelect = (field, value) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [field]: value,
-    }));
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [field]: "",
-    }));
+  const handleChange = (name, value, earnings = false, deductions = false) => {
+    if (earnings) {
+      setFormData((prevData) => ({
+        ...prevData,
+        earnings: { ...prevData.earnings, [name]: value },
+      }));
+    } else if (deductions) {
+      setFormData((prevData) => ({
+        ...prevData,
+        deductions: { ...prevData.deductions, [name]: value },
+      }));
+    } 
+    else {
+      if (name === "salary") {
+        // let basic = (0.6 * (Number(value) || 0)).toFixed(2);
+        // let hra = (basic * 0.4).toFixed(2);
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
+          // earnings: {
+          //   ...prevData.earnings,
+          //   basic,
+          //   hra,
+          // },
+        }));
+      } 
+      else {
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
+        }));
+      }
+
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
   };
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-    setErrors((prevData) => ({
-      ...prevData,
-      [name]: "",
-    }));
-  };
-  const handleAntInputDSelect = (field, value) => {
-    setUpdateFormData((prevData) => ({
-      ...prevData,
-      [field]: value,
-    }));
-    setErrors((prevErrors) => ({ ...prevErrors, [field]: "" }));
-  };
+
   const handleAntDSelectReportingManager = (reportingId) => {
     setSelectedReportingManagerId(reportingId);
     setFormData((prev) => ({
@@ -277,7 +317,7 @@ const Employee = () => {
     } else if (!regex.aadhaar.test(data.adhaar_no)) {
       newErrors.adhaar_no = "Invalid Aadhaar number (12 digits required)";
     }
-  
+
     if (!data.pan_no) {
       newErrors.pan_no = "PAN number is required";
     } else if (!regex.pan.test(data.pan_no.toUpperCase())) {
@@ -292,13 +332,13 @@ const Employee = () => {
       newErrors.emergency_contact_person = "Contact Person Name is Required";
     }
     if (!data.total_allocated_leaves) {
-      newErrors.total_allocated_leaves = "Please Provide Total Allocated Leaves";
+      newErrors.total_allocated_leaves =
+        "Please Provide Total Allocated Leaves";
     }
-    if(!selectedManagerId){
-      newErrors.designation_id = "Please Enter Designation";  
+    if (!selectedManagerId) {
+      newErrors.designation_id = "Please Enter Designation";
     }
 
-  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -311,16 +351,16 @@ const Employee = () => {
       );
       return;
     }
-    setFormState({
-      ...formState,
+    setFormState((prevState) => ({
+      ...prevState,
       emergency_contact_number: [...phones, ""],
-    });
+    }));
   };
   const handlePhoneChange = (formState, setFormState, index, e) => {
     const value = e.target.value;
     let phones =
       formState.emergency_contact_number &&
-        formState.emergency_contact_number.length > 0
+      formState.emergency_contact_number.length > 0
         ? [...formState.emergency_contact_number]
         : [""];
     while (phones.length <= index) {
@@ -350,44 +390,86 @@ const Employee = () => {
     e.preventDefault();
     const isValidate = validateForm("addEmployee");
     try {
+      const sanitizeNumber = (val) =>
+        val === "" || val == null ? 0 : Number(val);
       if (isValidate) {
         const dataToSend = {
           ...formData,
+          salary: sanitizeNumber(formData.salary),
+          earnings: {
+            basic: sanitizeNumber(formData.earnings.basic),
+            hra: sanitizeNumber(formData.earnings.hra),
+            travel_allowance: sanitizeNumber(
+              formData.earnings.travel_allowance
+            ),
+            medical_allowance: sanitizeNumber(
+              formData.earnings.medical_allowance
+            ),
+            basket_of_benifits: sanitizeNumber(
+              formData.earnings.basket_of_benifits
+            ),
+            performance_bonus: sanitizeNumber(
+              formData.earnings.performance_bonus
+            ),
+            other_allowances: sanitizeNumber(
+              formData.earnings.other_allowances
+            ),
+            conveyance: sanitizeNumber(formData.earnings.conveyance),
+          },
+          deductions: {
+            income_tax: sanitizeNumber(formData.deductions.income_tax),
+            esi: sanitizeNumber(formData.deductions.esi),
+            epf: sanitizeNumber(formData.deductions.epf),
+            professional_tax: sanitizeNumber(
+              formData.deductions.professional_tax
+            ),
+          },
           designation_id: selectedManagerId,
           reporting_manager_id: selectedReportingManagerId,
         };
-        const response = await api.post(
-          "/agent/add-addtional-employee-info",
-          dataToSend,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        setShowModal(false);
-        setFormData({
-          name: "",
-          email: "",
-          phone_number: "",
-          password: "",
-          address: "",
-          pincode: "",
-          adhaar_no: "",
-          pan_no: "",
-          joining_date: "",
-          status: "",
-          dob: "",
-          gender: "",
-          alternate_number: "",
-          salary: "",
-          leaving_date: "",
-          emergency_contact_person: "",
-          emergency_contact_number: [""],
-          total_allocated_leaves: "2",
-
-          
+        const response = await api.post("/employee/payroll", dataToSend, {
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
+        setShowModal(false);
+        // setFormData({
+        //   name: "",
+        //   email: "",
+        //   phone_number: "",
+        //   password: "",
+        //   address: "",
+        //   pincode: "",
+        //   adhaar_no: "",
+        //   designation_id: "",
+        //   pan_no: "",
+        //   joining_date: "",
+        //   status: "",
+        //   dob: "",
+        //   gender: "",
+        //   alternate_number: "",
+        //   salary: "",
+        //   leaving_date: "",
+        //   emergency_contact_person: "",
+        //   emergency_contact_number: [""],
+        //   total_allocated_leaves: "2",
+        //   earnings: {
+        //     basic: 0,
+        //     hra: 0,
+        //     travel_allowance: 0,
+        //     medical_allowance: 0,
+        //     basket_of_benifits: 0,
+        //     performance_bonus: 0,
+        //     other_allowances: 0,
+        //     conveyance: 0,
+        //   },
+        //   deductions: {
+        //     income_tax: 0,
+        //     esi: 0,
+        //     epf: 0,
+        //     professional_tax: 0,
+        //   },
+        // });
         setSelectedManagerId("");
         setSelectedReportingManagerId("");
         setReloadTrigger((prev) => prev + 1);
@@ -435,9 +517,7 @@ const Employee = () => {
     { key: "password", header: "Employee Password" },
     { key: "action", header: "Action" },
   ];
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+
   const handleDeleteModalOpen = async (userId) => {
     try {
       const response = await api.get(
@@ -452,9 +532,7 @@ const Employee = () => {
   };
   const handleUpdateModalOpen = async (userId) => {
     try {
-      const response = await api.get(
-        `/agent/get-additional-employee-info-by-id/${userId}`
-      );
+      const response = await api.get(`/agent/get-employee-by-id/${userId}`);
       setCurrentUpdateUser(response.data?.employee);
       setUpdateFormData({
         name: response?.data?.employee?.name,
@@ -476,14 +554,35 @@ const Employee = () => {
           ?.emergency_contact_number || [""],
         emergency_contact_person:
           response?.data?.employee?.emergency_contact_person,
-        total_allocated_leaves: response?.data?.employee?.total_allocated_leaves?.toString() || "2",
+        total_allocated_leaves:
+          response?.data?.employee?.total_allocated_leaves?.toString() || "2",
+        earnings: {
+          basic: response?.data?.employee?.earnings?.basic || 0,
+          hra: response?.data?.employee?.earnings?.hra || 0,
+          travel_allowance:
+            response?.data?.employee?.earnings?.travel_allowance || 0,
+          medical_allowance:
+            response?.data?.employee?.earnings?.medical_allowance || 0,
+          basket_of_benifits:
+            response?.data?.employee?.earnings?.basket_of_benifits || 0,
+          performance_bonus:
+            response?.data?.employee?.earnings?.performance_bonus || 0,
+          other_allowances:
+            response?.data?.employee?.earnings?.other_allowances || 0,
+          conveyance: response?.data?.employee?.earnings?.conveyance || 0,
+        },
 
-     
-
+        deductions: {
+          income_tax: response?.data?.employee?.deductions?.income_tax || 0,
+          esi: response?.data?.employee?.deductions?.esi || 0,
+          epf: response?.data?.employee?.deductions?.epf || 0,
+          professional_tax:
+            response?.data?.employee?.deductions?.professional_tax || 0,
+        },
       });
-      setSelectedManagerId(response.data?.employee?.designation_id?._id || "");
+      setSelectedManagerId(response.data?.employee?.designation_id?._id || 0);
       setSelectedReportingManagerId(
-        response.data?.employee?.reporting_manager_id || ""
+        response.data?.employee?.reporting_manager_id || 0
       );
       setSelectedManagerTitle(response.data?.employee?.designation_id?.title);
       setShowModalUpdate(true);
@@ -492,12 +591,33 @@ const Employee = () => {
       console.error("Error fetching user:", error);
     }
   };
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUpdateFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+
+  const handleInputChange = (
+    name,
+    value,
+    earnings = false,
+    deductions = false
+  ) => {
+    if (earnings) {
+      setUpdateFormData((prevData) => ({
+        ...prevData,
+        earnings: { ...prevData.earnings, [name]: value },
+      }));
+    } else if (deductions) {
+      setUpdateFormData((prevData) => ({
+        ...prevData,
+        deductions: { ...prevData.deductions, [name]: value },
+      }));
+    } else {
+      setUpdateFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
   };
   const handleDeleteUser = async () => {
     if (currentUser) {
@@ -525,6 +645,12 @@ const Employee = () => {
       if (isValid) {
         const dataToSend = {
           ...updateFormData,
+          deductions: {
+            ...updateFormData.deductions,
+          },
+          earnings: {
+            ...updateFormData.earnings,
+          },
           designation_id: selectedManagerId,
           reporting_manager_id: selectedReportingManagerId,
         };
@@ -563,19 +689,6 @@ const Employee = () => {
       }
     }
   };
-  const handleManager = async (event) => {
-    const groupId = event.target.value;
-    setSelectedManagerId(groupId);
-    const selected = managers.find((mgr) => mgr._id === groupId);
-    setSelectedManagerTitle(selected?.title || "");
-  };
-  const handleReportingManager = async (event) => {
-    const reportingId = event.target.value;
-    setSelectedReportingManagerId(reportingId);
-  };
-
-
-
 
   return (
     <>
@@ -597,7 +710,7 @@ const Employee = () => {
           <div className="flex-grow p-7">
             <div className="mt-6 mb-8">
               <div className="flex justify-between items-center w-full">
-                <h1 className="text-2xl font-semibold">Employee</h1>
+                <h1 className="text-2xl font-semibold">Payroll</h1>
                 <button
                   onClick={() => {
                     setShowModal(true);
@@ -635,7 +748,7 @@ const Employee = () => {
               <div>
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="email"
+                  htmlFor="name"
                 >
                   Full Name <span className="text-red-500">*</span>
                 </label>
@@ -643,7 +756,7 @@ const Employee = () => {
                   type="text"
                   name="name"
                   value={formData.name}
-                  onChange={handleChange}
+                  onChange={(e) => handleChange(e.target.name, e.target.value)}
                   id="name"
                   placeholder="Enter the Full Name"
                   required
@@ -657,7 +770,7 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="date"
+                    htmlFor="email"
                   >
                     Email <span className="text-red-500">*</span>
                   </label>
@@ -665,8 +778,10 @@ const Employee = () => {
                     type="email"
                     name="email"
                     value={formData.email}
-                    onChange={handleChange}
-                    id="text"
+                    onChange={(e) =>
+                      handleChange(e.target.name, e.target.value)
+                    }
+                    id="email"
                     placeholder="Enter Email"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -678,16 +793,18 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="date"
+                    htmlFor="phone_number"
                   >
                     Phone Number <span className="text-red-500">*</span>
                   </label>
                   <Input
-                    type="number"
+                    type="tel"
                     name="phone_number"
                     value={formData.phone_number}
-                    onChange={handleChange}
-                    id="text"
+                    onChange={(e) =>
+                      handleChange(e.target.name, e.target.value)
+                    }
+                    id="phone_number"
                     placeholder="Enter Phone Number"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -703,16 +820,18 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="pass"
+                    htmlFor="password"
                   >
                     Password <span className="text-red-500">*</span>
                   </label>
                   <Input
-                    type="pass"
+                    type="text"
                     name="password"
                     value={formData.password}
-                    onChange={handleChange}
-                    id="text"
+                    onChange={(e) =>
+                      handleChange(e.target.name, e.target.value)
+                    }
+                    id="password"
                     placeholder="Enter Password"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -726,16 +845,18 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="date"
+                    htmlFor="pincode"
                   >
                     Pincode <span className="text-red-500">*</span>
                   </label>
                   <Input
-                    type="number"
+                    type="text"
                     name="pincode"
                     value={formData.pincode}
-                    onChange={handleChange}
-                    id="text"
+                    onChange={(e) =>
+                      handleChange(e.target.name, e.target.value)
+                    }
+                    id="pincode"
                     placeholder="Enter Pincode"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -751,16 +872,18 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="date"
+                    htmlFor="adhaar_no"
                   >
                     Adhaar Number <span className="text-red-500">*</span>
                   </label>
                   <Input
-                    type="number"
+                    type="text"
                     name="adhaar_no"
                     value={formData.adhaar_no}
-                    onChange={handleChange}
-                    id="text"
+                    onChange={(e) =>
+                      handleChange(e.target.name, e.target.value)
+                    }
+                    id="adhaar_no"
                     placeholder="Enter Adhaar Number"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -774,7 +897,7 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="date"
+                    htmlFor="pan_no"
                   >
                     Pan Number <span className="text-red-500">*</span>
                   </label>
@@ -782,8 +905,10 @@ const Employee = () => {
                     type="text"
                     name="pan_no"
                     value={formData.pan_no}
-                    onChange={handleChange}
-                    id="text"
+                    onChange={(e) =>
+                      handleChange(e.target.name, e.target.value)
+                    }
+                    id="pan_no"
                     placeholder="Enter Pan Number"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -796,7 +921,7 @@ const Employee = () => {
               <div>
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="email"
+                  htmlFor="address"
                 >
                   Address <span className="text-red-500">*</span>
                 </label>
@@ -804,8 +929,8 @@ const Employee = () => {
                   type="text"
                   name="address"
                   value={formData.address}
-                  onChange={handleChange}
-                  id="name"
+                  onChange={(e) => handleChange(e.target.name, e.target.value)}
+                  id="address"
                   placeholder="Enter the Address"
                   required
                   className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -818,7 +943,7 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="category"
+                    htmlFor="designation_id"
                   >
                     Designation <span className="text-red-500 ">*</span>
                   </label>
@@ -843,8 +968,10 @@ const Employee = () => {
                       </Select.Option>
                     ))}
                   </Select>
-                  { errors.designation_id && (
-                    <p className="mt-2 text-sm text-red-600">{errors.designation_id}</p>
+                  {errors.designation_id && (
+                    <p className="mt-2 text-sm text-red-600">
+                      {errors.designation_id}
+                    </p>
                   )}
                 </div>
                 <div className="w-1/2">
@@ -854,17 +981,6 @@ const Employee = () => {
                   >
                     Status <span className="text-red-500">*</span>
                   </label>
-                  {/* <select
-                    name="status"
-                    value={formData?.status}
-                    onChange={handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
-                  >
-                    <option value="">Select Status</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="terminated">Terminated</option>
-                  </select> */}
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Status"
@@ -877,9 +993,9 @@ const Employee = () => {
                         .includes(input.toLowerCase())
                     }
                     value={formData?.status || undefined}
-                    onChange={(value) => handleAntDSelect("status", value)}
+                    onChange={(value) => handleChange("status", value)}
                   >
-                    {["Active", "Inactive", "Terminated",].map((stype) => (
+                    {["Active", "Inactive", "Terminated"].map((stype) => (
                       <Select.Option key={stype} value={stype.toLowerCase()}>
                         {stype}
                       </Select.Option>
@@ -894,7 +1010,7 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="joiningdate"
+                    htmlFor="joining_date"
                   >
                     Joining Date <span className="text-red-500">*</span>
                   </label>
@@ -902,8 +1018,10 @@ const Employee = () => {
                     type="date"
                     name="joining_date"
                     value={formData.joining_date}
-                    onChange={handleChange}
-                    id="joiningdate"
+                    onChange={(e) =>
+                      handleChange(e.target.name, e.target.value)
+                    }
+                    id="joining_date"
                     placeholder="Enter Employee Joining Date"
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
@@ -916,18 +1034,19 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="ld"
+                    htmlFor="leaving_date"
                   >
-                    Leaving Date <span className="text-red-500"></span>
+                    Leaving Date
                   </label>
                   <Input
                     type="date"
                     name="leaving_date"
                     value={formData.leaving_date}
-                    onChange={handleChange}
-                    id="ld"
+                    onChange={(e) =>
+                      handleChange(e.target.name, e.target.value)
+                    }
+                    id="leaving_date"
                     placeholder="Enter Leaving Date"
-                    required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                 </div>
@@ -944,7 +1063,9 @@ const Employee = () => {
                     type="date"
                     name="dob"
                     value={formData.dob}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                      handleChange(e.target.name, e.target.value)
+                    }
                     id="dob"
                     placeholder="Enter Employee Date of Birth"
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -960,16 +1081,6 @@ const Employee = () => {
                   >
                     Gender <span className="text-red-500">*</span>
                   </label>
-                  {/* <select
-                    name="gender"
-                    value={formData?.gender}
-                    onChange={handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </select> */}
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Gender"
@@ -982,7 +1093,7 @@ const Employee = () => {
                         .includes(input.toLowerCase())
                     }
                     value={formData?.gender || undefined}
-                    onChange={(value) => handleAntDSelect("gender", value)}
+                    onChange={(value) => handleChange("gender", value)}
                   >
                     {["Male", "Female", "Others"].map((gender) => (
                       <Select.Option key={gender} value={gender.toLowerCase()}>
@@ -999,38 +1110,19 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="sal"
-                  >
-                    Salary <span className="text-red-500">*</span>
-                  </label>
-                  <Input
-                    type="number"
-                    name="salary"
-                    value={formData.salary}
-                    onChange={handleChange}
-                    id="sal"
-                    placeholder="Enter Your Salary"
-                    required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
-                  />
-                  {errors.salary && (
-                    <p className="mt-2 text-sm text-red-600">{errors.salary}</p>
-                  )}
-                </div>
-                <div className="w-1/2">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="alternate"
+                    htmlFor="alternate_number"
                   >
                     Alternate Phone Number{" "}
                     <span className="text-red-500">*</span>
                   </label>
                   <Input
-                    type="number"
+                    type="tel"
                     name="alternate_number"
                     value={formData.alternate_number}
-                    onChange={handleChange}
-                    id="alternate"
+                    onChange={(e) =>
+                      handleChange(e.target.name, e.target.value)
+                    }
+                    id="alternate_number"
                     placeholder="Enter Alternate Phone Number"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -1041,20 +1133,22 @@ const Employee = () => {
                     </p>
                   )}
                 </div>
-              </div>
-              <div className="flex flex-row justify-between space-x-4">
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
                     htmlFor="total_allocated_leaves"
                   >
-                    Total Allocated Leaves <span className="text-red-500">*</span>
+                    Total Allocated Leaves{" "}
+                    <span className="text-red-500">*</span>
                   </label>
                   <Input
                     type="number"
+                    onWheel={(e) => e.target.blur()}
                     name="total_allocated_leaves"
                     value={formData.total_allocated_leaves}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                      handleChange(e.target.name, e.target.value)
+                    }
                     id="total_allocated_leaves"
                     placeholder="Enter total allocated leaves"
                     required
@@ -1066,10 +1160,12 @@ const Employee = () => {
                     </p>
                   )}
                 </div>
+              </div>
+              <div className="flex flex-row justify-between space-x-4">
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="cp"
+                    htmlFor="emergency_contact_person"
                   >
                     Emergency Contact Person
                     <span className="text-red-500">*</span>
@@ -1078,8 +1174,10 @@ const Employee = () => {
                     type="text"
                     name="emergency_contact_person"
                     value={formData.emergency_contact_person}
-                    onChange={handleChange}
-                    id="cp"
+                    onChange={(e) =>
+                      handleChange(e.target.name, e.target.value)
+                    }
+                    id="emergency_contact_person"
                     placeholder="Enter Emergency Contact Person Name"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -1090,15 +1188,12 @@ const Employee = () => {
                     </p>
                   )}
                 </div>
-              </div>
-              <div className="flex flex-row justify-between space-x-4">
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="emergency"
+                    htmlFor="emergency_contact_number"
                   >
                     Emergency Phone Number{" "}
-                    
                   </label>
                   <div className="flex items-center mb-2 gap-2">
                     <Input
@@ -1108,7 +1203,7 @@ const Employee = () => {
                       onChange={(e) =>
                         handlePhoneChange(formData, setFormData, 0, e)
                       }
-                      id="emergency_0"
+                      id="emergency_contact_number_0"
                       placeholder="Enter Default Emergency Phone Number"
                       required
                       className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -1130,7 +1225,7 @@ const Employee = () => {
                               e
                             )
                           }
-                          id={`emergency_${index + 1}`}
+                          id={`emergency_contact_number_${index + 1}`}
                           placeholder="Enter Additional Emergency Phone Number"
                           className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
@@ -1156,17 +1251,409 @@ const Employee = () => {
                   </button>
                 </div>
               </div>
+              <div className="flex flex-row justify-between space-x-4">
+                <div className="w-1/2">
+                  <label
+                    className="block  text-sm font-medium text-gray-900"
+                    htmlFor="salary"
+                  >
+                    Fixed Salary <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    type="number"
+                    onWheel={(e) => e.target.blur()}
+                    name="salary"
+                    value={formData.salary}
+                    onChange={(e) =>
+                      handleChange(e.target.name, e.target.value)
+                    }
+                    id="salary"
+                    placeholder="Enter Your Salary"
+                    required
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  />
+                  <span className="ml-2 font-medium font-mono text-blue-600">
+                    {numberToIndianWords(formData.salary || 0)}
+                  </span>
+                  {errors.salary && (
+                    <p className="mt-2 text-sm text-red-600">{errors.salary}</p>
+                  )}
+                </div>
+              </div>
+              <div>
+                <label
+                  className="block mb-4 text-3xl font-bold text-gray-900"
+                  htmlFor="earnings"
+                >
+                  Earnings
+                </label>
 
+                <div className="flex flex-row justify-between space-x-4 mb-6">
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="basic"
+                    >
+                      Fixed Basic Salary
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="basic"
+                      value={
+                        formData.earnings?.basic === 0
+                          ? ""
+                          : formData.earnings?.basic
+                      }
+                      onChange={(e) =>
+                        handleChange(e.target.name, e.target.value, true, false)
+                      }
+                      id="basic"
+                      placeholder="Enter Fixed Employee Basic Salary"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 `}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(formData.earnings?.basic || 0)}
+                    </span>
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="hra"
+                    >
+                      Fixed House Rent Allowance
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="hra"
+                      value={
+                        formData.earnings?.hra === 0
+                          ? ""
+                          : formData.earnings?.hra
+                      }
+                      onChange={(e) =>
+                        handleChange(e.target.name, e.target.value, true, false)
+                      }
+                      id="hra"
+                      placeholder="Enter Fixed House Rent Allowance"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(formData.earnings?.hra || 0)}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-row justify-between space-x-4 mb-6">
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="travel_allowance"
+                    >
+                      Fixed Travel Allowance
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="travel_allowance"
+                      value={
+                        formData.earnings?.travel_allowance === 0
+                          ? ""
+                          : formData.earnings?.travel_allowance
+                      }
+                      onChange={(e) =>
+                        handleChange(e.target.name, e.target.value, true, false)
+                      }
+                      id="travel_allowance"
+                      placeholder="Enter Fixed Employee Travel Allowance"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(
+                        formData.earnings?.travel_allowance || 0
+                      )}
+                    </span>
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="medical_allowance"
+                    >
+                      Fixed Medical Allowance
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="medical_allowance"
+                      value={
+                        formData.earnings?.medical_allowance === 0
+                          ? ""
+                          : formData.earnings?.medical_allowance
+                      }
+                      onChange={(e) =>
+                        handleChange(e.target.name, e.target.value, true, false)
+                      }
+                      id="medical_allowance"
+                      placeholder="Enter Fixed Medical Allowance"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(
+                        formData.earnings?.medical_allowance || 0
+                      )}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-row justify-between space-x-4 mb-6">
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="basket_of_benifits"
+                    >
+                      Fixed Basket of Benifits
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="basket_of_benifits"
+                      value={
+                        formData.earnings?.basket_of_benifits === 0
+                          ? ""
+                          : formData.earnings?.basket_of_benifits
+                      }
+                      onChange={(e) =>
+                        handleChange(e.target.name, e.target.value, true, false)
+                      }
+                      id="basket_of_benifits"
+                      placeholder="Enter Fixed Employee Basket of Benifits"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(
+                        formData.earnings?.basket_of_benifits || 0
+                      )}
+                    </span>
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="performance_bonus"
+                    >
+                      Fixed Performance Bonus
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="performance_bonus"
+                      value={
+                        formData.earnings?.performance_bonus === 0
+                          ? ""
+                          : formData.earnings?.performance_bonus
+                      }
+                      onChange={(e) =>
+                        handleChange(e.target.name, e.target.value, true, false)
+                      }
+                      id="performance_bonus"
+                      placeholder="Enter Fixed Performance Bonus"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(
+                        formData.earnings?.performance_bonus || 0
+                      )}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-row justify-between space-x-4 mb-6">
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="other_allowances"
+                    >
+                      Fixed Other Allowance
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="other_allowances"
+                      value={
+                        formData.earnings?.other_allowances === 0
+                          ? ""
+                          : formData.earnings?.other_allowances
+                      }
+                      onChange={(e) =>
+                        handleChange(e.target.name, e.target.value, true, false)
+                      }
+                      id="other_allowances"
+                      placeholder="Enter Fixed Other Allowance"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(
+                        formData.earnings?.other_allowances || 0
+                      )}
+                    </span>
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="conveyance"
+                    >
+                      Fixed Conveyance
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="conveyance"
+                      value={
+                        formData.earnings?.conveyance === 0
+                          ? ""
+                          : formData.earnings?.conveyance
+                      }
+                      onChange={(e) =>
+                        handleChange(e.target.name, e.target.value, true, false)
+                      }
+                      id="conveyance"
+                      placeholder="Enter Fixed Conveyance"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(formData.earnings?.conveyance || 0)}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-            
-
-
+              <div>
+                <label
+                  className="block mb-4 text-2xl font-bold text-gray-900"
+                  htmlFor="deductions"
+                >
+                  Deductions
+                </label>
+                <div className="flex flex-row justify-between space-x-4 mb-6">
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="income_tax"
+                    >
+                      Fixed Income Tax
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="income_tax"
+                      value={
+                        formData.deductions?.income_tax === 0
+                          ? ""
+                          : formData.deductions?.income_tax
+                      }
+                      onChange={(e) =>
+                        handleChange(e.target.name, e.target.value, false, true)
+                      }
+                      id="income_tax"
+                      placeholder="Enter Fixed Employee Income Tax"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(
+                        formData.deductions?.income_tax || 0
+                      )}
+                    </span>
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="esi"
+                    >
+                      Fixed Employees' State Insurance
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="esi"
+                      value={
+                        formData.deductions?.esi === 0
+                          ? ""
+                          : formData.deductions?.esi
+                      }
+                      onChange={(e) =>
+                        handleChange(e.target.name, e.target.value, false, true)
+                      }
+                      id="esi"
+                      placeholder="Enter Fixed Employees' State Insurance"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(formData.deductions?.esi || 0)}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-row justify-between space-x-4 mb-6">
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="epf"
+                    >
+                      Fixed Employees' Provident Fund
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="epf"
+                      value={
+                        formData.deductions?.epf === 0
+                          ? ""
+                          : formData.deductions?.epf
+                      }
+                      onChange={(e) =>
+                        handleChange(e.target.name, e.target.value, false, true)
+                      }
+                      id="epf"
+                      placeholder="Enter Fixed Employees' Provident Fund"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(formData.deductions?.epf || 0)}
+                    </span>
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="professional_tax"
+                    >
+                      Fixed Professional Tax
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="professional_tax"
+                      value={
+                        formData.deductions?.professional_tax === 0
+                          ? ""
+                          : formData.deductions?.professional_tax
+                      }
+                      onChange={(e) =>
+                        handleChange(e.target.name, e.target.value, false, true)
+                      }
+                      id="professional_tax"
+                      placeholder="Enter Fixed Employees' Professional Tax"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(
+                        formData.deductions?.professional_tax || 0
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
                   className="w-1/4 text-white bg-blue-700 hover:bg-blue-800
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
+            focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
                 >
                   Save Employee
                 </button>
@@ -1186,7 +1673,7 @@ const Employee = () => {
               <div>
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="email"
+                  htmlFor="update_name"
                 >
                   Full Name <span className="text-red-500 ">*</span>
                 </label>
@@ -1194,8 +1681,10 @@ const Employee = () => {
                   type="text"
                   name="name"
                   value={updateFormData.name}
-                  onChange={handleInputChange}
-                  id="name"
+                  onChange={(e) =>
+                    handleInputChange(e.target.name, e.target.value)
+                  }
+                  id="update_name"
                   placeholder="Enter the Full Name"
                   required
                   className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -1208,7 +1697,7 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="date"
+                    htmlFor="update_email"
                   >
                     Email <span className="text-red-500 ">*</span>
                   </label>
@@ -1216,8 +1705,10 @@ const Employee = () => {
                     type="email"
                     name="email"
                     value={updateFormData.email}
-                    onChange={handleInputChange}
-                    id="text"
+                    onChange={(e) =>
+                      handleInputChange(e.target.name, e.target.value)
+                    }
+                    id="update_email"
                     placeholder="Enter Email"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -1229,16 +1720,18 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="date"
+                    htmlFor="update_phone_number"
                   >
                     Phone Number <span className="text-red-500 ">*</span>
                   </label>
                   <Input
-                    type="number"
+                    type="tel"
                     name="phone_number"
                     value={updateFormData.phone_number}
-                    onChange={handleInputChange}
-                    id="text"
+                    onChange={(e) =>
+                      handleInputChange(e.target.name, e.target.value)
+                    }
+                    id="update_phone_number"
                     placeholder="Enter Phone Number"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -1251,10 +1744,10 @@ const Employee = () => {
                 </div>
               </div>
               <div className="flex flex-row justify-between space-x-4">
-                <div className="w-full">
+                <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="date"
+                    htmlFor="update_password"
                   >
                     Password <span className="text-red-500 ">*</span>
                   </label>
@@ -1262,8 +1755,10 @@ const Employee = () => {
                     type="text"
                     name="password"
                     value={updateFormData.password}
-                    onChange={handleInputChange}
-                    id="update-password"
+                    onChange={(e) =>
+                      handleInputChange(e.target.name, e.target.value)
+                    }
+                    id="update_password"
                     placeholder="Enter Password"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -1274,10 +1769,10 @@ const Employee = () => {
                     </p>
                   )}
                 </div>
-                <div className="w-full">
+                <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="date"
+                    htmlFor="update_pincode"
                   >
                     Pincode <span className="text-red-500 ">*</span>
                   </label>
@@ -1285,8 +1780,10 @@ const Employee = () => {
                     type="text"
                     name="pincode"
                     value={updateFormData.pincode}
-                    onChange={handleInputChange}
-                    id="text"
+                    onChange={(e) =>
+                      handleInputChange(e.target.name, e.target.value)
+                    }
+                    id="update_pincode"
                     placeholder="Enter Pincode"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -1302,7 +1799,7 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="date"
+                    htmlFor="update_adhaar_no"
                   >
                     Adhaar Number <span className="text-red-500 ">*</span>
                   </label>
@@ -1310,8 +1807,10 @@ const Employee = () => {
                     type="text"
                     name="adhaar_no"
                     value={updateFormData.adhaar_no}
-                    onChange={handleInputChange}
-                    id="text"
+                    onChange={(e) =>
+                      handleInputChange(e.target.name, e.target.value)
+                    }
+                    id="update_adhaar_no"
                     placeholder="Enter Adhaar Number"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -1325,7 +1824,7 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="date"
+                    htmlFor="update_pan_no"
                   >
                     Pan Number <span className="text-red-500 ">*</span>
                   </label>
@@ -1333,8 +1832,10 @@ const Employee = () => {
                     type="text"
                     name="pan_no"
                     value={updateFormData.pan_no}
-                    onChange={handleInputChange}
-                    id="text"
+                    onChange={(e) =>
+                      handleInputChange(e.target.name, e.target.value)
+                    }
+                    id="update_pan_no"
                     placeholder="Enter Pan Number"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -1347,7 +1848,7 @@ const Employee = () => {
               <div>
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="email"
+                  htmlFor="update_address"
                 >
                   Address <span className="text-red-500 ">*</span>
                 </label>
@@ -1355,8 +1856,10 @@ const Employee = () => {
                   type="text"
                   name="address"
                   value={updateFormData.address}
-                  onChange={handleInputChange}
-                  id="name"
+                  onChange={(e) =>
+                    handleInputChange(e.target.name, e.target.value)
+                  }
+                  id="update_address"
                   placeholder="Enter the Address"
                   required
                   className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -1369,13 +1872,13 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="category"
+                    htmlFor="update_designation_id"
                   >
                     Designation <span className="text-red-500 ">*</span>
                   </label>
-                 
+
                   <Select
-                    id="designation_id"
+                    id="update_designation_id"
                     name="designation_id"
                     value={selectedManagerId || undefined}
                     onChange={handleAntDSelectManager}
@@ -1404,21 +1907,10 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="status"
+                    htmlFor="update_status"
                   >
                     Status <span className="text-red-500">*</span>
                   </label>
-                  {/* <select
-                    name="status"
-                    value={updateFormData?.status}
-                    onChange={handleInputChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
-                  >
-                    <option value="">Select Status</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="terminated">Terminated</option>
-                  </select> */}
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Status"
@@ -1431,7 +1923,7 @@ const Employee = () => {
                         .includes(input.toLowerCase())
                     }
                     value={updateFormData?.status || undefined}
-                    onChange={(value) => handleAntInputDSelect("status", value)}
+                    onChange={(value) => handleInputChange("status", value)}
                   >
                     {["Active", "Inactive", "Terminated"].map((status) => (
                       <Select.Option key={status} value={status.toLowerCase()}>
@@ -1448,7 +1940,7 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="joiningdate"
+                    htmlFor="update_joining_date"
                   >
                     Joining Date <span className="text-red-500">*</span>
                   </label>
@@ -1456,8 +1948,10 @@ const Employee = () => {
                     type="date"
                     name="joining_date"
                     value={updateFormData.joining_date}
-                    onChange={handleInputChange}
-                    id="joiningdate"
+                    onChange={(e) =>
+                      handleInputChange(e.target.name, e.target.value)
+                    }
+                    id="update_joining_date"
                     placeholder="Enter Employee Joining Date"
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
@@ -1470,9 +1964,9 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="ld"
+                    htmlFor="update_leaving_date"
                   >
-                    Leaving Date <span className="text-red-500"></span>
+                    Leaving Date
                   </label>
                   <Input
                     type="date"
@@ -1480,14 +1974,15 @@ const Employee = () => {
                     value={
                       updateFormData?.leaving_date
                         ? new Date(updateFormData?.leaving_date || "")
-                          .toISOString()
-                          .split("T")[0]
+                            .toISOString()
+                            .split("T")[0]
                         : ""
                     }
-                    onChange={handleInputChange}
-                    id="ld"
+                    onChange={(e) =>
+                      handleInputChange(e.target.name, e.target.value)
+                    }
+                    id="update_leaving_date"
                     placeholder="Enter Leaving Date"
-                    required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                 </div>
@@ -1496,7 +1991,7 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="doB"
+                    htmlFor="update_dob"
                   >
                     Date of Birth <span className="text-red-500">*</span>
                   </label>
@@ -1506,12 +2001,14 @@ const Employee = () => {
                     value={
                       updateFormData?.dob
                         ? new Date(updateFormData?.dob || "")
-                          .toISOString()
-                          .split("T")[0]
+                            .toISOString()
+                            .split("T")[0]
                         : ""
                     }
-                    onChange={handleInputChange}
-                    id="doB"
+                    onChange={(e) =>
+                      handleInputChange(e.target.name, e.target.value)
+                    }
+                    id="update_dob"
                     placeholder="Enter Employee Date of Birth"
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
@@ -1522,20 +2019,10 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="gender"
+                    htmlFor="update_gender"
                   >
                     Gender <span className="text-red-500">*</span>
                   </label>
-                  {/* <select
-                    name="gender"
-                    value={updateFormData?.gender}
-                    onChange={handleInputChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </select> */}
                   <Select
                     className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                     placeholder="Select Gender"
@@ -1548,7 +2035,7 @@ const Employee = () => {
                         .includes(input.toLowerCase())
                     }
                     value={updateFormData?.gender || undefined}
-                    onChange={(value) => handleAntInputDSelect("gender", value)}
+                    onChange={(value) => handleInputChange("gender", value)}
                   >
                     {["Male", "Female", "Others"].map((gender) => (
                       <Select.Option key={gender} value={gender.toLowerCase()}>
@@ -1565,63 +2052,46 @@ const Employee = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="sal"
-                  >
-                    Salary <span className="text-red-500">*</span>
-                  </label>
-                  <Input
-                    type="number"
-                    name="salary"
-                    value={updateFormData.salary}
-                    onChange={handleInputChange}
-                    id="sal"
-                    placeholder="Enter Salary"
-                    required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
-                  />
-                  {errors.salary && (
-                    <p className="mt-2 text-sm text-red-600">{errors.salary}</p>
-                  )}
-                </div>
-                <div className="w-1/2">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="alternate"
+                    htmlFor="update_alternate_number"
                   >
                     Alternate Phone Number{" "}
                     <span className="text-red-500">*</span>
                   </label>
                   <Input
-                    type="number"
+                    type="tel"
                     name="alternate_number"
                     value={updateFormData.alternate_number}
-                    onChange={handleInputChange}
-                    id="alternate"
+                    onChange={(e) =>
+                      handleInputChange(e.target.name, e.target.value)
+                    }
+                    id="update_alternate_number"
                     placeholder="Enter Alternate Phone Number"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
+
                   {errors.alternate_number && (
                     <p className="mt-2 text-sm text-red-600">
                       {errors.alternate_number}
                     </p>
                   )}
                 </div>
-              </div>
-              <div className="flex flex-row justify-between space-x-4">
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="total_allocated_leaves"
+                    htmlFor="update_total_allocated_leaves"
                   >
                     Total No. of Leaves <span className="text-red-500">*</span>
                   </label>
                   <Input
                     type="number"
+                    onWheel={(e) => e.target.blur()}
                     name="total_allocated_leaves"
                     value={updateFormData.total_allocated_leaves}
-                    onChange={handleInputChange}
-                    id="total_allocated_leaves"
+                    onChange={(e) =>
+                      handleInputChange(e.target.name, e.target.value)
+                    }
+                    id="update_total_allocated_leaves"
                     placeholder="Enter total leaves"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -1632,10 +2102,12 @@ const Employee = () => {
                     </p>
                   )}
                 </div>
+              </div>
+              <div className="flex flex-row justify-between space-x-4">
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="cp"
+                    htmlFor="update_emergency_contact_person"
                   >
                     Emergency Contact Person{" "}
                     <span className="text-red-500">*</span>
@@ -1644,8 +2116,10 @@ const Employee = () => {
                     type="text"
                     name="emergency_contact_person"
                     value={updateFormData?.emergency_contact_person}
-                    onChange={handleInputChange}
-                    id="ld"
+                    onChange={(e) =>
+                      handleInputChange(e.target.name, e.target.value)
+                    }
+                    id="update_emergency_contact_person"
                     placeholder="Enter Emergency Contact Person Name"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -1656,15 +2130,12 @@ const Employee = () => {
                     </p>
                   )}
                 </div>
-              </div>
-              <div className="flex flex-row justify-between space-x-4">
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="emergency"
+                    htmlFor="update_emergency_contact_number"
                   >
                     Emergency Phone Number{" "}
-                  
                   </label>
                   <div className="flex items-center mb-2 gap-2">
                     <Input
@@ -1679,7 +2150,7 @@ const Employee = () => {
                           e
                         )
                       }
-                      id="emergency_0"
+                      id="update_emergency_contact_number_0"
                       placeholder="Enter Default Emergency Phone Number"
                       required
                       className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -1704,7 +2175,7 @@ const Employee = () => {
                               e
                             )
                           }
-                          id={`emergency_${index + 1}`}
+                          id={`update_emergency_contact_number_${index + 1}`}
                           placeholder="Enter Additional Emergency Phone Number"
                           className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
@@ -1734,15 +2205,472 @@ const Employee = () => {
                   </button>
                 </div>
               </div>
+              <div className="flex flex-row justify-between space-x-4">
+                <div className="w-1/2">
+                  <label
+                    className="block mb-2 text-sm font-medium text-gray-900"
+                    htmlFor="update_salary"
+                  >
+                    Fixed Salary <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    type="number"
+                    onWheel={(e) => e.target.blur()}
+                    name="salary"
+                    value={updateFormData.salary}
+                    onChange={(e) =>
+                      handleInputChange(e.target.name, e.target.value)
+                    }
+                    id="update_salary"
+                    placeholder="Enter Salary"
+                    required
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  />
+                  <span className="ml-2 font-medium font-mono text-blue-600">
+                    {numberToIndianWords(updateFormData.salary || 0)}
+                  </span>
+                  {errors.salary && (
+                    <p className="mt-2 text-sm text-red-600">{errors.salary}</p>
+                  )}
+                </div>
+              </div>
 
+              <div>
+                <label
+                  className="block mb-4 text-3xl font-bold text-gray-900"
+                  htmlFor="update_earnings"
+                >
+                  Earnings
+                </label>
 
-            
+                <div className="flex flex-row justify-between space-x-4 mb-6">
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="update_basic"
+                    >
+                      Fixed Basic Salary
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="basic"
+                      value={
+                        updateFormData.earnings?.basic === 0
+                          ? ""
+                          : updateFormData.earnings?.basic
+                      }
+                      onChange={(e) =>
+                        handleInputChange(
+                          e.target.name,
+                          e.target.value,
+                          true,
+                          false
+                        )
+                      }
+                      id="update_basic"
+                      placeholder="Enter Employee Fixed Basic Salary"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(updateFormData.earnings?.basic || 0)}
+                    </span>
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="update_hra"
+                    >
+                      Fixed House Rent Allowance
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="hra"
+                      value={
+                        updateFormData.earnings?.hra === 0
+                          ? ""
+                          : updateFormData.earnings?.hra
+                      }
+                      onChange={(e) =>
+                        handleInputChange(
+                          e.target.name,
+                          e.target.value,
+                          true,
+                          false
+                        )
+                      }
+                      id="update_hra"
+                      placeholder="Enter Fixed House Rent Allowance"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(updateFormData.earnings?.hra || 0)}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-row justify-between space-x-4 mb-6">
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="update_travel_allowance"
+                    >
+                      Fixed Travel Allowance
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="travel_allowance"
+                      value={
+                        updateFormData.earnings?.travel_allowance === 0
+                          ? ""
+                          : updateFormData.earnings?.travel_allowance
+                      }
+                      onChange={(e) =>
+                        handleInputChange(
+                          e.target.name,
+                          e.target.value,
+                          true,
+                          false
+                        )
+                      }
+                      id="update_travel_allowance"
+                      placeholder="Enter Fixed Employee Travel Allowance"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(
+                        updateFormData.earnings?.travel_allowance || 0
+                      )}
+                    </span>
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="update_medical_allowance"
+                    >
+                      Fixed Medical Allowance
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="medical_allowance"
+                      value={
+                        updateFormData.earnings?.medical_allowance === 0
+                          ? ""
+                          : updateFormData.earnings?.medical_allowance
+                      }
+                      onChange={(e) =>
+                        handleInputChange(
+                          e.target.name,
+                          e.target.value,
+                          true,
+                          false
+                        )
+                      }
+                      id="update_medical_allowance"
+                      placeholder="Enter Fixed Medical Allowance"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(
+                        updateFormData.earnings?.medical_allowance || 0
+                      )}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-row justify-between space-x-4 mb-6">
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="update_basket_of_benifits"
+                    >
+                      Fixed Basket of Benifits
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="basket_of_benifits"
+                      value={
+                        updateFormData.earnings?.basket_of_benifits === 0
+                          ? ""
+                          : updateFormData.earnings?.basket_of_benifits
+                      }
+                      onChange={(e) =>
+                        handleInputChange(
+                          e.target.name,
+                          e.target.value,
+                          true,
+                          false
+                        )
+                      }
+                      id="update_basket_of_benifits"
+                      placeholder="Enter Fixed Employee Basket of Benifits"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(
+                        updateFormData.earnings?.basket_of_benifits || 0
+                      )}
+                    </span>
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="update_performance_bonus"
+                    >
+                      Fixed Performance Bonus
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="performance_bonus"
+                      value={
+                        updateFormData.earnings?.performance_bonus === 0
+                          ? ""
+                          : updateFormData.earnings?.performance_bonus
+                      }
+                      onChange={(e) =>
+                        handleInputChange(
+                          e.target.name,
+                          e.target.value,
+                          true,
+                          false
+                        )
+                      }
+                      id="update_performance_bonus"
+                      placeholder="Enter Fixed Performance Bonus"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(
+                        updateFormData.earnings?.performance_bonus || 0
+                      )}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-row justify-between space-x-4 mb-6">
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="update_other_allowances"
+                    >
+                      Fixed Other Allowance
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="other_allowances"
+                      value={
+                        updateFormData.earnings?.other_allowances === 0
+                          ? ""
+                          : updateFormData.earnings?.other_allowances
+                      }
+                      onChange={(e) =>
+                        handleInputChange(
+                          e.target.name,
+                          e.target.value,
+                          true,
+                          false
+                        )
+                      }
+                      id="update_other_allowances"
+                      placeholder="Enter Fixed Other Allowance"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(
+                        updateFormData.earnings?.other_allowances || 0
+                      )}
+                    </span>
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="update_conveyance"
+                    >
+                      Fixed Conveyance
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="conveyance"
+                      value={
+                        updateFormData.earnings?.conveyance === 0
+                          ? ""
+                          : updateFormData.earnings?.conveyance
+                      }
+                      onChange={(e) =>
+                        handleInputChange(
+                          e.target.name,
+                          e.target.value,
+                          true,
+                          false
+                        )
+                      }
+                      id="update_conveyance"
+                      placeholder="Enter Fixed Conveyance"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(
+                        updateFormData.earnings?.conveyance || 0
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label
+                  className="block mb-4 text-3xl font-bold text-gray-900"
+                  htmlFor="update_deductions"
+                >
+                  Deductions
+                </label>
+                <div className="flex flex-row justify-between space-x-4 mb-6">
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="update_income_tax"
+                    >
+                      Fixed Income Tax
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="income_tax"
+                      value={
+                        updateFormData.deductions?.income_tax === 0
+                          ? ""
+                          : updateFormData.deductions?.income_tax
+                      }
+                      onChange={(e) =>
+                        handleInputChange(
+                          e.target.name,
+                          e.target.value,
+                          false,
+                          true
+                        )
+                      }
+                      id="update_income_tax"
+                      placeholder="Enter Fixed Employee Income Tax"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(
+                        updateFormData.deductions?.income_tax || 0
+                      )}
+                    </span>
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="update_esi"
+                    >
+                      Fixed Employees' State Insurance
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="esi"
+                      value={
+                        updateFormData.deductions?.esi === 0
+                          ? ""
+                          : updateFormData.deductions?.esi
+                      }
+                      onChange={(e) =>
+                        handleInputChange(
+                          e.target.name,
+                          e.target.value,
+                          false,
+                          true
+                        )
+                      }
+                      id="update_esi"
+                      placeholder="Enter Fixed Employees' State Insurance"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(updateFormData.deductions?.esi || 0)}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-row justify-between space-x-4 mb-6">
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="update_epf"
+                    >
+                      Fixed Employees' Provident Fund
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="epf"
+                      value={
+                        updateFormData.deductions?.epf === 0
+                          ? ""
+                          : updateFormData.deductions?.epf
+                      }
+                      onChange={(e) =>
+                        handleInputChange(
+                          e.target.name,
+                          e.target.value,
+                          false,
+                          true
+                        )
+                      }
+                      id="update_epf"
+                      placeholder="Enter Fixed Employees' Provident Fund"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(updateFormData.deductions?.epf || 0)}
+                    </span>
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                      htmlFor="update_professional_tax"
+                    >
+                      Fixed Professional Tax
+                    </label>
+                    <Input
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      name="professional_tax"
+                      value={
+                        updateFormData.deductions?.professional_tax === 0
+                          ? ""
+                          : updateFormData.deductions?.professional_tax
+                      }
+                      onChange={(e) =>
+                        handleInputChange(
+                          e.target.name,
+                          e.target.value,
+                          false,
+                          true
+                        )
+                      }
+                      id="update_professional_tax"
+                      placeholder="Enter Fixed Employees' Professional Tax"
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    />
+                    <span className="ml-2 font-medium font-mono text-blue-600">
+                      {numberToIndianWords(
+                        updateFormData.deductions?.professional_tax || 0
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
                   className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+            focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Update Employee
                 </button>
@@ -1772,7 +2700,7 @@ const Employee = () => {
                 <div>
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="groupName"
+                    htmlFor="delete_employee_name"
                   >
                     Please enter{" "}
                     <span className="text-primary font-bold">
@@ -1783,7 +2711,7 @@ const Employee = () => {
                   </label>
                   <Input
                     type="text"
-                    id="groupName"
+                    id="delete_employee_name"
                     placeholder="Enter the employee Full Name"
                     required
                     className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
@@ -1792,7 +2720,7 @@ const Employee = () => {
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+        focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Delete
                 </button>
@@ -1804,4 +2732,4 @@ const Employee = () => {
     </>
   );
 };
-export default Employee;
+export default Payroll;

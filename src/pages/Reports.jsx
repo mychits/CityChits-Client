@@ -14,6 +14,8 @@ import {
   MdMan,
 } from "react-icons/md";
 import { FaPersonWalkingArrowLoopLeft } from "react-icons/fa6";
+import { TbGraph } from "react-icons/tb";
+import { TbGraphFilled } from "react-icons/tb";
 import { RiMoneyRupeeCircleFill, RiAuctionFill } from "react-icons/ri";
 import { LiaCalculatorSolid } from "react-icons/lia";
 import { GiMoneyStack } from "react-icons/gi";
@@ -30,6 +32,8 @@ import { MdOutlinePayments } from "react-icons/md";
 import { MdCancel } from "react-icons/md";
 import { BsCalculator } from "react-icons/bs";
 import { MdCalendarMonth } from "react-icons/md";
+import { FaMobileAlt } from "react-icons/fa";
+import { PiMoneyDuotone } from "react-icons/pi";
 const GlobalSearchChangeHandler = (e) => {
   const { value } = e.target;
   setSearchText(value);
@@ -153,13 +157,13 @@ const subMenus = [
     category: "Finance",
     color: "from-teal-500 to-teal-600",
   },
-  {
-    title: "PayOut Report",
-    link: "/reports/payout",
-    Icon: MdOutlinePayment,
-    category: "Finance",
-    color: "from-orange-500 to-orange-600",
-  },
+  // {
+  //   title: "PayOut Report",
+  //   link: "/reports/payout",
+  //   Icon: MdOutlinePayment,
+  //   category: "Finance",
+  //   color: "from-orange-500 to-orange-600",
+  // },
   {
     id:"15",
     title: "Outstanding Report",
@@ -175,12 +179,13 @@ const subMenus = [
     category: "Finance",
     color: "from-violet-500 to-violet-600",
   },
-  { 
-    title: "Lead Report", 
-    link: "/reports/lead-report", 
+  {
+     id:"17",
+    title: "All Lead Report",
+    link: "/reports/lead-report",
     Icon: MdMan,
-    category: "Sales",
-    color: "from-fuchsia-500 to-fuchsia-600",
+    category: "Lead",
+    color: "from-purple-500 to-purple-600",
   },
   {
     title: "Pigme Report",
@@ -224,13 +229,47 @@ const subMenus = [
     category: "Employee",
     color: "from-violet-600 to-violet-700",
   },
-  {
-    id:"24",
-    title: "Payout Salary Report",
-    link: "/reports/payout-salary-report",
+
+    {
+    id:"25",
+    title: "Commission Report",
+    link: "/reports/target-commission",
+    category: "Agent",
+   Icon: TbGraph,
+   color: "from-yellow-500 to-yellow-600",
+  },
+   {
+    id:"26",
+    title: "Incentive Report",
+    link: "/reports/target-incentive",
     category: "Employee",
-    Icon: HiOutlineBanknotes,
-    color: "from-indigo-600 to-indigo-700",
+   Icon: TbGraphFilled,
+   color: "from-indigo-500 to-indigo-600",
+  },
+  // {
+  //   id:"24",
+  //   title: "Payout Salary Report",
+  //   link: "/reports/payout-salary-report",
+  //   category: "Employee",
+  //   Icon: HiOutlineBanknotes,
+  //   color: "from-indigo-600 to-indigo-700",
+  // },
+
+  {
+    id:"7",
+    title: "Loan Summary Report",
+    link: "/reports/customer-loan-report",
+    Icon: GiMoneyStack,
+    category: "Loan",
+    color: "from-cyan-500 to-cyan-600",
+  },
+   {
+    id:"&*DD",
+    title: "Pigmy Summary Report",
+    link: "/reports/pigmy-summary-report",
+    Icon: BsCalculator ,
+    category: "Pigmy",
+    color: "from-blue-500 to-blue-600",
   },
 
       {
@@ -264,6 +303,34 @@ const subMenus = [
     category: "Customer",
    Icon: MdCalendarMonth,
    color: "from-violet-500 to-violet-600",
+  },
+
+    {
+    id:"32",
+    title: "User Installed Source Report",
+    link: "/reports/user-registration-source-summary-report",
+    category: "Customer",
+   Icon: FaMobileAlt,
+   color: "from-blue-500 to-blue-600",
+  },
+
+       {
+    id:"38",
+    title: "Salary report",
+    link: "/reports/employee-salary-report",
+    category: "Employee",
+   Icon: HiOutlineBanknotes,
+   color: "from-blue-500 to-blue-600",
+   isNew: false,
+  },
+   {
+    id: "39",
+    title: "Employee Deduction report",
+    link: "/reports/employee-deduction-report",
+    category: "Employee",
+    Icon: PiMoneyDuotone,
+    color: "from-blue-500 to-blue-600",
+    isNew: false,
   },
 
 ];

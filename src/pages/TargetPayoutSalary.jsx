@@ -4,7 +4,7 @@ import Sidebar from "../components/layouts/Sidebar";
 import API from "../instance/TokenInstance";
 import Modal from "../components/modals/Modal";
 import DataTable from "../components/layouts/Datatable";
-import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
+import CustomAlert from "../components/alerts/CustomAlert";
 import CircularLoader from "../components/loaders/CircularLoader";
 import Navbar from "../components/layouts/Navbar";
 import { Select, Tooltip, notification } from "antd";
@@ -31,11 +31,7 @@ const TargetPayOutSalary = () => {
     incentiveAmount: "₹0.00",
     incentivePercent: "0%",
   });
-  const onGlobalSearchChangeHandler = (e) => {
-    setSearchText(e.target.value);
-    setCurrentPage(1);
-    setCurrentPageRelated(1);
-  };
+
   const [agents, setAgents] = useState([]);
   const [salaryPayments, setSalaryPayments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -192,7 +188,7 @@ const TargetPayOutSalary = () => {
 
   const fetchAgents = async () => {
     try {
-      const response = await API.get("/agent/get-employee");
+      const response = await API.get("/employee");
       setAgents(response.data?.employee || []);
     } catch (error) {
       console.error("Failed to fetch Agents");
@@ -274,12 +270,12 @@ const TargetPayOutSalary = () => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
-    setAdminId(userObj?._id);
-    setAdminName(userObj?.name || "");
+    setAdminId(userObj._id);
+    setAdminName(userObj.name || "");
 
     if (userObj?.admin_access_right_id?.access_permissions?.edit_payment) {
       setModifyPayment(
-        userObj?.admin_access_right_id?.access_permissions?.edit_payment === "true"
+        userObj.admin_access_right_id.access_permissions.edit_payment === "true"
       );
     }
   }, []);
@@ -382,17 +378,14 @@ const TargetPayOutSalary = () => {
       <div>
         {contextHolder}
         <div className="flex mt-20">
-           <Sidebar />
-        <Navbar
-          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-          visibility={true}
-        />
-        <CustomAlertDialog
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
-        />
+          <Navbar visibility={true} />
+          <Sidebar />
+          <CustomAlert
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            noReload={alertConfig.noReload}
+          />
           <div className="flex-grow p-7">
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-semibold">
@@ -407,7 +400,7 @@ const TargetPayOutSalary = () => {
                     setShowSalaryModal(true);
                     resetForm();
                   }}
-                  className="ml-4 bg-violet-900 text-white px-4 py-2 rounded shadow-md hover:bg-violet-600 transition duration-200 flex items-center"
+                  className="ml-4 bg-blue-900 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition duration-200 flex items-center"
                 >
                   <span className="mr-2">+</span> Salary Payment
                 </button>
@@ -415,7 +408,7 @@ const TargetPayOutSalary = () => {
             </div>
 
             <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4 text-violet-800 border-b pb-2">
+              <h2 className="text-xl font-semibold mb-4 text-blue-800 border-b pb-2">
                 Salary Payments
               </h2>
 
@@ -539,7 +532,7 @@ const TargetPayOutSalary = () => {
                       <div className="col-span-2">
                         <button
                           type="button"
-                          className="mt-2 bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded"
+                          className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
                           onClick={() => {
                             if (
                               salaryForm.agent_id &&
@@ -757,7 +750,7 @@ const TargetPayOutSalary = () => {
                   />
                 </div>
 
-                <div className="w-full bg-violet-50 p-3 rounded-lg">
+                <div className="w-full bg-blue-50 p-3 rounded-lg">
                   <label className="block mb-1 text-sm font-medium text-gray-900">
                     Disbursed By
                   </label>
@@ -775,7 +768,7 @@ const TargetPayOutSalary = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="px-4 py-2 bg-violet-700 text-white rounded-lg hover:bg-violet-600 disabled:opacity-50"
+                    className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
                   >
                     {isLoading ? "Processing..." : "Save Payment"}
                   </button>

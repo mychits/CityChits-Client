@@ -26,6 +26,13 @@ const Loan = () => {
   const [currentUpdateBorrower, setCurrentUpdateBorrower] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [removeReason, setRemoveReason] = useState("");
+  const [customRemoveReason, setCustomRemoveReason] = useState("");
+
+
+
   const onGlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
@@ -68,6 +75,55 @@ const Loan = () => {
     referred_type: "",
   });
 
+  const handleRemoveModalOpen = async (borrowerId) => {
+    try {
+      const response = await api.get(`/loans/get-borrower/${borrowerId}`);
+      setCurrentBorrower(response.data);
+      setRemoveReason("");
+      setShowRemoveModal(true);
+    } catch (error) {
+      console.error("Error fetching borrower:", error);
+    }
+  };
+
+const handleRemoveBorrower = async () => {
+  if (!removeReason || (removeReason === "Other" && !customRemoveReason.trim())) {
+    setAlertConfig({
+      visibility: true,
+      message: "Please select and specify removal reason",
+      type: "warning",
+    });
+    return;
+  }
+
+  try {
+    await api.patch(
+      `/loans/${currentBorrower._id}/remove`,
+      {
+        removal_reason:
+          removeReason === "Other" ? customRemoveReason : removeReason,
+      }
+    );
+
+    setAlertConfig({
+      visibility: true,
+      message: "Loan removed successfully",
+      type: "success",
+    });
+
+    setShowRemoveModal(false);
+    setRemoveReason("");
+    setCustomRemoveReason("");
+    setCurrentBorrower(null);
+    setReloadTrigger((prev) => prev + 1);
+
+  } catch (error) {
+    console.error("Error removing loan:", error);
+  }
+};
+
+
+
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
@@ -97,7 +153,7 @@ const Loan = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await api.get("/agent/get-employee");
+        const response = await api.get("/employee");
         setEmployees(response?.data?.employee);
       } catch (error) {
         console.error("failed to fetch employees", error);
@@ -128,14 +184,14 @@ const Loan = () => {
           referred_type: borrower?.referred_type,
           referred_by:
             borrower?.referred_employee?.name &&
-            borrower?.referred_employee?.phone_number
+              borrower?.referred_employee?.phone_number
               ? `${borrower.referred_employee.name} | ${borrower?.referred_employee?.phone_number}`
               : borrower?.referred_agent?.name
-    ? `${borrower.referred_agent.name} | ${borrower.referred_agent.phone_number}`
-              : borrower?.referred_customer?.full_name &&
-                borrower?.referred_customer?.phone_number
-              ? `${borrower.referred_customer.full_name} | ${borrower?.referred_customer?.phone_number}`
-              : "N/A",
+                ? `${borrower.referred_agent.name} | ${borrower.referred_agent.phone_number}`
+                : borrower?.referred_customer?.full_name &&
+                  borrower?.referred_customer?.phone_number
+                  ? `${borrower.referred_customer.full_name} | ${borrower?.referred_customer?.phone_number}`
+                  : "N/A",
           action: (
             <div className="flex justify-center gap-2" key={borrower._id}>
               <Dropdown
@@ -157,13 +213,14 @@ const Loan = () => {
                       key: "2",
                       label: (
                         <div
-                          className="text-red-600"
-                          onClick={() => handleDeleteModalOpen(borrower._id)}
+                          className="text-orange-600"
+                          onClick={() => handleRemoveModalOpen(borrower._id)}
                         >
-                          Delete
+                          Remove
                         </div>
                       ),
                     },
+
                   ],
                 }}
                 placement="bottomLeft"
@@ -310,8 +367,8 @@ const Loan = () => {
         start_date: formattedStartDate,
         end_date: formattedEndDate,
         note: response?.data?.note,
-        referred_employee: response?.data?.referred_employee?._id  || "",
-        referred_customer: response?.data?.referred_customer?._id  || "",
+        referred_employee: response?.data?.referred_employee?._id || "",
+        referred_customer: response?.data?.referred_customer?._id || "",
         referred_agent: response?.data?.referred_agent?._id || "",
         referred_type: response?.data?.referred_type || "",
       });
@@ -377,7 +434,7 @@ const Loan = () => {
     { key: "service_charges", header: "Service Charges" },
     { key: "start_date", header: "Start Date" },
     { key: "end_date", header: "Due Date" },
-     { key: "referred_type", header: "Referred Type" },
+    { key: "referred_type", header: "Referred Type" },
     { key: "referred_by", header: "Referred By" },
     { key: "note", header: "Note" },
     { key: "action", header: "Action" },
@@ -386,19 +443,20 @@ const Loan = () => {
   return (
     <>
       <div>
-       
-        <div className="flex mt-20">
-            <Sidebar />
         <Navbar
-          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
           visibility={true}
+          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
         />
         <CustomAlertDialog
           type={alertConfig.type}
           isVisible={alertConfig.visibility}
           message={alertConfig.message}
-          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
+          onClose={() =>
+            setAlertConfig((prev) => ({ ...prev, visibility: false }))
+          }
         />
+        <div className="flex mt-20">
+          <Sidebar />
 
           <div className="flex-grow p-7">
             <div className="mt-6 mb-8">
@@ -409,7 +467,7 @@ const Loan = () => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
                 >
                   + Add Loan
                 </button>
@@ -451,7 +509,7 @@ const Loan = () => {
                   value={formData.borrower}
                   onChange={handleChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                 >
                   <option value="" selected hidden>
                     Select Borrower Name
@@ -461,7 +519,7 @@ const Loan = () => {
                   ))}
                 </select> */}
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   placeholder="Select Or Search  Borrower Name "
                   popupMatchSelectWidth={false}
                   showSearch
@@ -477,7 +535,7 @@ const Loan = () => {
                 >
                   {users.map((user) => (
                     <Select.Option key={user._id} value={user._id}>
-                     {user.customer_id} | {user.full_name} | {user.phone_number} 
+                      {user.customer_id} | {user.full_name} | {user.phone_number}
                     </Select.Option>
                   ))}
                 </Select>
@@ -502,7 +560,7 @@ const Loan = () => {
                     id="loan_amount"
                     placeholder="Enter Loan Amount"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.loan_amount && (
                     <p className="text-red-500 text-sm mt-1">
@@ -525,7 +583,7 @@ const Loan = () => {
                     id="tenure"
                     placeholder="Enter Tenure in Days"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.tenure && (
                     <p className="text-red-500 text-sm mt-1">{errors.tenure}</p>
@@ -549,7 +607,7 @@ const Loan = () => {
                     id="service_charges"
                     placeholder="Enter Service Charges"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.service_charges && (
                     <p className="text-red-500 text-sm mt-1">
@@ -574,7 +632,7 @@ const Loan = () => {
                     onChange={handleChange}
                     id="daily_payment_amount"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.daily_payment_amount && (
                     <p className="text-red-500 text-sm mt-1">
@@ -600,7 +658,7 @@ const Loan = () => {
                     id="start_date"
                     placeholder="Enter the Date"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.start_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -623,7 +681,7 @@ const Loan = () => {
                     id="end_date"
                     placeholder="Enter End Date"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.end_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -638,7 +696,7 @@ const Loan = () => {
                     Referred Type <span className="text-red-500">*</span>
                   </label>
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                     placeholder="Select Referred Type"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -677,7 +735,7 @@ const Loan = () => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
                       placeholder="Select Or Search Referred Customer"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -709,7 +767,7 @@ const Loan = () => {
                       <span className="text-red-500">*</span>
                     </label>
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
                       placeholder="Select or Search Referred Agent"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -744,7 +802,7 @@ const Loan = () => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
                       placeholder="Select Or Search Referred Employee"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -785,10 +843,10 @@ const Loan = () => {
                     id="note"
                     placeholder="Specify Note if any!"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   <div
-                    className="bg-violet-700 hover:bg-violet-800 w-10 h-10 flex justify-center items-center rounded-md"
+                    className="bg-blue-700 hover:bg-blue-800 w-10 h-10 flex justify-center items-center rounded-md"
                     onClick={() => {
                       window.open("Calculator:///");
                     }}
@@ -800,8 +858,8 @@ const Loan = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800
-              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
+                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800
+              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
                 >
                   Save Loan
                 </button>
@@ -831,7 +889,7 @@ const Loan = () => {
                   value={updateFormData.borrower}
                   onChange={handleChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                 >
                   <option value="" selected hidden>
                     Select Borrower Name
@@ -841,7 +899,7 @@ const Loan = () => {
                   ))}
                 </select> */}
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   placeholder="Select Or Search Borrower Name"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -882,7 +940,7 @@ const Loan = () => {
                     id="loan_amount"
                     placeholder="Enter Loan Amount"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.loan_amount && (
                     <p className="text-red-500 text-sm mt-1">
@@ -905,7 +963,7 @@ const Loan = () => {
                     id="tenure"
                     placeholder="Enter Tenure in Days"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.tenure && (
                     <p className="text-red-500 text-sm mt-1">{errors.tenure}</p>
@@ -929,7 +987,7 @@ const Loan = () => {
                     id="service_charges"
                     placeholder="Enter Service Charges"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.service_charges && (
                     <p className="text-red-500 text-sm mt-1">
@@ -954,7 +1012,7 @@ const Loan = () => {
                     onChange={handleInputChange}
                     id="daily_payment_amount"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.daily_payment_amount && (
                     <p className="text-red-500 text-sm mt-1">
@@ -980,7 +1038,7 @@ const Loan = () => {
                     id="start_date"
                     placeholder="Enter the Date"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.start_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -1003,7 +1061,7 @@ const Loan = () => {
                     id="end_date"
                     placeholder="Enter End Date"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.end_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -1018,7 +1076,7 @@ const Loan = () => {
                     Referred Type <span className="text-red-500">*</span>
                   </label>
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
                     placeholder="Select Referred Type"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1057,7 +1115,7 @@ const Loan = () => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
                       placeholder="Select Or Search Referred Customer"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1089,7 +1147,7 @@ const Loan = () => {
                       <span className="text-red-500">*</span>
                     </label>
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
                       placeholder="Select or Search Referred Agent"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1124,7 +1182,7 @@ const Loan = () => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
                       placeholder="Select Or Search Referred Employee"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1167,10 +1225,10 @@ const Loan = () => {
                     id="note"
                     placeholder="Specify Note if any!"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   <div
-                    className="bg-violet-700 hover:bg-violet-800 w-10 h-10 flex justify-center items-center rounded-md"
+                    className="bg-blue-700 hover:bg-blue-800 w-10 h-10 flex justify-center items-center rounded-md"
                     onClick={() => {
                       window.open("Calculator:///");
                     }}
@@ -1182,8 +1240,8 @@ const Loan = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800
-              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
+                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800
+              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
                 >
                   Update Loan
                 </button>
@@ -1227,13 +1285,13 @@ const Loan = () => {
                     id="borrowerName"
                     placeholder="Enter the Borrower Name"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                 </div>
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Delete
                 </button>
@@ -1241,6 +1299,86 @@ const Loan = () => {
             )}
           </div>
         </Modal>
+
+        <Modal
+          isVisible={showRemoveModal}
+          onClose={() => {
+            setShowRemoveModal(false);
+            setCurrentBorrower(null);
+          }}
+        >
+          <div className="py-6 px-5 text-left">
+            <h3 className="mb-2 text-xl font-bold text-gray-900">
+              Remove Loan
+            </h3>
+
+            <p className="mb-4 text-sm text-gray-700">
+              Are you sure you want to remove this loan?
+            </p>
+
+            <div className="mb-4">
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Removal Reason <span className="text-red-500">*</span>
+              </label>
+
+              <Select
+                placeholder="Select reason"
+                value={removeReason || undefined}
+                onChange={(value) => {
+                  setRemoveReason(value);
+                  setCustomRemoveReason("");
+                }}
+                className="w-full"
+              >
+                {[
+                  "Loan Completed Successfully",
+                  "All EMIs Paid",
+                  "Loan Closed Early",
+                  "Customer Request",
+                  "Duplicate Loan Entry",
+                  "Verification Failed",
+                  "Loan Replaced With New Loan",
+                  "Written Off",
+                  "Other",
+                ].map((reason) => (
+                  <Select.Option key={reason} value={reason}>
+                    {reason}
+                  </Select.Option>
+                ))}
+              </Select>
+              {removeReason === "Other" && (
+                <div className="mt-3">
+                  <label className="block mb-2 text-sm font-medium text-gray-900">
+                    Specify Reason <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    placeholder="Enter removal reason"
+                    value={customRemoveReason}
+                    onChange={(e) => setCustomRemoveReason(e.target.value)}
+                  />
+                </div>
+              )}
+
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowRemoveModal(false)}
+                className="px-4 py-2 border rounded-md"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleRemoveBorrower}
+                className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700"
+              >
+                Confirm Remove
+              </button>
+            </div>
+          </div>
+        </Modal>
+
       </div>
     </>
   );

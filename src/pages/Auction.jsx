@@ -1,4 +1,3 @@
-
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import Sidebar from "../components/layouts/Sidebar";
@@ -10,12 +9,13 @@ import { BsEye } from "react-icons/bs";
 import { Dropdown } from "antd";
 import DataTable from "../components/layouts/Datatable";
 import { EyeIcon } from "lucide-react";
-import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
+import CustomAlert from "../components/alerts/CustomAlert";
 import Navbar from "../components/layouts/Navbar";
-import { Select } from "antd";
+import { Select, Input } from "antd";
 import { IoMdMore } from "react-icons/io";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
+import { fieldSize } from "../data/fieldSize";
 const Auction = () => {
   const [groups, setGroups] = useState([]);
   const [TableAuctions, setTableAuctions] = useState([]);
@@ -144,17 +144,29 @@ const Auction = () => {
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
-  const handleChangeUser = (e) => {
-    const { name, value } = e.target;
-    const [user_id, ticket] = value.split("-");
-    
-    setFormData((prevData) => ({
-      ...prevData,
-      user_id,
-      ticket,
-    }));
-    setErrors((prevErrors) => ({ ...prevErrors, customer: "" }));
-  };
+  // const handleChangeUser = (e) => {
+  //   const { name, value } = e.target;
+  //   const [user_id, ticket] = value.split("-");
+
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     user_id,
+  //     ticket,
+  //   }));
+  //   setErrors((prevErrors) => ({ ...prevErrors, customer: "" }));
+  // };
+
+const handleChangeUser = (value) => {
+  const [user_id, ticket] = value.split("-");
+
+  setFormData((prevData) => ({
+    ...prevData,
+    user_id,
+    ticket,
+  }));
+
+  setErrors((prevErrors) => ({ ...prevErrors, customer: "" }));
+};
 
   const handleGroupChange = async (groupId) => {
     setSelectedGroup(groupId);
@@ -178,11 +190,29 @@ const Auction = () => {
     }
   };
 
-  const handleGroup = async (event) => {
-    const groupId = event.target.value;
+  // const handleGroup = async (event) => {
+  //   const groupId = event.target.value;
+  //   setErrors((prevErrors) => ({ ...prevErrors, group: "" }));
+  //   setSelectedGroupId(groupId);
+  //   handleGroupChange(groupId);
+
+  //   if (groupId) {
+  //     try {
+  //       const response = await api.get(`/group/get-by-id-group/${groupId}`);
+  //       console.log("API Response:", response.data);
+  //       setGroupInfo(response.data || {});
+  //     } catch (error) {
+  //       console.error("Error fetching group data:", error);
+  //       setGroupInfo({});
+  //     }
+  //   } else {
+  //     setGroupInfo({});
+  //   }
+  // };
+  const handleGroup = async (groupId) => {
     setErrors((prevErrors) => ({ ...prevErrors, group: "" }));
     setSelectedGroupId(groupId);
-    handleGroupChange(groupId);
+    handleGroupChange(groupId); // your existing callback
 
     if (groupId) {
       try {
@@ -197,7 +227,6 @@ const Auction = () => {
       setGroupInfo({});
     }
   };
-
   const handleGroupAuction = async (groupId) => {
     setSelectedAuctionGroupId(groupId);
     handleGroupAuctionChange(groupId);
@@ -211,7 +240,6 @@ const Auction = () => {
   };
   const nextDate = (dateString) => {
     const date = new Date(dateString);
-
 
     return date.toISOString()?.split("T")[0];
   };
@@ -228,7 +256,7 @@ const Auction = () => {
             {
               id: 1,
               auction_date: prevDate(response?.data[0]?.auction_date),
-              next_date:nextDate(response?.data[0]?.auction_date),
+              next_date: nextDate(response?.data[0]?.auction_date),
               name: "Commencement",
               phone_number: "Commencement",
               ticket: "Commencement",
@@ -399,27 +427,23 @@ const Auction = () => {
     const { name, value } = e.target;
     setUpdateFormData((prevData) => ({
       ...prevData,
-      [name]: value
+      [name]: value,
     }));
     setErrors((prevData) => ({
       ...prevData,
       [name]: "",
-    }))
-
-  }
+    }));
+  };
 
   const handleUpdateModalOpen = async (groupId, si) => {
     try {
       const response = await api.get(`/auction/get-auction-by-id/${groupId}`);
       console.info("check test", response.data);
       setUpdateFormData({
-      auction_date: response.data?.auction_date,
-      next_date: response.data?.next_date,
-      })
-      setCurrentUpdateGroup({ ...response.data, SI_number: si ,
-      
-
+        auction_date: response.data?.auction_date,
+        next_date: response.data?.next_date,
       });
+      setCurrentUpdateGroup({ ...response.data, SI_number: si });
       setShowModalUpdate(true);
     } catch (error) {
       console.error("Error fetching auction:", error);
@@ -428,57 +452,71 @@ const Auction = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    try{
-      response = await api.put(`/auction/${currentUpdateGroup?._id}`,updateFormData);
+    try {
+      response = await api.put(
+        `/auction/${currentUpdateGroup?._id}`,
+        updateFormData
+      );
       console.info(response.data, "test");
       setShowModalUpdate(false);
-     // setReloadTrigger((prev) => prev + 1);
+      // setReloadTrigger((prev) => prev + 1);
 
       setAlertConfig({
         visibility: true,
         message: "Auction date Updated Successfully",
         type: "success",
       });
-
-    }catch(error){
+    } catch (error) {
       console.error("error in updating auction", error);
       if (
-          error.response &&
-          error.response.data &&
-          error.response.data.message
-        ) {
-          setAlertConfig({
-            visibility: true,
-            message: `${error?.response?.data?.message}`,
-            type: "error",
-          });
-        } else {
-          setAlertConfig({
-            visibility: true,
-            message: "An unexpected error occurred. Please try again.",
-            type: "error",
-          });
-        }
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setAlertConfig({
+          visibility: true,
+          message: `${error?.response?.data?.message}`,
+          type: "error",
+        });
+      } else {
+        setAlertConfig({
+          visibility: true,
+          message: "An unexpected error occurred. Please try again.",
+          type: "error",
+        });
+      }
     }
-  }
+  };
 
   console.log(filteredAuction);
+
+  const handleAntDSelect = async (field, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [field]: "",
+    }));
+  };
 
   return (
     <>
       <div>
         <div className="flex mt-20">
+          <Navbar
+            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+            visibility={true}
+          />
           <Sidebar />
-        <Navbar
-          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-          visibility={true}
-        />
-        <CustomAlertDialog
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
-        />
+
+          <CustomAlert
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+          />
           <div className="flex-grow p-7">
             <h1 className="text-2xl font-semibold">Auctions</h1>
             <div className="mt-6 mb-8">
@@ -510,7 +548,7 @@ const Auction = () => {
                       setShowModal(true);
                       setErrors({});
                     }}
-                    className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                    className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
                   >
                     + Add Auction
                   </button>
@@ -568,18 +606,27 @@ const Auction = () => {
                   >
                     Group <span className="text-red-500 ">*</span>
                   </label>
-                  <select
-                    value={selectedGroupId}
-                    onChange={handleGroup}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+
+                  <Select
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                    placeholder="Select or Search group"
+                    popupMatchSelectWidth={false}
+                    showSearch
+                    name="group_id"
+                    value={selectedGroupId || undefined}
+                    onChange={(value) => handleGroup(value)}
+                    filterOption={(input, option) =>
+                      option?.children
+                        ?.toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
                   >
-                    <option value="">Select Group</option>
                     {groups.map((group) => (
-                      <option key={group._id} value={group._id}>
+                      <Select.Option key={group._id} value={group._id}>
                         {group.group_name}
-                      </option>
+                      </Select.Option>
                     ))}
-                  </select>
+                  </Select>
                   {errors.group && (
                     <p className="mt-1 text-sm text-red-500">{errors.group}</p>
                   )}
@@ -592,14 +639,14 @@ const Auction = () => {
                     >
                       Group Value
                     </label>
-                    <input
+                    <Input
                       type="number"
                       name="group_value"
                       value={groupInfo.group_value || 0}
                       id="group_value"
                       placeholder="select group to check"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -616,7 +663,7 @@ const Auction = () => {
                       id="group_install"
                       placeholder="select group to check"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -633,7 +680,7 @@ const Auction = () => {
                       value={formData.auction_type}
                       onChange={handleChange}
                       required
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     >
                       <option value="normal">Normal Auction</option>
                       <option value="free">Free Auction</option>
@@ -653,26 +700,37 @@ const Auction = () => {
                   >
                     Customers <span className="text-red-500 ">*</span>
                   </label>
-                  <select
+                  <Select
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                    placeholder="Select or Search Customer"
+                    popupMatchSelectWidth={false}
+                    showSearch
                     name="user_id"
-                    value={`${formData.user_id}-${formData.ticket}`}
+                    value={
+                      formData.user_id && formData.ticket
+                        ? `${formData.user_id}-${formData.ticket}`
+                        : undefined
+                    }
                     onChange={handleChangeUser}
-                    required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                    filterOption={(input, option) =>
+                      option?.children
+                        ?.toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
                   >
-                    <option value="">Select Customer</option>
                     {filteredUsers.map(
                       (user) =>
                         user?.user_id?._id && (
-                          <option
-                            key={`${user.user_id?._id}-${user.tickets}`}
-                            value={`${user.user_id?._id}-${user.tickets}`}
+                          <Select.Option
+                            key={`${user.user_id._id}-${user.tickets}`}
+                            value={`${user.user_id._id}-${user.tickets}`}
                           >
-                            {user.user_id?.full_name} | {user.tickets}
-                          </option>
+                            {`${user.user_id.full_name} | ${user.tickets}`}
+                          </Select.Option>
                         )
                     )}
-                  </select>
+                  </Select>
+
                   {errors.customer && (
                     <p className="mt-1 text-sm text-red-500">
                       {errors.customer}
@@ -695,7 +753,7 @@ const Auction = () => {
                     id="name"
                     placeholder="Enter the Bid Amount"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                   />
                   {errors.bid_amount && (
                     <p className="mt-1 text-sm text-red-500">
@@ -718,7 +776,8 @@ const Auction = () => {
                       id="commission"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      disabled
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -735,7 +794,8 @@ const Auction = () => {
                       id="win_amount"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      disabled
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -754,7 +814,8 @@ const Auction = () => {
                       id="divident"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      disabled
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -771,7 +832,8 @@ const Auction = () => {
                       id="divident_head"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      disabled
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -788,7 +850,8 @@ const Auction = () => {
                       id="payable"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      disabled
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -808,7 +871,7 @@ const Auction = () => {
                       id="date"
                       placeholder="Enter the Date"
                       required
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                     {errors.auction_date && (
                       <p className="mt-1 text-sm text-red-500">
@@ -831,7 +894,7 @@ const Auction = () => {
                       id="date"
                       placeholder="Enter the Date"
                       required
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                     {errors.next_date && (
                       <p className="mt-1 text-sm text-red-500">
@@ -843,8 +906,8 @@ const Auction = () => {
                 <div className="w-full flex justify-end">
                   <button
                     type="submit"
-                    className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                   >
                     Save Auction
                   </button>
@@ -878,7 +941,7 @@ const Auction = () => {
                       id="name"
                       placeholder="SI Number"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -896,7 +959,7 @@ const Auction = () => {
                       id="name"
                       placeholder="Enter the Group Name"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -915,7 +978,7 @@ const Auction = () => {
                       id="group_value"
                       placeholder="select group to check"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -932,7 +995,7 @@ const Auction = () => {
                       id="group_install"
                       placeholder="select group to check"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -958,7 +1021,7 @@ const Auction = () => {
                       id="name"
                       placeholder="Enter the User Name"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                 )}
@@ -977,7 +1040,7 @@ const Auction = () => {
                     id="name"
                     placeholder="Enter the User Name"
                     readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                   />
                 </div>
 
@@ -999,7 +1062,7 @@ const Auction = () => {
                     id="name"
                     placeholder="Enter the Bid Amount"
                     readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                   />
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
@@ -1017,7 +1080,7 @@ const Auction = () => {
                       id="commission"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -1034,7 +1097,7 @@ const Auction = () => {
                       id="win_amount"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -1053,7 +1116,7 @@ const Auction = () => {
                       id="divident"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -1070,7 +1133,7 @@ const Auction = () => {
                       id="divident_head"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -1087,7 +1150,7 @@ const Auction = () => {
                       id="payable"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -1106,8 +1169,8 @@ const Auction = () => {
                       onChange={handleInputChange}
                       id="date"
                       placeholder="Enter the Date"
-                    //  readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      //  readOnly
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -1124,20 +1187,20 @@ const Auction = () => {
                       onChange={handleInputChange}
                       id="date"
                       placeholder="Enter the Date"
-                     // readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      // readOnly
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
                 </div>
                 <div className="w-full flex justify-end">
-                <button
-                  type="submit"
-                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                >
-                  Update
-                </button>
-              </div>
+                  <button
+                    type="submit"
+                    className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  >
+                    Update
+                  </button>
+                </div>
               </form>
             </div>
           </Modal>
@@ -1163,7 +1226,7 @@ const Auction = () => {
                   <button
                     type="submit"
                     className="w-full text-white bg-red-700 hover:bg-red-800
-                    focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                   >
                     Delete
                   </button>

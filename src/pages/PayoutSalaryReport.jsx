@@ -48,7 +48,7 @@ const { Option } = Select;
 //   // ✅ Fetch employee list
 //   const fetchAgents = async () => {
 //     try {
-//       const response = await API.get("/agent/get-employee");
+//       const response = await API.get("/employee");
 //       setAgents(response.data?.employee || []);
 //     } catch (error) {
 //       console.error("Failed to fetch Agents", error);
@@ -264,7 +264,7 @@ const { Option } = Select;
 //             {/* Filter Button */}
 //             <button
 //               onClick={fetchSalaryPayments}
-//               className="bg-violet-600 text-white px-4 py-2 rounded hover:bg-violet-700 transition"
+//               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
 //             >
 //               Filter
 //             </button>
@@ -342,7 +342,7 @@ const { Option } = Select;
 //   // ✅ Fetch employee list
 //   const fetchAgents = async () => {
 //     try {
-//       const response = await API.get("/agent/get-employee");
+//       const response = await API.get("/employee");
 //       setAgents(response.data?.employee || []);
 //     } catch (error) {
 //       console.error("Failed to fetch Agents", error);
@@ -525,7 +525,7 @@ const { Option } = Select;
 //             {/* Filter Button */}
 //             {/* <button
 //               onClick={fetchSalaryPayments}
-//               className="bg-violet-600 text-white px-4 py-2 rounded hover:bg-violet-700 transition"
+//               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
 //             >
 //               Filter
 //             </button> */}
@@ -614,7 +614,7 @@ const { Option } = Select;
 
 //   const fetchAgents = async () => {
 //     try {
-//       const response = await API.get("/agent/get-employee");
+//       const response = await API.get("/employee");
 //       setAgents(response.data?.employee || []);
 //     } catch (error) {
 //       console.error("Failed to fetch Agents", error);
@@ -877,7 +877,7 @@ const PayoutSalaryReport = () => {
 
   const fetchAgents = async () => {
     try {
-      const response = await API.get("/agent/get-employee");
+      const response = await API.get("/employee");
       setAgents(response.data?.employee || []);
     } catch (error) {
       console.error("Failed to fetch Agents", error);
@@ -1109,35 +1109,35 @@ const PayoutSalaryReport = () => {
 
             <div className="flex flex-wrap gap-5 p-4 rounded-lg  mb-5">
               <div className="bg-white shadow-sm rounded-lg p-4 w-full sm:w-[180px] text-sm">
-                <span className="font-semibold block text-violet-700">
+                <span className="font-semibold block text-blue-700">
                   Total Salary Amount
                 </span>
                 ₹{summaryData.totalSalary.toFixed(2) || 0}
               </div>
 
               <div className="bg-white shadow-sm rounded-lg p-4 w-full sm:w-[180px] text-sm">
-                <span className="font-semibold block text-violet-700">
+                <span className="font-semibold block text-blue-700">
                   Total Paid Amount
                 </span>
                 ₹{summaryData.totalPaid.toFixed(2) || 0}
               </div>
 
               <div className="bg-white shadow-sm rounded-lg p-4 w-full sm:w-[180px] text-sm">
-                <span className="font-semibold block text-violet-700">
+                <span className="font-semibold block text-blue-700">
                   Latest Payment
                 </span>
                 ₹{summaryData.latestPayment || 0}
               </div>
 
               <div className="bg-white shadow-sm rounded-lg p-4 w-full sm:w-[180px] text-sm">
-                <span className="font-semibold block text-violet-700">
+                <span className="font-semibold block text-blue-700">
                   Latest Month
                 </span>
                 {summaryData.latestMonth || "N/A"}
               </div>
 
               <div className="bg-white shadow-sm rounded-lg p-4 w-full sm:w-[180px] text-sm">
-                <span className="font-semibold block text-violet-700">
+                <span className="font-semibold block text-blue-700">
                   Number of Payments
                 </span>
                 {summaryData.numberOfPayments || 0}

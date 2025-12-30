@@ -93,11 +93,7 @@ const Target = () => {
   const formatToYearMonth = (year, month) => {
     return `${year}-${String(month).padStart(2, "0")}`;
   };
-  const onGlobalSearchChangeHandler = (e) => {
-    setSearchText(e.target.value);
-    setCurrentPage(1);
-    setCurrentPageRelated(1);
-  };
+
   const getMonthDateRange = (dateString) => {
     const { year, month } = parseDate(dateString);
     const startDate = new Date(year, parseInt(month) - 1, 1);
@@ -115,7 +111,7 @@ const Target = () => {
       try {
         const [agentRes, employeeRes] = await Promise.all([
           api.get("/agent/get-agent"),
-          api.get("/agent/get-employee"),
+          api.get("/employee"),
         ]);
 
         const allAgents = agentRes.data || [];
@@ -460,16 +456,15 @@ const Target = () => {
   return (
     <>
       <div className="flex mt-20">
+        <Navbar visibility={true} />
         <Sidebar />
-        <Navbar
-          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-          visibility={true}
-        />
         <CustomAlertDialog
           type={alertConfig.type}
           isVisible={alertConfig.visibility}
           message={alertConfig.message}
-          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
+          onClose={() => {
+            setAlertConfig((prev) => ({ ...prev, visibility: false }));
+          }}
         />
 
         <div className="flex-grow p-6">
@@ -477,7 +472,7 @@ const Target = () => {
             <h1 className="text-2xl font-semibold">Targets Management</h1>
             <button
               onClick={openBulkDrawer}
-              className="flex items-center bg-violet-600 text-white px-4 py-2 rounded hover:bg-violet-700"
+              className="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
               <IoMdAdd className="mr-2" /> Bulk Update Targets
             </button>
@@ -503,10 +498,10 @@ const Target = () => {
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                           <Link
                             to="/reports/target-commission"
-                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-violet-500 hover:text-violet-600 transition-colors"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
                           >
                             <DollarOutlined
-                              className="text-violet-500"
+                              className="text-blue-500"
                               size={30}
                             />
                             Commission Report
@@ -514,28 +509,28 @@ const Target = () => {
 
                           <Link
                             to="/reports/target-incentive"
-                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-violet-500 hover:text-violet-600 transition-colors"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
                           >
                             <FileTextOutlined
-                              className="text-violet-500"
+                              className="text-blue-500"
                               size={30}
                             />
                             Incentive Report
                           </Link>
 
-                          <Link
+                          {/* <Link
                             to="/target-commission-incentive"
-                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-violet-500 hover:text-violet-600 transition-colors"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
                           >
-                            <MdPayments className="text-violet-500" size={30} />
+                            <MdPayments className="text-blue-500" size={30} />
                             Commission or Incentive Payout
-                          </Link>
+                          </Link> */}
 
                           <Link
-                            to="/target-payout-salary"
-                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-violet-500 hover:text-violet-600 transition-colors"
+                            to="/payment-menu/payment-in-out-menu/payment-out/salary-payment"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-colors"
                           >
-                            <FaMoneyBill className="text-violet-500" size={30} />
+                            <FaMoneyBill className="text-blue-500" size={30} />
                             Salary Payout
                           </Link>
                         </div>
@@ -621,7 +616,7 @@ const Target = () => {
               <div className="relative min-h-[200px]">
                 {dataLoading && (
                   <div className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center z-10">
-                    <div className="animate-spin rounded-full h-10 w-10 border-4 border-violet-600 border-t-transparent"></div>
+                    <div className="animate-spin rounded-full h-10 w-10 border-4 border-blue-600 border-t-transparent"></div>
                   </div>
                 )}
                 <DataTable
@@ -719,7 +714,7 @@ const Target = () => {
 
             <button
               type="submit"
-              className="w-full bg-violet-600 text-white p-2 rounded hover:bg-violet-700 mt-6"
+              className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 mt-6"
             >
               {isBulkMode
                 ? "Update All Targets"

@@ -42,6 +42,7 @@ const Receipt = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showFilterField, setShowFilterField] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState("Today");
+  const [selectedPaymentFor,setSelectedPaymentFor] = useState([]);
 
   const now = new Date();
   const onGlobalSearchChangeHandler = (e) => {
@@ -50,7 +51,7 @@ const Receipt = () => {
   const todayString = now.toISOString().split("T")[0];
   const [selectedFromDate, setSelectedFromDate] = useState(todayString);
   const [selectedDate, setSelectedDate] = useState(todayString);
-  const [selectedPaymentMode, setSelectedPaymentMode] = useState("");
+  const [selectedPaymentMode, setSelectedPaymentMode] = useState([]);
   const [hideAccountType, setHideAccountType] = useState("");
   const [selectedAccountType, setSelectedAccountType] = useState("");
   const [selectedCustomers, setSelectedCustomers] = useState("");
@@ -128,7 +129,7 @@ const Receipt = () => {
     (async () => {
       try {
         const [employees, admins] = await Promise.all([
-          api.get("/agent/get-employee"),
+          api.get("/employee"),
           api.get("/admin/get-sub-admins"),
         ]);
         const emps = employees?.data?.employee.map((emp) => ({
@@ -298,6 +299,7 @@ const Receipt = () => {
             account_type: selectedAccountType,
             collected_by: collectionAgent,
             admin_type: collectionAdmin,
+            pay_for:selectedPaymentFor
           },
           signal: abortController.signal,
         });
@@ -326,7 +328,11 @@ const Receipt = () => {
             phone_number: group?.user_id?.phone_number,
             receipt_no: group?.receipt_no,
             old_receipt_no: group?.old_receipt_no,
-            ticket: group?.ticket,
+            ticket: group?.loan
+              ? group.loan?.loan_id
+              : group?.pigme
+              ? group.pigme?.pigme_id
+              : group?.ticket,
             amount: group?.amount,
             transaction_date: group?.createdAt?.split("T")?.[0],
             mode: group?.pay_type,
@@ -348,16 +354,14 @@ const Receipt = () => {
                           <Link
                             target="_blank"
                             to={`/print/${group._id}`}
-                            className="text-violet-600 "
-                          >
+                            className="text-blue-600 ">
                             Print
                           </Link>
                         ),
                       },
                     ],
                   }}
-                  placement="bottomLeft"
-                >
+                  placement="bottomLeft">
                   <IoMdMore className="text-bold" />
                 </Dropdown>
               </div>
@@ -390,6 +394,7 @@ const Receipt = () => {
     selectedAccountType,
     collectionAgent,
     collectionAdmin,
+    selectedPaymentFor
   ]);
 
   const columns = [
@@ -408,7 +413,7 @@ const Receipt = () => {
     ...(hideAccountType
       ? [{ key: "account_type", header: "Account Type" }]
       : []),
-    {key: "collection_time", header: "Collection Time"},
+    { key: "collection_time", header: "Collection Time" },
     { key: "collected_by", header: "Collected By" },
     { key: "action", header: "Action" },
   ];
@@ -533,700 +538,359 @@ const Receipt = () => {
             isVisible={alertConfig.visibility}
             message={alertConfig.message}
           />
-       <div className="flex-grow p-8 bg-gradient-to-br from-slate-50 via-violet-50 to-indigo-50 min-h-screen">
-  {/* Header Section */}
-  <div className="mb-8">
-    <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-      Reports - Receipt
-    </h1>
-    <p className="text-gray-600 mt-2">Track and manage all receipt transactions</p>
-  </div>
-
-  <div className="mt-6 mb-8">
-    {/* Filters Section */}
-    <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
-      <h2 className="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2">
-        <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-        </svg>
-        Filter Options
-      </h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {/* Filter Option */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Filter Option</label>
-          <Select
-            showSearch
-            popupMatchSelectWidth={false}
-            onChange={handleSelectFilter}
-            value={selectedLabel}
-            placeholder="Search Or Select Filter"
-            filterOption={(input, option) =>
-              option.children
-                .toString()
-                .toLowerCase()
-                .includes(input.toLowerCase())
-            }
-            className="w-full h-11"
-          >
-            {groupOptions.map((time) => (
-              <Select.Option key={time.value} value={time.value}>
-                {time.label}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-
-        {/* Custom Date Range */}
-        {showFilterField && (
-          <>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">From Date</label>
-              <input
-                type="date"
-                value={selectedFromDate}
-                onChange={(e) => setSelectedFromDate(e.target.value)}
-                className="w-full h-11 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
-              />
+          <div className="flex-grow p-8 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
+           
+            <div className="mb-8">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
+                Reports - Receipt
+              </h1>
+              <p className="text-gray-600 mt-2">
+                Track and manage all receipt transactions
+              </p>
             </div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">To Date</label>
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-full h-11 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
-              />
-            </div>
-          </>
-        )}
 
-        {/* Group Filter */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Group</label>
-          <Select
-            showSearch
-            popupMatchSelectWidth={false}
-            value={selectedAuctionGroupId}
-            onChange={handleGroupPayment}
-            placeholder="Search Or Select Group"
-            filterOption={(input, option) =>
-              option.children
-                .toString()
-                .toLowerCase()
-                .includes(input.toLowerCase())
-            }
-            className="w-full h-11"
-          >
-            <Select.Option value={""}>All</Select.Option>
-            {groups.map((group) => (
-              <Select.Option key={group._id} value={group._id}>
-                {group.group_name}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-
-        {/* Customer Filter */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Customer</label>
-          <Select
-            showSearch
-            popupMatchSelectWidth={false}
-            value={selectedCustomers}
-            filterOption={(input, option) =>
-              option.children
-                .toString()
-                .toLowerCase()
-                .includes(input.toLowerCase())
-            }
-            placeholder="Search Or Select Customer"
-            onChange={(groupId) => setSelectedCustomers(groupId)}
-            className="w-full h-11"
-          >
-            <Select.Option value="">All</Select.Option>
-            {filteredUsers.map((group) => (
-              <Select.Option key={group?._id} value={group?._id}>
-                {group?.full_name} - {group.phone_number}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-
-        {/* Payment Mode Filter */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Payment Mode</label>
-          <Select
-            value={selectedPaymentMode}
-            showSearch
-            placeholder="Search Or Select Payment"
-            popupMatchSelectWidth={false}
-            onChange={(groupId) => setSelectedPaymentMode(groupId)}
-            filterOption={(input, option) =>
-              option.children
-                .toString()
-                .toLowerCase()
-                .includes(input.toLowerCase())
-            }
-            className="w-full h-11"
-          >
-            <Select.Option value="">All</Select.Option>
-            <Select.Option value="cash">Cash</Select.Option>
-            <Select.Option value="online">Online</Select.Option>
-            <Select.Option value="Payment Link">Payment Link</Select.Option>
-            <Select.Option value="Transfer">Transfer</Select.Option>
-          </Select>
-        </div>
-
-        {/* Account Type Filter */}
-        {showAllPaymentModes && (
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Account Type</label>
-            <Select
-              value={selectedAccountType}
-              showSearch
-              placeholder="Search Or Select Account Type"
-              popupMatchSelectWidth={false}
-              onChange={(groupId) => setSelectedAccountType(groupId)}
-              filterOption={(input, option) =>
-                option.children
-                  .toString()
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              className="w-full h-11"
-            >
-              <Select.Option value="">Select Account Type</Select.Option>
-              <Select.Option value="suspense">Suspense</Select.Option>
-              <Select.Option value="credit">Credit</Select.Option>
-              <Select.Option value="adjustment">Adjustment</Select.Option>
-              <Select.Option value="others">Others</Select.Option>
-            </Select>
-          </div>
-        )}
-
-        {/* Collection Employee Filter */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Collection Employee</label>
-          <Select
-            showSearch
-            placeholder="Search Or Select Collection Agent"
-            popupMatchSelectWidth={false}
-            onChange={(selection) => {
-              const [id, type] = selection.split("|") || [];
-              if (type === "admin_type") {
-                setCollectionAdmin(id);
-                setCollectionAgent("");
-              } else if (type === "agent_type") {
-                setCollectionAgent(id);
-                setCollectionAdmin("");
-              } else {
-                setCollectionAdmin("");
-                setCollectionAgent("");
-              }
-            }}
-            filterOption={(input, option) =>
-              option.children
-                .toString()
-                .toLowerCase()
-                .includes(input.toLowerCase())
-            }
-            className="w-full h-11"
-          >
-            <Select.Option value="">All</Select.Option>
-            {[...new Set(agents), ...new Set(admins)].map((dt) => (
-              <Select.Option key={dt?._id} value={`${dt._id}|${dt.selected_type}`}>
-                {dt.selected_type === "admin_type" ? "Admin | " : "Agent | "}
-                {dt.full_name} | {dt.phone_number}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-      </div>
-    </div>
-
-    {/* Total Amount Card */}
-    <div className="mb-8">
-      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-violet-600 to-indigo-700 rounded-2xl shadow-2xl p-8 transform transition-all hover:scale-[1.02] duration-300">
-        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-16 -mb-16"></div>
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-4">
-         
-            <p className="text-white/90 text-sm font-semibold uppercase tracking-wider">
-              Total Receipt Amount
-            </p>
-          </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-white text-5xl font-bold tracking-tight">
-              ₹{payments?.toLocaleString() || 0}
-            </span>
-          </div>
-          <p className="text-white/70 text-sm mt-3">
-            Based on current filters
-          </p>
-        </div>
-
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12"></div>
-      </div>
-    </div>
-
-    {/* Data Table Section */}
-    {filteredAuction && filteredAuction.length > 0 && !isLoading ? (
-      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-        <div className="flex items-center gap-2 mb-6">
-          <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          <h2 className="text-lg font-semibold text-gray-800">Receipt Details</h2>
-        </div>
-        
-        <DataTable
-          data={filterOption(TableDaybook, searchText)}
-          columns={columns}
-          exportedPdfName={`Receipt Report`}
-          exportedFileName={`Reports Receipt.csv`}
-        />
-        
-        <div className="flex justify-end mt-6 pt-6 border-t border-gray-200">
-          <div className="bg-gradient-to-r from-indigo-50 to-violet-50 px-6 py-3 rounded-xl">
-            <span className="text-lg font-bold text-gray-800">
-              Total Amount: <span className="text-indigo-600">₹{payments?.toLocaleString()}</span>
-            </span>
-          </div>
-        </div>
-      </div>
-    ) : (
-      <div className="bg-white rounded-2xl shadow-lg p-12 text-center border border-gray-100">
-        <CircularLoader
-          isLoading={isLoading}
-          failure={filteredAuction.length <= 0}
-          data="Receipt Data"
-        />
-      </div>
-    )}
-  </div>
-</div>
-          <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
-            <div className="py-6 px-5 lg:px-8 text-left">
-              <h3 className="mb-4 text-xl font-bold text-gray-900">
-                Add Payment
-              </h3>
-              <form className="space-y-6" onSubmit={handleSubmit}>
-                <div className="w-full">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="category"
-                  >
-                    Group
-                  </label>
-                  <select
-                    value={selectedGroupId}
-                    onChange={handleGroup}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                  >
-                    <option value="">Select Group</option>
-                    {groups.map((group) => (
-                      <option key={group._id} value={group._id}>
-                        {group.group_name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="w-full">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="category"
-                  >
-                    Customers
-                  </label>
-                  <select
-                    name="user_id"
-                    value={`${formData.user_id}-${formData.ticket}`}
-                    onChange={handleChangeUser}
-                    required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                  >
-                    <option value="">Select Customer</option>
-                    {filteredUsers.map((user) => (
-                      <option
-                        key={`${user?.user_id?._id}-${user.tickets}`}
-                        value={`${user?.user_id?._id}-${user.tickets}`}
-                      >
-                        {user?.user_id?.full_name} | {user.tickets}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex flex-row justify-between space-x-4">
-                  <div className="w-1/2">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="group_value"
-                    >
-                      Receipt No.
-                    </label>
-                    <input
-                      type="text"
-                      name="receipt_no"
-                      value={formData.receipt_no}
-                      id="receipt_no"
-                      placeholder="Receipt No."
-                      readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+            <div className="mt-6 mb-8">
+             
+              <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
+                <h2 className="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2">
+                  <svg
+                    className="w-5 h-5 text-indigo-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
                     />
-                  </div>
-                  <div className="w-1/2">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="group_install"
-                    >
-                      Payment Date
+                  </svg>
+                  Filter Options
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {/* Filter Option */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Filter Option
                     </label>
-                    <input
-                      type="date"
-                      name="pay_date"
-                      value={formData.pay_date}
-                      id="pay_date"
-                      onChange={handleChange}
-                      placeholder=""
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                    />
+                    <Select
+                      showSearch
+                      popupMatchSelectWidth={false}
+                      onChange={handleSelectFilter}
+                      value={selectedLabel}
+                      placeholder="Search Or Select Filter"
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      className="w-full h-11">
+                      {groupOptions.map((time) => (
+                        <Select.Option key={time.value} value={time.value}>
+                          {time.label}
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </div>
-                </div>
-                <div className="flex flex-row justify-between space-x-4">
-                  <div className="w-1/2">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="group_value"
-                    >
-                      Amount
+
+                  {/* Custom Date Range */}
+                  {showFilterField && (
+                    <>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                          From Date
+                        </label>
+                        <input
+                          type="date"
+                          value={selectedFromDate}
+                          onChange={(e) => setSelectedFromDate(e.target.value)}
+                          className="w-full h-11 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                          To Date
+                        </label>
+                        <input
+                          type="date"
+                          value={selectedDate}
+                          onChange={(e) => setSelectedDate(e.target.value)}
+                          className="w-full h-11 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {/* Group Filter */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Group
                     </label>
-                    <input
-                      type="text"
-                      name="amount"
-                      value={formData.amount}
-                      id="amount"
-                      onChange={handleChange}
-                      placeholder="Enter Amount"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                    />
+                    <Select
+                      showSearch
+                      popupMatchSelectWidth={false}
+                      value={selectedAuctionGroupId}
+                      onChange={handleGroupPayment}
+                      placeholder="Search Or Select Group"
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      className="w-full h-11">
+                      <Select.Option value={""}>All</Select.Option>
+                      {groups.map((group) => (
+                        <Select.Option key={group._id} value={group._id}>
+                          {group.group_name}
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </div>
-                  <div className="w-1/2">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="pay_mode"
-                    >
+
+                  {/* Customer Filter */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Customer
+                    </label>
+                    <Select
+                      showSearch
+                      popupMatchSelectWidth={false}
+                      value={selectedCustomers}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      placeholder="Search Or Select Customer"
+                      onChange={(groupId) => setSelectedCustomers(groupId)}
+                      className="w-full h-11">
+                      <Select.Option value="">All</Select.Option>
+                      {filteredUsers.map((group) => (
+                        <Select.Option key={group?._id} value={group?._id}>
+                          {group?.full_name} - {group.phone_number}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+
+                  {/* Payment Mode Filter */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-slate-700">
                       Payment Mode
                     </label>
-                    <select
-                      name="pay_mode"
-                      id="pay_mode"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                      onChange={handlePaymentModeChange}
-                    >
-                      <option value="cash">Cash</option>
-                      <option value="online">Online</option>
-                      <option value="Payment Link">Payment Link</option>
-                      <option value="Transfer">Transfer</option>
-                    </select>
-                  </div>
-                </div>
-                {paymentMode === "online" && (
-                  <div className="w-full mt-4">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="transaction_id"
-                    >
-                      Transaction ID
-                    </label>
-                    <input
-                      type="text"
-                      name="transaction_id"
-                      id="transaction_id"
-                      value={formData.transaction_id}
-                      onChange={handleChange}
-                      placeholder="Enter Transaction ID"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                    />
-                  </div>
-                )}
-                <button
-                  type="submit"
-                  className="w-full text-white bg-violet-700 hover:bg-violet-800
-                              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                >
-                  Add
-                </button>
-              </form>
-            </div>
-          </Modal>
-          <Modal
-            isVisible={showModalUpdate}
-            onClose={() => setShowModalUpdate(false)}
-          >
-            <div className="py-6 px-5 lg:px-8 text-left">
-              <h3 className="mb-4 text-xl font-bold text-gray-900">
-                View Auction
-              </h3>
-              <form className="space-y-6" onSubmit={() => {}}>
-                <div>
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="email"
-                  >
-                    Group
-                  </label>
-                  <input
-                    type="text"
-                    name="group_id"
-                    value={currentUpdateGroup?.group_id?.group_name}
-                    onChange={() => {}}
-                    id="name"
-                    placeholder="Enter the Group Name"
-                    readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                  />
-                </div>
-                <div className="flex flex-row justify-between space-x-4">
-                  <div className="w-1/2">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="group_value"
-                    >
-                      Group Value
-                    </label>
-                    <input
-                      type="text"
-                      name="group_value"
-                      value={currentUpdateGroup?.group_id?.group_value}
-                      id="group_value"
-                      placeholder="select group to check"
-                      readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                    />
-                  </div>
-                  <div className="w-1/2">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="group_install"
-                    >
-                      Group Installment
-                    </label>
-                    <input
-                      type="text"
-                      name="group_install"
-                      value={currentUpdateGroup?.group_id?.group_install}
-                      id="group_install"
-                      placeholder="select group to check"
-                      readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="email"
-                  >
-                    User
-                  </label>
-                  <input
-                    type="text"
-                    name="group_id"
-                    value={`${currentUpdateGroup?.user_id?.full_name} | ${currentUpdateGroup?.ticket}`}
-                    onChange={() => {}}
-                    id="name"
-                    placeholder="Enter the User Name"
-                    readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                  />
-                </div>
 
-                <div>
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="email"
-                  >
-                    Bid Amount
-                  </label>
-                  <input
-                    type="number"
-                    name="bid_amount"
-                    value={
-                      currentUpdateGroup?.group_id?.group_value -
-                      currentUpdateGroup?.win_amount
-                    }
-                    onChange={() => {}}
-                    id="name"
-                    placeholder="Enter the Bid Amount"
-                    readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                    <Select
+                      mode="multiple"
+                      value={selectedPaymentMode}
+                      showSearch
+                      placeholder="Select payment mode"
+                      popupMatchSelectWidth={false}
+                      onChange={(modes) => {
+                        setSelectedPaymentMode(modes);
+                      }}
+                      filterOption={(input, option) =>
+                        option.label
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      className="w-full"
+                      style={{ height: "44px" }}
+                    
+                      options={[
+                        { label: "Cash", value: "cash" },
+                        { label: "Online", value: "online" },
+                        { label: "Payment Link", value: "Payment Link" },
+                      ]}
+                    />
+                  </div>
+<div className="space-y-2">
+                    <label className="block text-sm font-medium text-slate-700">
+                      Payment For
+                    </label>
+
+                    <Select
+                      mode="multiple"
+                      value={selectedPaymentFor}
+                      showSearch
+                      placeholder="Select payment for"
+                      popupMatchSelectWidth={false}
+                      onChange={(modes) => {
+                        setSelectedPaymentFor(modes);
+                      }}
+                      filterOption={(input, option) =>
+                        option.label
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      className="w-full"
+                      style={{ height: "44px" }}
+                      options={[
+                        { label: "Chit", value: "Chit" },
+                        { label: "Pigme", value: "Pigme" },
+                        { label: "Loan", value: "Loan" },
+                      ]}
+                    />
+                  </div>
+                  {/* Account Type Filter */}
+                  {showAllPaymentModes && (
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Account Type
+                      </label>
+                      <Select
+                        value={selectedAccountType}
+                        showSearch
+                        placeholder="Search Or Select Account Type"
+                        popupMatchSelectWidth={false}
+                        onChange={(groupId) => setSelectedAccountType(groupId)}
+                        filterOption={(input, option) =>
+                          option.children
+                            .toString()
+                            .toLowerCase()
+                            .includes(input.toLowerCase())
+                        }
+                        className="w-full h-11">
+                        <Select.Option value="">
+                          Select Account Type
+                        </Select.Option>
+                        <Select.Option value="suspense">Suspense</Select.Option>
+                        <Select.Option value="credit">Credit</Select.Option>
+                        <Select.Option value="adjustment">
+                          Adjustment
+                        </Select.Option>
+                        <Select.Option value="others">Others</Select.Option>
+                      </Select>
+                    </div>
+                  )}
+
+                  {/* Collection Employee Filter */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Collection Employee
+                    </label>
+                    <Select
+                      showSearch
+                      placeholder="Search Or Select Collection Agent"
+                      popupMatchSelectWidth={false}
+                      onChange={(selection) => {
+                        const [id, type] = selection.split("|") || [];
+                        if (type === "admin_type") {
+                          setCollectionAdmin(id);
+                          setCollectionAgent("");
+                        } else if (type === "agent_type") {
+                          setCollectionAgent(id);
+                          setCollectionAdmin("");
+                        } else {
+                          setCollectionAdmin("");
+                          setCollectionAgent("");
+                        }
+                      }}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      className="w-full h-11">
+                      <Select.Option value="">All</Select.Option>
+                      {[...new Set(agents), ...new Set(admins)].map((dt) => (
+                        <Select.Option
+                          key={dt?._id}
+                          value={`${dt._id}|${dt.selected_type}`}>
+                          {dt.selected_type === "admin_type"
+                            ? "Admin | "
+                            : "Agent | "}
+                          {dt.full_name} | {dt.phone_number}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Total Amount Card */}
+              <div className="mb-8">
+                <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-blue-600 to-indigo-700 rounded-2xl shadow-2xl p-8 transform transition-all hover:scale-[1.02] duration-300">
+                  <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+                  <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-16 -mb-16"></div>
+                  <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-3 mb-4">
+                      <p className="text-white/90 text-sm font-semibold uppercase tracking-wider">
+                        Total Receipt Amount
+                      </p>
+                    </div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-white text-5xl font-bold tracking-tight">
+                        ₹{payments?.toLocaleString() || 0}
+                      </span>
+                    </div>
+                    <p className="text-white/70 text-sm mt-3">
+                      Based on current filters
+                    </p>
+                  </div>
+
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12"></div>
+                </div>
+              </div>
+
+              {/* Data Table Section */}
+              {filteredAuction && filteredAuction.length > 0 && !isLoading ? (
+                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                  <div className="flex items-center gap-2 mb-6">
+                    <svg
+                      className="w-5 h-5 text-indigo-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      Receipt Details
+                    </h2>
+                  </div>
+
+                  <DataTable
+                    data={filterOption(TableDaybook, searchText)}
+                    columns={columns}
+                    exportedPdfName={`Receipt Report`}
+                    exportedFileName={`Reports Receipt.csv`}
+                  />
+
+                  <div className="flex justify-end mt-6 pt-6 border-t border-gray-200">
+                    <div className="bg-gradient-to-r from-indigo-50 to-blue-50 px-6 py-3 rounded-xl">
+                      <span className="text-lg font-bold text-gray-800">
+                        Total Amount:{" "}
+                        <span className="text-indigo-600">
+                          ₹{payments?.toLocaleString()}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-white rounded-2xl shadow-lg p-12 text-center border border-gray-100">
+                  <CircularLoader
+                    isLoading={isLoading}
+                    failure={filteredAuction.length <= 0}
+                    data="Receipt Data"
                   />
                 </div>
-                <div className="flex flex-row justify-between space-x-4">
-                  <div className="w-1/2">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="group_value"
-                    >
-                      Commission
-                    </label>
-                    <input
-                      type="text"
-                      name="commission"
-                      value={currentUpdateGroup?.commission}
-                      id="commission"
-                      placeholder=""
-                      readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                    />
-                  </div>
-                  <div className="w-1/2">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="group_install"
-                    >
-                      Winning Amount
-                    </label>
-                    <input
-                      type="text"
-                      name="win_amount"
-                      value={currentUpdateGroup?.win_amount}
-                      id="win_amount"
-                      placeholder=""
-                      readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-row justify-between space-x-4">
-                  <div className="w-1/2">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="group_value"
-                    >
-                      Divident
-                    </label>
-                    <input
-                      type="text"
-                      name="divident"
-                      value={currentUpdateGroup?.divident}
-                      id="divident"
-                      placeholder=""
-                      readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                    />
-                  </div>
-                  <div className="w-1/2">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="group_install"
-                    >
-                      Divident per Head
-                    </label>
-                    <input
-                      type="text"
-                      name="divident_head"
-                      value={currentUpdateGroup?.divident_head}
-                      id="divident_head"
-                      placeholder=""
-                      readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                    />
-                  </div>
-                  <div className="w-1/2">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="group_install"
-                    >
-                      Next Payable
-                    </label>
-                    <input
-                      type="text"
-                      name="payable"
-                      value={currentUpdateGroup?.payable}
-                      id="payable"
-                      placeholder=""
-                      readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-row justify-between space-x-4">
-                  <div className="w-1/2">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="date"
-                    >
-                      Auction Date
-                    </label>
-                    <input
-                      type="date"
-                      name="auction_date"
-                      value={currentUpdateGroup?.auction_date}
-                      onChange={() => {}}
-                      id="date"
-                      placeholder="Enter the Date"
-                      readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                    />
-                  </div>
-                  <div className="w-1/2">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="date"
-                    >
-                      Next Date
-                    </label>
-                    <input
-                      type="date"
-                      name="next_date"
-                      value={currentUpdateGroup?.next_date}
-                      onChange={() => {}}
-                      id="date"
-                      placeholder="Enter the Date"
-                      readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                    />
-                  </div>
-                </div>
-              </form>
-            </div>
-          </Modal>
-          <Modal
-            isVisible={showModalDelete}
-            onClose={() => {
-              setShowModalDelete(false);
-              setCurrentGroup(null);
-            }}
-          >
-            <div className="py-6 px-5 lg:px-8 text-left">
-              <h3 className="mb-4 text-xl font-bold text-gray-900">
-                Sure want to delete this Payment ?
-              </h3>
-              {currentGroup && (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleDeleteAuction();
-                  }}
-                  className="space-y-6"
-                >
-                  <button
-                    type="submit"
-                    className="w-full text-white bg-red-700 hover:bg-red-800
-                    focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                  >
-                    Delete
-                  </button>
-                </form>
               )}
             </div>
-          </Modal>
+          </div>
         </div>
       </div>
     </>

@@ -9,7 +9,7 @@ import Task from "../pages/Task";
 import Target from "../pages/Target";
 import EnrollmentRequestForm from "../pages/EnrollmentRequestForm";
 import FilterGroups from "../pages/FilterGroups";
-import EmployeeProfile from "../pages/EmployeeProfile";
+import Payroll from "../pages/Payroll";
 import Staff from "../pages/Staff";
 import Employee from "../pages/Employee";
 import WeekGroup from "../pages/WeekGroup";
@@ -46,6 +46,7 @@ import PaymentSummary from "../pages/PaymentSummary";
 import WhatsappAdd from "../pages/WhatsappAdd";
 import WhatsappFailed from "../pages/WhatsappFailed";
 import DueMessage from "../pages/DueMessage";
+import OutstandingReport from "../pages/OutstandingReport";
 import Reports from "../pages/Reports";
 import LeadSettings from "../pages/LeadSettings";
 import Designation from "../pages/Designation";
@@ -76,63 +77,59 @@ import TransferCustomer from "../pages/SoftTransferCustomer";
 import SoftTransferCustomer from "../pages/SoftTransferCustomer";
 import HardTransferCustomer from "../pages/HardTransfer";
 import UnApprovedCustomer from "../pages/UnApprovedCustomer";
-import CustomerView from "../pages/CustomerView";
-import MobileAppEnroll from "../pages/MobileAppEnroll";
 import PaymentLink from "../pages/PaymentLink";
+import MobileAppEnroll from "../pages/MobileAppEnroll";
 import PaymentLinkMenu from "../pages/PaymentLinkMenu";
 import ChitBulkPaymentLink from "../pages/BulkChitPaymentLink";
+import IndividualChitPaymentLink from "../pages/IndividualChitPaymentLink";
+
+import IndividualRegistrationChitPaymentLink from "../pages/IndividualRegistrationChitPaymentLink";
+import TargetIncentiveReport from "../pages/TargetIncentive";
+import TargetPayOutSalary from "../pages/TargetPayoutSalary";
+import TargetPayOutCommissionIncentive from "../pages/TargetPayOutCommissionIncentive";
+import TargetCommission from "../pages/TargetCommission";
+// import TargetPayOutMenu from "../pages/TargetPayOutMenu";
+import MonthlyInstallmentTurnoverReport from "../pages/MonthlyInstallmentTurnoverReport";
+import HoldedCustomerReport from "../pages/HoldedCustomerReport"
+import AuctionBidStatus from "../pages/AuctionBidStatus"
+import AuctionWinnerDocuments from "../pages/AuctionWinnerDocuments";
+import AuctionInformation from "../pages/AuctionInformation";
+import AuctionTermsandCondition from "../pages/AuctionTermsandCondition";
+import LeadWhatsappWelcomeMessage from "../pages/LeadWhatsappWelcomeMessage";
+import LeadReferredByWhatsappMessage from "../pages/LeadReferredByWhatsappMessage";
+import CustomerWelcomeWhatsappMessage from "../pages/CustomerWelcomeWhatsappMessage";
+import CustomerChitPlanWhatsappMessage from "../pages/CustomerChitPlanWhatsappMessage";
+import Insurance from "../pages/Insurance";
+import CustomerRewards from "../pages/CustomerRewards";
+import PayInOutMenu from "../pages/PayInOutMenu";
+import RegistrationFeeReport from "../pages/RegistrationFeeReport";
+import CollectionExecutiveReport from "../pages/CollectionExecutiveReport";
+import StaffMenu from "../pages/StaffMenu";
+import EmployeeAttendance from "../pages/EmployeeAttendanceReport"
+import EmployeeMonthlyReport from "../pages/EmployeeMonthlyReport";
+import EmployeeMenu from "../pages/EmployeeMenu";
+import PaymentMenu from "../pages/PaymentMenu";
+import CustomerLoanReport from "../pages/CustomerLoanReport";
+import CollectionAreaReport from "../pages/CollectionAreaReport";
+import PayoutSalaryReport from "../pages/PayoutSalaryReport";
+import TargetMenu from "../pages/TargetMenu";
+import EnrollmentMenu from "../pages/EnrollmentView";
+
+import PenaltySettings from "../pages/PenaltySettings";
+import PenaltyMonitor from "../pages/PenaltyMonitor";
+import UserMenu from "../pages/UserMenu"
+import OtherServicesMenu from "../pages/OtherServicesMenu";
+import LegalsMenu from "../pages/LegalsMenu";
+import UnApprovedCustomerReport from "../pages/UnApprovedCustomerReport";
+import PaymentReport from "../pages/PaymentReport";
+import PigmySummaryReport from "../pages/PigmySummaryReport";
+
+import CustomerView from "../pages/CustomerView";
 import Analytics from "../pages/Analytics";
 
 import TotalRevenue from "../pages/TotalRevenue";
 import MonthlyRevenue from "../pages/MonthlyRevenue";
 
-import AuctionBidStatus from "../pages/AuctionBidStatus"
-import AuctionWinnerDocuments from "../pages/AuctionWinnerDocuments";
-import AuctionInformation from "../pages/AuctionInformation";
-import AuctionTermsandCondition from "../pages/AuctionTermsandCondition";
-import CollectionExecutiveReport from "../pages/CollectionExecutiveReport";
-import CustomerWelcomeWhatsappMessage from "../pages/CustomerWelcomeWhatsappMessage";
-import CustomerChitPlanWhatsappMessage from "../pages/CustomerChitPlanWhatsappMessage";
-import Insurance from "../pages/Insurance";
-import CustomerRewards from "../pages/CustomerRewards";
-import EmployeeAttendance from "../pages/EmployeeAttendanceReport"
-import EmployeeMonthlyReport from "../pages/EmployeeMonthlyReport";
-import EmployeeMenu from "../pages/EmployeeMenu"
-import HoldedCustomerReport from "../pages/HoldedCustomerReport"
-import LeadWhatsappWelcomeMessage from "../pages/LeadWhatsappWelcomeMessage";
-import LeadReferredByWhatsappMessage from "../pages/LeadReferredByWhatsappMessage";
-import PayInOutMenu from "../pages/PayInOutMenu";
-import RegistrationFeeReport from "../pages/RegistrationFeeReport";
-import StaffMenu from "../pages/StaffMenu";
-
-import TargetIncentiveReport from "../pages/TargetIncentive";
-import TargetPayOutSalary from "../pages/TargetPayoutSalary";
-import TargetPayOutCommissionIncentive from "../pages/TargetPayOutCommissionIncentive";
-import TargetCommission from "../pages/TargetCommission";
-import TargetPayOutMenu from "../pages/TargetPayOutMenu";
-
-import MonthlyInstallmentTurnoverReport from "../pages/MonthlyInstallmentTurnoverReport";
-
-import CustomerLoanReport from "../pages/CustomerLoanReport";
-import CollectionAreaReport from "../pages/CollectionAreaReport";
-import EnrollmentMenu from "../pages/EnrollmentView";
-import OtherServicesMenu from "../pages/OtherServicesMenu";
-import LegalsMenu from "../pages/LegalsMenu";
-import OutstandingReport from "../pages/OutstandingReport";
-import PaymentMenu from "../pages/PaymentMenu";
-import PayoutSalaryReport from "../pages/PayoutSalaryReport";
-import PenaltySettings from "../pages/PenaltySettings";
-import PenaltyMonitor from "../pages/PenaltyMonitor";
-import TargetMenu from "../pages/TargetMenu";
-import UserMenu from "../pages/UserMenu"
-
-import Register from "../pages/Register";
-import IndividualChitPaymentLink from "../pages/IndividualChitPaymentLink";
-import IndividualRegistrationChitPaymentLink from "../pages/IndividualRegistrationChitPaymentLink";
-
-import UnApprovedCustomerReport from "../pages/UnApprovedCustomerReport";
-import PaymentReport from "../pages/PaymentReport";
-import PigmySummaryReport from "../pages/PigmySummaryReport";
 
 import ChitAskingMonthReport from "../pages/ChitAskingMonthReport";
 import  SalaryRemainingReport from "../pages/SalaryRemainingReport";
@@ -141,21 +138,23 @@ import SuspensePayments from "../pages/SuspensePayments";
 import InActiveUserReport from "../pages/InActiveUserReport";
 import NonConvertedLead from "../pages/NonConvertedLead";
 import ConvertedLead from "../pages/ConvertedLead";
-
-// import DueReport from "../pages/DueReport";
-
+import UserRegistrationSourceSummaryReport from "../pages/UserRegistrationSourceSummaryReport";
+import HRMenu from "../pages/HRMenu";
+import SalaryPayment from "../pages/SalaryPayment";
+import TransferMenu from "../pages/TransferMenu";
+import CollectionMenu from "../pages/CollectionMenu";
+import SalarySlipPrint from "../components/printFormats/SalarySlipPrint";
+import EmployeeSalaryReport from "../pages/EmployeeSalaryReport"
+import HRSalaryManagement from "../pages/HRSalaryManagement";
+import EmployeeStatement from "../pages/EmployeeStatement";
+import SalaryIncentive from "../pages/SalaryIncentive";
+import UnapprovedLoans from "../pages/UnapprovedLoans";
+import EmployeeDeductionReport from "../pages/EmployeeDeductionReport";
 const mainRoutes = createBrowserRouter([
   {
     path: "/",
-
     element: <Login />,
   },
-
-  {
-    path: "/register",
-    element: <Register />,
-  },
-
   {
     path: "/dashboard",
     element: (
@@ -173,22 +172,20 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-
   {
     path: "/analytics",
     element: (
       <ProtectedRoute>
-        <Analytics />
+        <Navbar />
       </ProtectedRoute>
     ),
   },
   {
     path: "/reg-fee-print/:id",
-
     element: <RegistrationReceipt />,
   },
 
-  {
+    {
     path: "/group",
     element: (
       <ProtectedRoute>
@@ -196,167 +193,10 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-
-  {
-    path: "/customer-menu/user",
-    element: (
-      <ProtectedRoute>
-        <User />
-      </ProtectedRoute>
-    ),
-  },
- {
-    path: "/approval-menu",
-    element: (<ProtectedRoute>
-      <AdminApprovalMenu/>
-      </ProtectedRoute>
-      ),
-
-  },
-  {
-    path: "/customer-menu/un-approved-customer",
-    element: (
-      <ProtectedRoute>
-        <UnApprovedCustomer />
-      </ProtectedRoute>
-    ),
-  },
-   {
-    path: "/approval-menu/un-approved-customer",
-    element: (
-      <ProtectedRoute>
-        <UnApprovedCustomer />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/target-menu",
-    element: (
-      <ProtectedRoute>
-        <TargetMenu />
-      </ProtectedRoute>
-    ),
-  },
-
-
-
-  {
-    path: "/penalty-settings",
-    element: <PenaltySettings />
-  },
-
-  {
-    path: "/penalty-monitor",
-    element: <PenaltyMonitor />
-  },
-
-
-  {
-    path: "/other-service-menu/",
-    element: (
-      <ProtectedRoute>
-        <OtherServicesMenu />
-      </ProtectedRoute>
-    ),
-  },
-
-  {
-    path: "/other-service-menu/loan",
-    element: (
-      <ProtectedRoute>
-        <Loan />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/other-service-menu/pigme",
-    element: (
-      <ProtectedRoute>
-        <Pigme />
-      </ProtectedRoute>
-    ),
-  },
-
-  {
-    path: "/enroll-menu/mobile-app-enroll",
-    element: (
-      <ProtectedRoute>
-        <MobileAppEnroll />
-      </ProtectedRoute>
-    ),
-  },
-     {
-    path: "/approval-menu/mobile-app-enroll",
-    element: (
-      <ProtectedRoute>
-        <MobileAppEnroll />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/enroll-menu/enrollment",
-    element: (
-      <ProtectedRoute>
-        <Enroll />
-      </ProtectedRoute>
-    ),
-  },
-
-  {
-    path: "/enroll-menu",
-    element: (<ProtectedRoute>
-      <EnrollmentMenu />
-    </ProtectedRoute>),
-  },
-
-  {
-    path: "/target-menu/target",
-    element: (
-      <ProtectedRoute>
-        <Target />
-      </ProtectedRoute>
-    ),
-  },
-
-
-
-  {
-    path: "/legals-menu",
-    element: <LegalsMenu />,
-  },
-
-  {
-    path: "/legals-menu/guarantor",
-    element: <Guarantor />,
-  },
-
-
-
-
-  {
-    path: "/payment-menu",
-    element: (
-      <ProtectedRoute>
-        <PaymentMenu />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/payment-menu/payment",
-    element: (
-      <ProtectedRoute>
-        <Payment />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/payment-menu/payment-in-out-menu/pay-out-menu",
-    element: (
-      <ProtectedRoute>
-        <PayOutMenu />
-      </ProtectedRoute>
-    ),
-  },
+  
+    { path: "customer-view", element: <CustomerView /> },
+      { path: "/total-revenue", element: <TotalRevenue /> },
+  { path: "/monthly-revenue", element: <MonthlyRevenue /> },
 
   {
     path: "/payment-menu/payment-in-out-menu/pay-in-menu",
@@ -366,8 +206,7 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-
-  {
+   {
     path: "/payment-menu/payment-in-out-menu",
     element: (
       <ProtectedRoute>
@@ -383,19 +222,19 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+   {
+    path: "/payment-menu/payment-in-out-menu/pay-in-menu/suspense-payments",
+    element: (
+      <ProtectedRoute>
+        <SuspensePayments />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: "/payment-menu/payment-in-out-menu/pay-in-menu/registration-fee",
     element: (
       <ProtectedRoute>
         <RegistrationFee />
-      </ProtectedRoute>
-    ),
-  },
-     {
-    path: "/payment-menu/payment-in-out-menu/pay-in-menu/suspense-payments",
-    element: (
-      <ProtectedRoute>
-        <SuspensePayments />
       </ProtectedRoute>
     ),
   },
@@ -407,48 +246,6 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
-    path: "/payment-menu/payment-in-out-menu/general-payment-out/:paymentType",
-    element: (
-      <ProtectedRoute>
-        <GeneralPaymentOut />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/payment-menu/payment-in-out-menu/payment-out/commission",
-    element: (
-      <ProtectedRoute>
-        <PayOutCommission />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/payment-menu/payment-in-out-menu/payment-out/salary",
-    element: (
-      <ProtectedRoute>
-        <PayOutSalary />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/payment-menu/payment-in-out-menu/payment-out/petty-Cash",
-    element: (
-      <ProtectedRoute>
-        <PayOutPettyCash />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/payment-menu/payment-in-out-menu/payment-out/others",
-    element: (
-      <ProtectedRoute>
-        <PayOutOthers />
-      </ProtectedRoute>
-    ),
-  },
-
-
   {
     path: "/payment-menu/payment-in-out-menu/pay-in-menu/payment-link-menu/chit-payment",
     element: (
@@ -482,9 +279,26 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-
   {
-    path: "/mobile-app-enroll",
+    path: "/salary-incentive",
+    element: (
+      <ProtectedRoute>
+        <SalaryIncentive />
+      </ProtectedRoute>
+    ),
+  },
+  
+  {
+    path: "/enroll-menu/mobile-app-enroll",
+    element: (
+      <ProtectedRoute>
+        <MobileAppEnroll />
+      </ProtectedRoute>
+    ),
+  },
+
+    {
+    path: "/approval-menu/mobile-app-enroll",
     element: (
       <ProtectedRoute>
         <MobileAppEnroll />
@@ -502,10 +316,27 @@ const mainRoutes = createBrowserRouter([
   },
   ,
   {
-    path: "/un-approved-customer",
+    path: "/customer-menu/un-approved-customer",
     element: (
       <ProtectedRoute>
         <UnApprovedCustomer />
+      </ProtectedRoute>
+    ),
+  },
+   {
+    path: "/approval-menu/un-approved-customer",
+    element: (
+      <ProtectedRoute>
+        <UnApprovedCustomer />
+      </ProtectedRoute>
+    ),
+  },
+
+   {
+    path: "/approval-menu/un-approved-loans",
+    element: (
+      <ProtectedRoute>
+        <UnapprovedLoans />
       </ProtectedRoute>
     ),
   },
@@ -519,57 +350,71 @@ const mainRoutes = createBrowserRouter([
   },
 
   {
-    path: "/target",
+    path: "/target-menu/target",
     element: (
       <ProtectedRoute>
         <Target />
       </ProtectedRoute>
     ),
   },
-
-  {
-    path: "/target-commission",
-    element: <TargetCommission />,
-  },
-  {
-    path: "/target-commission-incentive",
-    element: <TargetPayOutCommissionIncentive />,
-  },
-  {
-    path: "/target-payout-menu",
-    element: <TargetPayOutMenu />,
-  },
-  {
-    path: "/target-payout-salary",
-    element: <TargetPayOutSalary />,
-  },
-  {
-    path: "/target-incentive",
-    element: <TargetIncentiveReport />,
-  },
-
-
   {
     path: "/enrollment-request-form",
     element: <EnrollmentRequestForm />,
   },
   {
-    path: "/guarantor",
+    path: "/legals-menu/guarantor",
     element: <Guarantor />,
   },
+   {
+    path: "/legals-menu",
+    element: <LegalsMenu />,
+  },
   {
-    path: "/filter-groups",
+    path: "/group-menu/filter-groups",
     element: (
       <ProtectedRoute>
         <FilterGroups />
       </ProtectedRoute>
     ),
   },
-  {
-    path: "/employee-profile",
+ 
+   {
+    path: "/approval-menu",
+    element: (<ProtectedRoute>
+      <AdminApprovalMenu/>
+      </ProtectedRoute>
+      ),
+
+  },
+     {
+    path: "/hr-menu",
     element: (
       <ProtectedRoute>
-        <EmployeeProfile />
+        <HRMenu />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/hr-menu/payroll",
+    element: (
+      <ProtectedRoute>
+        <Payroll />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/hr-menu/salary-management",
+    element: (
+      <ProtectedRoute>
+        <HRSalaryManagement />
+      </ProtectedRoute>
+    ),
+  },
+   {
+    path: "/customer-menu",
+    element: (
+      <ProtectedRoute>
+        <UserMenu />
       </ProtectedRoute>
     ),
   },
@@ -582,6 +427,20 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
+   path: "/target-menu",
+   element: (
+   <ProtectedRoute>
+    <TargetMenu/>
+   </ProtectedRoute>
+   ),
+  },
+  {
+    path: "/enroll-menu",
+    element: (<ProtectedRoute>
+        <EnrollmentMenu/>
+      </ProtectedRoute>),
+  },
+    {
     path: "/staff-menu/employee-menu",
     element: (
       <ProtectedRoute>
@@ -605,6 +464,14 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+   {
+    path: "/staff-menu/employee-menu/employee-statement",
+    element: (
+      <ProtectedRoute>
+        <EmployeeStatement />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: "/week-group",
     element: (
@@ -614,7 +481,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "/user",
+    path: "/customer-menu/user",
     element: (
       <ProtectedRoute>
         <User />
@@ -622,7 +489,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "/enrollment",
+    path: "/enroll-menu/enrollment",
     element: (
       <ProtectedRoute>
         <Enroll />
@@ -630,7 +497,15 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "/loan",
+    path: "/other-service-menu/",
+    element: (
+      <ProtectedRoute>
+        <OtherServicesMenu />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/other-service-menu/loan",
     element: (
       <ProtectedRoute>
         <Loan />
@@ -638,7 +513,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "/pigme",
+    path: "/other-service-menu/pigme",
     element: (
       <ProtectedRoute>
         <Pigme />
@@ -653,17 +528,24 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+   {
+    path: "/payment-menu",
+    element: (
+      <ProtectedRoute>
+        <PaymentMenu />
+      </ProtectedRoute>
+    ),
+  },
   {
-    path: "/payment",
+    path: "/payment-menu/payment",
     element: (
       <ProtectedRoute>
         <Payment />
       </ProtectedRoute>
     ),
   },
-
   {
-    path: "/payment-in-out-menu/pay-out-menu",
+    path: "/payment-menu/payment-in-out-menu/pay-out-menu",
     element: (
       <ProtectedRoute>
         <PayOutMenu />
@@ -671,7 +553,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "/payment-in-out-menu/general-payment-out/:paymentType",
+    path: "/payment-menu/payment-in-out-menu/general-payment-out/:paymentType",
     element: (
       <ProtectedRoute>
         <GeneralPaymentOut />
@@ -679,7 +561,7 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "/payment-in-out-menu/payment-out/commission",
+    path: "/payment-menu/payment-in-out-menu/payment-out/commission",
     element: (
       <ProtectedRoute>
         <PayOutCommission />
@@ -687,15 +569,15 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "/payment-in-out-menu/payment-out/salary",
+    path: "/payment-menu/payment-in-out-menu/payment-out/salary-payment",
     element: (
       <ProtectedRoute>
-        <PayOutSalary />
+        <SalaryPayment />
       </ProtectedRoute>
     ),
   },
   {
-    path: "/payment-in-out-menu/payment-out/petty-Cash",
+    path: "/payment-menu/payment-in-out-menu/payment-out/petty-Cash",
     element: (
       <ProtectedRoute>
         <PayOutPettyCash />
@@ -703,15 +585,23 @@ const mainRoutes = createBrowserRouter([
     ),
   },
   {
-    path: "/payment-in-out-menu/payment-out/others",
+    path: "/payment-menu/payment-in-out-menu/payment-out/others",
     element: (
       <ProtectedRoute>
         <PayOutOthers />
       </ProtectedRoute>
     ),
   },
+     {
+    path: "/collection-menu",
+    element: (
+      <ProtectedRoute>
+        <CollectionMenu />
+      </ProtectedRoute>
+    ),
+  },
   {
-    path: "/collection-area-request",
+    path: "/collection-menu/collection-area-request",
     element: (
       <ProtectedRoute>
         <CollectionArea />
@@ -736,9 +626,6 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-
-  { path: "/total-revenue", element: <TotalRevenue /> },
-  { path: "/monthly-revenue", element: <MonthlyRevenue /> },
 
   {
     path: "/lead-setting",
@@ -778,9 +665,16 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
-  ,
+      {
+    path: "/transfer-menu",
+    element: (
+      <ProtectedRoute>
+        <TransferMenu />
+      </ProtectedRoute>
+    ),
+  },
   {
-    path: "soft-transfer",
+    path: "/transfer-menu/soft-transfer",
     element: (
       <ProtectedRoute>
         <SoftTransferCustomer />
@@ -789,7 +683,7 @@ const mainRoutes = createBrowserRouter([
   },
   ,
   {
-    path: "hard-transfer",
+    path: "/transfer-menu/hard-transfer",
     element: (
       <ProtectedRoute>
         <HardTransferCustomer />
@@ -833,20 +727,20 @@ const mainRoutes = createBrowserRouter([
     ),
   },
 
-  {
-    path: "/customer-menu",
-    element: (
-      <ProtectedRoute>
-        <UserMenu />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/gift-received",
-    element: <CustomerRewards />
+    {
+    path:"/penalty-settings",
+    element:<PenaltySettings/>
   },
 
-  { path: "customer-view", element: <CustomerView /> },
+   {
+    path:"/penalty-monitor",
+    element:<PenaltyMonitor/>
+  },
+
+    {
+    path: "/gift-received",
+    element: <CustomerRewards/>
+  },
 
   {
     path: "/reports",
@@ -855,9 +749,14 @@ const mainRoutes = createBrowserRouter([
       { path: "daybook", element: <Daybook /> },
       { path: "payout", element: <PayOutReport /> },
       { path: "sales-report", element: <SalesReport /> },
+      { path: "pigmy-summary-report", element: <PigmySummaryReport /> },
       { path: "receipt", element: <Receipt /> },
+      { path: "collection-executive", element: <CollectionExecutiveReport /> },
+      {path: "collection-area-report", element: <CollectionAreaReport />},
+      { path: "registration-fee-receipt", element: <RegistrationFeeReport /> },
       { path: "group-report", element: <GroupReport /> },
       { path: "all-group-report", element: <AllGroupReport /> },
+      { path: "auction-report", element: <AuctionReport /> },
       { path: "auction-report", element: <AuctionReport /> },
       { path: "lead-report", element: <LeadReport /> },
       { path: "user-report", element: <UserReport /> },
@@ -869,78 +768,66 @@ const mainRoutes = createBrowserRouter([
       { path: "commission-report", element: <CommissionReport /> },
       { path: "enrollment-report", element: <EnrollmentReport /> },
       { path: "payment-summary", element: <PaymentSummary /> },
-      { path: "monthly-install-turnover", element: <MonthlyInstallmentTurnoverReport /> },
-
-      { path: "employee-monthly-report", element: <EmployeeMonthlyReport /> },
-      { path: "holded-customer-report", element: <HoldedCustomerReport /> },
-      { path: "registration-fee-receipt", element: <RegistrationFeeReport /> },
-      { path: "collection-executive", element: <CollectionExecutiveReport /> },
-      { path: "collection-area-report", element: <CollectionAreaReport /> },
-
-      { path: "pigmy-summary-report", element: <PigmySummaryReport /> },
-      { path: "unverified-customer-report", element: <UnApprovedCustomerReport /> },
-      { path: "payment-report", element: <PaymentReport /> },
-
-      { path: "payout-salary-report", element: <PayoutSalaryReport /> },
-
-      { path: "customer-loan-report", element: <CustomerLoanReport /> },
+       { path: "holded-customer-report", element: <HoldedCustomerReport /> },
+      {path: "monthly-install-turnover", element:<MonthlyInstallmentTurnoverReport/>},
+      {path: "employee-monthly-report", element: <EmployeeMonthlyReport/>},
+      {path: "customer-loan-report", element: <CustomerLoanReport/>},
+      {path: "unverified-customer-report", element: <UnApprovedCustomerReport/>},
+      {path: "payment-report", element: <PaymentReport/>},
       {
         path: "outstanding-report",
         element: <OutstandingReport />,
       },
- {path: "chit-asking-month-report", element: <ChitAskingMonthReport/>},
-      {
-        path: "target-incentive",
-        element: <TargetIncentiveReport />,
-      },
-      {
-        path: "target-commission",
-        element: <TargetCommission />,
-      },
- {path: "salary-remaining", element: <SalaryRemainingReport/>},
+      {path: "chit-asking-month-report", element: <ChitAskingMonthReport/>},
+      {path: "payout-salary-report", element: <PayoutSalaryReport/>},
+        {
+    path: "target-incentive",
+    element: <TargetIncentiveReport />,
+  },
+    {
+    path: "target-commission",
+    element: <TargetCommission />,
+  },
+   {path: "salary-remaining", element: <SalaryRemainingReport/>},
     {path: "non-converted-lead-report", element: <NonConvertedLead/>},
    {path: "converted-lead-report", element: <ConvertedLead/>},
-
-      // {
-      //   path: "due-report",
-      //   element: <DueReport />,
-      // },
-
-      { path: "customer-view", element: <CustomerView /> },
-
+   {path: "employee-salary-report", element: <EmployeeSalaryReport/>},
+    {path: "user-registration-source-summary-report", element: <UserRegistrationSourceSummaryReport/>},
+      {
+        path: "employee-deduction-report",
+        element: <EmployeeDeductionReport />,
+      },
     ],
   },
 
-
-  {
-    path: "/target-commission",
-    element: <TargetCommission />,
-  },
   {
     path: "/target-commission-incentive",
     element: <TargetPayOutCommissionIncentive />,
   },
-  {
-    path: "/target-payout-menu",
-    element: <TargetPayOutMenu />,
-  },
+  // {
+  //   path: "/target-payout-menu",
+  //   element: <TargetPayOutMenu />,
+  // },
   {
     path: "/target-payout-salary",
     element: <TargetPayOutSalary />,
   },
-  {
-    path: "/target-incentive",
-    element: <TargetIncentiveReport />,
-  },
-
+ 
+  
   {
     path: "/insurance",
-    element: <Insurance />
+    element: <Insurance/>
   },
+
   {
     path: "/print/:id",
 
     element: <Print />,
+  },
+   {
+    path: "/salary-slip-print/:id",
+
+    element: <SalarySlipPrint />,
   },
   {
     path: "/marketing",
@@ -964,14 +851,15 @@ const mainRoutes = createBrowserRouter([
       { path: "what-promo", element: <WhatsappPromo /> },
       { path: "bid-winner", element: <BidWinner /> },
       { path: "payment-link", element: <PaymentLink /> },
-      { path: "bid-status", element: <AuctionBidStatus /> },
-      { path: "auction-info", element: <AuctionInformation /> },
-      { path: "winner-document", element: <AuctionWinnerDocuments /> },
-      { path: "auction-terms-condition", element: <AuctionTermsandCondition /> },
-      { path: "lead-welcome-message", element: <LeadWhatsappWelcomeMessage /> },
-      { path: "lead-referredby-message", element: <LeadReferredByWhatsappMessage /> },
-      { path: "customer-welcome-message", element: <CustomerWelcomeWhatsappMessage /> },
-      { path: "customer-chitplan-message", element: <CustomerChitPlanWhatsappMessage /> },
+       {path: "bid-status", element: <AuctionBidStatus/>},
+      {path: "auction-info", element: <AuctionInformation/>},
+      {path: "winner-document", element: <AuctionWinnerDocuments/>},
+      {path: "auction-terms-condition", element: <AuctionTermsandCondition/>},
+      {path: "lead-welcome-message", element: <LeadWhatsappWelcomeMessage/>},
+      {path: "lead-referredby-message", element: <LeadReferredByWhatsappMessage/>},
+      {path: "customer-welcome-message", element: <CustomerWelcomeWhatsappMessage/>},
+      {path: "customer-chitplan-message", element: <CustomerChitPlanWhatsappMessage/>},
+      
     ],
   },
 ]);

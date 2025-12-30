@@ -8,18 +8,18 @@ const StaffMenu = () => {
   const staffCategories = [
    
     {
-      id: 2,
+      id: 1,
       title: "Add/Update Employee",
       description: "Manage employee records, roles and assignments",
       icon: <Briefcase className="w-8 h-8" />,
-      color: "from-violet-600 to-violet-700",
-      lightColor: "bg-violet-50",
-      borderColor: "border-violet-200",
+      color: "from-blue-600 to-blue-700",
+      lightColor: "bg-blue-50",
+      borderColor: "border-blue-200",
       href: "/staff-menu/employee-menu/employee",
       stats: "Active Employees",
     },
      {
-      id: 1,
+      id: 2,
       title: "Attendance",
       description: "Manage Employee Attendance records",
       icon: <SlCalender className="w-8 h-8" />,
@@ -28,6 +28,17 @@ const StaffMenu = () => {
       borderColor: "border-green-200",
       href: "/staff-menu/employee-menu/add-employee-attendance",
       stats: "Attendance Information",
+    },
+    {
+      id: 3,
+      title: "Salary Ledger",
+      description: "Manage employee Salary ledger",
+      icon: <Briefcase className="w-8 h-8" />,
+      color: "from-amber-600 to-amber-700",
+      lightColor: "bg-amber-50",
+      borderColor: "border-amber-200",
+      href: "/staff-menu/employee-menu/employee-statement",
+      stats: "Employee Statement",
     },
   ];
 
@@ -92,10 +103,10 @@ const StaffMenu = () => {
                 </Link>
               ))}
             </div>
-              <div className="mt-16 p-8 bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl border border-violet-100">
+              <div className="mt-16 p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <Zap className="w-6 h-6 text-violet-600 mt-1" />
+                <Zap className="w-6 h-6 text-blue-600 mt-1" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">Quick Tips</h3>

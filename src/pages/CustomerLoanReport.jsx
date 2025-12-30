@@ -23,6 +23,7 @@ const CustomerLoanReport = () => {
     const fetchLoanReport = async () => {
       try {
         const response = await api.get(`/payment/customers/loan-report`);
+        console.info(response, " test fvdfhjdfgjhgf");
 
         const formattedData = response.data.loanReports.map((loan, index) => ({
           id: loan?._id,
@@ -33,7 +34,7 @@ const CustomerLoanReport = () => {
           customerId: loan?.borrower?.customer_id || "N/A",
           customerName: loan?.borrower?.full_name || "N/A",
           customerPhone: loan?.borrower?.phone_number || "N/A",
-
+          daily_payment_amount: loan?.daily_payment_amount || "N/A",
           loanStartDate: loan?.start_date
             ? new Date(loan.start_date).toLocaleDateString("en-GB")
             : "N/A",
@@ -47,6 +48,7 @@ const CustomerLoanReport = () => {
 
           referredBy: loan?.referredBy || "N/A",
         }));
+        
 
         setLoanReportTable(formattedData);
       } catch (error) {
@@ -127,9 +129,11 @@ const CustomerLoanReport = () => {
     { key: "customerPhone", header: "Phone Number" },
     { key: "loanStartDate", header: "Loan Start Date" },
     { key: "loanServiceCharges", header: "Service Charges" },
+    {key: "daily_payment_amount", header: "Daily Payment"},
     { key: "loanAmount", header: "Loan Amount" },
     { key: "totalLoanAmount", header: "Total Paid Loan Amount" },
     { key: "referredBy", header: "Referred By" },
+
     { key: "loanBalance", header: "Balance" },
   ];
 
@@ -148,12 +152,12 @@ const CustomerLoanReport = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="max-w-screen">
+      <div className=" mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold flex items-center gap-3">
-            <FileText className="w-7 h-7 text-violet-600" /> Customer Loan Report
+            <FileText className="w-7 h-7 text-blue-600" /> Customer Loan Report
           </h1>
           <p className="text-gray-600 ml-10">
             Overview of customer loans, payments & referral details
@@ -168,7 +172,7 @@ const CustomerLoanReport = () => {
           <>
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <StatCard icon={FileText} label="Total Loans" value={summaryStats.totalLoans} color="bg-violet-600" />
+              <StatCard icon={FileText} label="Total Loans" value={summaryStats.totalLoans} color="bg-blue-600" />
               <StatCard icon={IndianRupee} label="Total Loan Amount" value={`₹${summaryStats.totalAmount}`} color="bg-purple-600" />
               <StatCard icon={TrendingUp} label="Total Paid" value={`₹${summaryStats.totalPaid}`} color="bg-green-600" />
               <StatCard icon={Calendar} label="Total Balance" value={`₹${summaryStats.totalBalance}`} color="bg-orange-600" />
@@ -258,7 +262,7 @@ const CustomerLoanReport = () => {
             </div>
 
             {/* TABLE */}
-            <div className="bg-white rounded-xl shadow-sm border p-2">
+            <div className="max-w-screen">
               <DataTable
                 columns={loanReportColumns}
                 data={filteredLoanReport}

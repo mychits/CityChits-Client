@@ -1,70 +1,21 @@
+import { Link } from "react-router-dom";
 import Navbar from "../components/layouts/Navbar";
 import Sidebar from "../components/layouts/Sidebar";
-import { HiCurrencyRupee } from "react-icons/hi2";
-import { Banknote, Briefcase, TicketCheck, MoreHorizontal, ChevronRight,Zap } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Users, Briefcase, ChevronRight,Zap  } from "lucide-react";
 
-const PayOutMenu = () => {
-  const paymentOutMenuCategories = [
+const CollectionMenu = () => {
+  const collectionCategories = [
     {
-      id: "#1",
-      title: "Chit",
-      description: "Manage customer chit payment out transaction information.",
-      icon: <TicketCheck size={28} className="text-blue-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
-      href:"/payment-menu/payment-in-out-menu/general-payment-out/chit",
-      stats: "Chit Payment Out Information"
+      id: 1,
+      title: "Collection",
+      description: "Manage agent records, roles and assignments",
+      icon: <Users className="w-8 h-8" />,
+      color: "from-blue-600 to-blue-700",
+      lightColor: "bg-blue-50",
+      borderColor: "border-blue-200",
+      href: "/collection-menu/collection-area-request",
+      stats: "Active Agents",
     },
-    {
-      id: "#2",
-      title: "Incentive",
-      description: "Manage Employee Incentive  payment out transaction information.",
-      icon: <HiCurrencyRupee size={28} className="text-yellow-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
-       href:"/salary-incentive",
-       stats: "Incentive Information"
-    },
-    {
-      id: "#3",
-      title: "Salary",
-      description: "Manage Employee salary information.",
-      icon: <Briefcase size={28} className="text-purple-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
-       href:"/payment-menu/payment-in-out-menu/payment-out/salary-payment",
-       stats: "Employee Salary Out Information"
-
-    },
-    {
-      id: "#4",
-      title: "Petty Cash",
-      description: "Manage Petty Cash information.",
-      icon: <Banknote size={28} className="text-yellow-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
-       href:"/payment-menu/payment-in-out-menu/payment-out/petty-cash",
-       stats: "Petty cash Information"
-
-    },
-    {
-      id: "#5",
-      title: "Others",
-      description: "Manage Others information.",
-      icon: <MoreHorizontal size={28} className="text-gray-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
-       href:"/payment-menu/payment-in-out-menu/payment-out/others",
-       stats: "Other payment out Information"
-
-    },
-    
   ];
 
   return (
@@ -76,15 +27,15 @@ const PayOutMenu = () => {
           <div className="p-8">
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-gray-900">
-                Payment-Out Management
+                Collection Management
               </h2>
               <p className="text-gray-600 mt-2">
-                Manage and view payment-Out information 
+                Manage and organize your Collection Area.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-              {paymentOutMenuCategories.map((category) => (
+              {collectionCategories.map((category) => (
                 <Link key={category.id} to={category.href} className="group">
                   <div
                     className={`relative h-full overflow-hidden rounded-xl bg-white border ${category.borderColor} shadow-md hover:shadow-lg transition-all duration-300`}
@@ -135,12 +86,7 @@ const PayOutMenu = () => {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">Quick Tips</h3>
-                <p className="text-slate-700">Use the Chit directory to manage Chit payment out transaction details and view chit payment out information all in one place.</p>
-                <p className="text-slate-700">Use the Commission / Incentive directory to manage Commission / Incentive transaction details and view Commission / Incentive information all in one place.</p>
-                 <p className="text-slate-700">Use the Employee Salary directory to manage Employee Salary transaction details and view Salary payment out information all in one place.</p>
-                  <p className="text-slate-700">Use the Petty Cash Payment directory to manage Petty Cash Payment transaction details and view Petty Cash payment information all in one place.</p>
-                 <p className="text-slate-700">Use the Others Payment directory to manage  Payment transaction details and view payment out information all in one place.</p>
-                
+                <p className="text-slate-700">Use the Collection directory to manage Location, update Collection information.</p>
               </div>
             </div>
           </div>
@@ -151,4 +97,4 @@ const PayOutMenu = () => {
   );
 };
 
-export default PayOutMenu;
+export default CollectionMenu;
