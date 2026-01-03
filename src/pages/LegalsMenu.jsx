@@ -19,6 +19,22 @@ const LegalsMenu = () => {
       iconColor: "text-violet-600",
       bgColor: "bg-violet-100"
     },
+      {
+      id: 1,
+      title: "Co Applicant",
+      description: "Manage Co Applicant information",
+       icon: FaHandshake,
+        gradient: "from-violet-500 via-purple-500 to-pink-500",
+      bgGradient: "from-violet-50 via-purple-50 to-pink-50",
+ 
+      borderColor: "border-violet-200",
+      href: "/legals-menu/co-applicant",
+      stats: "Active Co Applicant",
+       secondaryIcon: Shield,
+       iconColor: "text-violet-600",
+      bgColor: "bg-violet-100"
+    },
+
   ];
 
   return (

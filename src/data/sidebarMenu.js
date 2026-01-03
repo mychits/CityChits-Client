@@ -38,6 +38,7 @@ import { MdAccountBalanceWallet } from "react-icons/md";
 import { LuTarget } from "react-icons/lu";
 
 import { FaExclamationTriangle } from "react-icons/fa";
+import { TbGraph } from "react-icons/tb";
 
 const sidebarMenu = [
   {
@@ -55,13 +56,13 @@ const sidebarMenu = [
     link: "/quick-search",
   },
 
-  {
-    id: "$2",
-    title: "Analytics",
-    icon: SiGoogleanalytics,
-    link: "/analytics",
-    activeColor: "primary",
-  },
+  // {
+  //   id: "$2",
+  //   title: "Analytics",
+  //   icon: SiGoogleanalytics,
+  //   link: "/analytics",
+  //   activeColor: "primary",
+  // },
   {
     id: "$3",
     title: "Groups ",
@@ -154,7 +155,7 @@ const sidebarMenu = [
     //   },
     // ],
   },
-
+ { title: "Penalty Monitor", icon: TbGraph, link: "/penalty-monitor" },
   {
     id: "$7",
     title: "Leads",
@@ -264,7 +265,16 @@ const sidebarMenu = [
             link: "/collection-area-request",
           },
 
-          {
+
+          // {
+          // 	id: ids.fifteen,
+          // 	title: "Collection Mapping",
+          // 	icon: RiUserLocationFill,
+          // 	link: "/collection-area-mapping",
+          // },
+        ],
+      },
+                {
             id: "#3",
             title: "HR",
             hider: true,
@@ -281,14 +291,6 @@ const sidebarMenu = [
             //   },
             // ],
           },
-          // {
-          // 	id: ids.fifteen,
-          // 	title: "Collection Mapping",
-          // 	icon: RiUserLocationFill,
-          // 	link: "/collection-area-mapping",
-          // },
-        ],
-      },
       // {
       // 	id: "#2",
       // 	title: "Groups",
@@ -305,43 +307,44 @@ const sidebarMenu = [
       // 		},
       // 	],
       // },
-      {
-        id: "#3",
-        title: "Employee",
-        hider: true,
-        icon: FaUserTie,
-        newTab: true,
-        submenu: true,
-        submenuItems: [
-          {
-            id: "#206",
-            title: "Employee Profile",
-            icon: GrUserSettings,
-            link: "/employee-profile",
-          },
-        ],
-      },
+      // {
+      //   id: "#3",
+      //   title: "Employee",
+      //   hider: true,
+      //   icon: FaUserTie,
+      //   newTab: true,
+      //   submenu: true,
+      //   submenuItems: [
+      //     {
+      //       id: "#206",
+      //       title: "Employee Profile",
+      //       icon: GrUserSettings,
+      //       link: "/employee-profile",
+      //     },
+      //   ],
+      // },
       {
         id: "#3",
         title: "Transfer",
         hider: true,
         icon: BiTransfer,
-        newTab: true,
-        submenu: true,
-        submenuItems: [
-          {
-            id: "#206",
-            title: "Soft Transfer",
-            icon: GrUserSettings,
-            link: "/soft-transfer",
-          },
-          {
-            id: "#206",
-            title: "Hard Transfer",
-            icon: GrUserSettings,
-            link: "/hard-transfer",
-          },
-        ],
+        link: "/transfer-menu"
+        // newTab: true,
+        // submenu: true,
+        // submenuItems: [
+        //   {
+        //     id: "#206",
+        //     title: "Soft Transfer",
+        //     icon: GrUserSettings,
+        //     link: "/soft-transfer",
+        //   },
+        //   {
+        //     id: "#206",
+        //     title: "Hard Transfer",
+        //     icon: GrUserSettings,
+        //     link: "/hard-transfer",
+        //   },
+        
       },
     ],
   },

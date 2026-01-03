@@ -966,7 +966,7 @@ const Enroll = () => {
                 </Select>
                 <button
                   onClick={() => setShowModal(true)}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                  className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
                 >
                   + Add Enrollment
                 </button>
@@ -1012,7 +1012,7 @@ const Enroll = () => {
                   Group <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
                   placeholder="Select or Search Group"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1042,7 +1042,7 @@ const Enroll = () => {
                   Customer <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
                   placeholder="Select or Search Customer"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1108,7 +1108,7 @@ const Enroll = () => {
                   Payment Type <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
                   placeholder="Select Payment Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1151,7 +1151,7 @@ const Enroll = () => {
                   Referred Type <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
                   placeholder="Select Referred Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1188,7 +1188,7 @@ const Enroll = () => {
                   </label>
 
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                     placeholder="Select Or Search Referred Customer"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1224,7 +1224,7 @@ const Enroll = () => {
                   </label>
 
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                     placeholder="Select Or Search Referred Leads"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1252,7 +1252,7 @@ const Enroll = () => {
                 <div className="w-full">
                   <label className="block mb-2 text-sm font-medium text-gray-900">Select Referred Agent{" "} <span className="text-red-500">*</span></label>
                   <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                   placeholder="Select or Search Referred Agent"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1285,7 +1285,7 @@ const Enroll = () => {
                   </label>
 
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                     placeholder="Select Or Search Referred Employee"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1328,14 +1328,14 @@ const Enroll = () => {
                     placeholder="Enter the Number of Tickets"
                     required
                     max={availableTicketsAdd.length}
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
                   />
                   {errors.no_of_tickets && (
                     <p className="mt-1 text-xs text-red-600">
                       {errors.no_of_tickets}
                     </p>
                   )}
-                  <p className="mt-1 text-xs text-blue-800 text-center">
+                  <p className="mt-1 text-xs text-violet-800 text-center">
                     Only {availableTicketsAdd.length} tickets left
                   </p>
                 </div>
@@ -1418,7 +1418,7 @@ const Enroll = () => {
                       ? "bg-gray-600 hover:bg-gray-700"
                       : enrollmentStep === "continue"
                       ? "bg-green-600 hover:bg-green-700"
-                      : "bg-blue-700 hover:bg-blue-800"
+                      : "bg-violet-700 hover:bg-violet-800"
                   }`}
                 >
                   {loading
@@ -1619,7 +1619,7 @@ const Enroll = () => {
                 <div className="w-full">
                   <label className="block mb-2 text-sm font-medium text-gray-900">Select Referred Agent{" "} <span className="text-red-500">*</span></label>
                   <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                   placeholder="Select or Search Referred Agent"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1738,7 +1738,7 @@ const Enroll = () => {
 
               <button
                 type="submit"
-                className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                className="w-full text-white bg-violet-700 hover:bg-violet-800 focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
               >
                 Update
               </button>
@@ -1776,6 +1776,7 @@ const Enroll = () => {
                   >
                     <option value="">-- Select Reason --</option>
                     <option value="Group Closed">Group Closed</option>
+                    <option value="Group Changed">Group Changed</option>
                     <option value="Chit Cancellation">Chit Cancellation</option>
                     <option value="On Hold">On Hold</option>
                     <option value="In Active Customer">

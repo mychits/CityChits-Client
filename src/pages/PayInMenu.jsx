@@ -20,7 +20,7 @@ const PayInMenu = () => {
     },
     {
       id: "#2",
-      title: "Chit Payment",
+      title: "Payment Receipt",
       description: "Manage customer chit payment transaction information",
       icon: IndianRupee,
       gradient: "from-purple-500 via-indigo-500 to-violet-500",
@@ -32,7 +32,21 @@ const PayInMenu = () => {
       bgColor: "bg-purple-100"
     },
 
-      
+               {
+      id: "#",
+      title: "Penalty payment Receipt",
+      description: "Customer payments with penalty  Receipt Management.",
+      icon: IndianRupee,
+       color: "from-yellow-600 to-yellow-700",
+     gradient: "from-purple-500 via-indigo-500 to-violet-500",
+      bgGradient: "from-purple-50 via-indigo-50 to-violet-50",
+       href:"/payment-menu/payment-in-out-menu/pay-in-menu/penalty-payment",
+       stats: "Payment Receipt Information Including Penalty",
+         secondaryIcon: UserCheck,
+        iconColor: "text-purple-600",
+      bgColor: "bg-purple-100"
+    },
+
       {
       id: "#",
      title: "Suspense Payments",

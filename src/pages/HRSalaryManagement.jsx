@@ -498,7 +498,7 @@ const confirmPayAsIncentive = () => {
         label: (
           <div
             key={salaryPayment?._id}
-            className="text-blue-600"
+            className="text-violet-600"
             onClick={() => handlePrint(salaryPayment?._id)}>
             Print
           </div>
@@ -882,7 +882,7 @@ const handleChange = (name, value) => {
       }
 
       // Add calculated incentive if it's been set (Pay as Incentive was confirmed)
-      totalSalaryPayable += finalCalculatedIncentive;
+      // totalSalaryPayable += finalCalculatedIncentive;
 
       const paidAmount = Number(formData.paid_amount || 0);
       const remainingBalance = totalSalaryPayable - paidAmount;
@@ -1082,7 +1082,7 @@ const handleChange = (name, value) => {
                 <div>
                   <button
                     onClick={() => setIsOpenAddModal(true)}
-                    className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200">
+                    className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200">
                     + Add Salary
                   </button>
                 </div>
@@ -1094,20 +1094,20 @@ const handleChange = (name, value) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <Link
                     to="/payment-menu/payment-in-out-menu/payment-out/salary-payment"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group">
                     <RiMoneyRupeeCircleFill
-                      className="text-blue-600 group-hover:scale-110 transition-transform"
+                      className="text-violet-600 group-hover:scale-110 transition-transform"
                       size={24}
                     />
-                    <span className="font-medium text-gray-700 group-hover:text-blue-600">
+                    <span className="font-medium text-gray-700 group-hover:text-violet-600">
                       Accounts / Salary Payment
                     </span>
                   </Link>
                   <Link
                     to="/staff-menu/employee-menu/employee-statement"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
-                    <MdOutlineMan className="text-blue-600 group-hover:scale-110 transition-transform text-lg" />
-                    <span className="font-medium text-gray-700 group-hover:text-blue-600">
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group">
+                    <MdOutlineMan className="text-violet-600 group-hover:scale-110 transition-transform text-lg" />
+                    <span className="font-medium text-gray-700 group-hover:text-violet-600">
                       Employees / Employee Statement
                     </span>
                   </Link>
@@ -1297,7 +1297,7 @@ const handleChange = (name, value) => {
                         value={formData.total_salary}
                         disabled
                       />
-                      <span className="ml-2 font-medium font-mono text-blue-600">
+                      <span className="ml-2 font-medium font-mono text-violet-600">
                         {numberToIndianWords(formData.total_salary || 0)}
                       </span>
                     </div>
@@ -1307,7 +1307,7 @@ const handleChange = (name, value) => {
                   {/* Header */}
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
+                      <div className="p-2 bg-gradient-to-br from-violet-500 to-violet-600 rounded-lg">
                         <BarChart3 className="w-6 h-6 text-white" />
                       </div>
                       <h3 className="font-semibold text-xl text-gray-900">
@@ -1320,7 +1320,7 @@ const handleChange = (name, value) => {
                           <Button
                             type="primary"
                             onClick={handlePayAsSalary}
-                            className="bg-blue-600 hover:bg-blue-700">
+                            className="bg-violet-600 hover:bg-violet-700">
                             Pay as Salary
                           </Button>
                           <Button
@@ -1338,9 +1338,9 @@ const handleChange = (name, value) => {
                     {/* Monthly Target */}
                     <div className="flex flex-col">
                       <div className="flex items-center gap-2 mb-2">
-                        <Target className="w-4 h-4 text-blue-600" />
+                        <Target className="w-4 h-4 text-violet-600" />
                         <label className="font-semibold text-gray-700 text-sm">
-                          Monthly Target
+                         Current Month Target
                         </label>
                       </div>
                       <input
@@ -1348,9 +1348,9 @@ const handleChange = (name, value) => {
                         onWheel={(e) => e.target.blur()}
                         value={formData?.monthly_business_info?.target || 0}
                         disabled
-                        className="w-full px-4 py-3 border border-slate-200 rounded-lg text-gray-900 font-semibold bg-slate-50 focus:bg-white focus:border-blue-300 focus:outline-none transition-colors disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 border border-slate-200 rounded-lg text-gray-900 font-semibold bg-slate-50 focus:bg-white focus:border-violet-300 focus:outline-none transition-colors disabled:cursor-not-allowed"
                       />
-                      <span className="mt-2 font-medium font-mono text-blue-600 text-sm">
+                      <span className="mt-2 font-medium font-mono text-violet-600 text-sm">
                         {numberToIndianWords(
                           formData?.monthly_business_info?.target ?? 0
                         )}
@@ -1361,7 +1361,7 @@ const handleChange = (name, value) => {
                       <div className="flex items-center gap-2 mb-2">
                         <TrendingUp className="w-4 h-4 text-amber-600" />
                         <label className="font-semibold text-gray-700 text-sm">
-                          Remaining Target
+                          Previous Remaining Target
                         </label>
                       </div>
                       <input
@@ -1409,7 +1409,7 @@ const handleChange = (name, value) => {
                       <div className="flex items-center gap-2 mb-2">
                         <CheckCircle className="w-4 h-4 text-emerald-600" />
                         <label className="font-semibold text-gray-700 text-sm">
-                          Total Business Closed
+                          Total Business Closed (Current Month)
                         </label>
                       </div>
                       <input
@@ -1433,7 +1433,7 @@ const handleChange = (name, value) => {
                       <div className="flex items-center gap-2 mb-2">
                         <Target className="w-4 h-4 text-red-600" />
                         <label className="font-semibold text-gray-700 text-sm">
-                          Current Remaining Target
+                          Pending Target 
                         </label>
                       </div>
                       <input
@@ -1487,7 +1487,7 @@ const handleChange = (name, value) => {
                         id="basic"
                         value={formData?.earnings?.basic}
                       />
-                      <span className="ml-2 font-medium font-mono text-blue-600">
+                      <span className="ml-2 font-medium font-mono text-violet-600">
                         {numberToIndianWords(formData?.earnings?.basic || 0)}
                       </span>
                     </div>
@@ -1506,7 +1506,7 @@ const handleChange = (name, value) => {
                         id="hra"
                         value={formData?.earnings?.hra}
                       />
-                      <span className="ml-2 font-medium font-mono text-blue-600">
+                      <span className="ml-2 font-medium font-mono text-violet-600">
                         {numberToIndianWords(formData?.earnings?.hra || 0)}
                       </span>
                     </div>
@@ -1526,7 +1526,7 @@ const handleChange = (name, value) => {
                         id="travel_allowance"
                         value={formData?.earnings?.travel_allowance}
                       />
-                      <span className="ml-2 font-medium font-mono text-blue-600">
+                      <span className="ml-2 font-medium font-mono text-violet-600">
                         {numberToIndianWords(
                           formData?.earnings?.travel_allowance || 0
                         )}
@@ -1547,7 +1547,7 @@ const handleChange = (name, value) => {
                         id="medical_allowance"
                         value={formData?.earnings?.medical_allowance}
                       />
-                      <span className="ml-2 font-medium font-mono text-blue-600">
+                      <span className="ml-2 font-medium font-mono text-violet-600">
                         {numberToIndianWords(
                           formData?.earnings?.medical_allowance || 0
                         )}
@@ -1569,7 +1569,7 @@ const handleChange = (name, value) => {
                         id="basket_of_benifits"
                         value={formData?.earnings?.basket_of_benifits}
                       />
-                      <span className="ml-2 font-medium font-mono text-blue-600">
+                      <span className="ml-2 font-medium font-mono text-violet-600">
                         {numberToIndianWords(
                           formData?.earnings?.basket_of_benifits || 0
                         )}
@@ -1591,7 +1591,7 @@ const handleChange = (name, value) => {
                         id="performance_bonus"
                         value={formData?.earnings?.performance_bonus}
                       />
-                      <span className="ml-2 font-medium font-mono text-blue-600">
+                      <span className="ml-2 font-medium font-mono text-violet-600">
                         {numberToIndianWords(
                           formData?.earnings?.performance_bonus || 0
                         )}
@@ -1613,7 +1613,7 @@ const handleChange = (name, value) => {
                         id="other_allowances"
                         value={formData?.earnings?.other_allowances}
                       />
-                      <span className="ml-2 font-medium font-mono text-blue-600">
+                      <span className="ml-2 font-medium font-mono text-violet-600">
                         {numberToIndianWords(
                           formData?.earnings?.other_allowances || 0
                         )}
@@ -1635,7 +1635,7 @@ const handleChange = (name, value) => {
                         id="conveyance"
                         value={formData?.earnings?.conveyance}
                       />
-                      <span className="ml-2 font-medium font-mono text-blue-600">
+                      <span className="ml-2 font-medium font-mono text-violet-600">
                         {numberToIndianWords(
                           formData?.earnings?.conveyance || 0
                         )}
@@ -1651,7 +1651,7 @@ const handleChange = (name, value) => {
                         value={totalEarningsExcludingSalary.toFixed(2)}
                         disabled
                       />
-                      <span className="ml-2 font-medium font-mono text-blue-600">
+                      <span className="ml-2 font-medium font-mono text-violet-600">
                         {numberToIndianWords(totalEarningsExcludingSalary)}
                       </span>
                     </div>
@@ -1678,7 +1678,7 @@ const handleChange = (name, value) => {
                         id="income_tax"
                         value={formData?.deductions?.income_tax}
                       />
-                      <span className="ml-2 font-medium font-mono text-blue-600">
+                      <span className="ml-2 font-medium font-mono text-violet-600">
                         {numberToIndianWords(
                           formData?.deductions?.income_tax || 0
                         )}
@@ -1700,7 +1700,7 @@ const handleChange = (name, value) => {
                         id="esi"
                         value={formData?.deductions?.esi}
                       />
-                      <span className="ml-2 font-medium font-mono text-blue-600">
+                      <span className="ml-2 font-medium font-mono text-violet-600">
                         {numberToIndianWords(formData?.deductions?.esi || 0)}
                       </span>
                     </div>
@@ -1720,7 +1720,7 @@ const handleChange = (name, value) => {
                         id="epf"
                         value={formData?.deductions?.epf}
                       />
-                      <span className="ml-2 font-medium font-mono text-blue-600">
+                      <span className="ml-2 font-medium font-mono text-violet-600">
                         {numberToIndianWords(formData?.deductions?.epf || 0)}
                       </span>
                     </div>
@@ -1740,7 +1740,7 @@ const handleChange = (name, value) => {
                         id="professional_tax"
                         value={formData?.deductions?.professional_tax}
                       />
-                      <span className="ml-2 font-medium font-mono text-blue-600">
+                      <span className="ml-2 font-medium font-mono text-violet-600">
                         {numberToIndianWords(
                           formData?.deductions?.professional_tax || 0
                         )}
@@ -1756,7 +1756,7 @@ const handleChange = (name, value) => {
                         value={totalDeductions.toFixed(2)}
                         disabled
                       />
-                      <span className="ml-2 font-medium font-mono text-blue-600">
+                      <span className="ml-2 font-medium font-mono text-violet-600">
                         {numberToIndianWords(totalDeductions.toFixed(2))}
                       </span>
                     </div>
@@ -1783,8 +1783,8 @@ const handleChange = (name, value) => {
                 </div>
                 {/* Calculated Salary Display */}
                 {calculatedSalary && (
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <h3 className="text-lg font-semibold text-blue-800 mb-4">
+                  <div className="bg-violet-50 p-4 rounded-lg">
+                    <h3 className="text-lg font-semibold text-violet-800 mb-4">
                       Attendance Details
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1799,7 +1799,7 @@ const handleChange = (name, value) => {
                           value={calculatedSalary.total_days}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             calculatedSalary.total_days || 0
                           )}
@@ -1816,7 +1816,7 @@ const handleChange = (name, value) => {
                           value={calculatedSalary.present_days}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             calculatedSalary.present_days || 0
                           )}
@@ -1833,7 +1833,7 @@ const handleChange = (name, value) => {
                           value={calculatedSalary.paid_days}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(calculatedSalary.paid_days || 0)}
                         </span>
                       </div>
@@ -1848,7 +1848,7 @@ const handleChange = (name, value) => {
                           value={calculatedSalary.lop_days}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(calculatedSalary.lop_days || 0)}
                         </span>
                       </div>
@@ -1863,7 +1863,7 @@ const handleChange = (name, value) => {
                           value={calculatedSalary.per_day_salary.toFixed(2)}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             calculatedSalary.per_day_salary.toFixed(2) || 0
                           )}
@@ -1880,126 +1880,171 @@ const handleChange = (name, value) => {
                           value={calculatedSalary.calculated_salary.toFixed(2)}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             calculatedSalary.calculated_salary.toFixed(2) || 0
                           )}
                         </span>
                       </div>
                     </div>
-                    <div className="mt-6 bg-gradient-to-br from-white to-slate-50 rounded-2xl border border-slate-200 p-8 shadow-sm">
-                      {/* Header */}
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
-                          <BarChart3 className="w-6 h-6 text-white" />
-                        </div>
-                        <h3 className="font-semibold text-xl text-gray-900">
-                          Monthly Target & Incentive
-                        </h3>
+                     <div className="mt-6 bg-gradient-to-br from-white to-slate-50 rounded-2xl border border-slate-200 p-8 shadow-sm">
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-gradient-to-br from-violet-500 to-violet-600 rounded-lg">
+                        <BarChart3 className="w-6 h-6 text-white" />
                       </div>
-                      {/* Metrics Grid */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {/* Monthly Target */}
-                        <div className="flex flex-col">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Target className="w-4 h-4 text-blue-600" />
-                            <label className="font-semibold text-gray-700 text-sm">
-                              Monthly Target
-                            </label>
-                          </div>
-                          <input
-                            type="number"
-                            onWheel={(e) => e.target.blur()}
-                            value={formData?.monthly_business_info?.target || 0}
-                            disabled
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg text-gray-900 font-semibold bg-slate-50 focus:bg-white focus:border-blue-300 focus:outline-none transition-colors disabled:cursor-not-allowed"
-                          />
-                          <span className="mt-2 font-medium font-mono text-blue-600 text-sm">
-                            {numberToIndianWords(
-                              formData?.monthly_business_info?.target ?? 0
-                            )}
-                          </span>
-                        </div>
-                        {/* Remaining Target */}
-                        <div className="flex flex-col">
-                          <div className="flex items-center gap-2 mb-2">
-                            <TrendingUp className="w-4 h-4 text-amber-600" />
-                            <label className="font-semibold text-gray-700 text-sm">
-                              Remaining Target
-                            </label>
-                          </div>
-                          <input
-                            type="number"
-                            onWheel={(e) => e.target.blur()}
-                            value={
-                              formData?.monthly_business_info
-                                ?.previous_remaining_target || 0
-                            }
-                            disabled
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg text-gray-900 font-semibold bg-slate-50 focus:bg-white focus:border-amber-300 focus:outline-none transition-colors disabled:cursor-not-allowed"
-                          />
-                          <span className="mt-2 font-medium font-mono text-amber-600 text-sm">
-                            {numberToIndianWords(
-                              formData?.monthly_business_info
-                                ?.previous_remaining_target ?? 0
-                            )}
-                          </span>
-                        </div>
-                        {/* Total Target */}
-                        <div className="flex flex-col">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Target className="w-4 h-4 text-purple-600" />
-                            <label className="font-semibold text-gray-700 text-sm">
-                              Total Target
-                            </label>
-                          </div>
-                          <input
-                            type="number"
-                            onWheel={(e) => e.target.blur()}
-                            value={
-                              formData?.monthly_business_info?.total_target || 0
-                            }
-                            disabled
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg text-gray-900 font-semibold bg-slate-50 focus:bg-white focus:border-purple-300 focus:outline-none transition-colors disabled:cursor-not-allowed"
-                          />
-                          <span className="mt-2 font-medium font-mono text-purple-600 text-sm">
-                            {numberToIndianWords(
-                              formData?.monthly_business_info?.total_target ?? 0
-                            )}
-                          </span>
-                        </div>
-                        {/* Total Business Closed */}
-                        <div className="flex flex-col">
-                          <div className="flex items-center gap-2 mb-2">
-                            <CheckCircle className="w-4 h-4 text-emerald-600" />
-                            <label className="font-semibold text-gray-700 text-sm">
-                              Total Business Closed
-                            </label>
-                          </div>
-                          <input
-                            type="number"
-                            value={
-                              formData?.monthly_business_info
-                                ?.total_business_closed ?? 0
-                            }
-                            readOnly
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg text-gray-900 font-semibold bg-emerald-50 cursor-not-allowed"
-                          />
-                          <span className="mt-2 font-medium font-mono text-emerald-600 text-sm">
-                            {numberToIndianWords(
-                              formData?.monthly_business_info
-                                ?.total_business_closed || 0
-                            )}
-                          </span>
-                        </div>
-                      </div>
+                      <h3 className="font-semibold text-xl text-gray-900">
+                        Monthly Target & Incentive
+                      </h3>
                     </div>
+                    <div className="flex gap-2">
+                      {calculatedIncentive > 0 && (
+                        <>
+                          <Button
+                            type="primary"
+                            onClick={handlePayAsSalary}
+                            className="bg-violet-600 hover:bg-violet-700">
+                            Pay as Salary
+                          </Button>
+                          <Button
+                            type="primary"
+                            onClick={handlePayAsIncentive}
+                            className="bg-purple-600 hover:bg-purple-700">
+                            Pay as Incentive
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  {/* Metrics Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {/* Monthly Target */}
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Target className="w-4 h-4 text-violet-600" />
+                        <label className="font-semibold text-gray-700 text-sm">
+                         Current Month Target
+                        </label>
+                      </div>
+                      <input
+                        type="number"
+                        onWheel={(e) => e.target.blur()}
+                        value={formData?.monthly_business_info?.target || 0}
+                        disabled
+                        className="w-full px-4 py-3 border border-slate-200 rounded-lg text-gray-900 font-semibold bg-slate-50 focus:bg-white focus:border-violet-300 focus:outline-none transition-colors disabled:cursor-not-allowed"
+                      />
+                      <span className="mt-2 font-medium font-mono text-violet-600 text-sm">
+                        {numberToIndianWords(
+                          formData?.monthly_business_info?.target ?? 0
+                        )}
+                      </span>
+                    </div>
+                    {/* Remaining Target */}
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2 mb-2">
+                        <TrendingUp className="w-4 h-4 text-amber-600" />
+                        <label className="font-semibold text-gray-700 text-sm">
+                          Previous Remaining Target
+                        </label>
+                      </div>
+                      <input
+                        type="number"
+                        onWheel={(e) => e.target.blur()}
+                        value={
+                          formData?.monthly_business_info
+                            ?.previous_remaining_target || 0
+                        }
+                        disabled
+                        className="w-full px-4 py-3 border border-slate-200 rounded-lg text-gray-900 font-semibold bg-slate-50 focus:bg-white focus:border-amber-300 focus:outline-none transition-colors disabled:cursor-not-allowed"
+                      />
+                      <span className="mt-2 font-medium font-mono text-amber-600 text-sm">
+                        {numberToIndianWords(
+                          formData?.monthly_business_info
+                            ?.previous_remaining_target ?? 0
+                        )}
+                      </span>
+                    </div>
+                    {/* Total Target */}
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Target className="w-4 h-4 text-purple-600" />
+                        <label className="font-semibold text-gray-700 text-sm">
+                          Total Target
+                        </label>
+                      </div>
+                      <input
+                        type="number"
+                        onWheel={(e) => e.target.blur()}
+                        value={
+                          formData?.monthly_business_info?.total_target || 0
+                        }
+                        disabled
+                        className="w-full px-4 py-3 border border-slate-200 rounded-lg text-gray-900 font-semibold bg-slate-50 focus:bg-white focus:border-purple-300 focus:outline-none transition-colors disabled:cursor-not-allowed"
+                      />
+                      <span className="mt-2 font-medium font-mono text-purple-600 text-sm">
+                        {numberToIndianWords(
+                          formData?.monthly_business_info?.total_target ?? 0
+                        )}
+                      </span>
+                    </div>
+                    {/* Total Business Closed */}
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2 mb-2">
+                        <CheckCircle className="w-4 h-4 text-emerald-600" />
+                        <label className="font-semibold text-gray-700 text-sm">
+                          Total Business Closed (Current Month)
+                        </label>
+                      </div>
+                      <input
+                        type="number"
+                        value={
+                          formData?.monthly_business_info
+                            ?.total_business_closed ?? 0
+                        }
+                        readOnly
+                        className="w-full px-4 py-3 border border-slate-200 rounded-lg text-gray-900 font-semibold bg-emerald-50 cursor-not-allowed"
+                      />
+                      <span className="mt-2 font-medium font-mono text-emerald-600 text-sm">
+                        {numberToIndianWords(
+                          formData?.monthly_business_info
+                            ?.total_business_closed || 0
+                        )}
+                      </span>
+                    </div>
+                    {/* Current Remaining Target */}
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Target className="w-4 h-4 text-red-600" />
+                        <label className="font-semibold text-gray-700 text-sm">
+                          Pending Target 
+                        </label>
+                      </div>
+                      <input
+                        type="number"
+                        onWheel={(e) => e.target.blur()}
+                        value={
+                          formData?.monthly_business_info
+                            ?.current_remaining_target || 0
+                        }
+                        disabled
+                        className="w-full px-4 py-3 border border-slate-200 rounded-lg text-gray-900 font-semibold bg-slate-50 focus:bg-white focus:border-red-300 focus:outline-none transition-colors disabled:cursor-not-allowed"
+                      />
+                      <span className="mt-2 font-medium font-mono text-red-600 text-sm">
+                        {numberToIndianWords(
+                          formData?.monthly_business_info
+                            ?.current_remaining_target ?? 0
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                </div>
                   </div>
                 )}
                 {/* Incentive Adjustment Display */}
                 {calculatedSalary && (
-                  <div className="bg-blue-50 p-4 rounded-lg mt-4">
-                    <h3 className="text-lg font-semibold text-blue-800 mb-4">
+                  <div className="bg-violet-50 p-4 rounded-lg mt-4">
+                    <h3 className="text-lg font-semibold text-violet-800 mb-4">
                       Incentive Payable
                     </h3>
                     <div className="form-group">
@@ -2032,7 +2077,7 @@ const handleChange = (name, value) => {
                               }
                               disabled
                             />
-                            <span className="ml-2 font-medium font-mono text-blue-600">
+                            <span className="ml-2 font-medium font-mono text-violet-600">
                               {numberToIndianWords(displayValue)}
                               {isPositive ? " (Bonus)" : " (Deduction)"}
                             </span>
@@ -2092,7 +2137,7 @@ const handleChange = (name, value) => {
                                 )
                               }
                             />
-                            <span className="ml-2 font-medium font-mono text-blue-600">
+                            <span className="ml-2 font-medium font-mono text-violet-600">
                               {numberToIndianWords(payment.value || 0)}
                             </span>
                           </div>
@@ -2157,7 +2202,7 @@ const handleChange = (name, value) => {
                                 )
                               }
                             />
-                            <span className="ml-2 font-medium font-mono text-blue-600">
+                            <span className="ml-2 font-medium font-mono text-violet-600">
                               {numberToIndianWords(payment.value || 0)}
                             </span>
                           </div>
@@ -2242,8 +2287,8 @@ const handleChange = (name, value) => {
                   </div>
                 )}
                 {calculatedSalary && showComponents && (
-                  <div className="bg-blue-50 p-4 rounded-lg mt-4">
-                    <h3 className="text-lg font-semibold text-blue-800 mb-4">
+                  <div className="bg-violet-50 p-4 rounded-lg mt-4">
+                    <h3 className="text-lg font-semibold text-violet-800 mb-4">
                       Transaction Details
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -2259,7 +2304,7 @@ const handleChange = (name, value) => {
                             value={previousMonthRemainingBalance.toFixed(2)}
                             disabled
                           />
-                          <span className="ml-2 font-medium font-mono text-blue-600">
+                          <span className="ml-2 font-medium font-mono text-violet-600">
                             {numberToIndianWords(
                               previousMonthRemainingBalance.toFixed(2)
                             )}
@@ -2365,7 +2410,7 @@ const handleChange = (name, value) => {
                           }
 
                           // Add calculated incentive if it's been set (Pay as Incentive was confirmed)
-                          total += formData.calculated_incentive || 0;
+                          // total += formData.calculated_incentive || 0;
 
                           return (
                             <>
@@ -2375,7 +2420,7 @@ const handleChange = (name, value) => {
                                 value={total.toFixed(2)}
                                 disabled
                               />
-                              <span className="ml-2 font-medium font-mono text-blue-600">
+                              <span className="ml-2 font-medium font-mono text-violet-600">
                                 {numberToIndianWords(total.toFixed(2))}
                               </span>
                             </>
@@ -2390,7 +2435,7 @@ const handleChange = (name, value) => {
           ) : (
             <div className="flex items-center justify-center py-12">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-500 mx-auto"></div>
                 <p className="mt-4 text-gray-600">
                   Loading employee details...
                 </p>
@@ -2416,10 +2461,10 @@ const handleChange = (name, value) => {
         <p className="text-lg font-medium mb-4">
           Are you sure you want to add the incentive amount as salary?
         </p>
-        <div className="bg-blue-50 p-4 rounded-lg">
+        <div className="bg-violet-50 p-4 rounded-lg">
           <div className="flex justify-between items-center mb-2">
             <span className="font-medium text-gray-700">Incentive Amount:</span>
-            <span className="font-bold text-blue-700 text-lg">
+            <span className="font-bold text-violet-700 text-lg">
               ₹{Number(calculatedIncentive).toLocaleString("en-IN")}
             </span>
           </div>
@@ -2599,8 +2644,8 @@ const handleChange = (name, value) => {
             </div>
           </div>
           {/* Monthly Business Info */}
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold text-blue-800 mb-4">
+          <div className="bg-violet-50 p-4 rounded-lg">
+            <h3 className="text-lg font-semibold text-violet-800 mb-4">
               Monthly Business Info
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2636,8 +2681,8 @@ const handleChange = (name, value) => {
             </div>
           </div>
           {/* Incentive */}
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold text-blue-800 mb-4">
+          <div className="bg-violet-50 p-4 rounded-lg">
+            <h3 className="text-lg font-semibold text-violet-800 mb-4">
               Calculated Incentive
             </h3>
             <Input
@@ -2855,7 +2900,7 @@ const handleChange = (name, value) => {
             {/* Salary Period */}
             <section className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
               <h4 className="font-bold text-slate-900 mb-4 flex items-center text-lg">
-                <span className="w-1 h-6 bg-blue-600 rounded-full mr-3"></span>
+                <span className="w-1 h-6 bg-violet-600 rounded-full mr-3"></span>
                 Salary Period
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -2971,9 +3016,9 @@ const handleChange = (name, value) => {
                 )}
               </ul>
             </section>
-            <section className="bg-gradient-to-br from-blue-50 to-blue-50 p-6 rounded-xl shadow-md border border-blue-200 hover:shadow-lg transition-shadow">
+            <section className="bg-gradient-to-br from-violet-50 to-violet-50 p-6 rounded-xl shadow-md border border-violet-200 hover:shadow-lg transition-shadow">
               <h4 className="font-bold text-slate-900 mb-4 flex items-center text-lg">
-                <span className="w-1 h-6 bg-blue-600 rounded-full mr-3"></span>
+                <span className="w-1 h-6 bg-violet-600 rounded-full mr-3"></span>
                 Target Details
               </h4>
               <ul className="space-y-2">
@@ -2982,11 +3027,11 @@ const handleChange = (name, value) => {
                 ).map(([key, val]) => (
                   <li
                     key={key}
-                    className="flex justify-between items-center bg-white p-4 rounded-lg border border-blue-100 hover:border-blue-200 transition-colors">
+                    className="flex justify-between items-center bg-white p-4 rounded-lg border border-violet-100 hover:border-violet-200 transition-colors">
                     <span className="capitalize text-slate-700 font-medium">
                       {key.replace(/_/g, " ")}
                     </span>
-                    <span className="font-bold text-blue-700">
+                    <span className="font-bold text-violet-700">
                       ₹
                       {Number(val).toLocaleString("en-IN", {
                         minimumFractionDigits: 2,
@@ -2999,20 +3044,20 @@ const handleChange = (name, value) => {
             </section>
             {/* Advance Payments */}
             {existingSalaryRecord.advance_payments?.length > 0 && (
-              <section className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl shadow-md border border-blue-200 hover:shadow-lg transition-shadow">
+              <section className="bg-gradient-to-br from-violet-50 to-cyan-50 p-6 rounded-xl shadow-md border border-violet-200 hover:shadow-lg transition-shadow">
                 <h4 className="font-bold text-slate-900 mb-4 flex items-center text-lg">
-                  <span className="w-1 h-6 bg-blue-600 rounded-full mr-3"></span>
+                  <span className="w-1 h-6 bg-violet-600 rounded-full mr-3"></span>
                   Advance Payments
                 </h4>
                 <ul className="space-y-2">
                   {existingSalaryRecord.advance_payments.map((pay, i) => (
                     <li
                       key={i}
-                      className="flex justify-between items-center bg-white p-4 rounded-lg border border-blue-100 hover:border-blue-200 transition-colors">
+                      className="flex justify-between items-center bg-white p-4 rounded-lg border border-violet-100 hover:border-violet-200 transition-colors">
                       <span className="text-slate-700 font-medium">
                         {pay.name || "Advance Payment"}
                       </span>
-                      <span className="font-bold text-blue-700">
+                      <span className="font-bold text-violet-700">
                         ₹
                         {Number(pay.value).toLocaleString("en-IN", {
                           minimumFractionDigits: 2,
@@ -3026,20 +3071,20 @@ const handleChange = (name, value) => {
             )}
             {/* Additional Payments */}
             {existingSalaryRecord.additional_payments?.length > 0 && (
-              <section className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl shadow-md border border-blue-200 hover:shadow-lg transition-shadow">
+              <section className="bg-gradient-to-br from-violet-50 to-cyan-50 p-6 rounded-xl shadow-md border border-violet-200 hover:shadow-lg transition-shadow">
                 <h4 className="font-bold text-slate-900 mb-4 flex items-center text-lg">
-                  <span className="w-1 h-6 bg-blue-600 rounded-full mr-3"></span>
+                  <span className="w-1 h-6 bg-violet-600 rounded-full mr-3"></span>
                   Additional Payments
                 </h4>
                 <ul className="space-y-2">
                   {existingSalaryRecord.additional_payments.map((pay, i) => (
                     <li
                       key={i}
-                      className="flex justify-between items-center bg-white p-4 rounded-lg border border-blue-100 hover:border-blue-200 transition-colors">
+                      className="flex justify-between items-center bg-white p-4 rounded-lg border border-violet-100 hover:border-violet-200 transition-colors">
                       <span className="text-slate-700 font-medium">
                         {pay.name || "Payment"}
                       </span>
-                      <span className="font-bold text-blue-700">
+                      <span className="font-bold text-violet-700">
                         ₹
                         {Number(pay.value).toLocaleString("en-IN", {
                           minimumFractionDigits: 2,

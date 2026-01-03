@@ -23,7 +23,7 @@ import { FaGift } from "react-icons/fa6";
 import { BsPersonCheck } from "react-icons/bs";
 const settingMenu = [
   { id: 1, title: "Dashboard", icon: RiDashboardFill, link: "/dashboard" },
-  { id: 2, title: "Analytics", icon: SiGoogleanalytics, link: "/analytics" },
+  // { id: 2, title: "Analytics", icon: SiGoogleanalytics, link: "/analytics" },
   {
     id: 3,
     title: "App Settings",
