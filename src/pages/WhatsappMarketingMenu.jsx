@@ -25,15 +25,15 @@ const WhatsappMarketingMenu = () => {
     },
      {
       id: 2,
-      title: "Due Whatsapp Management",
-      description: "Manage Due Whatsapp Message",
+      title: "Outstanding Whatsapp Management",
+      description: "Manage Outstanding Whatsapp Message",
       icon: <FaWhatsapp className="w-8 h-8" />,
       color: "from-violet-600 to-violet-700",
       lightColor: "bg-violet-50",
       borderColor: "border-violet-200",
       href: "/market-menu/whatsapp-marketing/due-whatsapp-marketing",
       target:"_self",
-      stats: "Active Due Message",
+      stats: "Active Outstanding Message",
     },
 
       {

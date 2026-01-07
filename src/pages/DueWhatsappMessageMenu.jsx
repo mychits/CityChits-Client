@@ -13,27 +13,27 @@ const DueWhatsappMessageMenu = () => {
   
      {
       id: 2,
-      title: "Due Whatsapp",
-      description: "Due Whatsapp",
+      title: "Outstanding Whatsapp",
+      description: "Outstanding Whatsapp",
       icon: <FaWhatsapp className="w-8 h-8" />,
       color: "from-violet-600 to-violet-700",
       lightColor: "bg-violet-50",
       borderColor: "border-violet-200",
       href: "/market-menu/whatsapp-marketing/due-whatsapp-marketing/due-message",
     //   target:"_self",
-      stats: "Due Whatsapp Message",
+      stats: "Outstanding Message",
     },
      {
       id: 2,
-      title: "Over Due Whatsapp",
-      description: "Over Due Whatsapp",
+      title: "Outstanding [Overdue] Whatsapp",
+      description: "Outstanding [Overdue] Whatsapp",
       icon: <FaWhatsapp className="w-8 h-8" />,
       color: "from-violet-600 to-violet-700",
       lightColor: "bg-violet-50",
       borderColor: "border-violet-200",
       href: "/market-menu/whatsapp-marketing/due-whatsapp-marketing/over-due-message",
     //   target:"_self",
-      stats: "Over Due Whatsapp Message",
+      stats: "Outstanding [Overdue] Whatsapp Message",
     },
    
      
@@ -48,10 +48,10 @@ const DueWhatsappMessageMenu = () => {
           <div className="p-8">
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-gray-900">
-               Due Whatsapp Message Management
+               Outstanding Whatsapp Message Management
               </h2>
               <p className="text-gray-600 mt-2">
-                Manage and organize your Due Whatsapp Message
+                Manage and organize your Outstanding Whatsapp Message
               </p>
             </div>
 
@@ -107,7 +107,7 @@ const DueWhatsappMessageMenu = () => {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">Quick Tips</h3>
-                <p className="text-slate-700">Manage Due whatsapp and more with Marketing Management—everything in one place.</p>
+                <p className="text-slate-700">Manage Outstanding whatsapp and more with Marketing Management—everything in one place.</p>
               </div>
             </div>
           </div>

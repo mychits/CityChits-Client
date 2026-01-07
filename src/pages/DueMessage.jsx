@@ -241,7 +241,7 @@ const DueMessage = () => {
         <Sidebar />
         <div className="flex-grow p-7 mt-32">
           <h1 className="text-2xl font-bold text-center">
-            Whatsapp Due Messages
+            Whatsapp Outstanding Messages
           </h1>
           {contextHolder}
 
@@ -352,10 +352,10 @@ const DueMessage = () => {
                   data={filteredUsers}
                   columns={Auctioncolumns}
                   catcher="_id"
-                  exportedPdfName="Due Message"
+                  exportedPdfName="Outstanding Message"
                   printHeaderKeys={["Group Name"]}
                   printHeaderValues={[groupFilter]}
-                  exportedFileName={`Due Message.csv`}
+                  exportedFileName={`Outstanding Message.csv`}
                 />
               </div>
             )}

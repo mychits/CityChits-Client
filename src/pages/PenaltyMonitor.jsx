@@ -293,7 +293,7 @@ const PenaltyMonitor = () => {
           manualLateFee,
           actions: whatsappActions,
           statusDiv: isVcWithinGrace ? (
-            <Tag color="violet">VC – Within Grace</Tag>
+            <Tag color="blue">VC – Within Grace</Tag>
           ) : isVcPenaltyApplied ? (
             <Tag color="gold">VC Penalty Applied</Tag>
           ) : userDetails.isPrized ? (
@@ -697,7 +697,7 @@ const PenaltyMonitor = () => {
       header: "Phone Number",
       render: (text) => (
         <div className="flex items-center">
-          <PhoneOutlined className="mr-2 text-violet-500" />
+          <PhoneOutlined className="mr-2 text-blue-500" />
           {text}
         </div>
       ),
@@ -710,7 +710,7 @@ const PenaltyMonitor = () => {
     {
       key: "groupName",
       header: "Group Name",
-      render: (text) => <Tag color="violet" className="font-medium">{text}</Tag>,
+      render: (text) => <Tag color="blue" className="font-medium">{text}</Tag>,
     },
     {
       key: "enrollmentDate",
@@ -896,7 +896,7 @@ const PenaltyMonitor = () => {
       dataIndex: "penalty_rate_percent",
       align: "center",
       render: (v, row) =>
-        row.vacant_cycle ? <Tag color="gold">VC Rate</Tag> : <span className="text-violet-600">{Number(v || 0)}%</span>,
+        row.vacant_cycle ? <Tag color="gold">VC Rate</Tag> : <span className="text-blue-600">{Number(v || 0)}%</span>,
     },
   ];
 
@@ -1006,7 +1006,7 @@ const PenaltyMonitor = () => {
                 className="shadow-sm rounded-lg border border-gray-200"
                 title={
                   <div className="flex items-center">
-                    <FilterOutlined className="mr-2 text-violet-600" />
+                    <FilterOutlined className="mr-2 text-blue-600" />
                     <span className="font-semibold text-lg">Filters</span>
                   </div>
                 }
@@ -1050,8 +1050,8 @@ const PenaltyMonitor = () => {
                   <Col xs={24} sm={8}>
                     <Card className="shadow-sm border border-gray-200">
                       <div className="flex items-center">
-                        <div className="bg-violet-100 p-3 rounded-lg mr-4">
-                          <UsergroupAddOutlined className="text-violet-500 text-xl" />
+                        <div className="bg-blue-100 p-3 rounded-lg mr-4">
+                          <UsergroupAddOutlined className="text-blue-500 text-xl" />
                         </div>
                         <div>
                           <p className="text-sm text-gray-500">Total Customers</p>
@@ -1151,11 +1151,11 @@ const PenaltyMonitor = () => {
                   </Card>
                 </Col>
                 <Col xs={24} sm={4}>
-                  <Card className="shadow-md border-l-4 border-l-violet-500">
+                  <Card className="shadow-md border-l-4 border-l-blue-500">
                     <div className="flex justify-between items-center">
                       <div>
                         <p className="text-xs text-gray-500">Total Balance</p>
-                        <p className="text-lg font-bold text-violet-600">
+                        <p className="text-lg font-bold text-blue-600">
                           ₹{Number(totals.totalBalanceWithoutPenalty || 0).toLocaleString("en-IN", {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
@@ -1206,7 +1206,7 @@ const PenaltyMonitor = () => {
                   <span className="font-semibold text-lg">Customer Details</span>
                   <span className="text-gray-500 text-sm">
                     {selectedRows.length > 0 ? (
-                      <span className="font-medium text-violet-600">{selectedRows.length} selected</span>
+                      <span className="font-medium text-blue-600">{selectedRows.length} selected</span>
                     ) : (
                       `Showing ${filteredUsers.length} of ${usersData.length} Records`
                     )}
@@ -1276,7 +1276,7 @@ const PenaltyMonitor = () => {
         title={
           <div>
             <div className="flex items-center">
-              <EyeOutlined className="mr-2 text-violet-600" />
+              <EyeOutlined className="mr-2 text-blue-600" />
               <span className="text-lg font-semibold">Penalty Breakdown</span>
             </div>
             {selectedCustomer && (
@@ -1356,7 +1356,7 @@ const PenaltyMonitor = () => {
       <Modal
         title={
           <div className="flex items-center">
-            <MessageOutlined className="mr-2 text-violet-600" />
+            <MessageOutlined className="mr-2 text-blue-600" />
             <span className="text-lg font-semibold">
               {sendModal.type === "vcWithinGrace" && "Send VC Grace Reminder?"}
               {sendModal.type === "vcPenaltyApplied" && "Send VC Penalty Applied Alert?"}
@@ -1491,7 +1491,7 @@ const PenaltyMonitor = () => {
       <Drawer
         title={
           <div className="flex items-center">
-            <UndoOutlined className="mr-2 text-violet-600" />
+            <UndoOutlined className="mr-2 text-blue-600" />
             <span className="text-lg font-semibold">Penalty Reversal</span>
           </div>
         }
@@ -1620,7 +1620,7 @@ const PenaltyMonitor = () => {
         {penaltySummary && (
           <div className="h-full flex flex-col bg-white">
             {/* Header Section */}
-            <div className="bg-violet-100 text-white p-6 border-b">
+            <div className="bg-blue-100 text-white p-6 border-b">
               <div className="flex justify-between items-center">
                 <div>
                   <Title level={3} className="text-white mb-1">Penalty Reversal</Title>
@@ -1780,7 +1780,7 @@ const PenaltyMonitor = () => {
         {penaltySummary && (
           <div className="h-full flex flex-col bg-white">
             {/* Header Section */}
-            <div className="bg-violet-100 text-white p-6 border-b">
+            <div className="bg-blue-100 text-white p-6 border-b">
               <div className="flex justify-between items-center">
                 <div>
                   <Title level={3} className="text-white mb-1">
@@ -1938,7 +1938,7 @@ const PenaltyMonitor = () => {
       <Drawer
         title={
           <div className="flex items-center">
-            <CalculatorOutlined className="mr-2 text-violet-600" />
+            <CalculatorOutlined className="mr-2 text-blue-600" />
             <span className="text-lg font-semibold">Add Manual Penalty</span>
           </div>
         }
@@ -2070,7 +2070,7 @@ const PenaltyMonitor = () => {
         {addPenaltyDetails && (
           <div className="h-full flex flex-col bg-white">
             {/* Header Section */}
-            <div className="bg-violet-100 text-white p-6 border-b">
+            <div className="bg-blue-100 text-white p-6 border-b">
               <div className="flex justify-between items-center">
                 <div>
                   <Title level={3} className="text-white mb-1">Add Manual Penalty</Title>

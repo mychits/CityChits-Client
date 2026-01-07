@@ -287,7 +287,7 @@ useEffect(() => {
                       key: "3",
                       label: (
                         <div
-                          className="text-violet-600"
+                          className="text-blue-600"
                           onClick={() => CoApplicantPrint(group?._id)}
                         >
                           Print
@@ -921,7 +921,7 @@ useEffect(() => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
                 >
                   + Add Co Applicant
                 </button>
@@ -962,7 +962,7 @@ useEffect(() => {
                   Customer Name <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   placeholder="Select Or Search Customer"
                   showSearch
                   value={formData.user_id || undefined}
@@ -1013,7 +1013,7 @@ useEffect(() => {
                   mode="tags"
                   allowClear
                   placeholder="Select enrollments"
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   value={formData.enrollment_ids}
                   onChange={(selectedEnrollmentIds) => {
                     setFormData((prev) => ({
@@ -1054,7 +1054,7 @@ useEffect(() => {
                   Select Referred Type <span className="text-red-500 ">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   placeholder="Select Referred Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1092,7 +1092,7 @@ useEffect(() => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                       placeholder="Select Or Search Referred Co Applicant"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1167,7 +1167,7 @@ useEffect(() => {
                           onChange={handleChange}
                           placeholder="Enter Co Applicant Name"
                           required
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         />
                         {errors.co_applicant_name && (
                           <p className="mt-2 text-sm text-red-600">
@@ -1186,7 +1186,7 @@ useEffect(() => {
                           onChange={handleChange}
                           placeholder="Enter Phone Number"
                           required
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         />
                         {errors.co_applicant_phone_number && (
                           <p className="mt-2 text-sm text-red-600">
@@ -1266,7 +1266,7 @@ useEffect(() => {
                           onChange={handleChange}
                           placeholder="Enter Email"
                           required
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         />
                         {errors.co_applicant_email && (
                           <p className="mt-2 text-sm text-red-600">
@@ -1289,7 +1289,7 @@ useEffect(() => {
                               : ""
                           }
                           onChange={handleChange}
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         />
                       </div>
                     </div>
@@ -1782,7 +1782,7 @@ useEffect(() => {
                             <button
                               type="button"
                               onClick={() => removeDocField(index)}
-                              className="text-violet-600 font-bold text-xl"
+                              className="text-blue-600 font-bold text-xl"
                             >
                               <IoMdClose />
                             </button>
@@ -1804,7 +1804,7 @@ useEffect(() => {
                       <button
                         type="button"
                         onClick={addNewDocField}
-                        className="mt-2 px-2 py-1 bg-violet-600 text-white rounded-lg shadow hover:bg-violet-700"
+                        className="mt-2 px-2 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
                       >
                         + Add Document
                       </button>
@@ -1921,7 +1921,7 @@ useEffect(() => {
                                 value={formData.co_applicant_bussiness_address}
                                 onChange={handleChange}
                                 placeholder="Enter  Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_bussiness_address && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -1947,7 +1947,7 @@ useEffect(() => {
                                 value={formData.co_applicant_bussiness_type}
                                 onChange={handleChange}
                                 placeholder="e.g., Retail, Manufacturing"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_bussiness_type && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -1965,7 +1965,7 @@ useEffect(() => {
                                 value={formData.co_applicant_bussiness_name}
                                 onChange={handleChange}
                                 placeholder="Enter Business Name"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_bussiness_name && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -1983,7 +1983,7 @@ useEffect(() => {
                                 value={formData.co_applicant_bussiness_address}
                                 onChange={handleChange}
                                 placeholder="Enter Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_bussiness_address && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -2008,7 +2008,7 @@ useEffect(() => {
                                 value={formData.co_applicant_profession_type}
                                 onChange={handleChange}
                                 placeholder="e.g., Doctor, CA, Engineer"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_profession_type && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -2026,7 +2026,7 @@ useEffect(() => {
                                 value={formData.co_applicant_bussiness_address}
                                 onChange={handleChange}
                                 placeholder="Clinic/Office Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_bussiness_address && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -2050,7 +2050,7 @@ useEffect(() => {
                                 value={formData.co_applicant_agri_rtc_no}
                                 onChange={handleChange}
                                 placeholder="Enter RTC Number"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_agri_rtc_no && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -2068,7 +2068,7 @@ useEffect(() => {
                                 value={formData.co_applicant_land_holdings}
                                 onChange={handleChange}
                                 placeholder="e.g., 5.5"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_land_holdings && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -2086,7 +2086,7 @@ useEffect(() => {
                                 value={formData.co_applicant_bussiness_address}
                                 onChange={handleChange}
                                 placeholder="Farm or Operation Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_bussiness_address && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -2111,7 +2111,7 @@ useEffect(() => {
                                 value={formData.co_applicant_bussiness_address}
                                 onChange={handleChange}
                                 placeholder="Enter Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_bussiness_address && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -2416,8 +2416,8 @@ useEffect(() => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Save Co Applicant
                 </button>
@@ -2439,7 +2439,7 @@ useEffect(() => {
                   Customer Name <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   placeholder="Select Or Search Customer"
                   showSearch
                   value={updateFormData.user_id || ""}
@@ -2484,7 +2484,7 @@ useEffect(() => {
                   mode="tags"
                   allowClear
                   placeholder="Select enrollments"
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   value={updateFormData.enrollment_ids}
                   onChange={(selectedEnrollmentIds) => {
                     setUpdateFormData((prev) => ({
@@ -2524,7 +2524,7 @@ useEffect(() => {
                   Select Referred Type <span className="text-red-500 ">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   placeholder="Select Referred Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -2564,7 +2564,7 @@ useEffect(() => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                       placeholder="Select Or Search Referred Customer"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -2638,7 +2638,7 @@ useEffect(() => {
                           onChange={handleInputChange}
                           placeholder="Enter Co Applicant Name"
                           required
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         />
                         {errors.co_applicant_name && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2658,7 +2658,7 @@ useEffect(() => {
                           onChange={handleInputChange}
                           placeholder="Enter Phone Number"
                           required
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         />
                         {errors.co_applicant_phone_number && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2740,7 +2740,7 @@ useEffect(() => {
                           onChange={handleInputChange}
                           placeholder="Enter Email"
                           required
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         />
                         {errors.co_applicant_email && (
                           <p className="mt-2 text-sm text-red-600">
@@ -2765,7 +2765,7 @@ useEffect(() => {
                               : ""
                           }
                           onChange={handleInputChange}
-                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         />
                       </div>
                     </div>
@@ -3268,7 +3268,7 @@ useEffect(() => {
                             <button
                               type="button"
                               onClick={() => removeDocField(index)}
-                              className="text-violet-600 font-bold text-xl"
+                              className="text-blue-600 font-bold text-xl"
                             >
                               <IoMdClose />
                             </button>
@@ -3290,7 +3290,7 @@ useEffect(() => {
                       <button
                         type="button"
                         onClick={addNewDocField}
-                        className="mt-2 px-2 py-1 bg-violet-600 text-white rounded-lg shadow hover:bg-violet-700"
+                        className="mt-2 px-2 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
                       >
                         + Add Document
                       </button>
@@ -3412,7 +3412,7 @@ useEffect(() => {
                                 }
                                 onChange={handleInputChange}
                                 placeholder="Enter Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_bussiness_address && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -3440,7 +3440,7 @@ useEffect(() => {
                                 }
                                 onChange={handleInputChange}
                                 placeholder="e.g., Retail, Manufacturing"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_bussiness_type && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -3460,7 +3460,7 @@ useEffect(() => {
                                 }
                                 onChange={handleInputChange}
                                 placeholder="Enter Business Name"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_bussiness_name && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -3480,7 +3480,7 @@ useEffect(() => {
                                 }
                                 onChange={handleInputChange}
                                 placeholder="Enter Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_bussiness_address && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -3507,7 +3507,7 @@ useEffect(() => {
                                 }
                                 onChange={handleInputChange}
                                 placeholder="e.g., Doctor, CA, Engineer"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_profession_type && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -3527,7 +3527,7 @@ useEffect(() => {
                                 }
                                 onChange={handleInputChange}
                                 placeholder="Clinic/Office Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_bussiness_address && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -3552,7 +3552,7 @@ useEffect(() => {
                                 value={updateFormData.co_applicant_agri_rtc_no}
                                 onChange={handleInputChange}
                                 placeholder="Enter RTC Number"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_agri_rtc_no && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -3572,7 +3572,7 @@ useEffect(() => {
                                 }
                                 onChange={handleInputChange}
                                 placeholder="e.g., 5.5"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_land_holdings && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -3592,7 +3592,7 @@ useEffect(() => {
                                 }
                                 onChange={handleInputChange}
                                 placeholder="Farm or Operation Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_bussiness_address && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -3619,7 +3619,7 @@ useEffect(() => {
                                 }
                                 onChange={handleInputChange}
                                 placeholder="Enter Address"
-                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-violet-500 focus:border-violet-500"
+                                className="bg-gray-50 border border-gray-300 h-14 text-gray-900 text-sm rounded-lg w-full p-3 focus:ring-blue-500 focus:border-blue-500"
                               />
                               {errors.co_applicant_bussiness_address && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -3955,8 +3955,8 @@ useEffect(() => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Update
                 </button>
@@ -4000,13 +4000,13 @@ useEffect(() => {
                     id="groupName"
                     placeholder="Enter the Co Applicant Name"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                   />
                 </div>
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Delete
                 </button>
