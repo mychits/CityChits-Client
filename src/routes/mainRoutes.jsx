@@ -749,15 +749,15 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
-    path: "/marketing",
-    element: (
-      <ProtectedRoute>
-        <Navbar />
-        <Marketing />
-      </ProtectedRoute>
-    ),
-  },
+  // {
+  //   path: "/marketing",
+  //   element: (
+  //     <ProtectedRoute>
+  //       <Navbar />
+  //       <Marketing />
+  //     </ProtectedRoute>
+  //   ),
+  // },
   {
     path: "/profile",
     element: (

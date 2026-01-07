@@ -240,7 +240,7 @@ const sidebarMenu = [
     id: "$11",
     title: "Marketing",
     icon: GoGraph,
-    link: "/marketing",
+    link: "/marketing-menu",
     activeColor: "primary",
   },
 
