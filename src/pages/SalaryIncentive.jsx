@@ -34,7 +34,7 @@ const AllEmployeeIncentives = () => {
     type: "info",
   });
 
-  const onGlobalSearchChangeHandler = (e) => {
+  const GlobalSearchChangeHandler = (e) => {
     setSearchText(e.target.value);
   };
   const fetchAllIncentives = async () => {
@@ -167,22 +167,22 @@ const AllEmployeeIncentives = () => {
 
   return (
     <>
-      <Navbar
-        visibility={true}
-        onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-      />
-
-      <CustomAlertDialog
-        type={alertConfig.type}
-        isVisible={alertConfig.visibility}
-        message={alertConfig.message}
-        onClose={() =>
-          setAlertConfig((prev) => ({ ...prev, visibility: false }))
-        }
-      />
+   
 
       <div className="flex mt-20">
-        <Sidebar />
+       <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
 
         <div className="flex-grow p-7">
           <div className="mt-6 mb-8">

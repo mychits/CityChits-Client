@@ -90,6 +90,10 @@ const PenaltySettings = () => {
   const [penaltyPreview, setPenaltyPreview] = useState(null);
   const [showPenaltyPreview, setShowPenaltyPreview] = useState(false);
 
+    const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
 
 
   useEffect(() => {
@@ -484,7 +488,10 @@ const PenaltySettings = () => {
     <div className="flex mt-20" style={{ backgroundColor: '#f0f2f5', minHeight: '100vh' }}>
       <SettingSidebar />
       <div style={{ flex: 1 }}>
-        <Navbar />
+       <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
         <div style={{ padding: '24px 32px', marginTop: '10px' }}>
 
           

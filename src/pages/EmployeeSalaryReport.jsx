@@ -1588,7 +1588,10 @@ const EmployeeSalaryReport = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedMonthYear, setSelectedMonthYear] = useState(null);
-
+  const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
   // Fetch all employees
   useEffect(() => {
     const fetchEmployee = async () => {
@@ -1880,7 +1883,10 @@ const EmployeeSalaryReport = () => {
 
   return (
     <div className="w-screen">
-      <Navbar />
+    <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
       <div className="flex-grow p-7">
         <h1 className="font-bold text-2xl mb-4">Reports - Salary Report</h1>
 

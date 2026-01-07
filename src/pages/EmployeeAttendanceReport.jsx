@@ -2904,6 +2904,10 @@ const EmployeeAttendanceReport = () => {
     const year = d.getFullYear();
     return `${day}-${month}-${year}`;
   };
+  const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
 
   // Format date for backend (yyyy-mm-dd)
   const formatDateForBackend = (date) => {
@@ -3331,19 +3335,19 @@ if (loginTime && logoutTime) {
   return (
     <div className="w-screen bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
       <div className="flex">
-        <Navbar
-          onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
-          visibility={true}
-        />
-        <Sidebar />
-        <CustomAlertDialog
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-          onClose={() =>
-            setAlertConfig((prev) => ({ ...prev, visibility: false }))
-          }
-        />
+           <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
         <div className="flex-grow p-8 mt-20">
           {/* Header Section */}
           <div className="mb-8">

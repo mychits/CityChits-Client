@@ -40,6 +40,10 @@ const LeadWhatsappWelcomeMessage = () => {
         .map((u) => u.groupName)
     ),
   ];
+    const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
   // const filteredUsers = useMemo(() => {
   //   const filtered = usersData.filter((u) => {
   //     const matchGroup = groupFilter ? u.groupName === groupFilter : true;
@@ -351,11 +355,12 @@ const LeadWhatsappWelcomeMessage = () => {
   return (
     <div className="w-screen">
       <div className="flex mt-30">
-        <Navbar
-          onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
-          visibility={true}
-        />
-        <Sidebar />
+       <Sidebar />
+                <Navbar
+                  onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+                  visibility={true}
+                />
+             
 
         <div className="flex-grow p-7">
           <h1 className="text-2xl font-bold text-center mt-32">

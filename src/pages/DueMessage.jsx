@@ -23,7 +23,10 @@ const DueMessage = () => {
   const [notifier, contextHolder] = notification.useNotification();
   const [selectAll, setSelectAll] = useState(false);
   const groupOptions = [...new Set(usersData.map((u) => u.groupName))];
-
+  const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
   const filteredUsers = useMemo(() => {
     const filtered = filterOption(
       usersData.filter((u) => {
@@ -234,11 +237,11 @@ const DueMessage = () => {
   return (
     <div className="w-screen">
       <div className="flex mt-30">
-        <Navbar
-          onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
-          visibility={true}
-        />
         <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
         <div className="flex-grow p-7 mt-32">
           <h1 className="text-2xl font-bold text-center">
             Whatsapp Outstanding Messages

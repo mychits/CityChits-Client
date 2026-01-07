@@ -14,6 +14,7 @@ import BackdropBlurLoader from "../components/loaders/BackdropBlurLoader";
 import { FaReceipt } from "react-icons/fa";
 import { numberToIndianWords } from "../helpers/numberToIndianWords";
 import { WarningOutlined } from "@ant-design/icons";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 const PenaltyPayment = () => {
   const [users, setUsers] = useState([]);
   const [actualGroups, setActualGroups] = useState([]);
@@ -71,7 +72,7 @@ const PenaltyPayment = () => {
 
     return dropDownItemList;
   };
-  const onGlobalSearchChangeHandler = (e) => {
+  const GlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
@@ -606,17 +607,19 @@ const PenaltyPayment = () => {
       ) : (
         <div>
           <div className="flex mt-20">
-            <Navbar
-              onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-              visibility={true}
-            />
-            <Sidebar />
-            <CustomAlert
-              type={alertConfig.type}
-              isVisible={alertConfig.visibility}
-              message={alertConfig.message}
-              noReload={alertConfig.noReload}
-            />
+             <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
             <div className="flex-grow p-7">
               <h1 className="text-2xl font-semibold">Payments</h1>
               <div className="mt-6  mb-8">

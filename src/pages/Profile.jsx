@@ -1,10 +1,15 @@
 import Sidebar from "../components/layouts/Sidebar";
+import Navbar from "../components/layouts/Navbar";
 import { useEffect, useState } from "react";
 import api from "../instance/TokenInstance";
 import CircularLoader from "../components/loaders/CircularLoader";
 //import Password from "antd/es/input/Password";
 
 const Profile = () => {
+      const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
     useEffect(() => {
         function getAdminUser() {
             const user = localStorage.getItem("user");
@@ -118,7 +123,11 @@ const Profile = () => {
         <>
             <div>
                 <div className="flex mt-20">
-                    <Sidebar />
+                  <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
                     <div className="flex-grow p-7">
                         <h1 className="text-2xl font-semibold mb-4">Profile</h1>
                         <div className="max-w-md mx-auto p-5 rounded-lg">

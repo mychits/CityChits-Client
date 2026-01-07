@@ -250,30 +250,41 @@ const sidebarMenu = [
     icon: TbSettings,
     submenu: true,
     submenuItems: [
-      {
+     {
         id: "#1",
         title: "Collection",
         icon: HiCurrencyRupee,
+        link: "/collection-menu",
         hider: true,
-        newTab: true,
-        submenu: true,
-        submenuItems: [
-          {
-            id: ids.fourteen,
-            title: "Collection Area",
-            icon: FaMapLocationDot,
-            link: "/collection-area-request",
-          },
-
-
-          // {
-          // 	id: ids.fifteen,
-          // 	title: "Collection Mapping",
-          // 	icon: RiUserLocationFill,
-          // 	link: "/collection-area-mapping",
-          // },
-        ],
+        // newTab: true,
+        // submenu: true,
+        // submenuItems: [
+        //   {
+        //     id: ids.fourteen,
+        //     title: "Collection Area",
+        //     icon: <FaMapLocationDot />,
+        //     link: "/collection-area-request",
+        //   },
+        
+        // ],
       },
+      // {
+      //   id: "#2",
+      //   title: "Groups",
+      //   icon: <MdOutlineGroups size="25" />,
+      //   hider: true,
+      //   newTab: true,
+      //   submenu: true,
+      //   submenuItems: [
+      //     {
+      //       id: ids.sixteen,
+      //       title: "Mobile Access Groups",
+      //       icon: <FaFilter size={18} />,
+      //       link: "/filter-groups",
+      //     },
+      //   ],
+      // },
+      
                 {
             id: "#3",
             title: "HR",
@@ -348,13 +359,13 @@ const sidebarMenu = [
       },
     ],
   },
-  {
-    id: "$12",
-    title: "Profile",
-    icon: CgProfile,
-    link: "/profile",
-    activeColor: "primary",
-  },
+  // {
+  //   id: "$12",
+  //   title: "Profile",
+  //   icon: CgProfile,
+  //   link: "/profile",
+  //   activeColor: "primary",
+  // },
   {
     id: "$13",
     title: "Other Sites",

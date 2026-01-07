@@ -37,7 +37,10 @@ const monthNames = [
   "November",
   "December",
 ];
-
+  const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
 const Target = () => {
   const [selectedType, setSelectedType] = useState("agents");
   const [selectedId, setSelectedId] = useState("all");
@@ -456,16 +459,19 @@ const Target = () => {
   return (
     <>
       <div className="flex mt-20">
-        <Navbar visibility={true} />
-        <Sidebar />
-        <CustomAlertDialog
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-          onClose={() => {
-            setAlertConfig((prev) => ({ ...prev, visibility: false }));
-          }}
-        />
+         <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
 
         <div className="flex-grow p-6">
           <div className="flex justify-between items-center mb-6">

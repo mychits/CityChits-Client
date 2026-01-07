@@ -62,6 +62,11 @@ const Lead = () => {
     note: "",
   });
 
+  const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
+  
   const [updateFormData, setUpdateFormData] = useState({
     lead_name: "",
     lead_phone: "",
@@ -605,8 +610,9 @@ const Lead = () => {
     <>
       <div>
         <div className="flex mt-20">
+           <Sidebar />
           <Navbar
-            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
             visibility={true}
           />
           <CustomAlertDialog
@@ -617,7 +623,6 @@ const Lead = () => {
               setAlertConfig((prev) => ({ ...prev, visibility: false }))
             }
           />
-          <Sidebar />
 
           <div className="flex-grow p-7">
             <div className="mt-6 mb-8 ">

@@ -28,7 +28,7 @@ const Employee = () => {
   const [managers, setManagers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [reloadTrigger, setReloadTrigger] = useState(0);
-  const onGlobalSearchChangeHandler = (e) => {
+  const GlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
@@ -581,11 +581,11 @@ const Employee = () => {
     <>
       <div>
         <div className="flex mt-20">
+          <Sidebar />
           <Navbar
-            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
             visibility={true}
           />
-          <Sidebar />
           <CustomAlertDialog
             type={alertConfig.type}
             isVisible={alertConfig.visibility}

@@ -456,7 +456,10 @@ const CustomerWelcomeWhatsappMessage = () => {
   const todayString = today.toISOString().split("T")[0];
   const [selectedDate, setSelectedDate] = useState(todayString);
   const [selectedLabel, setSelectedLabel] = useState("All");
-
+ const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
   // --- DATE FILTER HANDLER ---
   const handleSelectFilter = (value) => {
     setSelectedLabel(value);
@@ -699,11 +702,11 @@ const CustomerWelcomeWhatsappMessage = () => {
   return (
     <div className="w-screen">
       <div className="flex mt-30">
-        <Navbar
-          onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
-          visibility={true}
-        />
-        <Sidebar/>
+         <Sidebar />
+                 <Navbar
+                   onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+                   visibility={true}
+                 />
        
           <div className="flex-grow p-7">
             <h1 className="text-2xl font-bold text-center mt-32">

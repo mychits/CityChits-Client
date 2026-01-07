@@ -468,7 +468,10 @@ const CustomerChitPlanWhatsappMessage = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedLabel, setSelectedLabel] = useState("All");
   const [notifier, contextHolder] = notification.useNotification();
-
+ const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
   const groupOptions = [
     ...new Set(
       usersData
@@ -730,11 +733,11 @@ const CustomerChitPlanWhatsappMessage = () => {
   return (
     <div className="w-screen">
       <div className="flex mt-30">
-        <Navbar
-          onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
-          visibility={true}
-        />
-        <Sidebar />
+      <Sidebar />
+              <Navbar
+                onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+                visibility={true}
+              />
         
           <div className="flex-grow p-7">
             <h1 className="text-2xl font-bold text-center mb-6 mt-32">

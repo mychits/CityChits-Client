@@ -27,7 +27,7 @@ const Payroll = () => {
   const [managers, setManagers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [reloadTrigger, setReloadTrigger] = useState(0);
-  const onGlobalSearchChangeHandler = (e) => {
+  const GlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
@@ -694,19 +694,19 @@ const Payroll = () => {
     <>
       <div>
         <div className="flex mt-20">
-          <Navbar
-            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-            visibility={true}
-          />
-          <Sidebar />
-          <CustomAlertDialog
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-            onClose={() =>
-              setAlertConfig((prev) => ({ ...prev, visibility: false }))
-            }
-          />
+              <Sidebar />
+                    <Navbar
+                      onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+                      visibility={true}
+                    />
+                    <CustomAlertDialog
+                      type={alertConfig.type}
+                      isVisible={alertConfig.visibility}
+                      message={alertConfig.message}
+                      onClose={() =>
+                        setAlertConfig((prev) => ({ ...prev, visibility: false }))
+                      }
+                    />
           <div className="flex-grow p-7">
             <div className="mt-6 mb-8">
               <div className="flex justify-between items-center w-full">

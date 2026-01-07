@@ -3,6 +3,13 @@ import api from "../instance/TokenInstance";
 import DataTable from "../components/layouts/Datatable";
 import Navbar from "../components/layouts/Navbar";
 import CircularLoader from "../components/loaders/CircularLoader";
+import Sidebar from "../components/layouts/Sidebar";
+import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
+
+ const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
 
 const formatDate = (date) => date.toISOString().split("T")[0];
 
@@ -188,7 +195,7 @@ while (loop <= end) {
 
         return {
           id: idx + 1,
-          name: item.name,
+          name: item.agentName,
           phone: item.phone,
           leads: item.leads || 0,
           customers,
@@ -258,7 +265,11 @@ while (loop <= end) {
 
   return (
     <div className="w-screen min-h-screen">
-      <Navbar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+
       <div className="p-6">
         <h1 className="text-3xl font-bold text-center mb-6">Reports - Sales</h1>
 
@@ -304,7 +315,7 @@ while (loop <= end) {
         {selectedAgentDetails && (
           <>
             <div className="bg-gray-100 p-4 rounded shadow mb-6">
-              <h2 className="font-bold text-lg text-violet-800 mb-3">
+              <h2 className="font-bold text-lg text-blue-800 mb-3">
                 Agent Details
               </h2>
               <div className="grid md:grid-cols-3 gap-4">
@@ -411,35 +422,35 @@ while (loop <= end) {
 
         <div className="flex flex-wrap gap-6 mb-4 items-center px-2">
           <div className="flex flex-col">
-            <label className="font-semibold text-violet-700 mb-1">
+            <label className="font-semibold text-blue-700 mb-1">
               Total Leads:
             </label>
             <input
               readOnly
               value={totalLeads.toLocaleString("en-IN")}
-              className="border rounded px-3 py-1 w-[150px] text-center text-violet-700 font-medium"
+              className="border rounded px-3 py-1 w-[150px] text-center text-blue-700 font-medium"
             />
           </div>
 
           <div className="flex flex-col">
-            <label className="font-semibold text-violet-700 mb-1">
+            <label className="font-semibold text-blue-700 mb-1">
               Total Customers:
             </label>
             <input
               readOnly
               value={totalCustomers.toLocaleString("en-IN")}
-              className="border rounded px-3 py-1 w-[150px] text-center text-violet-700 font-medium"
+              className="border rounded px-3 py-1 w-[150px] text-center text-blue-700 font-medium"
             />
           </div>
 
           <div className="flex flex-col">
-            <label className="font-semibold text-violet-700 mb-1">
+            <label className="font-semibold text-blue-700 mb-1">
               Total Sales:
             </label>
             <input
               readOnly
               value={`₹${totalSales.toLocaleString("en-IN")}`}
-              className="border rounded px-3 py-1 w-[150px] text-center text-violet-700 font-medium"
+              className="border rounded px-3 py-1 w-[150px] text-center text-blue-700 font-medium"
             />
           </div>
         </div>
@@ -449,11 +460,39 @@ while (loop <= end) {
             <CircularLoader />
           </div>
         ) : (
+          // <DataTable
+          //   data={tableReportData}
+          //   columns={columns}
+          //   exportedFileName="SalesReport.csv"
+          // />
           <DataTable
-            data={tableReportData}
-            columns={columns}
-            exportedFileName="SalesReport.csv"
-          />
+  data={tableReportData}
+  columns={columns}
+  exportedFileName="SalesReport.csv"
+  exportedPdfName="Sales Report"
+  printHeaderKeys={[
+    "Agent Name",
+    "From Date",
+    "To Date",
+    "Total Leads",
+    "Total Customers",
+    "Total Sales",
+    "Target Set",
+    "Achieved",
+    "Remaining",
+  ]}
+  printHeaderValues={[
+    selectedAgentDetails?.name || "All Agents",
+    fromDate || "-",
+    toDate || "-",
+    totalLeads.toLocaleString("en-IN"),
+    totalCustomers.toLocaleString("en-IN"),
+    `₹${totalSales.toLocaleString("en-IN")}`,
+    `₹${targetData.target.toLocaleString("en-IN")}`,
+    `₹${targetData.achieved.toLocaleString("en-IN")}`,
+    `₹${targetData.remaining.toLocaleString("en-IN")}`,
+  ]}
+/>
         )}
       </div>
     </div>

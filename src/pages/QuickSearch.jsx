@@ -236,16 +236,16 @@ const QuickSearch = () => {
         let tooltip = "";
 
         if (record.isLead) {
-          route = `/lead?lead_id=${record._id}`;
+          route = `/reports/lead-report?lead_id=${record._id}`;
           tooltip = "View Lead";
         } else if (record.isAgent) {
-          route = `/agent?agent_id=${record._id}`;
+          route = `/staff-menu/agent?agent_id=${record._id}`;
           tooltip = "View Agent";
         } else if (record.isEmployee) {
-          route = `/employee?employee_id=${record._id}`;
+          route = `/staff-menu/employee-menu/employee?employee_id=${record._id}`;
           tooltip = "View Employee";
         } else {
-          route = `/customer-view/?user_id=${record._id}`;
+          route = `/reports/user-report?user_id=${record._id}`;
           tooltip = "View Customer";
         }
 

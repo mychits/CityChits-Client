@@ -74,7 +74,10 @@ const Loan = () => {
     referred_agent: "",
     referred_type: "",
   });
-
+  const GlobalSearchChangeHandler = (e) => {
+    const { value } = e.target;
+    setSearchText(value);
+  };
   const handleRemoveModalOpen = async (borrowerId) => {
     try {
       const response = await api.get(`/loans/get-borrower/${borrowerId}`);
@@ -443,20 +446,21 @@ const handleRemoveBorrower = async () => {
   return (
     <>
       <div>
-        <Navbar
-          visibility={true}
-          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-        />
-        <CustomAlertDialog
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-          onClose={() =>
-            setAlertConfig((prev) => ({ ...prev, visibility: false }))
-          }
-        />
+      
         <div className="flex mt-20">
-          <Sidebar />
+        <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
 
           <div className="flex-grow p-7">
             <div className="mt-6 mb-8">

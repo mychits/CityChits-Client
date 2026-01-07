@@ -23,7 +23,7 @@ const MonthlyInstallmentTurnoverReport = () => {
     const mm = String(now.getMonth() + 1).padStart(2, "0");
     return `${yyyy}-${mm}`; // e.g., "2025-09"
   });
-  const onGlobalSearchChangeHandler = (e) => {
+  const GlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
@@ -115,7 +115,10 @@ const MonthlyInstallmentTurnoverReport = () => {
   <>
     <div className="min-h-screen w-screen bg-gray-50">
       <div className="flex">
-        <Navbar onGlobalSearchChangeHandler={onGlobalSearchChangeHandler} />
+     <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
 
         <div className="flex-grow p-6">
           <h1 className="text-3xl font-bold mb-6">Reports - Monthly Installment Turnover</h1>
