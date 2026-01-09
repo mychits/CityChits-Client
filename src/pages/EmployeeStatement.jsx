@@ -450,11 +450,6 @@ import api from "../instance/TokenInstance";
 
 const { Text, Title } = Typography;
 
- const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchText(value);
-  };
-  
 // Constants
 const ALERT_MESSAGES = {
   EMPLOYEE_FETCH_ERROR: "Failed to load employees",
@@ -614,22 +609,16 @@ const EmployeeStatement = () => {
 
   return (
     <div>
-    
+      <Navbar visibility={true} onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)} />
+      <CustomAlertDialog
+        type={alertConfig.type}
+        isVisible={alertConfig.visibility}
+        message={alertConfig.message}
+        onClose={() => setAlertConfig(p => ({...p, visibility: false}))}
+      />
 
       <div className="flex mt-20">
-         <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
-          <CustomAlertDialog
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-            onClose={() =>
-              setAlertConfig((prev) => ({ ...prev, visibility: false }))
-            }
-          />
+        <Sidebar />
         <div className="flex-grow p-7">
           {/* Navigator */}
           <section className="mb-8">

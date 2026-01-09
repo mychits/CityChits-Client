@@ -12,6 +12,7 @@ import filterOption from "../helpers/filterOption";
 import { FaCalculator } from "react-icons/fa";
 import CircularLoader from "../components/loaders/CircularLoader";
 import { fieldSize } from "../data/fieldSize";
+import handleLoanRequestPrint from "../components/printFormats/LoanRequestPrint"
 const Loan = () => {
   const [users, setUsers] = useState([]);
   const [agents, setAgents] = useState([]);
@@ -74,10 +75,7 @@ const Loan = () => {
     referred_agent: "",
     referred_type: "",
   });
-  const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchText(value);
-  };
+
   const handleRemoveModalOpen = async (borrowerId) => {
     try {
       const response = await api.get(`/loans/get-borrower/${borrowerId}`);
@@ -220,6 +218,17 @@ const handleRemoveBorrower = async () => {
                           onClick={() => handleRemoveModalOpen(borrower._id)}
                         >
                           Remove
+                        </div>
+                      ),
+                    },
+                     {
+                      key: "3",
+                      label: (
+                        <div
+                          className="text-blue-600"
+                          onClick={() => handleLoanRequestPrint(borrower._id)}
+                        >
+                          Print
                         </div>
                       ),
                     },
@@ -446,21 +455,20 @@ const handleRemoveBorrower = async () => {
   return (
     <>
       <div>
-      
+        <Navbar
+          visibility={true}
+          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+        />
+        <CustomAlertDialog
+          type={alertConfig.type}
+          isVisible={alertConfig.visibility}
+          message={alertConfig.message}
+          onClose={() =>
+            setAlertConfig((prev) => ({ ...prev, visibility: false }))
+          }
+        />
         <div className="flex mt-20">
-        <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
-          <CustomAlertDialog
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-            onClose={() =>
-              setAlertConfig((prev) => ({ ...prev, visibility: false }))
-            }
-          />
+          <Sidebar />
 
           <div className="flex-grow p-7">
             <div className="mt-6 mb-8">

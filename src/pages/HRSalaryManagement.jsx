@@ -101,11 +101,6 @@ const HRSalaryManagement = () => {
     status: "",
   });
 
-    const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchText(value);
-  };
-
   // New state for confirmation modals
   const [payAsSalaryModalOpen, setPayAsSalaryModalOpen] = useState(false);
   const [payAsIncentiveModalOpen, setPayAsIncentiveModalOpen] = useState(false);
@@ -1004,11 +999,8 @@ const HRSalaryManagement = () => {
   return (
     <div>
       <div className="flex mt-20">
-      <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
+        <Navbar visibility={true} />
+        <Sidebar />
         <div className="flex-grow p-7">
           <h1 className="text-2xl font-semibold">Salary Management</h1>
           <div className="mt-6 mb-8">

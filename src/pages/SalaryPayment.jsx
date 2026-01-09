@@ -24,7 +24,6 @@ import { MdOutlineMan } from "react-icons/md";
 import { RiMoneyRupeeCircleFill } from "react-icons/ri";
 import { Flex, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import moment from "moment";
 const SalaryPayment = () => {
   const navigate = useNavigate();
@@ -78,17 +77,6 @@ const SalaryPayment = () => {
       current_remaining_target: 0,
     },
   });
-    const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchText(value);
-  };
-
-   const [alertConfig, setAlertConfig] = useState({
-      visibility: false,
-      message: "Something went wrong!",
-      type: "info",
-    });
-    
   const thisYear = dayjs().format("YYYY");
   const earningsObject = {
     basic: 0,
@@ -540,19 +528,8 @@ const SalaryPayment = () => {
   return (
     <div>
       <div className="flex mt-20">
-          <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
-          <CustomAlertDialog
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-            onClose={() =>
-              setAlertConfig((prev) => ({ ...prev, visibility: false }))
-            }
-          />
+        <Navbar visibility={true} />
+        <Sidebar />
         <div className="flex-grow p-7">
           <div className="mb-8">
             <h1 className="text-lg text-black font-bold font-mono p-2">
