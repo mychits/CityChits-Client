@@ -166,6 +166,8 @@ import Analytics from "../pages/Analytics";
 
 import TotalRevenue from "../pages/TotalRevenue";
 import MonthlyRevenue from "../pages/MonthlyRevenue";
+
+import AdvanceSalary from "../pages/AdvanceSalary";
 const mainRoutes = createBrowserRouter([
   {
     path: "/",
@@ -297,6 +299,15 @@ const mainRoutes = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <ChitBulkPaymentLink />
+      </ProtectedRoute>
+    ),
+  },
+
+      {
+    path: "/payment-menu/payment-in-out-menu/payment-out/advance-payment",
+    element: (
+      <ProtectedRoute>
+        <AdvanceSalary />
       </ProtectedRoute>
     ),
   },

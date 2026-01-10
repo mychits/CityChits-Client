@@ -12,6 +12,7 @@ import { fieldSize } from "../data/fieldSize";
 import CircularLoader from "../components/loaders/CircularLoader";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import { numberToIndianWords } from "../helpers/numberToIndianWords";
+import { HiOutlinePlusCircle, HiOutlineTrash } from "react-icons/hi";
 const Payroll = () => {
   const [TableEmployees, setTableEmployees] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -27,7 +28,7 @@ const Payroll = () => {
   const [managers, setManagers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [reloadTrigger, setReloadTrigger] = useState(0);
-  const GlobalSearchChangeHandler = (e) => {
+  const onGlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
@@ -74,6 +75,7 @@ const Payroll = () => {
       epf: 0,
       professional_tax: 0,
     },
+    additional_salary: [],
   });
   const [updateFormData, setUpdateFormData] = useState({
     name: "",
@@ -111,6 +113,7 @@ const Payroll = () => {
       epf: 0,
       professional_tax: 0,
     },
+    additional_salary: [],
   });
   useEffect(() => {
     const fetchEmployeeProfile = async () => {
@@ -138,8 +141,7 @@ const Payroll = () => {
                       label: (
                         <div
                           className="text-green-600"
-                          onClick={() => handleUpdateModalOpen(group._id)}
-                        >
+                          onClick={() => handleUpdateModalOpen(group._id)}>
                           Edit
                         </div>
                       ),
@@ -149,16 +151,14 @@ const Payroll = () => {
                       label: (
                         <div
                           className="text-red-600"
-                          onClick={() => handleDeleteModalOpen(group._id)}
-                        >
+                          onClick={() => handleDeleteModalOpen(group._id)}>
                           Delete
                         </div>
                       ),
                     },
                   ],
                 }}
-                placement="bottomLeft"
-              >
+                placement="bottomLeft">
                 <IoMdMore className="text-bold" />
               </Dropdown>
             </div>
@@ -203,6 +203,36 @@ const Payroll = () => {
       managerTitle: "",
     }));
   };
+  const handleAdditionalSalaryChange = (
+    index,
+    field,
+    val,
+    isUpdate = false
+  ) => {
+    const setter = isUpdate ? setUpdateFormData : setFormData;
+    setter((prev) => {
+      const updatedList = [...prev.additional_salary];
+      updatedList[index] = {
+        ...updatedList[index],
+        [field]: field === "value" ? (val === "" ? 0 : Number(val)) : val,
+      };
+      return { ...prev, additional_salary: updatedList };
+    });
+  };
+  const addAdditionalSalaryField = (isUpdate = false) => {
+    const setter = isUpdate ? setUpdateFormData : setFormData;
+    setter((prev) => ({
+      ...prev,
+      additional_salary: [...prev.additional_salary, { name: "", value: 0 }],
+    }));
+  };
+  const removeAdditionalSalaryField = (index, isUpdate = false) => {
+    const setter = isUpdate ? setUpdateFormData : setFormData;
+    setter((prev) => ({
+      ...prev,
+      additional_salary: prev.additional_salary.filter((_, i) => i !== index),
+    }));
+  };
 
   const handleChange = (name, value, earnings = false, deductions = false) => {
     if (earnings) {
@@ -215,22 +245,13 @@ const Payroll = () => {
         ...prevData,
         deductions: { ...prevData.deductions, [name]: value },
       }));
-    } 
-    else {
+    } else {
       if (name === "salary") {
-        // let basic = (0.6 * (Number(value) || 0)).toFixed(2);
-        // let hra = (basic * 0.4).toFixed(2);
         setFormData((prevData) => ({
           ...prevData,
           [name]: value,
-          // earnings: {
-          //   ...prevData.earnings,
-          //   basic,
-          //   hra,
-          // },
         }));
-      } 
-      else {
+      } else {
         setFormData((prevData) => ({
           ...prevData,
           [name]: value,
@@ -579,6 +600,7 @@ const Payroll = () => {
           professional_tax:
             response?.data?.employee?.deductions?.professional_tax || 0,
         },
+        additional_salary: response?.data?.employee?.additional_salary || [],
       });
       setSelectedManagerId(response.data?.employee?.designation_id?._id || 0);
       setSelectedReportingManagerId(
@@ -694,19 +716,19 @@ const Payroll = () => {
     <>
       <div>
         <div className="flex mt-20">
-              <Sidebar />
-                    <Navbar
-                      onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-                      visibility={true}
-                    />
-                    <CustomAlertDialog
-                      type={alertConfig.type}
-                      isVisible={alertConfig.visibility}
-                      message={alertConfig.message}
-                      onClose={() =>
-                        setAlertConfig((prev) => ({ ...prev, visibility: false }))
-                      }
-                    />
+          <Navbar
+            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <Sidebar />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
           <div className="flex-grow p-7">
             <div className="mt-6 mb-8">
               <div className="flex justify-between items-center w-full">
@@ -716,8 +738,7 @@ const Payroll = () => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
-                >
+                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200">
                   + Add Employee
                 </button>
               </div>
@@ -748,8 +769,7 @@ const Payroll = () => {
               <div>
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="name"
-                >
+                  htmlFor="name">
                   Full Name <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -770,8 +790,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="email"
-                  >
+                    htmlFor="email">
                     Email <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -793,8 +812,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="phone_number"
-                  >
+                    htmlFor="phone_number">
                     Phone Number <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -820,8 +838,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="password"
-                  >
+                    htmlFor="password">
                     Password <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -845,8 +862,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="pincode"
-                  >
+                    htmlFor="pincode">
                     Pincode <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -872,8 +888,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="adhaar_no"
-                  >
+                    htmlFor="adhaar_no">
                     Adhaar Number <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -897,8 +912,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="pan_no"
-                  >
+                    htmlFor="pan_no">
                     Pan Number <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -921,8 +935,7 @@ const Payroll = () => {
               <div>
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="address"
-                >
+                  htmlFor="address">
                   Address <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -943,8 +956,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="designation_id"
-                  >
+                    htmlFor="designation_id">
                     Designation <span className="text-red-500 ">*</span>
                   </label>
                   <Select
@@ -960,8 +972,7 @@ const Payroll = () => {
                       option.children
                         .toLowerCase()
                         .includes(input.toLowerCase())
-                    }
-                  >
+                    }>
                     {managers.map((mgr) => (
                       <Select.Option key={mgr._id} value={mgr._id}>
                         {mgr.title}
@@ -977,8 +988,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="status"
-                  >
+                    htmlFor="status">
                     Status <span className="text-red-500">*</span>
                   </label>
                   <Select
@@ -993,8 +1003,7 @@ const Payroll = () => {
                         .includes(input.toLowerCase())
                     }
                     value={formData?.status || undefined}
-                    onChange={(value) => handleChange("status", value)}
-                  >
+                    onChange={(value) => handleChange("status", value)}>
                     {["Active", "Inactive", "Terminated"].map((stype) => (
                       <Select.Option key={stype} value={stype.toLowerCase()}>
                         {stype}
@@ -1010,8 +1019,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="joining_date"
-                  >
+                    htmlFor="joining_date">
                     Joining Date <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -1034,8 +1042,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="leaving_date"
-                  >
+                    htmlFor="leaving_date">
                     Leaving Date
                   </label>
                   <Input
@@ -1055,8 +1062,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="dob"
-                  >
+                    htmlFor="dob">
                     Date of Birth <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -1077,8 +1083,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="gender"
-                  >
+                    htmlFor="gender">
                     Gender <span className="text-red-500">*</span>
                   </label>
                   <Select
@@ -1093,8 +1098,7 @@ const Payroll = () => {
                         .includes(input.toLowerCase())
                     }
                     value={formData?.gender || undefined}
-                    onChange={(value) => handleChange("gender", value)}
-                  >
+                    onChange={(value) => handleChange("gender", value)}>
                     {["Male", "Female", "Others"].map((gender) => (
                       <Select.Option key={gender} value={gender.toLowerCase()}>
                         {gender}
@@ -1110,8 +1114,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="alternate_number"
-                  >
+                    htmlFor="alternate_number">
                     Alternate Phone Number{" "}
                     <span className="text-red-500">*</span>
                   </label>
@@ -1136,8 +1139,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="total_allocated_leaves"
-                  >
+                    htmlFor="total_allocated_leaves">
                     Total Allocated Leaves{" "}
                     <span className="text-red-500">*</span>
                   </label>
@@ -1165,8 +1167,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="emergency_contact_person"
-                  >
+                    htmlFor="emergency_contact_person">
                     Emergency Contact Person
                     <span className="text-red-500">*</span>
                   </label>
@@ -1191,8 +1192,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="emergency_contact_number"
-                  >
+                    htmlFor="emergency_contact_number">
                     Emergency Phone Number{" "}
                   </label>
                   <div className="flex items-center mb-2 gap-2">
@@ -1235,8 +1235,7 @@ const Payroll = () => {
                             onClick={() =>
                               removePhoneField(formData, setFormData, index + 1)
                             }
-                            className="text-red-600 text-sm"
-                          >
+                            className="text-red-600 text-sm">
                             Remove
                           </button>
                         )}
@@ -1245,8 +1244,7 @@ const Payroll = () => {
                   <button
                     type="button"
                     onClick={() => addPhoneField(formData, setFormData)}
-                    className="mt-2 text-blue-600 text-sm"
-                  >
+                    className="mt-2 text-blue-600 text-sm">
                     + Add Another
                   </button>
                 </div>
@@ -1255,8 +1253,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block  text-sm font-medium text-gray-900"
-                    htmlFor="salary"
-                  >
+                    htmlFor="salary">
                     Fixed Salary <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -1280,11 +1277,101 @@ const Payroll = () => {
                   )}
                 </div>
               </div>
+              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 mt-8">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h4 className="text-base font-bold text-slate-800">
+                      Additional Salaries
+                    </h4>
+                    <p className="text-xs text-slate-500">
+                      Add collection salary or more.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => addAdditionalSalaryField(false)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm font-semibold hover:bg-blue-100 transition-colors border border-blue-200">
+                    <HiOutlinePlusCircle size={18} />
+                    Add Component
+                  </button>
+                </div>
+
+                {formData.additional_salary.length > 0 ? (
+                  <div className="space-y-4">
+                    {/* Table-like headers for better alignment */}
+                    <div className="flex px-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                      <div className="flex-1">Component Name</div>
+                      <div className="flex-1 ml-4">Amount (₹)</div>
+                      <div className="w-10"></div>
+                    </div>
+
+                    {formData.additional_salary.map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-row items-start space-x-4 animate-fadeIn">
+                        {/* Component Name Input */}
+                        <div className="flex-1 group">
+                          <Input
+                            placeholder="e.g. Collection"
+                            value={item.name}
+                            onChange={(e) =>
+                              handleAdditionalSalaryChange(
+                                index,
+                                "name",
+                                e.target.value
+                              )
+                            }
+                            className={`bg-white border-slate-200 ${fieldSize.height} rounded-xl focus:border-blue-500 hover:border-blue-400 shadow-sm w-full transition-all`}
+                          />
+                        </div>
+
+                        {/* Amount Input */}
+                        <div className="flex-1">
+                          <Input
+                            type="number"
+                            placeholder="0.00"
+                            value={item.value || ""}
+                            onChange={(e) =>
+                              handleAdditionalSalaryChange(
+                                index,
+                                "value",
+                                e.target.value
+                              )
+                            }
+                            className={`bg-white border-slate-200 ${fieldSize.height} rounded-xl focus:border-blue-500 hover:border-blue-400 shadow-sm w-full transition-all`}
+                          />
+                          {item.value > 0 && (
+                            <p className="text-[10px] font-medium text-blue-500 mt-1.5 px-1 italic">
+                              {numberToIndianWords(item.value)} Only
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Delete Action */}
+                        <button
+                          type="button"
+                          onClick={() => removeAdditionalSalaryField(index)}
+                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all mt-1"
+                          title="Remove component">
+                          <HiOutlineTrash size={20} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6 border-2 border-dashed border-slate-200 rounded-xl">
+                    <p className="text-sm text-slate-400">
+                      No additional salary components added.
+                    </p>
+                  </div>
+                )}
+              </div>
+
               <div>
                 <label
                   className="block mb-4 text-3xl font-bold text-gray-900"
-                  htmlFor="earnings"
-                >
+                  htmlFor="earnings">
                   Earnings
                 </label>
 
@@ -1292,8 +1379,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="basic"
-                    >
+                      htmlFor="basic">
                       Fixed Basic Salary
                     </label>
                     <Input
@@ -1319,8 +1405,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="hra"
-                    >
+                      htmlFor="hra">
                       Fixed House Rent Allowance
                     </label>
                     <Input
@@ -1348,8 +1433,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="travel_allowance"
-                    >
+                      htmlFor="travel_allowance">
                       Fixed Travel Allowance
                     </label>
                     <Input
@@ -1377,8 +1461,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="medical_allowance"
-                    >
+                      htmlFor="medical_allowance">
                       Fixed Medical Allowance
                     </label>
                     <Input
@@ -1408,8 +1491,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="basket_of_benifits"
-                    >
+                      htmlFor="basket_of_benifits">
                       Fixed Basket of Benifits
                     </label>
                     <Input
@@ -1437,8 +1519,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="performance_bonus"
-                    >
+                      htmlFor="performance_bonus">
                       Fixed Performance Bonus
                     </label>
                     <Input
@@ -1468,8 +1549,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="other_allowances"
-                    >
+                      htmlFor="other_allowances">
                       Fixed Other Allowance
                     </label>
                     <Input
@@ -1497,8 +1577,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="conveyance"
-                    >
+                      htmlFor="conveyance">
                       Fixed Conveyance
                     </label>
                     <Input
@@ -1527,16 +1606,14 @@ const Payroll = () => {
               <div>
                 <label
                   className="block mb-4 text-2xl font-bold text-gray-900"
-                  htmlFor="deductions"
-                >
+                  htmlFor="deductions">
                   Deductions
                 </label>
                 <div className="flex flex-row justify-between space-x-4 mb-6">
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="income_tax"
-                    >
+                      htmlFor="income_tax">
                       Fixed Income Tax
                     </label>
                     <Input
@@ -1564,8 +1641,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="esi"
-                    >
+                      htmlFor="esi">
                       Fixed Employees' State Insurance
                     </label>
                     <Input
@@ -1593,8 +1669,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="epf"
-                    >
+                      htmlFor="epf">
                       Fixed Employees' Provident Fund
                     </label>
                     <Input
@@ -1620,8 +1695,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="professional_tax"
-                    >
+                      htmlFor="professional_tax">
                       Fixed Professional Tax
                     </label>
                     <Input
@@ -1653,8 +1727,7 @@ const Payroll = () => {
                 <button
                   type="submit"
                   className="w-1/4 text-white bg-blue-700 hover:bg-blue-800
-            focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
-                >
+            focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black">
                   Save Employee
                 </button>
               </div>
@@ -1663,8 +1736,7 @@ const Payroll = () => {
         </Modal>
         <Modal
           isVisible={showModalUpdate}
-          onClose={() => setShowModalUpdate(false)}
-        >
+          onClose={() => setShowModalUpdate(false)}>
           <div className="py-6 px-5 lg:px-8 text-left">
             <h3 className="mb-4 text-xl font-bold text-gray-900">
               Update Employee
@@ -1673,8 +1745,7 @@ const Payroll = () => {
               <div>
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="update_name"
-                >
+                  htmlFor="update_name">
                   Full Name <span className="text-red-500 ">*</span>
                 </label>
                 <Input
@@ -1697,8 +1768,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_email"
-                  >
+                    htmlFor="update_email">
                     Email <span className="text-red-500 ">*</span>
                   </label>
                   <Input
@@ -1720,8 +1790,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_phone_number"
-                  >
+                    htmlFor="update_phone_number">
                     Phone Number <span className="text-red-500 ">*</span>
                   </label>
                   <Input
@@ -1747,8 +1816,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_password"
-                  >
+                    htmlFor="update_password">
                     Password <span className="text-red-500 ">*</span>
                   </label>
                   <Input
@@ -1772,8 +1840,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_pincode"
-                  >
+                    htmlFor="update_pincode">
                     Pincode <span className="text-red-500 ">*</span>
                   </label>
                   <Input
@@ -1799,8 +1866,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_adhaar_no"
-                  >
+                    htmlFor="update_adhaar_no">
                     Adhaar Number <span className="text-red-500 ">*</span>
                   </label>
                   <Input
@@ -1824,8 +1890,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_pan_no"
-                  >
+                    htmlFor="update_pan_no">
                     Pan Number <span className="text-red-500 ">*</span>
                   </label>
                   <Input
@@ -1848,8 +1913,7 @@ const Payroll = () => {
               <div>
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="update_address"
-                >
+                  htmlFor="update_address">
                   Address <span className="text-red-500 ">*</span>
                 </label>
                 <Input
@@ -1872,8 +1936,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_designation_id"
-                  >
+                    htmlFor="update_designation_id">
                     Designation <span className="text-red-500 ">*</span>
                   </label>
 
@@ -1890,8 +1953,7 @@ const Payroll = () => {
                       option.children
                         .toLowerCase()
                         .includes(input.toLowerCase())
-                    }
-                  >
+                    }>
                     {managers.map((manager) => (
                       <Select.Option key={manager._id} value={manager._id}>
                         {manager.title}
@@ -1907,8 +1969,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_status"
-                  >
+                    htmlFor="update_status">
                     Status <span className="text-red-500">*</span>
                   </label>
                   <Select
@@ -1923,8 +1984,7 @@ const Payroll = () => {
                         .includes(input.toLowerCase())
                     }
                     value={updateFormData?.status || undefined}
-                    onChange={(value) => handleInputChange("status", value)}
-                  >
+                    onChange={(value) => handleInputChange("status", value)}>
                     {["Active", "Inactive", "Terminated"].map((status) => (
                       <Select.Option key={status} value={status.toLowerCase()}>
                         {status}
@@ -1940,8 +2000,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_joining_date"
-                  >
+                    htmlFor="update_joining_date">
                     Joining Date <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -1964,8 +2023,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_leaving_date"
-                  >
+                    htmlFor="update_leaving_date">
                     Leaving Date
                   </label>
                   <Input
@@ -1991,8 +2049,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_dob"
-                  >
+                    htmlFor="update_dob">
                     Date of Birth <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -2019,8 +2076,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_gender"
-                  >
+                    htmlFor="update_gender">
                     Gender <span className="text-red-500">*</span>
                   </label>
                   <Select
@@ -2035,8 +2091,7 @@ const Payroll = () => {
                         .includes(input.toLowerCase())
                     }
                     value={updateFormData?.gender || undefined}
-                    onChange={(value) => handleInputChange("gender", value)}
-                  >
+                    onChange={(value) => handleInputChange("gender", value)}>
                     {["Male", "Female", "Others"].map((gender) => (
                       <Select.Option key={gender} value={gender.toLowerCase()}>
                         {gender}
@@ -2052,8 +2107,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_alternate_number"
-                  >
+                    htmlFor="update_alternate_number">
                     Alternate Phone Number{" "}
                     <span className="text-red-500">*</span>
                   </label>
@@ -2079,8 +2133,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_total_allocated_leaves"
-                  >
+                    htmlFor="update_total_allocated_leaves">
                     Total No. of Leaves <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -2107,8 +2160,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_emergency_contact_person"
-                  >
+                    htmlFor="update_emergency_contact_person">
                     Emergency Contact Person{" "}
                     <span className="text-red-500">*</span>
                   </label>
@@ -2133,8 +2185,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_emergency_contact_number"
-                  >
+                    htmlFor="update_emergency_contact_number">
                     Emergency Phone Number{" "}
                   </label>
                   <div className="flex items-center mb-2 gap-2">
@@ -2161,8 +2212,7 @@ const Payroll = () => {
                     .map((phone, index) => (
                       <div
                         key={index + 1}
-                        className="flex items-center mb-2 gap-2"
-                      >
+                        className="flex items-center mb-2 gap-2">
                         <Input
                           type="tel"
                           name={`emergency_phone_${index + 1}`}
@@ -2188,8 +2238,7 @@ const Payroll = () => {
                               index + 1
                             )
                           }
-                          className="text-red-600 text-sm"
-                        >
+                          className="text-red-600 text-sm">
                           Remove
                         </button>
                       </div>
@@ -2199,8 +2248,7 @@ const Payroll = () => {
                     onClick={() =>
                       addPhoneField(updateFormData, setUpdateFormData)
                     }
-                    className="mt-2 text-blue-600 text-sm"
-                  >
+                    className="mt-2 text-blue-600 text-sm">
                     + Add Another
                   </button>
                 </div>
@@ -2209,8 +2257,7 @@ const Payroll = () => {
                 <div className="w-1/2">
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="update_salary"
-                  >
+                    htmlFor="update_salary">
                     Fixed Salary <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -2234,12 +2281,105 @@ const Payroll = () => {
                   )}
                 </div>
               </div>
+              {/* Additional Salary Section for Update */}
+              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 mt-8">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h4 className="text-base font-bold text-slate-800">
+                      Additional Salaries
+                    </h4>
+                    <p className="text-xs text-slate-500">
+                      Update Collection Salaries and more.
+                    </p>
+                  </div>
 
+                  <button
+                    type="button"
+                    onClick={() => addAdditionalSalaryField(true)} // 'true' for Update logic
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm font-semibold hover:bg-blue-100 transition-colors border border-blue-200">
+                    <HiOutlinePlusCircle size={18} />
+                    Add Component
+                  </button>
+                </div>
+
+                {updateFormData.additional_salary.length > 0 ? (
+                  <div className="space-y-4">
+                    {/* Column Headers */}
+                    <div className="flex px-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                      <div className="flex-1">Component Name</div>
+                      <div className="flex-1 ml-4">Amount (₹)</div>
+                      <div className="w-10"></div>
+                    </div>
+
+                    {updateFormData.additional_salary.map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-row items-start space-x-4 animate-fadeIn">
+                        {/* Component Name */}
+                        <div className="flex-1">
+                          <Input
+                            placeholder="eg: Collection"
+                            value={item.name}
+                            onChange={(e) =>
+                              handleAdditionalSalaryChange(
+                                index,
+                                "name",
+                                e.target.value,
+                                true
+                              )
+                            }
+                            className={`bg-white border-slate-200 ${fieldSize.height} rounded-xl focus:border-blue-500 hover:border-blue-400 shadow-sm w-full transition-all`}
+                          />
+                        </div>
+
+                        {/* Amount */}
+                        <div className="flex-1">
+                          <Input
+                            type="number"
+                            placeholder="0.00"
+                            value={item.value || ""}
+                            onChange={(e) =>
+                              handleAdditionalSalaryChange(
+                                index,
+                                "value",
+                                e.target.value,
+                                true
+                              )
+                            }
+                            className={`bg-white border-slate-200 ${fieldSize.height} rounded-xl focus:border-blue-500 hover:border-blue-400 shadow-sm w-full transition-all`}
+                          />
+                          {item.value > 0 && (
+                            <p className="text-[10px] font-medium text-blue-500 mt-1.5 px-1 italic">
+                              {numberToIndianWords(item.value)} Only
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Remove Button */}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            removeAdditionalSalaryField(index, true)
+                          } // 'true' for Update logic
+                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all mt-1"
+                          title="Remove component">
+                          <HiOutlineTrash size={20} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6 border-2 border-dashed border-slate-200 rounded-xl">
+                    <p className="text-sm text-slate-400">
+                      No additional components found for this employee.
+                    </p>
+                  </div>
+                )}
+              </div>
               <div>
                 <label
                   className="block mb-4 text-3xl font-bold text-gray-900"
-                  htmlFor="update_earnings"
-                >
+                  htmlFor="update_earnings">
                   Earnings
                 </label>
 
@@ -2247,8 +2387,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="update_basic"
-                    >
+                      htmlFor="update_basic">
                       Fixed Basic Salary
                     </label>
                     <Input
@@ -2279,8 +2418,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="update_hra"
-                    >
+                      htmlFor="update_hra">
                       Fixed House Rent Allowance
                     </label>
                     <Input
@@ -2313,8 +2451,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="update_travel_allowance"
-                    >
+                      htmlFor="update_travel_allowance">
                       Fixed Travel Allowance
                     </label>
                     <Input
@@ -2347,8 +2484,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="update_medical_allowance"
-                    >
+                      htmlFor="update_medical_allowance">
                       Fixed Medical Allowance
                     </label>
                     <Input
@@ -2383,8 +2519,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="update_basket_of_benifits"
-                    >
+                      htmlFor="update_basket_of_benifits">
                       Fixed Basket of Benifits
                     </label>
                     <Input
@@ -2417,8 +2552,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="update_performance_bonus"
-                    >
+                      htmlFor="update_performance_bonus">
                       Fixed Performance Bonus
                     </label>
                     <Input
@@ -2453,8 +2587,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="update_other_allowances"
-                    >
+                      htmlFor="update_other_allowances">
                       Fixed Other Allowance
                     </label>
                     <Input
@@ -2487,8 +2620,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="update_conveyance"
-                    >
+                      htmlFor="update_conveyance">
                       Fixed Conveyance
                     </label>
                     <Input
@@ -2524,16 +2656,14 @@ const Payroll = () => {
               <div>
                 <label
                   className="block mb-4 text-3xl font-bold text-gray-900"
-                  htmlFor="update_deductions"
-                >
+                  htmlFor="update_deductions">
                   Deductions
                 </label>
                 <div className="flex flex-row justify-between space-x-4 mb-6">
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="update_income_tax"
-                    >
+                      htmlFor="update_income_tax">
                       Fixed Income Tax
                     </label>
                     <Input
@@ -2566,8 +2696,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="update_esi"
-                    >
+                      htmlFor="update_esi">
                       Fixed Employees' State Insurance
                     </label>
                     <Input
@@ -2600,8 +2729,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="update_epf"
-                    >
+                      htmlFor="update_epf">
                       Fixed Employees' Provident Fund
                     </label>
                     <Input
@@ -2632,8 +2760,7 @@ const Payroll = () => {
                   <div className="w-1/2">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-900"
-                      htmlFor="update_professional_tax"
-                    >
+                      htmlFor="update_professional_tax">
                       Fixed Professional Tax
                     </label>
                     <Input
@@ -2670,8 +2797,7 @@ const Payroll = () => {
                 <button
                   type="submit"
                   className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-            focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                >
+            focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                   Update Employee
                 </button>
               </div>
@@ -2683,8 +2809,7 @@ const Payroll = () => {
           onClose={() => {
             setShowModalDelete(false);
             setCurrentUser(null);
-          }}
-        >
+          }}>
           <div className="py-6 px-5 lg:px-8 text-left">
             <h3 className="mb-4 text-xl font-bold text-gray-900">
               Delete Employee
@@ -2695,13 +2820,11 @@ const Payroll = () => {
                   e.preventDefault();
                   handleDeleteUser();
                 }}
-                className="space-y-6"
-              >
+                className="space-y-6">
                 <div>
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="delete_employee_name"
-                  >
+                    htmlFor="delete_employee_name">
                     Please enter{" "}
                     <span className="text-primary font-bold">
                       {currentUser.name}
@@ -2720,8 +2843,7 @@ const Payroll = () => {
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-        focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                >
+        focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                   Delete
                 </button>
               </form>
