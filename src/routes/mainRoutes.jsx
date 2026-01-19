@@ -168,6 +168,9 @@ import TotalRevenue from "../pages/TotalRevenue";
 import MonthlyRevenue from "../pages/MonthlyRevenue";
 
 import AdvanceSalary from "../pages/AdvanceSalary";
+
+import PaymentLinkTransactions from "../pages/PaymentLinkTransactions";
+
 const mainRoutes = createBrowserRouter([
   {
     path: "/",
@@ -265,6 +268,16 @@ const mainRoutes = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+
+    {
+    path: "/payment-link-transactions",
+    element: (
+      <ProtectedRoute>
+        <PaymentLinkTransactions />
+      </ProtectedRoute>
+    ),
+  },
+  
   {
     path: "/payment-menu/payment-in-out-menu/pay-in-menu/payment-link-menu",
     element: (

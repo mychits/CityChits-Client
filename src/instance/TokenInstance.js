@@ -10,9 +10,9 @@ const api = axios.create({
 
       // baseURL : "https://citychit-prod-node-pat4-git-main-mychits-projects.vercel.app/api"
 
-      	// baseURL: "http://51.21.197.152:3000/api",
+      	baseURL: "http://51.21.197.152:3000/api",
 
-        	baseURL : "http://13.48.115.111:3000/api"   //NEW BASE URL
+        	// baseURL : "http://13.48.115.111:3000/api"   //NEW BASE URL
 });
 
 

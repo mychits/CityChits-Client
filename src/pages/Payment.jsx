@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "../components/layouts/Sidebar";
 import api from "../instance/TokenInstance";
 import DataTable from "../components/layouts/Datatable";
-import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
+import CustomAlert from "../components/alerts/CustomAlert";
 import CircularLoader from "../components/loaders/CircularLoader";
 import { FaWhatsappSquare } from "react-icons/fa";
 import Navbar from "../components/layouts/Navbar";
@@ -12,7 +12,7 @@ import { IoMdMore } from "react-icons/io";
 import { Link } from "react-router-dom";
 import BackdropBlurLoader from "../components/loaders/BackdropBlurLoader";
 import { FaReceipt } from "react-icons/fa";
-
+import { numberToIndianWords } from "../helpers/numberToIndianWords";
 const Payment = () => {
   const [users, setUsers] = useState([]);
   const [actualGroups, setActualGroups] = useState([]);
@@ -27,7 +27,7 @@ const Payment = () => {
   const [enrollmentLoading, setEnrollmentLoading] = useState(false);
   const [showModalView, setShowModalView] = useState(false);
   const [currentViewGroup, setCurrentViewGroup] = useState(null);
-  const [whatsappEnable,setWhatsappEnable] = useState(true);
+  const [whatsappEnable, setWhatsappEnable] = useState(true);
   const [paymentMode, setPaymentMode] = useState("cash");
   const today = new Date().toISOString().split("T")[0];
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +47,7 @@ const Payment = () => {
       {
         key: "1",
         label: (
-          <Link to={`/print/${paymentObject?._id}`} className="text-violet-600 ">
+          <Link to={`/print/${paymentObject?._id}`} className="text-blue-600 ">
             Print
           </Link>
         ),
@@ -95,7 +95,6 @@ const Payment = () => {
     cheque_bank_branch: "",
     collection_time: "",
   });
-
 
   const [modifyPayment, setModifyPayment] = useState(false);
   const [modifyMinMaxPaymentDate, setModifyMinMaxPaymentDate] = useState(false);
@@ -159,7 +158,7 @@ const Payment = () => {
           throw new Error("fetching loan borrowers Failed");
         setBorrowers(response.data);
       } catch (err) {
-        setBorrowers([])
+        setBorrowers([]);
         console.log("Error Occurred");
       }
     };
@@ -190,16 +189,16 @@ const Payment = () => {
   }, [selectedUserId]);
 
   useEffect(() => {
-    const fetchEnrolledCustomers = async () => {
+    const fetchAllCustomers = async () => {
       try {
-        const response = await api.get("/enroll/users");
+        const response = await api.get("user/verified");
         setUsers(response?.data?.data);
       } catch (error) {
         setUsers([]);
         console.error("Error fetching group data:", error);
       }
     };
-    fetchEnrolledCustomers();
+    fetchAllCustomers();
   }, []);
 
   useEffect(() => {
@@ -251,19 +250,57 @@ const Payment = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
+const handleChange = (e) => {
+  const { name, value } = e.target;
+
+  if (name === "amount") {
+    // Allow digits & ONLY one dot
+    let cleaned = value.replace(/[^0-9.]/g, "");
+
+    const dotCount = (cleaned.match(/\./g) || []).length;
+    if (dotCount > 1) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: cleaned,
     }));
-    setErrors((prevData) => ({ ...prevData, [name]: "" }));
-  };
+
+    return;
+  }
+
+  // Other fields
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
+
+
   const handlePaymentAntSelect = (values) => {
     setPaymentGroupTickets(values);
   };
 
 
+
+  
+const formatIndianNumber = (value) => {
+  if (!value) return "";
+
+  value = value.toString().replace(/[^0-9.]/g, "");
+
+  const parts = value.split(".");
+  const integerPart = parts[0];
+  const decimalPart = parts[1] ? parts[1].slice(0, 2) : "";
+
+  let lastThree = integerPart.slice(-3);
+  let otherNumbers = integerPart.slice(0, -3);
+
+  let formattedInt = otherNumbers
+    ? otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree
+    : lastThree;
+
+  return decimalPart ? `${formattedInt}.${decimalPart}` : formattedInt;
+};
 
   const columns = [
     { key: "id", header: "SL. NO" },
@@ -279,13 +316,12 @@ const Payment = () => {
     { key: "pay_type", header: "Payment Type" },
     { key: "collection_time", header: "Collection Time" },
     { key: "collected_by", header: "Collected By" },
-    { key: "action", header: "Action" }
+    { key: "action", header: "Action" },
   ];
 
- 
   const handleCustomer = async (userId) => {
-    
     setFilteredUsers([]);
+    setFilteredEnrollments([]);
     setSelectedUserId(userId);
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -297,8 +333,7 @@ const Payment = () => {
   };
 
   const handleGroupPayment = async (groupId) => {
-   
-   if (groupId) {
+    if (groupId) {
       let url = `/payment/get-payments-by-dates?from_date=${today}&to_date=${today}`;
       try {
         setIsLoading(true);
@@ -340,17 +375,15 @@ const Payment = () => {
             };
           });
           setTablePayments(formattedData);
-        } 
+        }
       } catch (error) {
         setTablePayments([]);
         console.error("Error fetching payment data:", error);
-        
       } finally {
         setIsLoading(false);
       }
-    } 
+    }
   };
-
 
   const handlePaymentModeChange = (e) => {
     const selectedMode = e.target.value;
@@ -379,13 +412,12 @@ const Payment = () => {
     const isValid = validateForm();
     try {
       if (isValid) {
-       
         setAlertConfig((prev) => ({
           ...prev,
           visibility: false,
         }));
         setShowModal(false);
-    
+
         const usr = localStorage.getItem("user");
         let admin_type = null;
         try {
@@ -400,33 +432,30 @@ const Payment = () => {
         formData.admin_type = admin_type?._id;
         setOpenBackdropLoader(true);
         await api.post("/payment/add-payments", formData);
- 
-          setSelectedUserId("");
-          setPaymentGroupTickets([]);
-          
-          setFormData({
-            user_id: "",
-            receipt_no: "",
-            pay_date: today,
-            amount: "",
-            pay_type: "cash",
-            transaction_id: "",
-            payment_group_tickets: [],
-            account_type: "",
-            cheque_number: "",
-            cheque_date: "",
-            cheque_bank_name: "",
-            cheque_bank_branch: "",
-          });
-          setAlertConfig({
-            visibility: true,
-            noReload: true,
-            message: "Payment Added Successfully",
-            type: "success",
-          });
-        
 
-       
+        setSelectedUserId("");
+        setPaymentGroupTickets([]);
+
+        setFormData({
+          user_id: "",
+          receipt_no: "",
+          pay_date: today,
+          amount: "",
+          pay_type: "cash",
+          transaction_id: "",
+          payment_group_tickets: [],
+          account_type: "",
+          cheque_number: "",
+          cheque_date: "",
+          cheque_bank_name: "",
+          cheque_bank_branch: "",
+        });
+        setAlertConfig({
+          visibility: true,
+          noReload: true,
+          message: "Payment Added Successfully",
+          type: "success",
+        });
       }
     } catch (error) {
       setShowModal(false);
@@ -447,7 +476,7 @@ const Payment = () => {
         message: `Error submitting payment data`,
         type: "error",
       });
-     
+
       console.error("Error submitting payment data:", error);
     } finally {
       setOpenBackdropLoader(false);
@@ -480,14 +509,13 @@ const Payment = () => {
           const validEnrollments = response.data.filter(
             (auction) => auction.enrollment && auction.enrollment.group
           );
-          setFilteredEnrollments(validEnrollments)
-        
-        } 
+          setFilteredEnrollments(validEnrollments);
+        }
       } catch (error) {
         console.error("Error fetching enrollment data:", error);
-        setFilteredEnrollments([])
+        setFilteredEnrollments([]);
       }
-    } 
+    }
   };
 
   return (
@@ -497,82 +525,7 @@ const Payment = () => {
       ) : (
         <div>
           <div className="flex mt-20">
-          <Sidebar />
-        <Navbar
-          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-          visibility={true}
-        />
-        <CustomAlertDialog
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
-        />
-            <div className="flex-grow p-7">
-              <h1 className="text-2xl font-semibold">Payments</h1>
-              <div className="mt-6  mb-8">
-                <div className="mb-10">
-                  <label className="font-bold">Search or Select Group</label>
-                  <div className="flex justify-between items-center w-full">
-                    <Select
-                      placeholder="Select Group"
-                      popupMatchSelectWidth={false}
-                      showSearch
-                      className="w-full  h-14 max-w-md"
-                      filterOption={(input, option) =>
-                        option.children
-                          .toString()
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      value={selectedGroupId || undefined}
-                      onChange={handleGroupPayment}
-                    >
-                      {actualGroups.map((group) => (
-                        <Select.Option key={group._id} value={group._id}>
-                          {group.group_name}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                    <div>
-                      <button
-                        onClick={() => setShowModal(true)}
-                        className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
-                      >
-                        + Add Payment
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {TablePayments && TablePayments.length > 0 ? (
-                  <DataTable
-                    data={TablePayments.filter((item) =>
-                      Object.values(item).some((value) =>
-                        String(value)
-                          .toLowerCase()
-                          .includes(searchText.toLowerCase())
-                      )
-                    )}
-                    columns={columns}
-                    exportedPdfName="Payments"
-                    printHeaderKeys={["Group Name"]}
-                    printHeaderValues={["Today's"]}
-                    exportedFileName={`Payments.csv`}
-                  />
-                ) : (
-                  <div className="mt-10 text-center text-gray-500">
-                    <CircularLoader
-                      isLoading={isLoading}
-                      data="Payments Data"
-                      failure={
-                        TablePayments.length <= 0 
-                      }
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
+                          
 
             <Drawer
               open={showModal}
@@ -661,7 +614,7 @@ const Payment = () => {
                           onChange={handlePaymentAntSelect}
                           loading={enrollmentLoading}
                           value={paymentGroupTickets}
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         >
                           {filteredEnrollments.map((entry, index) => {
                             const groupName =
@@ -729,7 +682,7 @@ const Payment = () => {
                               id="pay_date"
                               onChange={handleChange}
                               placeholder=""
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                             />
                             {errors.pay_date && (
                               <p className="text-red-500 text-xs mt-1">
@@ -739,27 +692,30 @@ const Payment = () => {
                           </div>
 
                           <div>
-                            <label
-                              className="block mb-2 text-sm font-medium text-gray-900"
-                              htmlFor="group_value"
-                            >
-                              Amount <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                              type="number"
-                              name="amount"
-                              value={formData.amount}
-                              id="amount"
-                              onChange={handleChange}
-                              placeholder="Enter Amount"
-                              required
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                            />
-                            {errors.amount && (
-                              <p className="text-red-500 text-xs mt-1">
-                                {errors.amount}
-                              </p>
-                            )}
+                            <div>
+                              <label
+                                className="block mb-2 text-sm font-medium text-gray-900"
+                                htmlFor="group_value"
+                              >
+                                Amount <span className="text-red-500">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                name="amount"
+                                value={formatIndianNumber(formData.amount)}
+                                id="amount"
+                                onChange={handleChange}
+                                placeholder="Enter Amount"
+                                required
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                              />
+                              {errors.amount && (
+                                <p className="text-red-500 text-xs mt-1">
+                                  {errors.amount}
+                                </p>
+                              )}
+                            </div>
+                            <div className="text-blue-900">{numberToIndianWords(formData.amount)}</div>
                           </div>
 
                           <div>
@@ -772,7 +728,7 @@ const Payment = () => {
                             <select
                               name="pay_mode"
                               id="pay_mode"
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                               onChange={handlePaymentModeChange}
                             >
                               <option value="cash">Cash</option>
@@ -793,7 +749,7 @@ const Payment = () => {
                               <select
                                 name="account_type"
                                 id="account_type"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                                 onChange={handleAccountTypeChange}
                               >
                                 <option value="">Select Account Type</option>
@@ -804,23 +760,31 @@ const Payment = () => {
                         </div>
 
                         {formData.amount && paymentGroupTickets.length > 1 && (
-                          <div className="mt-4">
-                            <label
-                              className="block mb-2 text-sm font-medium text-gray-900"
-                              htmlFor="individual_amount"
-                            >
-                              Individual Ticket Amount
-                            </label>
-                            <input
-                              type="text"
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg hover:cursor-not-allowed w-full p-2.5"
-                              placeholder="Individual Amount"
-                              value={
+                          <div>
+                            <div className="mt-4">
+                              <label
+                                className="block mb-2 text-sm font-medium text-gray-900"
+                                htmlFor="individual_amount"
+                              >
+                                Individual Ticket Amount
+                              </label>
+                              <input
+                                type="text"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg hover:cursor-not-allowed w-full p-2.5"
+                                placeholder="Individual Amount"
+                                value={formatIndianNumber(
+                                  Number(formData.amount) /
+                                    paymentGroupTickets.length
+                                )}
+                                disabled
+                              />
+                            </div>
+                            <div className="text-blue-900">
+                              {numberToIndianWords(
                                 Number(formData.amount) /
-                                paymentGroupTickets.length
-                              }
-                              disabled
-                            />
+                                  paymentGroupTickets.length
+                              )}
+                            </div>
                           </div>
                         )}
 
@@ -841,7 +805,7 @@ const Payment = () => {
                               value={formData.transaction_id}
                               onChange={handleChange}
                               placeholder="Enter Transaction ID"
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                             />
                             {errors.transaction_id && (
                               <p className="text-red-500 text-xs mt-1">
@@ -872,7 +836,7 @@ const Payment = () => {
                                   value={formData.cheque_number}
                                   onChange={handleChange}
                                   placeholder="Enter Cheque Number"
-                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                                 />
                                 {errors.cheque_number && (
                                   <p className="text-red-500 text-xs mt-1">
@@ -896,7 +860,7 @@ const Payment = () => {
                                   value={formData.cheque_date.split("T")[0]}
                                   onChange={handleChange}
                                   placeholder="Enter Cheque Date"
-                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                                 />
                                 {errors.cheque_date && (
                                   <p className="text-red-500 text-xs mt-1">
@@ -919,7 +883,7 @@ const Payment = () => {
                                   value={formData.cheque_bank_name}
                                   onChange={handleChange}
                                   placeholder="Enter Bank Name"
-                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                                 />
                               </div>
 
@@ -937,7 +901,7 @@ const Payment = () => {
                                   value={formData.cheque_bank_branch}
                                   onChange={handleChange}
                                   placeholder="Enter Bank Branch"
-                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                                 />
                               </div>
                             </div>
@@ -973,7 +937,7 @@ const Payment = () => {
                       <div className="flex justify-end pt-4">
                         <button
                           type="submit"
-                          className="flex items-center gap-2 text-white bg-violet-600 hover:bg-violet-700 focus:ring-2 focus:outline-none focus:ring-violet-300 font-medium rounded-md text-sm px-6 py-3 shadow-sm transition-all"
+                          className="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-6 py-3 shadow-sm transition-all"
                         >
                           Save Payment
                         </button>
@@ -1070,7 +1034,7 @@ const Payment = () => {
               <h3 className="mb-4 text-xl font-bold text-gray-900">
                 Payment Details
               </h3>
-              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5">
+              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
                 <div className="mb-3 flex gap-x-2">
                   <strong>Group: </strong>{" "}
                   {currentViewGroup?.group_id?.group_name}

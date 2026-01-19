@@ -6,12 +6,11 @@ import Modal from "../components/modals/Modal";
 import DataTable from "../components/layouts/Datatable";
 import CircularLoader from "../components/loaders/CircularLoader";
 import Navbar from "../components/layouts/Navbar";
-import { Select, Dropdown, Modal as AntModal, Alert } from "antd";
+import { Select, Dropdown, Modal as AntModal, Alert, Empty } from "antd";
 import { IoMdMore } from "react-icons/io";
 import { Link } from "react-router-dom";
 import BackdropBlurLoader from "../components/loaders/BackdropBlurLoader";
 import { fieldSize } from "../data/fieldSize";
-import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 
 const IndividualChitPaymentLink = () => {
   const [groups, setGroups] = useState([]);
@@ -54,23 +53,12 @@ const IndividualChitPaymentLink = () => {
     type: "info"
   });
 
-    const [alertConfig, setAlertConfig] = useState({
-      visibility: false,
-      message: "Something went wrong!",
-      type: "info",
-    });
-
-    const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchText(value);
-  };
-
   const dropDownItems = (group) => {
     const dropDownItemList = [
       {
         key: "1",
         label: (
-          <Link to={`/print/${group._id}`} className="text-violet-600 ">
+          <Link to={`/print/${group._id}`} className="text-blue-600 ">
             Print
           </Link>
         ),
@@ -550,20 +538,12 @@ const IndividualChitPaymentLink = () => {
         <BackdropBlurLoader title={"payment Data processing...."} />
       ) : (
         <div>
-           <div className="flex mt-20" >
-          <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
-          <CustomAlertDialog
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-            onClose={() =>
-              setAlertConfig((prev) => ({ ...prev, visibility: false }))
-            }
-          />
+          <div className="flex mt-20">
+            <Navbar
+              onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+              visibility={true}
+            />
+            <Sidebar />
             
             {/* Ant Design Alert */}
             {alert.visible && (
@@ -588,7 +568,7 @@ const IndividualChitPaymentLink = () => {
                       placeholder="Today's Payment"
                       popupMatchSelectWidth={false}
                       showSearch
-                      className="w-full   h-14 max-w-md"
+                      className="w-full  h-14 max-w-md"
                       filterOption={(input, option) =>
                         option.children
                           .toString()
@@ -610,7 +590,7 @@ const IndividualChitPaymentLink = () => {
                     <div>
                       <button
                         onClick={() => setShowModal(true)}
-                        className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                        className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
                       >
                         + Add Payment Link
                       </button>
@@ -618,7 +598,13 @@ const IndividualChitPaymentLink = () => {
                   </div>
                 </div>
 
-                {TablePayments && TablePayments.length > 0 ? (
+                {isLoading? <CircularLoader
+                     
+                      data="Payments Data"
+                      failure={
+                        TablePayments.length <= 0 && selectedAuctionGroupId
+                      }
+                    />: TablePayments && TablePayments.length > 0 ? (
                   <DataTable
                     data={TablePayments.filter((item) =>
                       Object.values(item).some((value) =>
@@ -637,13 +623,7 @@ const IndividualChitPaymentLink = () => {
                   />
                 ) : (
                   <div className="mt-10 text-center text-gray-500">
-                    <CircularLoader
-                      isLoading={isLoading}
-                      data="Payments Data"
-                      failure={
-                        TablePayments.length <= 0 && selectedAuctionGroupId
-                      }
-                    />
+                   <Empty description="No Payment Link Transaction Found"/>
                   </div>
                 )}
               </div>
@@ -712,7 +692,7 @@ const IndividualChitPaymentLink = () => {
                       placeholder="Select Group | Ticket"
                       onChange={handlePaymentAntSelect}
                       value={paymentGroupTickets}
-                      className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full ${fieldSize.height}`}
+                      className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full ${fieldSize.height}`}
                     >
                       {filteredAuction.map((entry, index) => {
                         const groupName =
@@ -771,7 +751,7 @@ const IndividualChitPaymentLink = () => {
                           onChange={handleChange}
                           placeholder="Enter Amount"
                           required
-                          className="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 p-2.5"
+                          className="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
                         />
                       </div>
                       {errors.amount && (
@@ -813,7 +793,7 @@ const IndividualChitPaymentLink = () => {
                       min={tomorrowFormatted} // Prevent selecting past dates
                       value={formData.expiry}
                       onChange={handleChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                     />
                   </div>
 
@@ -866,8 +846,8 @@ const IndividualChitPaymentLink = () => {
                   <div className="flex justify-end pt-4">
                     <button
                       type="submit"
-                      className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 active:bg-violet-900 
-                   border-2 border-violet-700 focus:ring-4 focus:outline-none focus:ring-violet-300 
+                      className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 active:bg-blue-900 
+                   border-2 border-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 
                    font-medium rounded-lg text-sm px-5 py-2.5 transition-colors duration-200"
                     >
                       Add Payment Link
@@ -889,7 +869,7 @@ const IndividualChitPaymentLink = () => {
               <h3 className="mb-4 text-xl font-bold text-gray-900">
                 Payment Details
               </h3>
-              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5">
+              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
                 <div className="mb-3 flex gap-x-2">
                   <strong>Group: </strong>{" "}
                   {currentViewGroup?.group_id?.group_name}

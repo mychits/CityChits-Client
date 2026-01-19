@@ -34,7 +34,7 @@ const AllUserReport = () => {
 
     // Registration fee kept separate
     const registrationFee = Number(
-      userInfo?.registrationFee?.totalRegistrationFee || 0
+      userInfo?.registration_fee || 0
     );
 
     const auctionCount = parseInt(userInfo?.auctions?.counts) || 0;

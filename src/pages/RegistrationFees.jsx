@@ -13,7 +13,6 @@ import { IoMdMore } from "react-icons/io";
 import { Link } from "react-router-dom";
 import dataPaymentsFor from "../data/paymentsFor";
 import BackdropBlurLoader from "../components/loaders/BackdropBlurLoader";
-import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import { FaReceipt } from "react-icons/fa";
 import { fieldSize } from "../data/fieldSize";
 const RegistrationFee = () => {
@@ -23,7 +22,7 @@ const RegistrationFee = () => {
   const [TablePayments, setTablePayments] = useState([]);
   const [selectedAuctionGroup, setSelectedAuctionGroup] = useState("");
   const [selectedGroupId, setSelectedGroupId] = useState("");
-  const [selectedAuctionGroupId, setSelectedAuctionGroupId] = useState("today");
+  const [selectedAuctionGroupId, setSelectedAuctionGroupId] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [userName, setUserName] = useState("");
   const [viewLoader, setViewLoader] = useState(false);
@@ -107,7 +106,7 @@ const RegistrationFee = () => {
     }
     return dropDownItemList;
   };
-  const GlobalSearchChangeHandler = (e) => {
+  const onGlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
@@ -140,13 +139,6 @@ const RegistrationFee = () => {
   const handleUploadModalClose = () => {
     setShowUploadModal(false);
   };
-
-  useEffect(() => {
-  if (selectedAuctionGroupId) {
-    handleGroupPayment(selectedAuctionGroupId);
-  }
-}, [selectedAuctionGroupId]);
-
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -186,7 +178,7 @@ const RegistrationFee = () => {
             to_date: today,
           },
         });
-        console.info(response.data, "registration fees");
+     
         if (response.data && response.data.length > 0) {
           const formattedData = response.data.map((group, index) => {
            //if (!group?.group_id?.group_name) return {};
@@ -851,49 +843,7 @@ const RegistrationFee = () => {
     }
   };
 
-  // const handleFileSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   const formDatas = new FormData();
-  //   const fileInput = e.target.file;
-
-  //   formDatas.append("user_id", formData.user_id);
-  //   formDatas.append("group_id", formData.group_id);
-  //   formDatas.append("ticket", formData.ticket);
-
-  //   if (fileInput && fileInput.files[0]) {
-  //     formDatas.append("file", fileInput.files[0]);
-
-  //     try {
-  //       const response = await api.post(`/payment/payment-excel`, formDatas, {
-  //         headers: { "Content-Type": "multipart/form-data" },
-  //       });
-
-  //       if (response.status === 200) {
-  //         setShowUploadModal(false);
-  //         setAlertConfig({
-  //           visibility: true,
-  //           message: "File uploaded successfully!",
-  //           type: "success",
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.error("Error uploading file:", error);
-
-  //       setAlertConfig({
-  //         visibility: true,
-  //         message: "Failed to upload file.",
-  //         type: "success",
-  //       });
-  //     }
-  //   } else {
-  //     setAlertConfig({
-  //       visibility: true,
-  //       message: "Please select a file to upload.",
-  //       type: "success",
-  //     });
-  //   }
-  // };
+  
 
   const handleGroupAuctionChange = async (groupId) => {
     if (groupId) {
@@ -924,20 +874,18 @@ const RegistrationFee = () => {
         <BackdropBlurLoader title={"payment Data processing...."} />
       ) : (
         <div>
-        <div className="flex mt-20" >
-          <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
-          <CustomAlertDialog
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-            onClose={() =>
-              setAlertConfig((prev) => ({ ...prev, visibility: false }))
-            }
-          />
+          <div className="flex mt-20">
+            <Navbar
+              onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+              visibility={true}
+            />
+            <Sidebar />
+            <CustomAlert
+              type={alertConfig.type}
+              isVisible={alertConfig.visibility}
+              message={alertConfig.message}
+              noReload={alertConfig.noReload}
+            />
             <div className="flex-grow p-7">
               <h1 className="text-2xl font-semibold">Registration Fee</h1>
               <div className="mt-6  mb-8">
@@ -948,7 +896,7 @@ const RegistrationFee = () => {
                       placeholder="Today's Registration Fee"
                       popupMatchSelectWidth={false}
                       showSearch
-                      className="w-full   h-14 max-w-md"
+                      className="w-full  h-14 max-w-md"
                       filterOption={(input, option) =>
                         option.children
                           .toString()
@@ -970,13 +918,13 @@ const RegistrationFee = () => {
                     <div>
                       <button
                         onClick={() => setShowModal(true)}
-                        className="ml-4 bg-violet-600 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                        className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
                       >
                         + Add Registration Fees
                       </button>
                       <button
                         onClick={() => setShowUploadModal(true)}
-                        className="ml-4 bg-violet-300 text-black px-4 py-2 rounded shadow-md hover:bg-violet-400 transition duration-200"
+                        className="ml-4 bg-yellow-300 text-black px-4 py-2 rounded shadow-md hover:bg-yellow-400 transition duration-200"
                       >
                         Upload Excel
                       </button>
@@ -1004,13 +952,8 @@ const RegistrationFee = () => {
                       )
                     )}
                     columns={columns}
-                    exportedFileName={`Payments ${
-                      TablePayments.length > 0
-                        ? TablePayments[0].date +
-                          " to " +
-                          TablePayments[TablePayments.length - 1].date
-                        : "empty"
-                    }.csv`}
+                    exportedPdfName="Registration Fees"
+                    exportedFileName={`Registration Fees.csv`}
                   />
                 ) : (
                   <div className="mt-10 text-center text-gray-500">
@@ -1151,7 +1094,7 @@ const RegistrationFee = () => {
                     <select
                       name="pay"
                       id="pay_for"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                       onChange={handlePaymentFor}
                     >
                       <option value="">Select Registration Fee Type</option>
@@ -1174,7 +1117,7 @@ const RegistrationFee = () => {
                       placeholder="Select Group | Ticket"
                       onChange={handlePaymentAntSelect}
                       value={paymentGroupTickets}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5 "
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 "
                     >
                       {formData.pay_for === "Reg|Chit" && (
                         <>
@@ -1245,7 +1188,7 @@ const RegistrationFee = () => {
                         id="pay_date"
                         onChange={handleChange}
                         placeholder=""
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                       />
 
                       {errors.pay_date && (
@@ -1273,7 +1216,7 @@ const RegistrationFee = () => {
                           onChange={handleChange}
                           placeholder="Enter Amount"
                           required
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         />
                       </div>
 
@@ -1293,7 +1236,7 @@ const RegistrationFee = () => {
                       <select
                         name="pay_mode"
                         id="pay_mode"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         onChange={handlePaymentModeChange}
                       >
                         <option value="cash">Cash</option>
@@ -1336,7 +1279,7 @@ const RegistrationFee = () => {
                         value={formData.transaction_id}
                         onChange={handleChange}
                         placeholder="Enter Transaction ID"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                       />
                       {errors.transaction_id && (
                         <p className="text-red-500 text-xs mt-1">
@@ -1348,8 +1291,8 @@ const RegistrationFee = () => {
                   <div className="w-full flex justify-end">
                     <button
                       type="submit"
-                      className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
-                              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                      className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+                              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                     >
                       Save Payment
                     </button>
@@ -1372,7 +1315,7 @@ const RegistrationFee = () => {
               <h3 className="mb-4 text-xl font-bold text-gray-900">
                 Payment Details
               </h3>
-              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5">
+              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
                 <div className="mb-3 flex gap-x-2">
                   <strong>Group: </strong>{" "}
                   {currentViewGroup?.group_id?.group_name}
@@ -1455,7 +1398,7 @@ const RegistrationFee = () => {
                     <button
                       type="submit"
                       className="w-full text-white bg-red-700 hover:bg-red-800
-                    focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                     >
                       Delete
                     </button>
