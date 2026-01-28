@@ -47,7 +47,7 @@ const Payment = () => {
       {
         key: "1",
         label: (
-          <Link to={`/print/${paymentObject?._id}`} className="text-blue-600 ">
+          <Link to={`/print/${paymentObject?._id}`} className="text-Violet-600 ">
             Print
           </Link>
         ),
@@ -525,7 +525,80 @@ const formatIndianNumber = (value) => {
       ) : (
         <div>
           <div className="flex mt-20">
-                          
+            <Navbar
+              onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+              visibility={true}
+            />
+            <Sidebar />
+            <CustomAlert
+              type={alertConfig.type}
+              isVisible={alertConfig.visibility}
+              message={alertConfig.message}
+              noReload={alertConfig.noReload}
+            />
+            <div className="flex-grow p-7">
+              <h1 className="text-2xl font-semibold">Payments</h1>
+              <div className="mt-6  mb-8">
+                <div className="mb-10">
+                  <label className="font-bold">Search or Select Group</label>
+                  <div className="flex justify-between items-center w-full">
+                    <Select
+                      placeholder="Select Group"
+                      popupMatchSelectWidth={false}
+                      showSearch
+                      className="w-full  h-14 max-w-md"
+                      filterOption={(input, option) =>
+                        option.children
+                          .toString()
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      value={selectedGroupId || undefined}
+                      onChange={handleGroupPayment}
+                    >
+                      {actualGroups.map((group) => (
+                        <Select.Option key={group._id} value={group._id}>
+                          {group.group_name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                    <div>
+                      <button
+                        onClick={() => setShowModal(true)}
+                        className="ml-4 bg-Violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-Violet-800 transition duration-200"
+                      >
+                        + Add Payment
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {TablePayments && TablePayments.length > 0 ? (
+                  <DataTable
+                    data={TablePayments.filter((item) =>
+                      Object.values(item).some((value) =>
+                        String(value)
+                          .toLowerCase()
+                          .includes(searchText.toLowerCase())
+                      )
+                    )}
+                    columns={columns}
+                    exportedPdfName="Payments"
+                    printHeaderKeys={["Group Name"]}
+                    printHeaderValues={["Today's"]}
+                    exportedFileName={`Payments.csv`}
+                  />
+                ) : (
+                  <div className="mt-10 text-center text-gray-500">
+                    <CircularLoader
+                      isLoading={isLoading}
+                      data="Payments Data"
+                      failure={TablePayments.length <= 0}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
 
             <Drawer
               open={showModal}
@@ -614,7 +687,7 @@ const formatIndianNumber = (value) => {
                           onChange={handlePaymentAntSelect}
                           loading={enrollmentLoading}
                           value={paymentGroupTickets}
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-Violet-500 focus:border-Violet-500 w-full p-2.5"
                         >
                           {filteredEnrollments.map((entry, index) => {
                             const groupName =
@@ -682,7 +755,7 @@ const formatIndianNumber = (value) => {
                               id="pay_date"
                               onChange={handleChange}
                               placeholder=""
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-Violet-500 focus:border-Violet-500 w-full p-2.5"
                             />
                             {errors.pay_date && (
                               <p className="text-red-500 text-xs mt-1">
@@ -707,7 +780,7 @@ const formatIndianNumber = (value) => {
                                 onChange={handleChange}
                                 placeholder="Enter Amount"
                                 required
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-Violet-500 focus:border-Violet-500 w-full p-2.5"
                               />
                               {errors.amount && (
                                 <p className="text-red-500 text-xs mt-1">
@@ -715,7 +788,7 @@ const formatIndianNumber = (value) => {
                                 </p>
                               )}
                             </div>
-                            <div className="text-blue-900">{numberToIndianWords(formData.amount)}</div>
+                            <div className="text-Violet-900">{numberToIndianWords(formData.amount)}</div>
                           </div>
 
                           <div>
@@ -728,7 +801,7 @@ const formatIndianNumber = (value) => {
                             <select
                               name="pay_mode"
                               id="pay_mode"
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-Violet-500 focus:border-Violet-500 w-full p-2.5"
                               onChange={handlePaymentModeChange}
                             >
                               <option value="cash">Cash</option>
@@ -749,7 +822,7 @@ const formatIndianNumber = (value) => {
                               <select
                                 name="account_type"
                                 id="account_type"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-Violet-500 focus:border-Violet-500 w-full p-2.5"
                                 onChange={handleAccountTypeChange}
                               >
                                 <option value="">Select Account Type</option>
@@ -779,7 +852,7 @@ const formatIndianNumber = (value) => {
                                 disabled
                               />
                             </div>
-                            <div className="text-blue-900">
+                            <div className="text-Violet-900">
                               {numberToIndianWords(
                                 Number(formData.amount) /
                                   paymentGroupTickets.length
@@ -805,7 +878,7 @@ const formatIndianNumber = (value) => {
                               value={formData.transaction_id}
                               onChange={handleChange}
                               placeholder="Enter Transaction ID"
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-Violet-500 focus:border-Violet-500 w-full p-2.5"
                             />
                             {errors.transaction_id && (
                               <p className="text-red-500 text-xs mt-1">
@@ -836,7 +909,7 @@ const formatIndianNumber = (value) => {
                                   value={formData.cheque_number}
                                   onChange={handleChange}
                                   placeholder="Enter Cheque Number"
-                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-Violet-500 focus:border-Violet-500 w-full p-2.5"
                                 />
                                 {errors.cheque_number && (
                                   <p className="text-red-500 text-xs mt-1">
@@ -860,7 +933,7 @@ const formatIndianNumber = (value) => {
                                   value={formData.cheque_date.split("T")[0]}
                                   onChange={handleChange}
                                   placeholder="Enter Cheque Date"
-                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-Violet-500 focus:border-Violet-500 w-full p-2.5"
                                 />
                                 {errors.cheque_date && (
                                   <p className="text-red-500 text-xs mt-1">
@@ -883,7 +956,7 @@ const formatIndianNumber = (value) => {
                                   value={formData.cheque_bank_name}
                                   onChange={handleChange}
                                   placeholder="Enter Bank Name"
-                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-Violet-500 focus:border-Violet-500 w-full p-2.5"
                                 />
                               </div>
 
@@ -901,7 +974,7 @@ const formatIndianNumber = (value) => {
                                   value={formData.cheque_bank_branch}
                                   onChange={handleChange}
                                   placeholder="Enter Bank Branch"
-                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-Violet-500 focus:border-Violet-500 w-full p-2.5"
                                 />
                               </div>
                             </div>
@@ -937,7 +1010,7 @@ const formatIndianNumber = (value) => {
                       <div className="flex justify-end pt-4">
                         <button
                           type="submit"
-                          className="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-6 py-3 shadow-sm transition-all"
+                          className="flex items-center gap-2 text-white bg-Violet-600 hover:bg-Violet-700 focus:ring-2 focus:outline-none focus:ring-Violet-300 font-medium rounded-md text-sm px-6 py-3 shadow-sm transition-all"
                         >
                           Save Payment
                         </button>
@@ -1034,7 +1107,7 @@ const formatIndianNumber = (value) => {
               <h3 className="mb-4 text-xl font-bold text-gray-900">
                 Payment Details
               </h3>
-              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
+              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-Violet-500 focus:border-Violet-500 w-full p-2.5">
                 <div className="mb-3 flex gap-x-2">
                   <strong>Group: </strong>{" "}
                   {currentViewGroup?.group_id?.group_name}
