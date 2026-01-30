@@ -245,7 +245,7 @@ const QuickSearch = () => {
           route = `/staff-menu/employee-menu/employee?employee_id=${record._id}`;
           tooltip = "View Employee";
         } else {
-          route = `customer-view?user_id=${record._id}`;
+          route = `/customer-view?user_id=${record._id}`;
           tooltip = "View Customer";
         }
 
