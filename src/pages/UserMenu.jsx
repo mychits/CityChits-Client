@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Navbar from "../components/layouts/Navbar";
 import Sidebar from "../components/layouts/Sidebar";
-import { Users, ChevronRight, Zap, Shield, UserCheck, Sparkles, ArrowUpRight, Grid3x3 } from "lucide-react";
+import { Users, TrendingUp, AlertCircle, CheckCircle, ArrowRight } from "lucide-react";
 import { IoIosPersonAdd } from "react-icons/io";
 import { MdCancel } from "react-icons/md";
 
@@ -9,199 +9,234 @@ const UserMenu = () => {
   const userCategories = [
     {
       id: 1,
-      title: "Customers",
-      description: "Manage customer records and information",
+      title: "Active Customers",
+      description: "Manage verified customer records and details",
       icon: IoIosPersonAdd,
-      gradient: "from-violet-500 via-purple-500 to-pink-500",
-      bgGradient: "from-violet-50 via-purple-50 to-pink-50",
       href: "/customer-menu/user",
-      stats: "Active Customers",
-      secondaryIcon: Shield,
-      iconColor: "text-violet-600",
-      bgColor: "bg-violet-100"
+      badge: "Active",
+      badgeColor: "bg-blue-100 text-blue-700",
+      borderColor: "border-blue-600",
+      iconBg: "bg-blue-50 text-blue-600"
     },
     {
       id: 2,
       title: "Unverified Customers",
-      description: "Manage unverified customer records",
+      description: "Review pending customer registrations",
       icon: MdCancel,
-      gradient: "from-amber-500 via-orange-500 to-red-500",
-      bgGradient: "from-amber-50 via-orange-50 to-red-50",
       href: "/customer-menu/un-approved-customer",
-      stats: "Unverified Customers",
-      secondaryIcon: UserCheck,
-      iconColor: "text-amber-600",
-      bgColor: "bg-amber-100"
+      badge: "Pending",
+      badgeColor: "bg-amber-100 text-amber-700",
+      borderColor: "border-amber-500",
+      iconBg: "bg-amber-50 text-amber-600"
     },
   ];
 
   return (
-    <div className="flex mt-20">
-      <div className="flex min-h-screen w-full relative overflow-hidden">
-      
-        {/* <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-gray-50">
-          <div className="absolute inset-0">
-            <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-            <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-            <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-          </div>
-        </div> */}
-
+    <div className="min-h-screen mt-20 bg-gray-50">
+      <div className="flex">
         <Sidebar />
-        <div className="flex-1 relative">
+        <div className="flex-1">
           <Navbar visibility={true} />
-          <div className="p-8 relative">
-        
-            <div className="mb-12">
-              <div className="flex items-center gap-6">
-                <div className="relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-purple-600 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
-                  <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-2xl">
-                    <Users className="w-8 h-8 text-white" />
+          <div className="p-4 md:p-8 md:ml-16 md:mr-11 md:mt-11 pb-8">
+            
+            {/* Professional Header */}
+            <header className="mb-8">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  Customer Management
+                </h1>
+                <p className="text-gray-600">
+                  Manage customer records, verify registrations, and monitor growth.
+                </p>
+              </div>
+            </header>
+
+            {/* Quick Stats Matching Home Theme */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+              {/* Stat 1 */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-300">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="p-3 bg-blue-100 rounded-lg">
+                    <Users className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-green-100 text-green-700">
+                      Active
+                    </span>
                   </div>
                 </div>
-                <div>
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 bg-clip-text text-transparent">
-                    Customer Management
-                  </h1>
-                  <p className="text-slate-600 mt-1 text-lg">Manage and organize your customer base</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                  Total Customers
+                </h3>
+                <p className="text-sm text-gray-500 mb-4">
+                  Registered user base
+                </p>
+                <div className="mb-4">
+                  <span className="text-2xl font-bold text-blue-600">
+                    1,240
+                  </span>
+                </div>
+                <div className="pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-500">
+                      Growing steadily
+                    </span>
+                    <div className="flex items-center text-sm text-green-600 font-medium">
+                      <TrendingUp className="w-4 h-4 mr-1" /> +12%
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Stat 2 */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-300">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="p-3 bg-amber-100 rounded-lg">
+                    <AlertCircle className="w-6 h-6 text-amber-600" />
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-amber-100 text-amber-700">
+                      Pending
+                    </span>
+                  </div>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                  Pending Review
+                </h3>
+                <p className="text-sm text-gray-500 mb-4">
+                  Unverified registrations
+                </p>
+                <div className="mb-4">
+                  <span className="text-2xl font-bold text-amber-600">
+                    24
+                  </span>
+                </div>
+                <div className="pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-500">
+                      Action required
+                    </span>
+                    <Link 
+                      to="/customer-menu/un-approved-customer"
+                      className="text-xs font-medium text-blue-600 hover:underline"
+                    >
+                      View List
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+               {/* Stat 3 - Placeholder for balance */}
+               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-300 hidden lg:block xl:block">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="p-3 bg-indigo-100 rounded-lg">
+                    <CheckCircle className="w-6 h-6 text-indigo-600" />
+                  </div>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                  Verification Rate
+                </h3>
+                <p className="text-sm text-gray-500 mb-4">
+                  Approved vs Total
+                </p>
+                <div className="mb-4">
+                  <span className="text-2xl font-bold text-indigo-600">
+                    98%
+                  </span>
+                </div>
+                <div className="pt-4 border-t border-gray-100">
+                  <span className="text-xs text-gray-500">
+                    Last 30 days
+                  </span>
                 </div>
               </div>
             </div>
 
-          
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-              {userCategories.map((category) => {
-                const Icon = category.icon;
-                const SecondaryIcon = category.secondaryIcon;
-                return (
-                  <Link key={category.id} to={category.href} className="group">
-                    <div className="relative h-full overflow-hidden rounded-3xl bg-white/80 backdrop-blur-xl border border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-700 transform hover:-translate-y-2">
-                    
-                      <div className="absolute inset-0 rounded-3xl bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-700 p-[2px]">
-                        <div className={`w-full h-full rounded-3xl bg-gradient-to-r ${category.gradient}`}></div>
-                      </div>
+            {/* Management Navigation Cards - Modern & Unique */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Management Sections</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {userCategories.map((category) => (
+                  <Link
+                    key={category.id}
+                    to={category.href}
+                    className="group block"
+                  >
+                    <div className={`bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 relative overflow-hidden`}>
                       
-                     
-                      <div className="relative h-full bg-white rounded-3xl p-8">
-                    
-                        <div className={`absolute top-4 right-4 w-32 h-32 rounded-full bg-gradient-to-br ${category.bgGradient} opacity-30 blur-2xl`}></div>
-                        
-                       
-                        <div className="flex items-start justify-between mb-6 relative">
-                          <div className="relative group">
-                            <div className="absolute -inset-3 bg-gradient-to-r from-violet-400 to-purple-400 rounded-2xl blur-lg opacity-0 group-hover:opacity-40 transition duration-500"></div>
-                            <div className={`relative w-16 h-16 rounded-2xl ${category.bgColor} flex items-center justify-center shadow-xl border border-white/50 group-hover:scale-110 transition-transform duration-500`}>
-                              <Icon className={`w-8 h-8 ${category.iconColor}`} />
-                            </div>
-                          </div>
-                          <div className="p-3 rounded-2xl bg-gradient-to-br from-slate-50 to-white shadow-lg border border-slate-200/50 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-4 group-hover:translate-x-0">
-                            <SecondaryIcon className="w-5 h-5 text-slate-600" />
-                          </div>
-                        </div>
+                      {/* Accent Left Border */}
+                      <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${category.borderColor} transition-all duration-300 group-hover:w-2`}></div>
 
-                       
-                        <div className="mb-6 relative">
-                          <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:bg-gradient-to-r group-hover:from-violet-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-500">
-                            {category.title}
-                          </h3>
-                          <p className="text-slate-600 leading-relaxed">
+                      <div className="flex items-center justify-between pl-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className={`p-2.5 rounded-lg ${category.iconBg} transition-colors`}>
+                              <category.icon className="text-2xl" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-700 transition-colors">
+                              {category.title}
+                            </h3>
+                          </div>
+                          <p className="text-gray-600 text-sm mb-4 pl-1">
                             {category.description}
                           </p>
-                        </div>
-
-                        <div className="flex items-center justify-between pt-6 border-t border-slate-200/50 relative">
-                          <div className="flex items-center gap-3">
-                            <div className="relative">
-                              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                              <div className="absolute inset-0 w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
-                            </div>
-                            <span className="text-sm font-medium text-slate-500 uppercase tracking-wide">
-                              {category.stats}
+                          
+                          <div className="flex items-center gap-3 pl-1">
+                            <span className={`px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider ${category.badgeColor}`}>
+                              {category.badge}
                             </span>
                           </div>
-                          <div className="flex items-center gap-2 text-violet-600 opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-500">
-                            <span className="text-sm font-semibold">Explore</span>
-                            <ChevronRight className="w-5 h-5" />
-                          </div>
+                        </div>
+
+                        <div className="flex-shrink-0 pl-4">
+                          <button className="p-2 rounded-lg bg-gray-50 text-gray-400 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                            <ArrowRight className="w-5 h-5" />
+                          </button>
                         </div>
                       </div>
                     </div>
                   </Link>
-                );
-              })}
-            </div>
-            
-     
-            <div className="relative p-8 bg-gradient-to-br from-violet-50 via-purple-50 to-pink-50 rounded-3xl border border-white/50 shadow-2xl overflow-hidden">
-       
-              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-violet-200/30 to-transparent rounded-full blur-3xl"></div>
-              <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-purple-200/30 to-transparent rounded-full blur-3xl"></div>
-              
-              <div className="relative flex items-center gap-4">
-                <div className="relative group">
-                  <div className="absolute -inset-2 bg-gradient-to-r from-violet-500 to-purple-500 rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition duration-300"></div>
-                  <div className="relative w-14 h-14 rounded-2xl bg-white shadow-xl flex items-center justify-center">
-                    <Zap className="w-7 h-7 text-violet-600" />
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
-                    Quick Tips
-                    <Sparkles className="w-5 h-5 text-violet-500 animate-pulse" />
-                  </h3>
-                  <p className="text-slate-700 leading-relaxed">
-                    Use the Customer directory to manage customer information, update customer details all in one place.
-                  </p>
-                  <p className="text-slate-700 leading-relaxed mt-2">
-                    Use the Customer directory to manage Unverified Customers Information, update customer information all in one place.
-                  </p>
-                </div>
+                ))}
               </div>
             </div>
+
+            {/* Quick Tips - Clean Style */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 border border-blue-100">
+                  <AlertCircle className="w-5 h-5 text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">
+                    Quick Guidelines
+                  </h3>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-3">
+                      <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-gray-700 text-sm leading-relaxed">
+                        <strong className="text-gray-900">Verified Customers:</strong> Full access to profiles, payment history, and enrollment status.
+                      </p>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-gray-700 text-sm leading-relaxed">
+                        <strong className="text-gray-900">Unverified Customers:</strong> Requires document review before approval. Verify identity to enable access.
+                      </p>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-gray-700 text-sm leading-relaxed">
+                        Use the <span className="font-semibold text-blue-600">"Manage"</span> buttons on the dashboard for quick actions.
+                      </p>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>  
+
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes blob {
-          0% {
-            transform: translate(0px, 0px) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-          100% {
-            transform: translate(0px, 0px) scale(1);
-          }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-        @keyframes tilt {
-          0%, 50%, 100% {
-            transform: rotate(0deg);
-          }
-          25% {
-            transform: rotate(0.5deg);
-          }
-          75% {
-            transform: rotate(-0.5deg);
-          }
-        }
-        .animate-tilt {
-          animation: tilt 10s infinite;
-        }
-      `}</style>
     </div>
   );
 };

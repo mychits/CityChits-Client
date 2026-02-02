@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Navbar from "../components/layouts/Navbar";
 import Sidebar from "../components/layouts/Sidebar";
-import { Users, Briefcase, ChevronRight, Zap, Shield, UserCheck, Sparkles } from "lucide-react";
+import { Users, Briefcase, TrendingUp, AlertCircle, CheckCircle, ArrowRight } from "lucide-react";
 
 const EnrollmentMenu = () => {
   const enrollCategories = [
@@ -10,196 +10,164 @@ const EnrollmentMenu = () => {
       title: "Enrollments",
       description: "Manage and view enrollment group records",
       icon: Users,
-      gradient: "from-violet-500 via-purple-500 to-pink-500",
-      bgGradient: "from-violet-50 via-purple-50 to-pink-50",
       href: "/enroll-menu/enrollment",
-      stats: "Active Enrollment Groups",
-      secondaryIcon: Shield,
-      iconColor: "text-violet-600",
-      bgColor: "bg-violet-100"
+      label: "Active Enrollment Groups",
+      gradient: "from-purple-500 to-pink-500",
+      lightBg: "bg-purple-50",
+      iconBg: "bg-purple-500"
     },
     {
       id: 2,
       title: "Mobile Enrollments",
       description: "Manage and enroll new mobile enrollment records",
       icon: Briefcase,
-      gradient: "from-purple-500 via-indigo-500 to-blue-500",
-      bgGradient: "from-purple-50 via-indigo-50 to-blue-50",
       href: "/enroll-menu/mobile-app-enroll",
-      stats: "Mobile Enrollments",
-      secondaryIcon: UserCheck,
-      iconColor: "text-purple-600",
-      bgColor: "bg-purple-100"
+      label: "Mobile Enrollments",
+      gradient: "from-purple-600 to-pink-600",
+      lightBg: "bg-pink-50",
+      iconBg: "bg-pink-500"
     },
   ];
 
   return (
     <div className="flex mt-20">
-      <div className="flex min-h-screen w-full relative overflow-hidden">
-      
-        {/* <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-gray-50">
-          <div className="absolute inset-0">
-            <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-            <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-            <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-          </div>
-        </div> */}
-
+      <div className="flex min-h-screen w-full bg-gradient-to-b from-white/90 to-purple-50/90">
         <Sidebar />
-        <div className="flex-1 relative">
+        <div className="flex-1">
           <Navbar visibility={true} />
-          <div className="p-8 relative">
-        
-            <div className="mb-12">
-              <div className="flex items-center gap-6">
-                <div className="relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-purple-600 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
-                  <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-2xl">
-                    <Users className="w-8 h-8 text-white" />
+          <div className="p-8">
+            {/* Page Header with Gradient */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                Enrollment Management
+              </h1>
+              <p className="text-gray-600">
+                Manage and organize enrollment groups and customer information
+              </p>
+            </div>
+
+            {/* Stats Overview - More Generic */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="bg-white/80 backdrop-blur-xl rounded-xl shadow-sm border border-purple-100/50 p-6 hover:shadow-lg transition-all duration-300">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Enrollment Overview</p>
+                    <p className="text-2xl font-bold text-gray-900">Group Records</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center">
+                    <Users className="w-6 h-6 text-purple-600" />
                   </div>
                 </div>
-                <div>
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 bg-clip-text text-transparent">
-                    Enrollments Management
-                  </h1>
-                  <p className="text-slate-600 mt-1 text-lg">Manage and organize enrollment groups and customer information</p>
+                <div className="mt-4 flex items-center text-sm">
+                  <TrendingUp className="w-4 h-4 text-green-600 mr-1" />
+                  <span className="text-green-600 font-medium">Growing Network</span>
+                </div>
+              </div>
+
+              <div className="bg-white/80 backdrop-blur-xl rounded-xl shadow-sm border border-purple-100/50 p-6 hover:shadow-lg transition-all duration-300">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Management</p>
+                    <p className="text-2xl font-bold text-gray-900">Enrollment Directory</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl flex items-center justify-center">
+                    <Briefcase className="w-6 h-6 text-pink-600" />
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <p className="text-sm text-purple-600 font-medium">Organized and accessible</p>
                 </div>
               </div>
             </div>
 
-          
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-              {enrollCategories.map((category) => {
-                const Icon = category.icon;
-                const SecondaryIcon = category.secondaryIcon;
-                return (
-                  <Link key={category.id} to={category.href} className="group">
-                    <div className="relative h-full overflow-hidden rounded-3xl bg-white/80 backdrop-blur-xl border border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-700 transform hover:-translate-y-2">
-                    
-                      <div className="absolute inset-0 rounded-3xl bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-700 p-[2px]">
-                        <div className={`w-full h-full rounded-3xl bg-gradient-to-r ${category.gradient}`}></div>
-                      </div>
-                      
-                     
-                      <div className="relative h-full bg-white rounded-3xl p-8">
-                    
-                        <div className={`absolute top-4 right-4 w-32 h-32 rounded-full bg-gradient-to-br ${category.bgGradient} opacity-30 blur-2xl`}></div>
-                        
-                       
-                        <div className="flex items-start justify-between mb-6 relative">
-                          <div className="relative group">
-                            <div className="absolute -inset-3 bg-gradient-to-r from-violet-400 to-purple-400 rounded-2xl blur-lg opacity-0 group-hover:opacity-40 transition duration-500"></div>
-                            <div className={`relative w-16 h-16 rounded-2xl ${category.bgColor} flex items-center justify-center shadow-xl border border-white/50 group-hover:scale-110 transition-transform duration-500`}>
-                              <Icon className={`w-8 h-8 ${category.iconColor}`} />
-                            </div>
-                          </div>
-                          <div className="p-3 rounded-2xl bg-gradient-to-br from-slate-50 to-white shadow-lg border border-slate-200/50 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-4 group-hover:translate-x-0">
-                            <SecondaryIcon className="w-5 h-5 text-slate-600" />
-                          </div>
-                        </div>
-
-                       
-                        <div className="mb-6 relative">
-                          <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:bg-gradient-to-r group-hover:from-violet-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-500">
-                            {category.title}
-                          </h3>
-                          <p className="text-slate-600 leading-relaxed">
-                            {category.description}
-                          </p>
-                        </div>
-
-                        <div className="flex items-center justify-between pt-6 border-t border-slate-200/50 relative">
+            {/* Management Cards with Purple/Pink Theme - No Counts */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Management Sections</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {enrollCategories.map((category) => (
+                  <Link
+                    key={category.id}
+                    to={category.href}
+                    className="group block"
+                  >
+                    <div className="bg-white/80 backdrop-blur-xl rounded-xl shadow-sm border border-purple-100/50 hover:shadow-lg transition-all duration-200 overflow-hidden">
+                      {/* Card Header with Purple/Pink Gradient */}
+                      <div className={`bg-gradient-to-r ${category.gradient} p-6`}>
+                        <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <div className="relative">
-                              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                              <div className="absolute inset-0 w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
+                            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                              <category.icon className="w-6 h-6 text-white" />
                             </div>
-                            <span className="text-sm font-medium text-slate-500 uppercase tracking-wide">
-                              {category.stats}
-                            </span>
+                            <div>
+                              <h3 className="text-xl font-semibold text-white">
+                                {category.title}
+                              </h3>
+                              <p className="text-white/90 text-sm mt-0.5">
+                                {category.description}
+                              </p>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2 text-violet-600 opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-500">
-                            <span className="text-sm font-semibold">Explore</span>
-                            <ChevronRight className="w-5 h-5" />
+                          <ArrowRight className="w-5 h-5 text-white/80 group-hover:text-white group-hover:translate-x-1 transition-all duration-200" />
+                        </div>
+                      </div>
+
+                      {/* Card Body - No Count Display */}
+                      <div className="p-6 bg-white/90 backdrop-blur-sm">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-600">
+                              {category.label}
+                            </p>
+                          </div>
+                          <div className={`px-4 py-2 ${category.lightBg} rounded-lg hover:shadow-md transition-all duration-200 border border-purple-100/50`}>
+                            <p className="text-sm font-medium text-purple-700">
+                              Manage
+                            </p>
                           </div>
                         </div>
                       </div>
                     </div>
                   </Link>
-                );
-              })}
+                ))}
+              </div>
             </div>
-            
-     
-            <div className="relative p-8 bg-gradient-to-br from-violet-50 via-purple-50 to-pink-50 rounded-3xl border border-white/50 shadow-2xl overflow-hidden">
-       
-              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-violet-200/30 to-transparent rounded-full blur-3xl"></div>
-              <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-purple-200/30 to-transparent rounded-full blur-3xl"></div>
-              
-              <div className="relative flex items-center gap-4">
-                <div className="relative group">
-                  <div className="absolute -inset-2 bg-gradient-to-r from-violet-500 to-purple-500 rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition duration-300"></div>
-                  <div className="relative w-14 h-14 rounded-2xl bg-white shadow-xl flex items-center justify-center">
-                    <Zap className="w-7 h-7 text-violet-600" />
-                  </div>
+
+            {/* Quick Tips with Purple/Pink Theme */}
+            <div className="bg-white/80 backdrop-blur-xl rounded-xl shadow-sm border border-purple-100/50 p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     Quick Tips
-                    <Sparkles className="w-5 h-5 text-violet-500 animate-pulse" />
                   </h3>
-                  <p className="text-slate-700 leading-relaxed">
-                    Use the Enrollment directory to manage enrollment groups and customer, update enrollment groups information all in one place.
-                  </p>
-                  <p className="text-slate-700 leading-relaxed mt-2">
-                    Use the Mobile Enrollment directory to enroll in and update enrollment groups information all in one place.
-                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-gray-700 text-sm">
+                        Use the Enrollment directory to manage enrollment groups and customer information
+                      </p>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-gray-700 text-sm">
+                        Use the Mobile Enrollment directory to enroll in and update enrollment groups information
+                      </p>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-gray-700 text-sm">
+                        Click on any card to access detailed management features
+                      </p>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes blob {
-          0% {
-            transform: translate(0px, 0px) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-          100% {
-            transform: translate(0px, 0px) scale(1);
-          }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-        @keyframes tilt {
-          0%, 50%, 100% {
-            transform: rotate(0deg);
-          }
-          25% {
-            transform: rotate(0.5deg);
-          }
-          75% {
-            transform: rotate(-0.5deg);
-          }
-        }
-        .animate-tilt {
-          animation: tilt 10s infinite;
-        }
-      `}</style>
     </div>
   );
 };

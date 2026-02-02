@@ -1,812 +1,283 @@
-// import { NavLink, Outlet } from "react-router-dom";
-import { useState, Fragment, useRef,useEffect } from "react";
+import { NavLink, Outlet } from "react-router-dom";
+import { useState, Fragment } from "react";
 import Sidebar from "../components/layouts/Sidebar";
-// import { FaWhatsapp } from "react-icons/fa";
-// import { RiMoneyRupeeCircleLine } from "react-icons/ri";
-import { FaFacebookSquare } from "react-icons/fa";
-// import { MdEmail } from "react-icons/md";
-import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
-import { LiaSmsSolid } from "react-icons/lia";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
-
-
-// const mainMenus = [
-//   {
-//     key: "#main-1",
-//     title: "Whatsapp Marketing",
-//     icon: <FaWhatsapp size={20} />,
-//     subMenus: [
-//       {
-//         key: "#1",
-//         title: "Login",
-//         link: "https://app.interakt.ai/login",
-//         icon: <FaWhatsapp size={20} />,
-//         newTab: true,
-//       },
-
-//       {
-//         key: "#main-4",
-//         title: "Due Message",
-//         icon: <FaWhatsapp size={20} />,
-//         subMenus: [
-//           {
-//             key: "#4",
-//             title: "Due",
-//             link: "/marketing/due-message",
-//             icon: <RiMoneyRupeeCircleLine size={20} />,
-//           },
-//           {
-//             key: "#6",
-//             title: "Over Due",
-//             link: "/marketing/over-due-message",
-//             icon: <RiMoneyRupeeCircleLine size={28} />,
-//           },
-//         ],
-//       },
-//       {
-//         key: "#main-6",
-//         title: "Auction Message",
-//         icon: <FaWhatsapp size={20} />,
-//         subMenus: [
-//           {
-//         key: "#5",
-//         title: "Auction Intimation Message",
-//         link: "/marketing/auction-intimation-message",
-//         icon: <RiMoneyRupeeCircleLine size={28} />,
-//       },
-
-//       {
-//         key: "#12",
-//         title: "Bid Winner",
-//         link: "/marketing/bid-winner",
-//         icon: <RiMoneyRupeeCircleLine size={28} />,
-//       },
-//         ],
-//       },
-//       {
-//         key: "#main-5",
-//         title: "Promo",
-//         icon: <FaWhatsapp size={20} />,
-//         subMenus: [
-//           {
-//         key: "#11",
-//         title: "Promo",
-//         link: "/marketing/what-promo",
-//         icon: <FaWhatsapp size={20} />,
-//       },
-//           {
-//         key: "#11",
-//         title: "Customer promo",
-//         link: "/marketing/what-customer-promo",
-//         icon: <FaWhatsapp size={20} />,
-//       },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     key: "#main-2",
-//     title: "Email Marketing",
-//     icon: <MdEmail size={20} />,
-//     subMenus: [
-//       {
-//         key: "#7",
-//         title: " Due Email ",
-//         link: "/marketing/due-email",
-//         icon: <RiMoneyRupeeCircleLine size={20} />,
-//       },
-//       {
-//         key: "#8",
-//         title: "Over Due Email",
-//         link: "/marketing/over-due-email",
-//         icon: <RiMoneyRupeeCircleLine size={20} />,
-//       },
-//     ],
-//   },
-//   {
-//     key: "#main-3",
-//     title: "SMS Marketing",
-//     icon: <LiaSmsSolid size={20} />,
-//     subMenus: [
-//       {
-//         key: "#9",
-//         title: " Due SMS Message ",
-//         link: "/marketing/due-sms",
-//         icon: <RiMoneyRupeeCircleLine size={20} />,
-//       },
-//       {
-//         key: "#10",
-//         title: "Over Due SMS Message",
-//         link: "/marketing/over-due-sms",
-//         icon: <RiMoneyRupeeCircleLine size={28} />,
-//       },
-//     ],
-//   },
-// ];
-
-// const Marketing = () => {
-//   const [openMenuIndex, setOpenMenuIndex] = useState(null);
-
-//   const toggleMenu = (index) => {
-//     setOpenMenuIndex((prevIndex) => (prevIndex === index ? null : index));
-//   };
-
-//   return (
-//     <div className="w-screen flex mt-20">
-//       <Sidebar />
-//       <div className="flex min-h-screen">
-//         <div className="w-[300px] bg-gray-50 min-h-screen p-4 space-y-4">
-//           {mainMenus.map((menu, index) => {
-//             const isOpen = openMenuIndex === index;
-//             return (
-//               <Fragment key={menu.key}>
-//                 <div
-//                   onClick={() => toggleMenu(index)}
-//                   className="flex items-center gap-3 text-lg font-semibold text-violet-900 px-2 py-2 cursor-pointer hover:opacity-80 rounded-md transition"
-//                 >
-//                   {menu.icon}
-//                   {menu.title}
-//                   {menu.subMenus && (
-//                     <span className="ml-auto">
-//                       {isOpen ? (
-//                         <AiOutlineMinus className="text-sm" />
-//                       ) : (
-//                         <AiOutlinePlus className="text-sm" />
-//                       )}
-//                     </span>
-//                   )}
-//                 </div>
-
-//                 {/* Submenus */}
-//                 {isOpen && menu.subMenus && (
-//                   <ul className="ml-5 mt-2 space-y-1">
-//                     {menu.subMenus.map((submenu) => (
-//                       <li key={submenu.key}>
-//                         <NavLink
-//                           to={submenu.link}
-//                           target={submenu.newTab ? "_blank" : "_self"}
-//                           className={({ isActive }) =>
-//                             `flex items-center gap-3 p-2 rounded-md transition font-medium ${
-//                               submenu.red ? "text-red-700" : "text-violet-950"
-//                             } ${
-//                               isActive
-//                                 ? "bg-violet-100 border-l-4 border-violet-400"
-//                                 : "hover:bg-gray-200"
-//                             }`
-//                           }
-//                         >
-//                           {submenu.icon}
-//                           {submenu.title}
-//                         </NavLink>
-//                       </li>
-//                     ))}
-//                   </ul>
-//                 )}
-//               </Fragment>
-//             );
-//           })}
-//         </div>
-
-//         <div className="flex-1 bg-white p-6">
-//           <Outlet />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-// const mainMenus = [
-//   {
-//     key: "#main-1",
-//     title: "Whatsapp Marketing",
-//     icon: <FaWhatsapp size={20} />,
-//     subMenus: [
-//       {
-//         key: "#1",
-//         title: "Login",
-//         link: "https://app.interakt.ai/login",
-//         icon: <FaWhatsapp size={20} />,
-//         newTab: true,
-//       },
-//       {
-//         key: "#main-4",
-//         title: "Due Message",
-//         icon: <FaWhatsapp size={20} />,
-//         subMenus: [
-//           {
-//             key: "#4",
-//             title: "Due",
-//             link: "/marketing/due-message",
-//             icon: <RiMoneyRupeeCircleLine size={22} />,
-//           },
-//           {
-//             key: "#6",
-//             title: "Overdue",
-//             link: "/marketing/over-due-message",
-//             icon: <RiMoneyRupeeCircleLine size={22} />,
-//           },
-//           ,
-         
-          
-//         ],
-//       },
-//        {
-//         key: "#main-7",
-//         title: "Lead Whatsapp Message",
-//         icon: <FaWhatsapp size={20} />,
-//         subMenus: [
-//           {
-//             key: "#20",
-//             title: "Welcome Message",
-//             link: "/marketing/lead-welcome-message",
-//             icon: <RiMoneyRupeeCircleLine size={22} />,
-//           },
-//           {
-//             key: "#21",
-//             title: "ReferredBy Message",
-//             link: "/marketing/lead-referredby-message",
-//             icon: <RiMoneyRupeeCircleLine size={22} />,
-//           },
-//           ,
-         
-          
-//         ],
-//       },
-//        {
-//         key: "#main-8",
-//         title: "Customer Whatsapp Message",
-//         icon: <FaWhatsapp size={20} />,
-//         subMenus: [
-//           {
-//             key: "#20",
-//             title: "Welcome Message",
-//             link: "/marketing/customer-welcome-message",
-//             icon: <RiMoneyRupeeCircleLine size={22} />,
-//           },
-//           {
-//             key: "#21",
-//             title: "ChitPlan Message",
-//             link: "/marketing/customer-chitplan-message",
-//             icon: <RiMoneyRupeeCircleLine size={22} />,
-//           },
-//           ,
-         
-          
-//         ],
-//       },
-//       {
-//         key: "#main-6",
-//         title: "Auction Message",
-//         icon: <FaWhatsapp size={20} />,
-//         subMenus: [
-//           {
-//             key: "#5",
-//             title: "Auction Intimation Message",
-//             link: "/marketing/auction-intimation-message",
-//             icon: <RiMoneyRupeeCircleLine size={22} />,
-//           },
-//           {
-//             key: "#12",
-//             title: "Bid Winner",
-//             link: "/marketing/bid-winner",
-//             icon: <RiMoneyRupeeCircleLine size={22} />,
-//           },
-//           {
-//             key: "#18",
-//             title: "Auction Bid status",
-//             link: "/marketing/bid-status",
-//             icon: <RiMoneyRupeeCircleLine size={22} />,
-//           },
-//           {
-//             key: "#19",
-//             title: "Bid Winner Document List",
-//             link: "/marketing/winner-document",
-//             icon: <RiMoneyRupeeCircleLine size={22} />,
-//           },
-//           {
-//             key: "#20",
-//             title: "Auction information",
-//             link: "/marketing/auction-info",
-//             icon: <RiMoneyRupeeCircleLine size={22} />,
-//           },
-//           {
-//             key: "#21",
-//             title: "Auction Terms and Condition",
-//             link: "/marketing/auction-terms-condition",
-//             icon: <RiMoneyRupeeCircleLine size={22} />,
-//           },
-
-//         ],
-//       },
-//       {
-//         key: "#main-5",
-//         title: "Promotion",
-//         icon: <FaWhatsapp size={20} />,
-//         subMenus: [
-//           {
-//             key: "#11",
-//             title: "Promo",
-//             link: "/marketing/what-promo",
-//             icon: <FaWhatsapp size={20} />,
-//           },
-//           // {
-//           //   key: "#11",
-//           //   title: "Customer Promo",
-//           //   link: "/marketing/what-customer-promo",
-//           //   icon: <FaWhatsapp size={20} />,
-//           //   Example of sub-submenu
-//           //   subMenus: [
-//           //     {
-//           //       key: "#11-1",
-//           //       title: "Special Promo",
-//           //       link: "/marketing/special-promo",
-//           //       icon: <FaWhatsapp size={18} />,
-//           //     },
-//           //     {
-//           //       key: "#11-2",
-//           //       title: "Festival Promo",
-//           //       link: "/marketing/festival-promo",
-//           //       icon: <FaWhatsapp size={18} />,
-//           //     },
-//           //   ],
-//           // },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     key: "#main-2",
-//     title: "Email Marketing",
-//     icon: <MdEmail size={20} />,
-//     subMenus: [
-//       {
-//         key: "#main-10",
-//         title: "Due Email",
-//         icon: <MdEmail size={20} />,
-//         subMenus: [
-//           {
-//             key: "#15",
-//             title: "Due",
-//             link: "/marketing/due-email",
-//             icon: <RiMoneyRupeeCircleLine size={22} />,
-//           },
-//           {
-//             key: "#16",
-//             title: "Overdue",
-//             link: "/marketing/over-due-email",
-//             icon: <RiMoneyRupeeCircleLine size={22} />,
-//           },
-//         ],
-//       },
-      
-//     ],
-//   },
-  
-//   {
-//     key: "#main-3",
-//     title: "Payment Links",
-//     icon: <RiMoneyRupeeCircleLine size={20} />,
-//     subMenus: [
-//        {
-//             key: "#7",
-//             title: "Payment Link",
-//             link: "/marketing/payment-link",
-//             icon: <RiMoneyRupeeCircleLine size={22} />,
-//           },
-      
-//     ],
-//   },
-// ];
-
-// const Marketing = () => {
-//   const [openMenu, setOpenMenu] = useState({});
-
-//   const toggleMenu = (menuKey) => {
-//     setOpenMenu((prev) => ({
-//       ...prev,
-//       [menuKey]: !prev[menuKey],
-//     }));
-//   };
-
-//   // ✅ Recursive menu rendering function
-//   const renderMenu = (menus, level = 0) => {
-//     return (
-//       <ul className={level > 0 ? "ml-5 mt-2 space-y-1" : ""}>
-//         {menus.map((menu) => {
-//           const hasSubMenu = menu.subMenus && menu.subMenus.length > 0;
-//           const isOpen = openMenu[menu.key];
-
-//           return (
-//             <Fragment key={menu.key}>
-//               <li>
-//                 {menu.link ? (
-//                   <NavLink
-//                     to={menu.link}
-//                     target={menu.newTab ? "_blank" : "_self"}
-//                     className={({ isActive }) =>
-//                       `flex items-center gap-3 p-2 rounded-md transition font-medium cursor-pointer 
-//                       ${isActive ? "bg-violet-500 text-white" : "hover:bg-gray-200 text-violet-950"}`
-//                     }
-//                   >
-//                     {menu.icon}
-//                     <span>{menu.title}</span>
-//                   </NavLink>
-//                 ) : (
-//                   <div
-//                     onClick={() => hasSubMenu && toggleMenu(menu.key)}
-//                     className={`flex items-center gap-3 p-2 rounded-md transition font-medium cursor-pointer 
-//                     ${isOpen ? "bg-gray-100 text-violet-950" : "hover:bg-gray-200 text-violet-950"}`}
-//                   >
-//                     {menu.icon}
-//                     <span>{menu.title}</span>
-//                     {hasSubMenu && (
-//                       <span className="ml-auto">
-//                         {isOpen ? <AiOutlineMinus /> : <AiOutlinePlus />}
-//                       </span>
-//                     )}
-//                   </div>
-//                 )}
-
-//                 {hasSubMenu && isOpen && renderMenu(menu.subMenus, level + 1)}
-//               </li>
-//             </Fragment>
-//           );
-//         })}
-//       </ul>
-//     );
-//   };
-
-//   return (
-//     <div className="w-screen flex mt-20">
-//       <Sidebar />
-//       <div className="flex min-h-screen">
-//         <div className="w-[300px] bg-gray-50 min-h-screen p-4 space-y-4">
-//           {renderMenu(mainMenus)}
-//         </div>
-
-//         <div className="flex-1 bg-white p-6">
-//           <Outlet />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-
-
-// import React, { useState, useEffect } from "react";
-// import { NavLink, Outlet, useLocation } from "react-router-dom";
-import {
-  FaWhatsapp,
-  FaChevronDown,
-  FaChevronRight,
-  FaExternalLinkAlt,
-  FaSpinner
-} from "react-icons/fa";
-import { MdEmail } from "react-icons/md";
+import { FaWhatsapp } from "react-icons/fa";
 import { RiMoneyRupeeCircleLine } from "react-icons/ri";
-// import Sidebar from "./Sidebar";
+import { MdEmail } from "react-icons/md";
+import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+import { TrendingUp, AlertCircle, MessageCircle, Mail, Link2, ChevronRight, ChevronDown } from "lucide-react";
 
 const mainMenus = [
   {
-    key: "whatsapp",
-    title: "Whatsapp Marketing",
-    icon: <FaWhatsapp size={20} />,
-    color: "#25D366",
+    id: 1,
+    title: "WhatsApp Marketing",
+    icon: FaWhatsapp,
+    gradient: "from-purple-500 to-pink-500",
     subMenus: [
       {
-        title: "Login",
-        link: "https://app.interakt.ai/login",
-        newTab: true,
-        description: "Access your Interakt dashboard"
-      },
-      {
+        id: 11,
         title: "Due Message",
+        icon: RiMoneyRupeeCircleLine,
         subMenus: [
-          { 
-            title: "Due", 
-            link: "/marketing/due-message",
-            description: "Send due payment reminders"
-          },
-          { 
-            title: "Overdue", 
-            link: "/marketing/over-due-message",
-            description: "Notify about overdue payments"
-          },
+          { id: 111, title: "Due", href: "/marketing/due-message" },
+          { id: 112, title: "Overdue", href: "/marketing/over-due-message" },
         ],
       },
       {
-        title: "Lead Whatsapp Message",
+        id: 12,
+        title: "Lead Messages",
+        icon: FaWhatsapp,
         subMenus: [
-          { 
-            title: "Welcome Message", 
-            link: "/marketing/lead-welcome-message",
-            description: "Send welcome messages to new leads"
-          },
-          { 
-            title: "ReferredBy Message", 
-            link: "/marketing/lead-referredby-message",
-            description: "Notify leads about referrals"
-          },
+          { id: 121, title: "Welcome Message", href: "/marketing/lead-welcome-message" },
+          { id: 122, title: "ReferredBy Message", href: "/marketing/lead-referredby-message" },
         ],
       },
       {
-        title: "Customer Whatsapp Message",
+        id: 13,
+        title: "Customer Messages",
+        icon: FaWhatsapp,
         subMenus: [
-          { 
-            title: "Welcome Message", 
-            link: "/marketing/customer-welcome-message",
-            description: "Welcome new customers"
-          },
-          { 
-            title: "ChitPlan Message", 
-            link: "/marketing/customer-chitplan-message",
-            description: "Send chit plan information"
-          },
+          { id: 131, title: "Welcome Message", href: "/marketing/customer-welcome-message" },
+          { id: 132, title: "ChitPlan Message", href: "/marketing/customer-chitplan-message" },
         ],
       },
       {
-        title: "Auction Message",
+        id: 14,
+        title: "Auction Messages",
+        icon: FaWhatsapp,
         subMenus: [
-          { 
-            title: "Auction Intimation", 
-            link: "/marketing/auction-intimation-message",
-            description: "Notify about upcoming auctions"
-          },
-          { 
-            title: "Bid Winner", 
-            link: "/marketing/bid-winner",
-            description: "Notify auction winners"
-          },
-          { 
-            title: "Bid Status", 
-            link: "/marketing/bid-status",
-            description: "Update bid status"
-          },
-          { 
-            title: "Winner Documents", 
-            link: "/marketing/winner-document",
-            description: "Request documents from winners"
-          },
-          { 
-            title: "Auction Info", 
-            link: "/marketing/auction-info",
-            description: "Provide auction details"
-          },
-          { 
-            title: "Terms & Conditions", 
-            link: "/marketing/auction-terms-condition",
-            description: "Share auction terms"
-          },
+          { id: 141, title: "Auction Intimation", href: "/marketing/auction-intimation-message" },
+          { id: 142, title: "Bid Winner", href: "/marketing/bid-winner" },
+          { id: 143, title: "Bid Status", href: "/marketing/bid-status" },
+          { id: 144, title: "Winner Documents", href: "/marketing/winner-document" },
+          { id: 145, title: "Auction Info", href: "/marketing/auction-info" },
+          { id: 146, title: "Terms & Conditions", href: "/marketing/auction-terms-condition" },
         ],
       },
       {
-        title: "Promotion",
+        id: 15,
+        title: "Promotions",
+        icon: FaWhatsapp,
         subMenus: [
-          { 
-            title: "Promo", 
-            link: "/marketing/what-promo",
-            description: "Send promotional messages"
-          },
+          { id: 151, title: "Promo", href: "/marketing/what-promo" },
         ],
       },
     ],
   },
   {
-    key: "email",
+    id: 2,
     title: "Email Marketing",
-    icon: <MdEmail size={20} />,
-    color: "#EA4335",
+    icon: MdEmail,
+    gradient: "from-purple-600 to-pink-600",
     subMenus: [
       {
-        title: "Due Email",
+        id: 21,
+        title: "Due Emails",
+        icon: MdEmail,
         subMenus: [
-          { 
-            title: "Due", 
-            link: "/marketing/due-email",
-            description: "Send due payment emails"
-          },
-          { 
-            title: "Overdue", 
-            link: "/marketing/over-due-email",
-            description: "Send overdue payment emails"
-          },
+          { id: 211, title: "Due", href: "/marketing/due-email" },
+          { id: 212, title: "Overdue", href: "/marketing/over-due-email" },
         ],
       },
     ],
   },
   {
-    key: "payment",
+    id: 3,
     title: "Payment Links",
-    icon: <RiMoneyRupeeCircleLine size={20} />,
-    color: "#00C853",
+    icon: RiMoneyRupeeCircleLine,
+    gradient: "from-purple-700 to-pink-700",
     subMenus: [
-      { 
-        title: "Payment Link", 
-        link: "/marketing/payment-link",
-        description: "Generate payment links"
-      },
+      { id: 31, title: "Payment Link", href: "/marketing/payment-link" },
     ],
   },
 ];
 
 const Marketing = () => {
-  const [activeMenu, setActiveMenu] = useState(mainMenus[0]);
-  const [openSection, setOpenSection] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const location = useLocation();
+  const [openMenu, setOpenMenu] = useState({});
 
-  // Set initial active menu based on current path
-  useEffect(() => {
-    const currentPath = location.pathname;
-    const matchedMenu = mainMenus.find(menu => {
-      return menu.subMenus.some(section => {
-        if (section.link === currentPath) return true;
-        if (section.subMenus) {
-          return section.subMenus.some(subItem => subItem.link === currentPath);
-        }
-        return false;
-      });
-    });
-    
-    if (matchedMenu) {
-      setActiveMenu(matchedMenu);
-    }
-  }, [location.pathname]);
-
-  const handleMenuClick = (menu) => {
-    setActiveMenu(menu);
-    setOpenSection(null);
-    setIsLoading(true);
-    // Simulate loading
-    setTimeout(() => setIsLoading(false), 300);
+  const toggleMenu = (menuId) => {
+    setOpenMenu((prev) => ({
+      ...prev,
+      [menuId]: !prev[menuId],
+    }));
   };
 
-  const handleSectionToggle = (index) => {
-    setOpenSection(openSection === index ? null : index);
+  // Compact menu rendering
+  const renderCompactMenu = (menus, level = 0) => {
+    return (
+      <div className={`${level > 0 ? "ml-3 mt-2" : ""}`}>
+        {menus.map((menu) => {
+          const hasSubMenu = menu.subMenus && menu.subMenus.length > 0;
+          const isOpen = openMenu[menu.id];
+
+          return (
+            <Fragment key={menu.id}>
+              <div className={`mb-2 ${level > 0 ? "border-l-2 border-purple-200 pl-3" : ""}`}>
+                <div
+                  className={`bg-white/70 backdrop-blur-sm rounded-lg border border-purple-100/50 hover:border-purple-200 transition-all duration-200 overflow-hidden
+                    ${level === 0 ? "shadow-sm hover:shadow-md" : "shadow-xs hover:shadow-sm"}`}
+                >
+                  <div
+                    className={`flex items-center justify-between p-3 cursor-pointer
+                      ${level === 0 ? `bg-gradient-to-r ${menu.gradient} text-white` : "hover:bg-purple-50"}`}
+                    onClick={() => hasSubMenu && toggleMenu(menu.id)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center
+                        ${level === 0 ? "bg-white/20" : "bg-purple-100"}`}
+                      >
+                        {typeof menu.icon === 'function' ? (
+                          <menu.icon className={`w-4 h-4 ${level === 0 ? "text-white" : "text-purple-600"}`} />
+                        ) : (
+                          <menu.icon className={`w-4 h-4 ${level === 0 ? "text-white" : "text-purple-600"}`} />
+                        )}
+                      </div>
+                      <div>
+                        <h4 className={`font-medium ${level === 0 ? "text-white" : "text-gray-800"}`}>
+                          {menu.title}
+                        </h4>
+                        {level === 0 && (
+                          <p className="text-xs text-white/80 mt-0.5">
+                            {menu.subMenus?.length || 0} modules
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {menu.href && (
+                        <NavLink
+                          to={menu.href}
+                          onClick={(e) => e.stopPropagation()}
+                          className="p-1.5 rounded-lg bg-white/20 hover:bg-white/30 transition-colors"
+                        >
+                          <ChevronRight className="w-4 h-4 text-white" />
+                        </NavLink>
+                      )}
+                      {hasSubMenu && (
+                        <div className={`p-1.5 rounded-lg transition-colors
+                          ${level === 0 ? "bg-white/20 hover:bg-white/30" : "bg-purple-100 hover:bg-purple-200"}`}
+                        >
+                          {isOpen ? (
+                            <ChevronDown className={`w-4 h-4 ${level === 0 ? "text-white" : "text-purple-600"}`} />
+                          ) : (
+                            <ChevronRight className={`w-4 h-4 ${level === 0 ? "text-white" : "text-purple-600"}`} />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {hasSubMenu && isOpen && (
+                <div className="mt-2 space-y-1">
+                  {renderCompactMenu(menu.subMenus, level + 1)}
+                </div>
+              )}
+            </Fragment>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
-      <Sidebar />
-
-      <div className="flex flex-1 flex-col md:flex-row">
-        {/* LEFT – MAIN MENU */}
-        <div className="w-full md:w-64 bg-white border-r border-gray-200 shadow-sm p-4 mt-16 ">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4 mr-10 mt-10">Marketing Tools</h2>
-          <nav className="space-y-1">
-            {mainMenus.map((menu) => (
-              <div
-                key={menu.key}
-                onClick={() => handleMenuClick(menu)}
-                className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 ${
-                  activeMenu.key === menu.key
-                    ? "bg-gradient-to-r from-violet-50 to-indigo-50 text-violet-700 shadow-sm border-l-4 border-violet-500"
-                    : "hover:bg-gray-50 text-gray-700 hover:text-gray-900"
-                }`}
-                style={{
-                  borderLeftColor: activeMenu.key === menu.key ? menu.color : undefined
-                }}
-              >
-                <div 
-                  className={`p-2 rounded-md ${
-                    activeMenu.key === menu.key ? "bg-white shadow-sm" : "bg-gray-100"
-                  }`}
-                  style={{ color: activeMenu.key === menu.key ? menu.color : undefined }}
-                >
-                  {menu.icon}
-                </div>
-                <span className="font-medium">{menu.title}</span>
-              </div>
-            ))}
-          </nav>
-        </div>
-
-        {/* RIGHT – SUB MENU */}
-        <div className="flex-1 p-4 md:p-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-            <div className="flex items-center justify-between mb-6 mt-16">
-              <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                <div 
-                  className="p-2 rounded-lg "
-                  style={{ backgroundColor: `${activeMenu.color}20`, color: activeMenu.color }}
-                >
-                  {activeMenu.icon}
-                </div>
-                {activeMenu.title}
-              </h2>
-              {isLoading && <FaSpinner className="animate-spin text-violet-500" />}
+    <div className="flex mt-20">
+      <div className="flex min-h-screen w-full bg-gradient-to-b from-white/90 to-purple-50/90">
+        <Sidebar />
+        <div className="flex-1">
+          <div className="p-6">
+            {/* Compact Header */}
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+                Marketing Hub
+              </h1>
+              <p className="text-gray-600 text-sm mt-1">
+                Manage campaigns and communications
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {activeMenu.subMenus.map((section, index) => (
-                <div
-                  key={index}
-                  className="border border-gray-200 rounded-xl overflow-hidden transition-all duration-200 hover:shadow-md"
-                >
-                  <div
-                    onClick={() => section.subMenus && handleSectionToggle(index)}
-                    className={`p-4 bg-gradient-to-r from-gray-50 to-white cursor-pointer ${
-                      section.subMenus ? "hover:from-gray-100 hover:to-gray-50" : ""
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-gray-800">{section.title}</h3>
-                      {section.subMenus && (
-                        <span className="text-gray-500 transition-transform duration-200">
-                          {openSection === index ? <FaChevronDown /> : <FaChevronRight />}
-                        </span>
-                      )}
-                    </div>
-                    {section.description && (
-                      <p className="text-sm text-gray-600 mt-1">{section.description}</p>
-                    )}
+            {/* Compact Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="bg-white/70 backdrop-blur-sm rounded-lg border border-purple-100/50 p-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-medium text-gray-600">WhatsApp</p>
+                    <p className="text-lg font-bold text-gray-900">Active</p>
                   </div>
-
-                  {/* 3RD LEVEL */}
-                  {openSection === index && section.subMenus && (
-                    <div className="p-2 bg-gray-50 border-t border-gray-200">
-                      <ul className="space-y-1">
-                        {section.subMenus.map((item, idx) => (
-                          <li key={idx}>
-                            <NavLink
-                              to={item.link}
-                              target={item.newTab ? "_blank" : "_self"}
-                              className={({ isActive }) => 
-                                `flex items-center justify-between p-3 rounded-lg transition-all duration-200 ${
-                                  isActive 
-                                    ? "bg-violet-50 text-violet-700 font-medium" 
-                                    : "hover:bg-white text-gray-700"
-                                }`
-                              }
-                            >
-                              <span>{item.title}</span>
-                              {item.newTab && <FaExternalLinkAlt className="text-xs text-gray-400" />}
-                            </NavLink>
-                            {item.description && (
-                              <p className="text-xs text-gray-500 px-3 pb-2">{item.description}</p>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {/* Direct Link */}
-                  {section.link && (
-                    <div className="p-2 bg-gray-50 border-t border-gray-200">
-                      <NavLink
-                        to={section.link}
-                        target={section.newTab ? "_blank" : "_self"}
-                        className={({ isActive }) => 
-                          `flex items-center justify-between p-3 rounded-lg transition-all duration-200 ${
-                            isActive 
-                              ? "bg-violet-50 text-violet-700 font-medium" 
-                              : "hover:bg-white text-gray-700"
-                          }`
-                        }
-                      >
-                        <span>Open</span>
-                        {section.newTab && <FaExternalLinkAlt className="text-xs text-gray-400" />}
-                      </NavLink>
-                    </div>
-                  )}
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center">
+                    <MessageCircle className="w-5 h-5 text-purple-600" />
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <Outlet />
+              <div className="bg-white/70 backdrop-blur-sm rounded-lg border border-purple-100/50 p-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-medium text-gray-600">Email</p>
+                    <p className="text-lg font-bold text-gray-900">Scheduled</p>
+                  </div>
+                  <div className="w-10 h-10 bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg flex items-center justify-center">
+                    <Mail className="w-5 h-5 text-pink-600" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white/70 backdrop-blur-sm rounded-lg border border-purple-100/50 p-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-medium text-gray-600">Payment Links</p>
+                    <p className="text-lg font-bold text-gray-900">Ready</p>
+                  </div>
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center">
+                    <Link2 className="w-5 h-5 text-purple-600" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Compact Menu Cards */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-purple-100/50 shadow-sm p-5">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Marketing Channels</h2>
+              {renderCompactMenu(mainMenus)}
+            </div>
+
+            {/* Compact Tips */}
+            <div className="mt-6 bg-white/70 backdrop-blur-sm rounded-xl border border-purple-100/50 shadow-sm p-4">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="w-4 h-4 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-1">Quick Tips</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="flex items-start gap-2">
+                      <div className="w-1 h-1 bg-purple-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                      <p className="text-xs text-gray-600">
+                        WhatsApp for immediate engagement
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-1 h-1 bg-purple-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                      <p className="text-xs text-gray-600">
+                        Email for detailed communications
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-1 h-1 bg-purple-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                      <p className="text-xs text-gray-600">
+                        Payment links for better conversion
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 };
-
-
-
-
-
 
 export default Marketing;

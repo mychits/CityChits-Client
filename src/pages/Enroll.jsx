@@ -15,6 +15,8 @@ import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
 import { FiMail } from "react-icons/fi";
+import { TrendingUp, AlertCircle, CheckCircle, ArrowRight, Users, Calendar, Search } from "lucide-react";
+
 const Enroll = () => {
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
@@ -85,10 +87,11 @@ const Enroll = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState([]);
 
-    const today = new Date();
+  const today = new Date();
   const currentYear = today.getFullYear();
   const currentMonth = String(today.getMonth() + 1).padStart(2, "0");
   const currentYearMonth = `${currentYear}-${currentMonth}`;
+
   function formatDate(date) {
     const year = date.getFullYear();
     const month = `0${date.getMonth() + 1}`.slice(-2);
@@ -128,28 +131,28 @@ const Enroll = () => {
     December: 0,
   });
 
-
   const onGlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
+
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
     const adminId = userObj?._id;
     if (adminId) {
       setAdmin(userObj?._id);
-
       setFormData((prev) => ({ ...prev, created_by: adminId }));
     } else {
       setAdmin("");
     }
   }, []);
+
   useEffect(() => {
     const fetchGroups = async () => {
       try {
         const response = await api.get("/group/get-group-admin");
-        setGroups(response.data || []);
+        setGroups(response.data);
       } catch (error) {
         console.error("Error fetching group data:", error);
       }
@@ -157,7 +160,7 @@ const Enroll = () => {
     fetchGroups();
   }, []);
 
-    const parseDate = (dateString) => {
+  const parseDate = (dateString) => {
     const [year, month] = dateString.split("-");
     return {
       year,
@@ -279,6 +282,7 @@ const Enroll = () => {
     };
     fetchUsers();
   }, []);
+
   useEffect(() => {
     const fetchAgents = async () => {
       try {
@@ -290,18 +294,19 @@ const Enroll = () => {
     };
     fetchAgents();
   }, []);
-  useEffect( () => {
-    const fetchEmployees = async () => {
-      try{
-        const response = await api.get("/employee");
-        setEmployees(response?.data?.employee)
 
-      }catch(error){
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const response = await api.get("/employee");
+        setEmployees(response?.data?.employee);
+      } catch (error) {
         console.error("failed to fetch employees", error);
       }
-    }
-    fetchEmployees()
-  }, [])
+    };
+    fetchEmployees();
+  }, []);
+
   useEffect(() => {
     const fetchLeads = async () => {
       try {
@@ -334,77 +339,45 @@ const Enroll = () => {
       }
     }
   };
+
   function setRefferedType(referralArray) {
     const found = referralArray.find((referee) => referee.data);
     return found ? found.value : null;
   }
-  // const handleAntInputDSelect = (field, value) => {
-  //   if (field === "referred_type" ) {
-  //     setUpdateFormData((prevData) => ({
-  //       ...prevData,
-  //       referred_type: "",
-  //       blocked_referral: true,
-  //       referred_customer: "",
-  //       referred_lead: "",
-  //       agent: "",
-  //       blocked_referral_type: setRefferedType([
-  //         { data: prevData?.referred_customer, value: "Customer" },
-  //         { data: prevData?.referred_lead, value: "Lead" },
-  //         { data: prevData?.agent, value: "Agent" },
-  //       ]),
-  //       blocked_referred_customer: prevData?.referred_customer?._id,
-  //       blocked_referred_lead: prevData?.referred_lead?._id,
-  //       blocked_referred_agent: prevData?.agent?._id,
-  //     }));
-  //     return;
-  //   } else {
-  //     setUpdateFormData((prevData) => ({
-  //       ...prevData,
-  //       blocked_referral_type: false,
-  //       blocked_referred_customer: "",
-  //       blocked_referred_lead: "",
-  //       blocked_referred_agent: "",
-  //       [field]: value,
-  //     }));
-  //   }
 
-  //   setErrors({ ...errors, [field]: "" });
-  // };
-  
-  
   const handleAntInputDSelect = (field, value) => {
-  if (field === "referred_type") {
+    if (field === "referred_type") {
+      setUpdateFormData((prevData) => ({
+        ...prevData,
+        referred_type: value,
+        blocked_referral: true,
+        referred_customer: "",
+        referred_lead: "",
+        agent: "",
+        blocked_referral_type: setRefferedType([
+          { data: prevData?.referred_customer, value: "Customer" },
+          { data: prevData?.referred_lead, value: "Lead" },
+          { data: prevData?.agent, value: "Agent" },
+        ]),
+        blocked_referred_customer: prevData?.referred_customer?._id,
+        blocked_referred_lead: prevData?.referred_lead?._id,
+        blocked_referred_agent: prevData?.agent?._id,
+      }));
+      return;
+    }
+
+    // other fields
     setUpdateFormData((prevData) => ({
       ...prevData,
-      referred_type: value,            // ✔ FIXED
-      blocked_referral: true,
-      referred_customer: "",
-      referred_lead: "",
-      agent: "",
-      blocked_referral_type: setRefferedType([
-        { data: prevData?.referred_customer, value: "Customer" },
-        { data: prevData?.referred_lead, value: "Lead" },
-        { data: prevData?.agent, value: "Agent" },
-      ]),
-      blocked_referred_customer: prevData?.referred_customer?._id,
-      blocked_referred_lead: prevData?.referred_lead?._id,
-      blocked_referred_agent: prevData?.agent?._id,
+      blocked_referral_type: false,
+      blocked_referred_customer: "",
+      blocked_referred_lead: "",
+      blocked_referred_agent: "",
+      [field]: value,
     }));
-    return;
-  }
 
-  // other fields
-  setUpdateFormData((prevData) => ({
-    ...prevData,
-    blocked_referral_type: false,
-    blocked_referred_customer: "",
-    blocked_referred_lead: "",
-    blocked_referred_agent: "",
-    [field]: value,
-  }));
-
-  setErrors({ ...errors, [field]: "" });
-};
+    setErrors({ ...errors, [field]: "" });
+  };
 
   const handleGroupChange = async (groupId) => {
     setSelectedGroup(groupId);
@@ -538,6 +511,7 @@ const Enroll = () => {
       }
     }
   };
+
   const validate = (type) => {
     const newErrors = {};
     const data = type === "addEnrollment" ? formData : updateFormData;
@@ -601,7 +575,7 @@ const Enroll = () => {
           agent,
           referred_lead,
           referred_type,
-          chit_asking_month:formData.chit_asking_month,
+          chit_asking_month: formData.chit_asking_month,
           tickets: ticketNumber,
           email_id,
           created_by,
@@ -811,7 +785,7 @@ const Enroll = () => {
           );
         if (referredCustomerName)
           referredInfoParts.push(
-            `Already referred by Customer Name: ${referredCustomerName}`
+            ` Already referred by Customer Name: ${referredCustomerName}`
           );
         if (referredLeadName)
           referredInfoParts.push(
@@ -837,7 +811,6 @@ const Enroll = () => {
               : response.data?.referred_lead
               ? "Leads"
               : ""),
-          
         }));
 
         let selectedBy = "Unknown";
@@ -921,97 +894,158 @@ const Enroll = () => {
 
   return (
     <>
-      <div>
-        <div className="flex mt-20">
-          <Navbar
-            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-            visibility={true}
-          />
-          <Sidebar />
-          <CustomAlert
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-          />
-          <div className="flex-grow p-7">
-            <h1 className="text-2xl font-semibold">Enrollments</h1>
-            <div className="mt-6 mb-8">
-              <div className="mb-2">
-                <label>Search or Select Group</label>
+      <div className="flex mt-20">
+        <Navbar
+          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+          visibility={true}
+        />
+        <Sidebar />
+        <CustomAlert
+          type={alertConfig.type}
+          isVisible={alertConfig.visibility}
+          message={alertConfig.message}
+        />
+        <div className="flex-1 bg-gradient-to-b from-white/90 to-purple-50/90">
+          <div className="p-8">
+            {/* Page Header with Gradient */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                Enrollment Management
+              </h1>
+              <p className="text-gray-600">
+                Manage and track customer enrollments
+              </p>
+            </div>
+
+            {/* Stats Overview with Purple/Pink Theme */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="bg-white/80 backdrop-blur-xl rounded-xl shadow-sm border border-purple-100/50 p-6 hover:shadow-lg transition-all duration-300">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Enrollment Overview</p>
+                    <p className="text-2xl font-bold text-gray-900">Enrollment Records</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center">
+                    <Users className="w-6 h-6 text-purple-600" />
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center text-sm">
+                  <TrendingUp className="w-4 h-4 text-green-600 mr-1" />
+                  <span className="text-green-600 font-medium">Growing Network</span>
+                </div>
               </div>
-              <div className="flex  justify-between items-center w-full">
-                <Select
-                  showSearch
-                  popupMatchSelectWidth={false}
-                  value={selectedGroup || "today"}
-                  filterOption={(input, option) =>
-                    option.children
-                      .toString()
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  placeholder="Search or Select Group"
-                  onChange={handleGroupChange}
-                  className="border  h-14 w-full max-w-md"
-                >
-                  <Select.Option key={"$1"} value={"today"}>
-                    Today's Enrollment
-                  </Select.Option>
-                  {groups.map((group) => (
-                    <Select.Option key={group._id} value={group._id}>
-                      {group.group_name}
+
+              <div className="bg-white/80 backdrop-blur-xl rounded-xl shadow-sm border border-purple-100/50 p-6 hover:shadow-lg transition-all duration-300">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Management</p>
+                    <p className="text-2xl font-bold text-gray-900">Enrollment Directory</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl flex items-center justify-center">
+                    <CheckCircle className="w-6 h-6 text-pink-600" />
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <p className="text-sm text-purple-600 font-medium">Organized and accessible</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Search and Filter Section */}
+            <div className="bg-white/80 backdrop-blur-xl rounded-xl shadow-sm border border-purple-100/50 p-6 mb-8">
+              <div className="flex flex-col md:flex-row md:items-center gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Search or Select Group
+                  </label>
+                  <Select
+                    showSearch
+                    popupMatchSelectWidth={false}
+                    value={selectedGroup || "today"}
+                    filterOption={(input, option) =>
+                      option.children
+                        .toString()
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    placeholder="Search or Select Group"
+                    onChange={handleGroupChange}
+                    className="w-full h-12 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
+                  >
+                    <Select.Option key={"$1"} value={"today"}>
+                      Today's Enrollment
                     </Select.Option>
-                  ))}
-                </Select>
+                    {groups.map((group) => (
+                      <Select.Option key={group._id} value={group._id}>
+                        {group.group_name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
                 <button
                   onClick={() => setShowModal(true)}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                  className="mt-6 md:mt-0 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl shadow-md hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center gap-2"
                 >
-                  + Add Enrollment
+                  <span>+ Add Enrollment</span>
                 </button>
               </div>
             </div>
+
+            {/* Data Table */}
             {TableEnrolls?.length > 0 ? (
-              <DataTable
-                updateHandler={handleUpdateModalOpen}
-                data={filterOption(TableEnrolls, searchText)}
-                columns={columns}
-                exportedFileName={`Enrollments-${
-                  TableEnrolls.length > 0
-                    ? TableEnrolls[0].name +
-                      " to " +
-                      TableEnrolls[TableEnrolls.length - 1].name
-                    : "empty"
-                }.csv`}
-              />
+              <div className="bg-white/80 backdrop-blur-xl rounded-xl shadow-sm border border-purple-100/50 p-6">
+                <DataTable
+                  updateHandler={handleUpdateModalOpen}
+                  data={filterOption(TableEnrolls, searchText)}
+                  columns={columns}
+                  exportedFileName={`Enrollments-${
+                    TableEnrolls.length > 0
+                      ? TableEnrolls[0].name +
+                        " to " +
+                        TableEnrolls[TableEnrolls.length - 1].name
+                      : "empty"
+                  }.csv`}
+                />
+              </div>
             ) : (
-              <CircularLoader
-                isLoading={isDataTableLoading}
-                failure={TableEnrolls?.length <= 0 && selectedGroup}
-                data={"Enrollment Data"}
-              />
+              <div className="bg-white/80 backdrop-blur-xl rounded-xl shadow-sm border border-purple-100/50 p-8">
+                <CircularLoader
+                  isLoading={isDataTableLoading}
+                  failure={TableEnrolls?.length <= 0 && selectedGroup}
+                  data={"Enrollment Data"}
+                />
+              </div>
             )}
           </div>
         </div>
-        <Modal
-          isVisible={showModal}
-          onClose={() => {
-            setShowModal(false);
-            setErrors({});
-          }}
-        >
-          <div className="py-6 px-5 lg:px-8 text-left bg-white rounded-lg">
-            <h3 className="mb-6 text-2xl font-bold text-gray-900 border-b pb-3">
+      </div>
+
+      {/* Add Enrollment Modal */}
+      <Modal
+        isVisible={showModal}
+        onClose={() => {
+          setShowModal(false);
+          setErrors({});
+        }}
+      >
+        <div className="py-6 px-5 lg:px-8 text-left bg-white rounded-xl shadow-2xl">
+          <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-200">
+            <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+              <Users className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900">
               Add Enrollment
             </h3>
+          </div>
 
-            <form className="space-y-6" onSubmit={handleSubmit} noValidate>
+          <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block mb-2 text-sm font-semibold text-gray-800">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Group <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                  className="w-full h-12 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
                   placeholder="Select or Search Group"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1037,11 +1071,11 @@ const Enroll = () => {
               </div>
 
               <div>
-                <label className="block mb-2 text-sm font-semibold text-gray-800">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Customer <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                  className="w-full h-12 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
                   placeholder="Select or Search Customer"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1053,7 +1087,6 @@ const Enroll = () => {
                       .includes(input.toLowerCase())
                   }
                   value={formData?.user_id || undefined}
-                  //onChange={(value) => handleAntDSelect("user_id", value)}
                   onChange={(value) => {
                     handleAntDSelect("user_id", value);
 
@@ -1074,40 +1107,42 @@ const Enroll = () => {
                     </Select.Option>
                   ))}
                 </Select>
-                {formData?.user_id && (
-                  <div className="mt-3">
-                    <label
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                      title="Email ID For Payment Link Submission"
-                    >
-                      Email
-                    </label>
-                    <input
-                      title="Email ID For Payment Link Submission"
-                      type="email"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2"
-                      value={email || ""}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        setFormData((prev) => ({
-                          ...prev,
-                          email_id: e.target.value,
-                        }));
-                      }}
-                    />
-                  </div>
+                {errors.user_id && (
+                  <p className="mt-1 text-xs text-red-600">{errors.user_id}</p>
                 )}
+              </div>
+            </div>
+
+            {formData?.user_id && (
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  className="w-full h-12 p-3 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
+                  value={email || ""}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setFormData((prev) => ({
+                      ...prev,
+                      email_id: e.target.value,
+                    }));
+                  }}
+                />
                 {errors.email_id && (
                   <p className="mt-1 text-xs text-red-600">{errors.email_id}</p>
                 )}
               </div>
+            )}
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block mb-2 text-sm font-semibold text-gray-800">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Payment Type <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                  className="w-full h-12 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
                   placeholder="Select Payment Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1127,223 +1162,213 @@ const Enroll = () => {
               </div>
 
               <div>
-                <label className="block mb-2 text-sm font-semibold text-gray-800">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Chit Asking Month
                 </label>
                 <input
                   type="month"
-                  className="p-2 border rounded w-full"
+                  className="w-full h-12 p-3 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
                   value={selectedDate}
                   onChange={(e) => {
                     setSelectedDate(e.target.value);
                     setFormData((prev) => ({
                       ...prev,
-                      chit_asking_month: e.target.value, // <-- FIX
+                      chit_asking_month: e.target.value,
                     }));
                   }}
-                  max={formatToYearMonth(currentYear, currentMonth)}
                 />
               </div>
+            </div>
 
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Referred Type <span className="text-red-500">*</span>
+              </label>
+              <Select
+                className="w-full h-12 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
+                placeholder="Select Referred Type"
+                popupMatchSelectWidth={false}
+                showSearch
+                name="referred_type"
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().includes(input.toLowerCase())
+                }
+                value={formData?.referred_type || undefined}
+                onChange={(value) => handleAntDSelect("referred_type", value)}
+              >
+                {[
+                  "Self Joining",
+                  "Customer",
+                  "Employee",
+                  "Agent",
+                  "Leads",
+                  "Others",
+                ].map((refType) => (
+                  <Select.Option key={refType} value={refType}>
+                    {refType}
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
+
+            {formData.referred_type === "Customer" && (
               <div>
-                <label className="block mb-2 text-sm font-semibold text-gray-800">
-                  Referred Type <span className="text-red-500">*</span>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Select Referred Customer <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
-                  placeholder="Select Referred Type"
+                  className="w-full h-12 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
+                  placeholder="Select Or Search Referred Customer"
                   popupMatchSelectWidth={false}
                   showSearch
-                  name="referred_type"
+                  name="referred_customer"
                   filterOption={(input, option) =>
-                    option.children.toLowerCase().includes(input.toLowerCase())
+                    option.children
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
                   }
-                  value={formData?.referred_type || undefined}
-                  onChange={(value) => handleAntDSelect("referred_type", value)}
+                  value={formData?.referred_customer || undefined}
+                  onChange={(value) =>
+                    handleAntDSelect("referred_customer", value)
+                  }
                 >
-                  {[
-                    "Self Joining",
-                    "Customer",
-                    "Employee",
-                    "Agent",
-                    "Leads",
-
-                    "Others",
-                  ].map((refType) => (
-                    <Select.Option key={refType} value={refType}>
-                      {refType}
+                  {users.map((user) => (
+                    <Select.Option key={user._id} value={user._id}>
+                      {user.full_name} | {user.phone_number || "No Number"}
                     </Select.Option>
                   ))}
                 </Select>
               </div>
-              {formData.referred_type === "Customer" && (
-                <div className="w-full">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="category"
-                  >
-                    Select Referred Customer{" "}
-                    <span className="text-red-500 ">*</span>
-                  </label>
+            )}
 
-                  <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
-                    placeholder="Select Or Search Referred Customer"
-                    popupMatchSelectWidth={false}
-                    showSearch
-                    name="referred_customer"
-                    filterOption={(input, option) =>
-                      option.children
-                        .toString()
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    value={formData?.referred_customer || undefined}
-                    onChange={(value) =>
-                      handleAntDSelect("referred_customer", value)
-                    }
-                  >
-                    {users.map((user) => (
-                      <Select.Option key={user._id} value={user._id}>
-                        {user.full_name} |{" "}
-                        {user.phone_number ? user.phone_number : "No Number"}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-              )}
-              {formData.referred_type === "Leads" && (
-                <div className="w-full">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="category"
-                  >
-                    Select Referred Leads{" "}
-                    <span className="text-red-500 ">*</span>
-                  </label>
+            {formData.referred_type === "Leads" && (
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Select Referred Leads <span className="text-red-500">*</span>
+                </label>
+                <Select
+                  className="w-full h-12 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
+                  placeholder="Select Or Search Referred Leads"
+                  popupMatchSelectWidth={false}
+                  showSearch
+                  name="referred_lead"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  value={formData?.referred_lead || undefined}
+                  onChange={(value) =>
+                    handleAntDSelect("referred_lead", value)
+                  }
+                >
+                  {leads.map((lead) => (
+                    <Select.Option key={lead._id} value={lead._id}>
+                      {lead.lead_name} | {lead.lead_phone}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            )}
 
-                  <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
-                    placeholder="Select Or Search Referred Leads"
-                    popupMatchSelectWidth={false}
-                    showSearch
-                    name="referred_lead"
-                    filterOption={(input, option) =>
-                      option.children
-                        .toString()
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    value={formData?.referred_lead || undefined}
-                    onChange={(value) =>
-                      handleAntDSelect("referred_lead", value)
-                    }
-                  >
-                    {leads.map((lead) => (
-                      <Select.Option key={lead._id} value={lead._id}>
-                        {lead.lead_name} | {lead.lead_phone}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-              )}
-              {formData.referred_type === "Agent" && (
-                <div className="w-full">
-                  <label className="block mb-2 text-sm font-medium text-gray-900">Select Referred Agent{" "} <span className="text-red-500">*</span></label>
-                  <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+            {formData.referred_type === "Agent" && (
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Select Referred Agent <span className="text-red-500">*</span>
+                </label>
+                <Select
+                  className="w-full h-12 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
                   placeholder="Select or Search Referred Agent"
                   popupMatchSelectWidth={false}
                   showSearch
                   name="agent"
-                  filterOption={(input,option) =>
-                    option.children.toString().toLowerCase().includes(input.toLowerCase())
+                  filterOption={(input, option) =>
+                    option.children
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
                   }
                   value={formData.agent || undefined}
                   onChange={(value) => handleAntDSelect("agent", value)}
-                  >
-                    {agents.map((agent) => (
-                      <Select.Option key={agent._id} value={agent._id}>
-                        {agent.name} | {agent.phone_number}
-                      </Select.Option>
-                    ))
+                >
+                  {agents.map((agent) => (
+                    <Select.Option key={agent._id} value={agent._id}>
+                      {agent.name} | {agent.phone_number}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            )}
 
-                  }
+            {formData.referred_type === "Employee" && (
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Select Referred Employee <span className="text-red-500">*</span>
+                </label>
+                <Select
+                  className="w-full h-12 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
+                  placeholder="Select Or Search Referred Employee"
+                  popupMatchSelectWidth={false}
+                  showSearch
+                  name="agent"
+                  filterOption={(input, option) => {
+                    if (!option || !option.children) return false;
+                    return option.children
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase());
+                  }}
+                  value={formData?.agent || undefined}
+                  onChange={(value) => handleAntDSelect("agent", value)}
+                >
+                  {employees.map((employee) => (
+                    <Select.Option key={employee._id} value={employee._id}>
+                      {employee.name} | {employee.phone_number}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            )}
 
-                  </Select>
-                </div>
-              )}
-              {formData.referred_type === "Employee" && (
-                <div className="w-full">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="category"
-                  >
-                    Select Referred Employee{" "}
-                    <span className="text-red-500 ">*</span>
-                  </label>
-
-                  <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
-                    placeholder="Select Or Search Referred Employee"
-                    popupMatchSelectWidth={false}
-                    showSearch
-                    name="agent"
-                    filterOption={(input, option) => {
-                      if (!option || !option.children) return false; // Ensure option and children exist
-
-                      return option.children
-                        .toString()
-                        .toLowerCase()
-                        .includes(input.toLowerCase());
-                    }}
-                    value={formData?.agent || undefined}
-                    onChange={(value) => handleAntDSelect("agent", value)}
-                  >
-                    {employees.map((employee) => (
-                      <Select.Option key={employee._id} value={employee._id}>
-                        {employee.name} | {employee.phone_number}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-              )}
-
-              {formData.group_id && availableTicketsAdd.length === 0 ? (
+            {formData.group_id && availableTicketsAdd.length === 0 ? (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
                 <p className="text-center text-red-600 font-medium">
                   Group is Full
                 </p>
-              ) : formData.group_id && availableTicketsAdd.length !== 0 ? (
-                <div>
-                  <label className="block mb-2 text-sm font-semibold text-gray-800">
-                    Number of Tickets <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    name="no_of_tickets"
-                    value={formData?.no_of_tickets}
-                    id="name"
-                    onChange={handleChange}
-                    placeholder="Enter the Number of Tickets"
-                    required
-                    max={availableTicketsAdd.length}
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
-                  />
-                  {errors.no_of_tickets && (
-                    <p className="mt-1 text-xs text-red-600">
-                      {errors.no_of_tickets}
-                    </p>
-                  )}
-                  <p className="mt-1 text-xs text-blue-800 text-center">
-                    Only {availableTicketsAdd.length} tickets left
+              </div>
+            ) : formData.group_id && availableTicketsAdd.length !== 0 ? (
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Number of Tickets <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="number"
+                  name="no_of_tickets"
+                  value={formData?.no_of_tickets}
+                  onChange={handleChange}
+                  placeholder="Enter the Number of Tickets"
+                  required
+                  max={availableTicketsAdd.length}
+                  className="w-full h-12 p-3 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
+                />
+                {errors.no_of_tickets && (
+                  <p className="mt-1 text-xs text-red-600">
+                    {errors.no_of_tickets}
                   </p>
-                </div>
-              ) : null}
+                )}
+                <p className="mt-1 text-xs text-purple-600 text-center">
+                  Only {availableTicketsAdd.length} tickets left
+                </p>
+              </div>
+            ) : null}
 
-              <div className="border-t pt-4 space-y-4">
-                <h2 className="text-base font-semibold text-gray-900">
-                  Actions
-                </h2>
+            <div className="border-t pt-4">
+              <h2 className="text-base font-semibold text-gray-900 mb-4">
+                Actions
+              </h2>
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <FaWhatsapp className="text-green-600 w-5 h-5" />
@@ -1384,7 +1409,7 @@ const Enroll = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <FiMail className="w-5 h-5" aria-hidden="true" />
+                    <FiMail className="w-5 h-5" />
                     <span className="text-gray-800">Enable Email</span>
                   </div>
                   <input
@@ -1400,66 +1425,69 @@ const Enroll = () => {
                   />
                 </div>
               </div>
+            </div>
 
-              <div className="flex justify-end pt-4">
-                <button
-                  type="button"
-                  disabled={
-                    loading ||
-                    (enrollmentStep === "submit" &&
-                      (!isVerified || availableTicketsAdd.length === 0))
-                  }
-                  onClick={handleMultiStep}
-                  className={`w-1/4 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors ${
-                    loading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : enrollmentStep === "verify"
-                      ? "bg-gray-600 hover:bg-gray-700"
-                      : enrollmentStep === "continue"
-                      ? "bg-green-600 hover:bg-green-700"
-                      : "bg-blue-700 hover:bg-blue-800"
-                  }`}
-                >
-                  {loading
-                    ? "Processing..."
+            <div className="flex justify-end pt-4">
+              <button
+                type="button"
+                disabled={
+                  loading ||
+                  (enrollmentStep === "submit" &&
+                    (!isVerified || availableTicketsAdd.length === 0))
+                }
+                onClick={handleMultiStep}
+                className={`px-6 py-3 rounded-xl text-sm font-medium text-white transition-all duration-200 ${
+                  loading
+                    ? "bg-gray-400 cursor-not-allowed"
                     : enrollmentStep === "verify"
-                    ? "Verify"
+                    ? "bg-gray-600 hover:bg-gray-700"
                     : enrollmentStep === "continue"
-                    ? "Continue"
-                    : "Submit"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </Modal>
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                }`}
+              >
+                {loading
+                  ? "Processing..."
+                  : enrollmentStep === "verify"
+                  ? "Verify"
+                  : enrollmentStep === "continue"
+                  ? "Continue"
+                  : "Submit"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </Modal>
 
-        <Modal
-          isVisible={showModalUpdate}
-          onClose={() => {
-            setShowModalUpdate(false);
-            setErrors({});
-          }}
-        >
-          <div className="py-6 px-5 lg:px-8 text-left">
-            <h3 className="mb-4 text-xl font-bold text-gray-900">
+      {/* Update Enrollment Modal */}
+      <Modal
+        isVisible={showModalUpdate}
+        onClose={() => {
+          setShowModalUpdate(false);
+          setErrors({});
+        }}
+      >
+        <div className="py-6 px-5 lg:px-8 text-left bg-white rounded-xl shadow-2xl">
+          <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-200">
+            <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+              <Users className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900">
               Update Enrollment
             </h3>
-            <form className="space-y-6" onSubmit={handleUpdate}>
-              <div className="w-full">
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="group_id"
-                >
-                  Group <span className="text-red-500 ">*</span>
+          </div>
+          <form className="space-y-4" onSubmit={handleUpdate}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Group <span className="text-red-500">*</span>
                 </label>
                 <select
                   name="group_id"
-                  id="group_id"
                   value={updateFormData.group_id}
                   onChange={handleInputChange}
-                  required
                   disabled
-                  className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                  className="w-full h-12 p-3 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl"
                 >
                   <option value="">Select Group</option>
                   {groups.map((group) => (
@@ -1470,21 +1498,16 @@ const Enroll = () => {
                 </select>
               </div>
 
-              <div className="w-full">
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="user_id"
-                >
-                  Customer <span className="text-red-500 ">*</span>
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Customer <span className="text-red-500">*</span>
                 </label>
                 <select
                   name="user_id"
-                  id="user_id"
                   value={updateFormData.user_id}
                   onChange={handleInputChange}
-                  required
                   disabled
-                  className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                  className="w-full h-12 p-3 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl"
                 >
                   <option value="">Select Customer</option>
                   {users.map((user) => (
@@ -1497,15 +1520,15 @@ const Enroll = () => {
                   <p className="mt-1 text-sm text-red-600">{errors.user_id}</p>
                 )}
               </div>
-              <div className="w-full">
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="payment_type"
-                >
-                  Select Payment Type <span className="text-red-500 ">*</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Payment Type <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                  className="w-full h-12 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
                   placeholder="Select Payment Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1525,278 +1548,266 @@ const Enroll = () => {
                   ))}
                 </Select>
               </div>
-              <div className="w-full">
-                <label className="block mb-2 text-sm font-medium text-gray-900">
+
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
                   Chit Asking Month
                 </label>
                 <input
                   type="month"
-                  className="p-2 border rounded w-full"
+                  className="w-full h-12 p-3 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
                   value={updateFormData.chit_asking_month}
                   onChange={(e) =>
                     setUpdateFormData((prev) => ({
                       ...prev,
-                      chit_asking_month: e.target.value, // <-- FIXED
+                      chit_asking_month: e.target.value,
                     }))
                   }
                 />
               </div>
+            </div>
 
-              <div className="w-full">
-                <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="referred_type"
-                >
-                  Select Referred Type <span className="text-red-500 ">*</span>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Select Referred Type <span className="text-red-500">*</span>
+              </label>
+              <Select
+                className="w-full h-12 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
+                placeholder="Select Referred Type"
+                popupMatchSelectWidth={false}
+                showSearch
+                name="referred_type"
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().includes(input.toLowerCase())
+                }
+                value={updateFormData?.referred_type || undefined}
+                onChange={(value) =>
+                  handleAntInputDSelect("referred_type", value)
+                }
+              >
+                {[
+                  "Self Joining",
+                  "Customer",
+                  "Employee",
+                  "Agent",
+                  "Leads",
+                  "Blocked Referral",
+                  "Others",
+                ].map((refType) => (
+                  <Select.Option key={refType} value={refType}>
+                    {refType}
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
+
+            {updateFormData.referred_type === "Customer" && (
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Select Referred Customer <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
-                  placeholder="Select Referred Type"
+                  className="w-full h-12 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
+                  placeholder="Select Or Search Referred Customer"
                   popupMatchSelectWidth={false}
                   showSearch
-                  name="referred_type"
+                  name="referred_customer"
                   filterOption={(input, option) =>
-                    option.children.toLowerCase().includes(input.toLowerCase())
+                    option.children
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
                   }
-                  value={updateFormData?.referred_type || undefined}
+                  value={updateFormData?.referred_customer || undefined}
                   onChange={(value) =>
-                    handleAntInputDSelect("referred_type", value)
+                    handleAntInputDSelect("referred_customer", value)
                   }
                 >
-                  {[
-                    "Self Joining",
-                    "Customer",
-                    "Employee",
-                    "Agent",
-                    "Leads",
-                    "Blocked Referral",
-                    "Others",
-                  ].map((refType) => (
-                    <Select.Option key={refType} value={refType}>
-                      {refType}
+                  {users.map((user) => (
+                    <Select.Option key={user._id} value={user._id}>
+                      {user.full_name} | {user.phone_number}
                     </Select.Option>
                   ))}
                 </Select>
               </div>
+            )}
 
-              {updateFormData.referred_type === "Customer" && (
-                <div className="w-full">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="category"
-                  >
-                    Select Referred Customer{" "}
-                    <span className="text-red-500 ">*</span>
-                  </label>
-
-                  <Select
-                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
-                    placeholder="Select Or Search Referred Customer"
-                    popupMatchSelectWidth={false}
-                    showSearch
-                    name="referred_customer"
-                    filterOption={(input, option) =>
-                      option.children
-                        .toString()
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    value={updateFormData?.referred_customer || undefined}
-                    onChange={(value) =>
-                      handleAntInputDSelect("referred_customer", value)
-                    }
-                  >
-                    {users.map((user) => (
-                      <Select.Option key={user._id} value={user._id}>
-                        {user.full_name} | {user.phone_number}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-              )}
-              {updateFormData.referred_type === "Agent" && (
-                <div className="w-full">
-                  <label className="block mb-2 text-sm font-medium text-gray-900">Select Referred Agent{" "} <span className="text-red-500">*</span></label>
-                  <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+            {updateFormData.referred_type === "Agent" && (
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Select Referred Agent <span className="text-red-500">*</span>
+                </label>
+                <Select
+                  className="w-full h-12 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
                   placeholder="Select or Search Referred Agent"
                   popupMatchSelectWidth={false}
                   showSearch
                   name="agent"
-                  filterOption={(input,option) =>
-                    option.children.toString().toLowerCase().includes(input.toLowerCase())
+                  filterOption={(input, option) =>
+                    option.children
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
                   }
                   value={updateFormData.agent || undefined}
                   onChange={(value) => handleAntInputDSelect("agent", value)}
-                  >
-                    {agents.map((agent) => (
-                      <Select.Option key={agent._id} value={agent._id}>
-                        {agent.name} | {agent.phone_number}
-                      </Select.Option>
-                    ))
+                >
+                  {agents.map((agent) => (
+                    <Select.Option key={agent._id} value={agent._id}>
+                      {agent.name} | {agent.phone_number}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            )}
 
+            {updateFormData.referred_type === "Leads" && (
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Select Referred Leads <span className="text-red-500">*</span>
+                </label>
+                <Select
+                  className="w-full h-12 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
+                  placeholder="Select Or Search Referred Lead"
+                  popupMatchSelectWidth={false}
+                  showSearch
+                  name="referred_lead"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
                   }
+                  value={updateFormData?.referred_lead || undefined}
+                  onChange={(value) =>
+                    handleAntInputDSelect("referred_lead", value)
+                  }
+                >
+                  {leads.map((lead) => (
+                    <Select.Option key={lead._id} value={lead._id}>
+                      {lead.lead_name} | {lead.lead_phone}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            )}
 
-                  </Select>
-                </div>
-              )}
-              {updateFormData.referred_type === "Leads" && (
-                <div className="w-full">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="category"
-                  >
-                    Select Referred Leads{" "}
-                    <span className="text-red-500 ">*</span>
-                  </label>
+            {updateFormData.referred_type === "Employee" && (
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Select Referred Employee <span className="text-red-500">*</span>
+                </label>
+                <Select
+                  className="w-full h-12 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-purple-500 focus:border-purple-500"
+                  placeholder="Select Or Search Referred Employee"
+                  popupMatchSelectWidth={false}
+                  showSearch
+                  name="agent"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  value={updateFormData?.agent || undefined}
+                  onChange={(value) => handleAntInputDSelect("agent", value)}
+                >
+                  {employees.map((employee) => (
+                    <Select.Option key={employee._id} value={employee._id}>
+                      {employee.name} | {employee.phone_number}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            )}
 
-                  <Select
-                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
-                    placeholder="Select Or Search Referred Lead"
-                    popupMatchSelectWidth={false}
-                    showSearch
-                    name="referred_lead"
-                    filterOption={(input, option) =>
-                      option.children
-                        .toString()
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    value={updateFormData?.referred_lead || undefined}
-                    onChange={(value) =>
-                      handleAntInputDSelect("referred_lead", value)
-                    }
-                  >
-                    {leads.map((lead) => (
-                      <Select.Option key={lead._id} value={lead._id}>
-                        {lead.lead_name} | {lead.lead_phone}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-              )}
-              {updateFormData.referred_type === "Employee" && (
-                <div className="w-full">
-                  <label
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                    htmlFor="category"
-                  >
-                    Select Referred Employee{" "}
-                    <span className="text-red-500 ">*</span>
-                  </label>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Select Ticket <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="tickets"
+                value={updateFormData.tickets}
+                onChange={handleInputChange}
+                disabled
+                className="w-full h-12 p-3 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl"
+              >
+                <option value="">Select Ticket</option>
+                {availableTickets
+                  .concat([updateFormData.tickets])
+                  .map((ticket, index) => (
+                    <option key={index} value={ticket}>
+                      {ticket}
+                    </option>
+                  ))}
+              </select>
+            </div>
 
-                  <Select
-                    className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
-                    placeholder="Select Or Search Referred Employee"
-                    popupMatchSelectWidth={false}
-                    showSearch
-                    name="agent"
-                    filterOption={(input, option) =>
-                      option.children
-                        .toString()
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    value={updateFormData?.agent || undefined}
-                    onChange={(value) => handleAntInputDSelect("agent", value)}
-                  >
-                    {employees.map((agent) => (
-                      <Select.Option key={agent._id} value={agent._id}>
-                        {agent.name} | {agent.phone_number}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-              )}
+            <button
+              type="submit"
+              className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
+            >
+              Update
+            </button>
+          </form>
+        </div>
+      </Modal>
+
+      {/* Remove Enrollment Modal */}
+      <Modal
+        isVisible={showModalRemove}
+        onClose={() => {
+          setShowModalRemove(false);
+          setCurrentGroup(null);
+        }}
+      >
+        <div className="py-6 px-5 lg:px-8 text-left bg-white rounded-xl shadow-2xl">
+          <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-200">
+            <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-pink-500 rounded-lg flex items-center justify-center">
+              <AlertCircle className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900">
+              Please Select a Reason for Removal
+            </h3>
+          </div>
+
+          {currentGroup && (
+            <form onSubmit={handleRemoveGroup} className="space-y-4">
               <div>
                 <label
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                  htmlFor="no_of_tickets"
+                  htmlFor="removalReason"
+                  className="block mb-2 text-sm font-medium text-gray-700"
                 >
-                  Select Ticket <span className="text-red-500 ">*</span>
+                  Removal Reason <span className="text-red-500">*</span>
                 </label>
                 <select
-                  name="tickets"
-                  value={updateFormData.tickets}
-                  onChange={handleInputChange}
-                  id="no_of_tickets"
-                  disabled
+                  id="removalReason"
+                  name="removalReason"
+                  value={removalReason}
+                  onChange={(e) => setRemovalReason(e.target.value)}
                   required
-                  className="bg-gray-50 border h-14 border-gray-300 text-gray-900 text-sm rounded-lg w-full"
+                  className="w-full h-12 p-3 bg-white/90 backdrop-blur-sm border border-purple-100/50 rounded-xl focus:ring-red-500 focus:border-red-500"
                 >
-                  <option value="">Select Ticket</option>
-                  {availableTickets
-                    .concat([updateFormData.tickets])
-                    .map((ticket, index) => (
-                      <option key={index} value={ticket}>
-                        {ticket}
-                      </option>
-                    ))}
+                  <option value="">-- Select Reason --</option>
+                  <option value="Group Closed">Group Closed</option>
+                  <option value="Chit Cancellation">Chit Cancellation</option>
+                  <option value="On Hold">On Hold</option>
+                  <option value="In Active Customer">InActive Customer</option>
+                  <option value="Legal">Legal</option>
+                  <option value="Others">Others</option>
                 </select>
               </div>
 
               <button
                 type="submit"
-                className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                className="w-full py-3 px-4 bg-gradient-to-r from-red-500 to-pink-500 text-white font-medium rounded-xl hover:from-red-600 hover:to-pink-600 transition-all duration-200"
               >
-                Update
+                Remove
               </button>
             </form>
-          </div>
-        </Modal>
-        <Modal
-          isVisible={showModalRemove}
-          onClose={() => {
-            setShowModalRemove(false);
-            setCurrentGroup(null);
-          }}
-        >
-          <div className="py-6 px-5 lg:px-8 text-left">
-            <h3 className="mb-4 text-xl font-bold text-gray-900">
-              Please Select a Reason for Removal
-            </h3>
-
-            {currentGroup && (
-              <form onSubmit={handleRemoveGroup} className="space-y-6">
-                <div>
-                  <label
-                    htmlFor="removalReason"
-                    className="block mb-2 text-sm font-medium text-gray-700"
-                  >
-                    Removal Reason <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="removalReason"
-                    name="removalReason"
-                    value={removalReason}
-                    onChange={(e) => setRemovalReason(e.target.value)}
-                    required
-                    className="block w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                  >
-                    <option value="">-- Select Reason --</option>
-                    <option value="Group Closed">Group Closed</option>
-                    <option value="Group Changed">Group Changed</option>
-                    <option value="Chit Cancellation">Chit Cancellation</option>
-                    <option value="On Hold">On Hold</option>
-                    <option value="In Active Customer">
-                      InActive Customer
-                    </option>
-                    <option value="Legal">Legal</option>
-                    <option value="Others">Others</option>
-                  </select>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                >
-                  Remove
-                </button>
-              </form>
-            )}
-          </div>
-        </Modal>
-      </div>
+          )}
+        </div>
+      </Modal>
     </>
   );
 };
