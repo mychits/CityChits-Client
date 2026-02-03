@@ -40,6 +40,11 @@ import { LuTarget } from "react-icons/lu";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { TbGraph } from "react-icons/tb";
 
+import { FaGifts } from "react-icons/fa";
+
+
+import { MdAdminPanelSettings } from "react-icons/md";
+
 const sidebarMenu = [
   {
     id: "$1",
@@ -356,6 +361,21 @@ const sidebarMenu = [
         //     link: "/hard-transfer",
         //   },
         
+      },
+                {
+              id: "#3",
+              title: "Rewards",
+              hider: true,
+              icon: FaGifts,
+              link: "/reward-menu"
+          },
+
+          {
+        id: "#4",
+        title: "Admin Support",
+        icon: MdAdminPanelSettings,
+        isHeading: true,
+        link: "/supports"
       },
     ],
   },
