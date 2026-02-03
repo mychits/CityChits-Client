@@ -7,6 +7,15 @@ import { useNavigate } from "react-router-dom";
 import api from "../instance/TokenInstance";
 import Navbar from "../components/layouts/Navbar";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
+import { BsGrid3X3GapFill, BsListUl } from "react-icons/bs";
+import Receipt from "../components/receipts/CustomReceiptOne"; // Added import
+import dayjs from "dayjs"; // Added import
+import { Tag } from "antd"; // Added import
+import {
+  ClockCircleOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+} from "@ant-design/icons"; // Added imports
 
 const Home = () => {
   const [groups, setGroups] = useState([]);
@@ -22,6 +31,10 @@ const Home = () => {
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [enrollmentsCount, setEnrollmentsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [viewMode, setViewMode] = useState("list");
+
+  const [transactionsLoading, setTransactionsLoading] = useState(false);
+  const [tableTransactions, setTableTransactions] = useState([]);
 
   const [alertConfig, setAlertConfig] = useState({
     visibility: false,
@@ -46,12 +59,12 @@ const Home = () => {
   const handleViewDetailsClick = (redirect) => {
     setSelectedRedirect(redirect);
     setShowPasswordPrompt(true);
-    setErrorMsg(""); 
+    setErrorMsg("");
   };
 
   const verifyPasswordAndRedirect = async () => {
-    setIsLoadingVerify(true); 
-    setErrorMsg(""); 
+    setIsLoadingVerify(true);
+    setErrorMsg("");
     try {
       const admin = JSON.parse(localStorage.getItem("admin"));
       if (!admin?.phoneNumber) {
@@ -69,19 +82,22 @@ const Home = () => {
         setShowPasswordPrompt(false);
         setPasswordInput("");
         setErrorMsg("");
-        
+
         // Special handling for revenue pages
-        if (selectedRedirect === "/total-revenue" || selectedRedirect === "/monthly-revenue") {
+        if (
+          selectedRedirect === "/total-revenue" ||
+          selectedRedirect === "/monthly-revenue"
+        ) {
           setShowRevenue(true);
           setTimeout(() => setShowRevenue(false), 30000); // Hide after 30 seconds
         }
-        
+
         navigate(selectedRedirect);
       }
     } catch (err) {
       setErrorMsg(err.response?.data?.message || "Password verification failed");
     } finally {
-      setIsLoadingVerify(false); 
+      setIsLoadingVerify(false);
     }
   };
 
@@ -115,7 +131,9 @@ const Home = () => {
     const fetchEnrollments = async () => {
       try {
         const response = await api.get("/enroll/get-enroll");
-        setEnrollmentsCount(Array.isArray(response.data) ? response.data.length : 0);
+        setEnrollmentsCount(
+          Array.isArray(response.data) ? response.data.length : 0
+        );
       } catch (error) {
         console.error("Error fetching enrollments:", error);
         setEnrollmentsCount(0);
@@ -190,7 +208,10 @@ const Home = () => {
         const today = new Date();
         const currentMonth = today.getMonth();
         const currentYear = today.getFullYear();
-        const firstDay = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-01`;
+        const firstDay = `${currentYear}-${String(currentMonth + 1).padStart(
+          2,
+          "0"
+        )}-01`;
         const lastDay = new Date(currentYear, currentMonth + 1, 0);
         const lastDayFormatted = lastDay.toISOString().split("T")[0];
 
@@ -216,6 +237,83 @@ const Home = () => {
     }
     return "•••••";
   };
+
+  async function getTransactions() {
+    try {
+      setTransactionsLoading(true);
+      const response = await api.get("/cashfree-pg-orders/10");
+      const transactionsData = response.data?.data;
+      const filteredData = transactionsData.map((order, index) => {
+        const status = order?.status;
+        const color =
+          status === "ACTIVE"
+            ? "blue"
+            : status === "PAID"
+            ? "green"
+            : "red";
+        const icon =
+          status === "ACTIVE" ? (
+            <ClockCircleOutlined />
+          ) : status === "PAID" ? (
+            <CheckCircleOutlined />
+          ) : (
+            <CloseCircleOutlined />
+          );
+        const groups = order?.groups;
+        const pigmys = order.pigmys;
+        const loans = order?.loans;
+        const groupsString =
+          (groups
+            ?.map(
+              (group) => `${group?.group_id?.group_name} | ${group?.ticket}`
+            ) || []
+          ).join(" | ") || "";
+        const pigmysString =
+          (pigmys
+            ?.map((pigmy) => `${pigmy?.payable_amount} | ${pigmy?.pigme_id}`)
+            .join(" | ") || "");
+        const loansString =
+          (loans
+            ?.map((loan) => `${loan?.loan_amount} | ${loan?.loan_id}`)
+            .join(" | ") || "");
+        
+        return {
+          id: index + 1,
+          orderType: order?.order_type,
+          user_name: order?.user_id?.full_name,
+          phone_number: order?.user_id?.phone_number,
+          groups: groupsString,
+          pigmys: pigmysString,
+          loans: loansString,
+          others: groupsString + pigmysString + loansString,
+          status: (
+            <Tag
+              key={"success"}
+              color={color}
+              icon={icon}
+              variant={"filled"}
+            >
+              {status}
+            </Tag>
+          ),
+          statusRaw: status,
+          collectedBy: order?.collected_by,
+          createdAt: dayjs(order?.createdAt)
+            ?.endOf("D")
+            ?.format("YYYY-MM-DD"),
+        };
+      });
+      setTableTransactions(filteredData);
+    } catch (error) {
+      setTableTransactions([]);
+    } finally {
+      setTransactionsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    getTransactions();
+  }, []);
 
   const cardData = [
     {
@@ -257,19 +355,6 @@ const Home = () => {
       redirect: "/enrollment",
       key: "8",
     },
-    // {
-    //   icon: FaUserLock,
-    //   title: "Staff Management",
-    //   value: staffs.length,
-    //   subtitle: "Administrative personnel",
-    //   color: "from-pink-500 to-pink-600",
-    //   iconBg: "bg-pink-100",
-    //   iconColor: "text-pink-600",
-    //   borderColor: "border-pink-600",
-    //   ringColor: "ring-pink-500/20",
-    //   redirect: "/staff-menu",
-    //   key: "4",
-    // },
     {
       icon: FaUserLock,
       title: "Agents",
@@ -306,7 +391,7 @@ const Home = () => {
       iconColor: "text-emerald-600",
       borderColor: "border-emerald-600",
       ringColor: "ring-emerald-500/20",
-        redirect: "/total-revenue", 
+      redirect: "/total-revenue",
       key: "6",
     },
     {
@@ -319,7 +404,7 @@ const Home = () => {
       iconColor: "text-sky-600",
       borderColor: "border-sky-600",
       ringColor: "ring-sky-500/20",
-       redirect: "/monthly-revenue",
+      redirect: "/monthly-revenue",
       key: "7",
     },
   ].filter(
@@ -349,7 +434,7 @@ const Home = () => {
             <h1 className="text-3xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 mb-2">
               Chit Intelligence Dashboard
             </h1>
-            <p className="text-gray-500 max-w-2xl text-lg ">
+            <p className="text-gray-500 max-w-2xl text-lg">
               Real-time analytics and performance metrics for your organization.
               Monitor key business indicators and make data-driven decisions.
             </p>
@@ -372,7 +457,9 @@ const Home = () => {
                     <div className="p-4">
                       <div className="flex items-start justify-between">
                         <div className={`p-2 rounded-xl ${card.iconBg} mb-4`}>
-                          <card.icon className={`w-5 h-5 ${card.iconColor}`} />
+                          <card.icon
+                            className={`w-5 h-5 ${card.iconColor}`}
+                          />
                         </div>
                         <span className="text-sm font-medium px-2 py-1 rounded-full bg-violet-50 ">
                           Live
@@ -398,9 +485,7 @@ const Home = () => {
                             Updated: Just now
                           </span>
                           <button
-                            onClick={() =>
-                              handleViewDetailsClick(card.redirect)
-                            }
+                            onClick={() => handleViewDetailsClick(card.redirect)}
                             className="text-md font-medium text-gray-600 hover:text-gray-900 transition-colors flex items-center"
                           >
                             View details
@@ -454,31 +539,136 @@ const Home = () => {
               </p>
             </div>
           )}
+
+          {/* RECENT TRANSACTIONS SECTION INTEGRATED FROM HOME 1 */}
+          <div className="mt-16">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Recent Transactions
+                </h2>
+                <p className="text-sm text-gray-500">Showing the latest activities</p>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="flex bg-gray-200 p-1 rounded-lg">
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`p-2 rounded-md transition-all ${
+                      viewMode === "grid"
+                        ? "bg-white shadow-sm text-blue-600"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    <BsGrid3X3GapFill size={18} />
+                  </button>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`p-2 rounded-md transition-all ${
+                      viewMode === "list"
+                        ? "bg-white shadow-sm text-blue-600"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    <BsListUl size={18} />
+                  </button>
+                </div>
+
+                <button
+                  onClick={getTransactions}
+                  className="bg-white border px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50"
+                >
+                  Refresh
+                </button>
+              </div>
+            </div>
+
+            {transactionsLoading ? (
+              <div className="space-y-4">
+                <div className="h-20 bg-gray-200 animate-pulse rounded-md" />
+                <div className="h-20 bg-gray-200 animate-pulse rounded-md" />
+              </div>
+            ) : (
+              <div
+                className={
+                  viewMode === "grid"
+                    ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                    : "flex flex-col border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm"
+                }
+              >
+                {viewMode === "list" && tableTransactions.length > 0 && (
+                  <div className="grid grid-cols-[60px_140px_1fr_1.5fr_100px_100px_120px] items-center bg-gray-100 p-4 border-b border-gray-200 font-bold text-[10px] text-gray-500 uppercase tracking-wider gap-4">
+                    <div>ID</div>
+                    <div className="text-left">Transaction Date</div>
+                    <div>Customer</div>
+                    <div>Details</div>
+                    <div>Type</div>
+                    <div>Status</div>
+                    <div className="text-right">Agent</div>
+                  </div>
+                )}
+
+                {tableTransactions.length > 0 ? (
+                  tableTransactions.map((item) => (
+                    <Receipt
+                      key={item?.id}
+                      {...item}
+                      status={item?.statusRaw}
+                      viewMode={viewMode}
+                    />
+                  ))
+                ) : (
+                  <div className="p-20 text-center text-gray-400 italic">
+                    No transactions found
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+          {/* END RECENT TRANSACTIONS SECTION */}
         </div>
       </div>
 
-   
       {showPasswordPrompt && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4 animate-fade-in">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 transform transition-all duration-300 scale-100 hover:scale-[1.01]">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-800"> Secure Access Required</h2>
+              <h2 className="text-xl font-bold text-gray-800">
+                {" "}
+                Secure Access Required
+              </h2>
               <button
                 onClick={() => setShowPasswordPrompt(false)}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
 
             <p className="text-gray-600 text-sm mb-6">
-              Please enter your admin password to proceed to <span className="font-medium text-violet-600">{selectedRedirect} page</span>
+              Please enter your admin password to proceed to{" "}
+              <span className="font-medium text-violet-600">
+                {selectedRedirect} page
+              </span>
             </p>
 
             <div className="mb-6">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Password
               </label>
               <input
@@ -492,8 +682,16 @@ const Home = () => {
               />
               {errorMsg && (
                 <p className="mt-2 text-sm text-red-500 font-medium flex items-center">
-                  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                   {errorMsg}
                 </p>
@@ -512,16 +710,33 @@ const Home = () => {
                 onClick={verifyPasswordAndRedirect}
                 disabled={isLoadingVerify}
                 className={`flex-1 py-3 px-4 font-medium rounded-xl shadow-md transition-all duration-200 flex items-center justify-center
-                  ${isLoadingVerify
-                    ? "bg-violet-400 cursor-not-allowed opacity-80"
-                    : "bg-gradient-to-r from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700 text-white hover:shadow-lg"
+                  ${
+                    isLoadingVerify
+                      ? "bg-violet-400 cursor-not-allowed opacity-80"
+                      : "bg-gradient-to-r from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700 text-white hover:shadow-lg"
                   }`}
               >
                 {isLoadingVerify ? (
                   <>
-                    <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg
+                      className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
                     </svg>
                     Verifying...
                   </>

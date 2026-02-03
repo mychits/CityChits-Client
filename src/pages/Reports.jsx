@@ -42,6 +42,7 @@ import { LiaPeopleCarrySolid } from "react-icons/lia";
 import { MdPersonOff } from "react-icons/md";
 import { FaMobileAlt } from "react-icons/fa";
 import { PiMoneyDuotone } from "react-icons/pi";
+import { TfiGift } from "react-icons/tfi";
 
 
   const GlobalSearchChangeHandler = (e) => {
@@ -346,6 +347,26 @@ const subMenus = [
     color: "from-violet-500 to-violet-600",
     isNew: false,
   },
+
+      {
+    id: "40",
+    title: "Redemption Points Report",
+    link: "/reports/redemtion-points",
+    category: "Employee",
+    Icon: TfiGift,
+    color: "from-blue-500 to-blue-600",
+    isNew: false,
+  },
+   {
+    id: "41",
+    title: "Loan Completion Report",
+    link: "/reports/loan-completion-report",
+    category: "Customer",
+    Icon: GiMoneyStack,
+    color: "from-blue-500 to-blue-600",
+    isNew: false,
+  },
+  
   
 ];
 

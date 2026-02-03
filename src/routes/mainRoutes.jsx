@@ -171,6 +171,16 @@ import AdvanceSalary from "../pages/AdvanceSalary";
 
 import PaymentLinkTransactions from "../pages/PaymentLinkTransactions";
 
+import CustomerRewardPoints from "../pages/CustomerRewards"
+import RedemptionPointsReport from "../pages/RedemptionPointsReport";
+import LoanCompletionReport from "../pages/LoanCompletionReport";
+import HelpAndSupport from "../pages/HelpAndSupport";
+import ComplaintForm from "../pages/ComplaintForm";
+import Supports from "../pages/Supports";
+import EmployeeRewardPoints from "../pages/EmployeeRewardPoints";
+import RewardSettings from "../pages/RewardSettings";
+import RewardMenu from "../pages/RewardsMenu";
+
 const mainRoutes = createBrowserRouter([
   {
     path: "/",
@@ -190,6 +200,30 @@ const mainRoutes = createBrowserRouter([
       <ProtectedRoute>
         <Navbar />
         <QuickSearch />
+      </ProtectedRoute>
+    ),
+  },
+       {
+    path: "/help",
+    element: (
+      <ProtectedRoute>
+        <HelpAndSupport/>
+      </ProtectedRoute>
+    ),
+  },
+     {
+    path: "/help&support",
+    element: (
+      <ProtectedRoute>
+        <HelpAndSupport/>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/help-support",
+    element: (
+      <ProtectedRoute>
+        <ComplaintForm/>
       </ProtectedRoute>
     ),
   },
@@ -213,6 +247,39 @@ const mainRoutes = createBrowserRouter([
         <Group />
       </ProtectedRoute>
     ),
+  },
+    {
+    path: "/supports",
+    element: (
+      <ProtectedRoute>
+       <Supports/>
+      </ProtectedRoute>
+    ),
+  },
+           {
+    path: "/reward-menu",
+    element: (
+      <ProtectedRoute>
+        <RewardMenu />
+      </ProtectedRoute>
+    ),
+  },
+        {
+    path: "/reward-menu/employee-reward-points",
+    element: ( <ProtectedRoute> <EmployeeRewardPoints/> </ProtectedRoute>),
+  },
+       {
+    path: "/reward-menu/customer-reward-points",
+    element: ( <ProtectedRoute> <CustomerRewardPoints/> </ProtectedRoute>),
+  },
+
+        {
+    path: "/employee-reward-points",
+    element: <EmployeeRewardPoints/>
+  },
+     {
+    path: "/reward-settings",
+    element: <RewardSettings/>
   },
 
       { path: "customer-view", element: <CustomerView /> },
@@ -862,6 +929,8 @@ const mainRoutes = createBrowserRouter([
         path: "employee-deduction-report",
         element: <EmployeeDeductionReport />,
       },
+        {path:"redemtion-points", element: <RedemptionPointsReport/>},
+      {path: "loan-completion-report", element: <LoanCompletionReport/>},
     ],
   },
 
