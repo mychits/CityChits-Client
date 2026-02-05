@@ -1,376 +1,369 @@
 import { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import GlobalSearchBar from "../search/GlobalSearchBar";
-import { MdKeyboardArrowDown, MdOutlineArrowCircleLeft } from "react-icons/md";
-import { CgProfile } from "react-icons/cg";
-import { IoMdMore, IoIosNotifications } from "react-icons/io";
-import { HiX } from "react-icons/hi";
-import { BiMenu } from "react-icons/bi";
-import { AiOutlineLogout } from "react-icons/ai";
-import hotkeys from "../../data/hotKeys";
+import { HiOutlineMenu, HiX, HiSearch } from "react-icons/hi";
+import { IoIosNotifications, IoIosHelpCircle } from "react-icons/io";
+import { AiOutlineUser, AiOutlineSetting } from "react-icons/ai";
+import { CgProfile, CgWebsite } from "react-icons/cg";
+import { FaChevronDown, FaExternalLinkAlt } from "react-icons/fa";
+import { MdAdminPanelSettings } from "react-icons/md";
+import sidebarMenu from "../../data/sidebarMenu"; // Importing your EXACT data
 import CityChits from "../../assets/images/mychits.png";
 
-const Navbar = ({
-  onGlobalSearchChangeHandler = () => {},
-  visibility = false,
-  showMobileSidebar = false,
-  setShowMobileSidebar = () => {},
-}) => {
+const Navbar = ({ onGlobalSearchChangeHandler = () => {} }) => {
   const navigate = useNavigate();
-  const [showHotKeys, setShowHotKeys] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
-  const [adminName, setAdminName] = useState("Super Admin");
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [showProfileCard, setShowProfileCard] = useState(false);
-  const notificationRef = useRef(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeMegaMenu, setActiveMegaMenu] = useState(null); // 'operations', 'finance', 'system'
+  const [showHotkeys, setShowHotkeys] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [adminName, setAdminName] = useState("Admin");
+
   const profileRef = useRef(null);
 
-  // Quick approvals data
-  const quickApprovals = [
-    {
-      title: "Payment Link Transactions",
-      href: "/payment-link-transactions",
-      color: "text-green-400",
-    },
-    {
-      title: "Unverified Customers",
-      href: "/approval-menu/un-approved-customer",
-      color: "text-blue-400",
-    },
-    {
-      title: "Mobile Enrollments",
-      href: "/approval-menu/mobile-app-enroll",
-      color: "text-amber-400",
-    },
-    {
-      title: "Unapproved Loans",
-      href: "/approval-menu/un-approved-loans",
-      color: "text-red-400",
-    },
-  ];
+  // --- CATEGORIZATION LOGIC ---
+  // We dynamically sort your sidebarMenu into these buckets for the Top Nav
+  const menuCategories = {
+    overview: sidebarMenu.filter(m => ["Dashboard", "AI Search"].includes(m.title)),
+    operations: sidebarMenu.filter(m => 
+      ["Groups", "Customers", "Enrollments", "Legals", "Staff", "Tasks", "Target Management", "Penalty Monitor", "Leads"].includes(m.title)
+    ),
+    finance: sidebarMenu.filter(m => 
+      ["Other Services", "Approvals", "Auctions", "Accounts", "Reports", "Marketing"].includes(m.title)
+    ),
+    system: sidebarMenu.filter(m => 
+      ["General Settings", "Other Sites", "Setting", "Help & Support"].includes(m.title)
+    )
+  };
 
+  // --- EFFECTS ---
+  useEffect(() => {
+    try {
+      const usr = localStorage.getItem("user");
+      if (usr) setAdminName(JSON.parse(usr)?.admin_name || "Admin");
+    } catch (e) { console.error(e); }
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) setShowProfile(false);
+      if (!event.target.closest('.nav-group') && !eventTargetMatchesCommand) setActiveMegaMenu(null);
+    };
+    let eventTargetMatchesCommand = false;
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Close dropdowns on route change
+  useEffect(() => {
+    setActiveMegaMenu(null);
+    setMobileMenuOpen(false);
+  }, [navigate]);
+
+  // --- HANDLERS ---
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/");
   };
 
-  useEffect(() => {
-    try {
-      const usr = localStorage.getItem("user");
-      if (usr) {
-        const admin = JSON.parse(usr);
-        setAdminName(admin?.admin_name || "Super Admin");
-      }
-    } catch (e) {
-      console.error("Failed to parse user from localStorage:", e);
-    }
-  }, []);
-
-  // Click outside handler for dropdowns
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        notificationRef.current &&
-        !notificationRef.current.contains(event.target)
-      ) {
-        setShowNotifications(false);
-      }
-      if (profileRef.current && !profileRef.current.contains(event.target)) {
-        setShowProfileCard(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [notificationRef, profileRef]);
-
   return (
     <>
-      <style>{`
-        @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        .animate-slide-down {
-          animation: slideDown 0.2s ease-out;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #1e1b4b;
-          border-radius: 10px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #6d28d9;
-          border-radius: 10px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #7c3aed;
-        }
-      `}</style>
-      
-      <nav className="w-full fixed z-50 top-0 left-0">
-        <div className="flex items-center justify-between bg-violet-900 shadow-xl backdrop-blur-md bg-opacity-95 px-4 sm:px-8 py-3 flex-wrap md:flex-nowrap">
-
-          {/* Logo */}
-          <button
-            onClick={() => navigate("/")}
-            className="flex items-center space-x-2 sm:space-x-4 text-white transition-transform duration-300 hover:scale-105"
-          >
-            <img src={CityChits} alt="Logo" className="h-10 sm:h-12 w-auto" />
-            <span className="hidden sm:block font-extrabold text-2xl bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              My Chits New
-            </span>
-          </button>
-
-          {/* Center Search */}
-          <div className="flex items-center flex-1 justify-center">
-            <button
-              onClick={() => navigate(-1)}
-              className="p-2 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 text-white hidden sm:block"
-              aria-label="Go Back"
-            >
-              <MdOutlineArrowCircleLeft size={24} />
+      {/* --- TOP NAVIGATION BAR --- */}
+      <nav className="fixed top-0 left-0 w-full h-[80px] bg-white/90 backdrop-blur-xl border-b border-slate-200/60 z-50 transition-all duration-300 shadow-sm">
+        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+          
+          {/* 1. LOGO & BRANDING */}
+          <div className="flex items-center gap-3 shrink-0">
+            <button onClick={() => navigate("/")} className="flex items-center gap-2.5 group">
+              <img src={CityChits} alt="Logo" className="h-10 w-auto transition-transform group-hover:scale-105" />
+              <div className="hidden md:block">
+                <h1 className="text-xl font-black tracking-tight text-slate-900 leading-none">My Chits</h1>
+                <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">Enterprise Suite</span>
+              </div>
             </button>
+          </div>
 
-            <div className="flex items-center bg-white bg-opacity-20 backdrop-blur-md rounded-full px-4 py-2 w-full max-w-3xl">
-              <GlobalSearchBar
-                onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-                visibility={visibility}
-              />
-              <button
-                onClick={() => setShowHotKeys(!showHotKeys)}
-                className={`ml-2 p-2 rounded-full text-white transition-transform duration-300 hover:scale-110 ${
-                  showHotKeys ? "rotate-180" : ""
-                }`}
-                aria-label="Toggle Hotkeys"
+          {/* 2. CENTER NAVIGATION (Mega Menu Triggers) */}
+          <div className="hidden xl:flex items-center h-full gap-1">
+            
+            {/* Overview Group (Direct Links) */}
+            {menuCategories.overview.map((item) => (
+              <NavLink 
+                key={item.id} 
+                to={item.link}
+                className={({ isActive }) => 
+                  `px-4 py-2 text-sm font-bold rounded-xl transition-all duration-200 flex items-center gap-2
+                  ${isActive ? "text-indigo-600 bg-indigo-50" : "text-slate-600 hover:text-indigo-600 hover:bg-slate-50"}`
+                }
               >
-                <MdKeyboardArrowDown size={22} />
+                {item.icon && <item.icon size={18} />}
+                {item.title}
+              </NavLink>
+            ))}
+
+            {/* Operations Mega Menu */}
+            <div 
+              className="nav-group h-full flex items-center px-2 cursor-pointer group"
+              onMouseEnter={() => setActiveMegaMenu('operations')}
+            >
+              <button className={`flex items-center gap-1.5 px-3 py-2 text-sm font-bold rounded-xl transition-all duration-200 ${activeMegaMenu === 'operations' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-50'}`}>
+                Operations <FaChevronDown size={10} className={`transition-transform ${activeMegaMenu === 'operations' ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+
+            {/* Finance Mega Menu */}
+            <div 
+              className="nav-group h-full flex items-center px-2 cursor-pointer group"
+              onMouseEnter={() => setActiveMegaMenu('finance')}
+            >
+              <button className={`flex items-center gap-1.5 px-3 py-2 text-sm font-bold rounded-xl transition-all duration-200 ${activeMegaMenu === 'finance' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-50'}`}>
+                Finance <FaChevronDown size={10} className={`transition-transform ${activeMegaMenu === 'finance' ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+
+            {/* System Dropdown */}
+            <div 
+              className="nav-group h-full flex items-center px-2 cursor-pointer group"
+              onMouseEnter={() => setActiveMegaMenu('system')}
+            >
+              <button className={`flex items-center gap-1.5 px-3 py-2 text-sm font-bold rounded-xl transition-all duration-200 ${activeMegaMenu === 'system' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-50'}`}>
+                System <FaChevronDown size={10} className={`transition-transform ${activeMegaMenu === 'system' ? 'rotate-180' : ''}`} />
               </button>
             </div>
           </div>
 
-          {/* Right Section */}
-          <div className="flex items-center space-x-3">
-            {/* Notification Icon with Quick Approvals */}
-            <div className="relative" ref={notificationRef}>
-              <button
-                onClick={() => setShowNotifications(!showNotifications)}
-                className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 transform hover:scale-105 ${
-                  showNotifications
-                    ? "bg-gradient-to-br from-purple-600 to-purple-700 text-white shadow-lg"
-                    : "bg-white bg-opacity-20 text-white hover:bg-opacity-30"
-                }`}
-              >
-                <IoIosNotifications className="text-2xl" />
-                <span className="absolute -top-1 -right-1 h-5 w-5 bg-gradient-to-br from-pink-500 to-pink-600 rounded-full border-2 border-white flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">{quickApprovals.length}</span>
-                </span>
-              </button>
-
-              {showNotifications && (
-                <div className="absolute right-0 mt-4 w-96 bg-violet-800 rounded-2xl shadow-2xl border border-violet-600 overflow-hidden animate-slide-down">
-                  {/* Header with gradient */}
-                  <div className="px-6 py-5 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h3 className="font-bold text-lg">Pending Approvals</h3>
-                        <p className="text-purple-100 text-xs mt-0.5">
-                          Action required on these items
-                        </p>
-                      </div>
-                      <div className="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                        <span className="text-sm font-bold">{quickApprovals.length}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Body */}
-                  <div className="max-h-80 overflow-y-auto custom-scrollbar">
-                    {quickApprovals.map((item, index) => (
-                      <NavLink
-                        key={index}
-                        to={item.href}
-                        onClick={() => setShowNotifications(false)}
-                        className="flex items-center gap-4 px-6 py-4 hover:bg-violet-700 transition-all duration-200 border-b border-violet-700 last:border-0 group"
-                      >
-                        <div className="flex-1 min-w-0">
-                          <p
-                            className={`font-semibold text-sm ${item.color} group-hover:text-white transition-colors`}
-                          >
-                            {item.title}
-                          </p>
-                          <p className="text-xs text-purple-200 mt-0.5">
-                            Requires immediate attention
-                          </p>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-                              item.color === "text-blue-400"
-                                ? "bg-blue-900 text-blue-300"
-                                : item.color === "text-amber-400"
-                                ? "bg-amber-900 text-amber-300"
-                                : item.color === "text-green-400"
-                                ? "bg-green-900 text-green-300"
-                                : "bg-red-900 text-red-300"
-                            }`}
-                          >
-                            Pending
-                          </span>
-                          <svg
-                            className="w-5 h-5 text-purple-400 group-hover:text-white group-hover:translate-x-1 transition-all"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5l7 7-7 7"
-                            />
-                          </svg>
-                        </div>
-                      </NavLink>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Enhanced Profile Section */}
-            <div className="relative" ref={profileRef}>
-              <button
-                onClick={() => setShowProfileCard(!showProfileCard)}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-all duration-300 transform hover:scale-105 ${
-                  showProfileCard
-                    ? "bg-gradient-to-br from-purple-600 to-purple-700 text-white shadow-lg"
-                    : "bg-white bg-opacity-20 text-white hover:bg-opacity-30"
-                }`}
-              >
-                <CgProfile className="text-xl" />
-                <p className="font-semibold text-sm hidden sm:block">{adminName}</p>
-              </button>
-
-              {showProfileCard && (
-                <div className="absolute right-0 mt-4 w-80 bg-violet-800 rounded-2xl shadow-2xl border border-violet-600 overflow-hidden animate-slide-down">
-                  {/* Header with gradient and avatar */}
-                  <div className="relative h-28 bg-gradient-to-br from-purple-700 to-pink-700">
-                    <div className="absolute inset-0 bg-black/10"></div>
-                    <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
-                      <div className="w-24 h-24 rounded-2xl bg-violet-900 shadow-xl flex items-center justify-center ring-4 ring-violet-700">
-                        <CgProfile className="text-5xl text-purple-400" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Profile Info */}
-                  <div className="pt-16 px-6 pb-6">
-                    <div className="text-center mb-6">
-                      <h3 className="font-bold text-xl text-white">
-                        {adminName}
-                      </h3>
-
-                      <div className="inline-flex items-center gap-2 mt-3 px-3 py-1.5 bg-green-900 bg-opacity-50 rounded-full">
-                        <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                        <span className="text-xs font-semibold text-green-400">
-                          Active Now
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Stats Cards */}
-                    <div className="grid grid-cols-2 gap-3 mb-6">
-                      <div className="bg-gradient-to-br from-purple-700 to-purple-800 rounded-xl p-4 text-center">
-                        <p className="text-xs text-purple-300 font-medium mb-1">
-                          Last Login
-                        </p>
-                        <p className="text-sm font-bold text-white">
-                          {new Date().toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </p>
-                      </div>
-                      <div className="bg-gradient-to-br from-pink-700 to-pink-800 rounded-xl p-4 text-center">
-                        <p className="text-xs text-pink-300 font-medium mb-1">
-                          Session
-                        </p>
-                        <p className="text-sm font-bold text-white">
-                          Active
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="space-y-2">
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
-                      >
-                        <AiOutlineLogout className="text-lg" />
-                        <span className="text-sm font-semibold">Logout</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Mobile Menu Toggle */}
-            <button
-              onClick={() => setShowMobileSidebar(!showMobileSidebar)}
-              className="p-2 rounded-full bg-white bg-opacity-20 text-white hover:bg-opacity-30 md:hidden"
+          {/* 3. RIGHT ACTIONS */}
+          <div className="flex items-center gap-3">
+            
+            {/* Hotkeys Trigger */}
+            <button 
+              onClick={() => setShowHotkeys(true)}
+              className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-xs font-bold text-slate-500 hover:text-indigo-600 hover:border-indigo-200 transition-all"
             >
-              {showMobileSidebar ? <HiX size={24} /> : <BiMenu size={24} />}
+              <span>⌘</span><span>K</span>
+            </button>
+
+            {/* Notifications */}
+            <button className="relative p-2.5 rounded-full text-slate-500 hover:bg-slate-100 hover:text-indigo-600 transition-colors">
+              <IoIosNotifications size={22} />
+              <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-rose-500 border-2 border-white rounded-full"></span>
+            </button>
+
+            {/* Profile */}
+            <div className="relative" ref={profileRef}>
+              <button 
+                onClick={() => setShowProfile(!showProfile)}
+                className="flex items-center gap-2 pl-1 pr-3 py-1.5 rounded-full hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100"
+              >
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-md">
+                  {adminName.charAt(0)}
+                </div>
+                <div className="hidden lg:block text-left">
+                  <p className="text-xs font-bold text-slate-800 leading-none">{adminName}</p>
+                  <p className="text-[10px] text-slate-500 font-medium mt-0.5">Admin</p>
+                </div>
+              </button>
+
+              {showProfile && (
+                <div className="absolute right-0 mt-3 w-56 bg-white border border-slate-100 rounded-2xl shadow-xl py-2 z-50 animate-fadeInUp">
+                   <div className="px-4 py-2 border-b border-slate-50">
+                     <p className="text-xs font-bold text-slate-400">ACCOUNT</p>
+                     <p className="text-sm font-bold text-slate-800">{adminName}</p>
+                   </div>
+                   <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-rose-600 hover:bg-rose-50 transition-colors text-left">
+                     <AiOutlineUser /> Sign Out
+                   </button>
+                </div>
+              )}
+            </div>
+
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="xl:hidden p-2 text-slate-600"
+            >
+              {mobileMenuOpen ? <HiX size={26} /> : <HiOutlineMenu size={26} />}
             </button>
           </div>
         </div>
 
-        {/* Hotkeys Dropdown */}
-        {showHotKeys && (
-          <div className="bg-violet-800 bg-opacity-90 backdrop-blur-md border-4 border-violet-600 px-5 py-5 mt-3 mx-4 sm:mx-8 rounded-2xl shadow-2xl animate-slideDown">
-            <h3 className="text-white font-bold text-lg mb-4 text-center">
-              Quick Actions
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {hotkeys.map(({ key, title, path }) => (
-                <NavLink
-                  key={key}
-                  to={path}
-                  className={({ isActive }) =>
-                    `text-center py-3 rounded-lg font-semibold shadow-md transition-all ${
-                      isActive
-                        ? "bg-purple-600 text-white"
-                        : "bg-violet-700 text-white hover:bg-violet-600"
-                    }`
-                  }
-                >
-                  {title}
-                </NavLink>
+        {/* --- MEGA MENUS (Overlay Content) --- */}
+        <div className={`absolute top-[80px] left-0 w-full bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-2xl z-40 transition-all duration-300 origin-top ${activeMegaMenu ? 'opacity-100 visible' : 'opacity-0 invisible h-0 overflow-hidden'}`}>
+          <div className="max-w-[1600px] mx-auto p-8">
+            
+            {activeMegaMenu === 'operations' && (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div className="col-span-1 border-r border-slate-100 pr-6">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Core Operations</h3>
+                  <div className="space-y-1">
+                     {menuCategories.operations.slice(0, 4).map(item => <MegaMenuItem key={item.id} item={item} />)}
+                  </div>
+                </div>
+                <div className="col-span-1 border-r border-slate-100 pr-6">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Management</h3>
+                  <div className="space-y-1">
+                     {menuCategories.operations.slice(4, 7).map(item => <MegaMenuItem key={item.id} item={item} />)}
+                  </div>
+                </div>
+                <div className="col-span-2">
+                   <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Quick Access</h3>
+                   <div className="grid grid-cols-2 gap-4">
+                     {menuCategories.operations.slice(7).map(item => <MegaMenuItem key={item.id} item={item} />)}
+                   </div>
+                </div>
+              </div>
+            )}
+
+            {activeMegaMenu === 'finance' && (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div className="col-span-1">
+                   <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Financials</h3>
+                   <div className="space-y-1">
+                     {menuCategories.finance.map(item => <MegaMenuItem key={item.id} item={item} />)}
+                   </div>
+                </div>
+                <div className="col-span-3 bg-indigo-50/50 rounded-2xl p-6 flex items-center justify-between">
+                   <div>
+                     <h4 className="font-bold text-indigo-900">Revenue Reports</h4>
+                     <p className="text-sm text-indigo-600 mt-1">View detailed analytics for this quarter.</p>
+                   </div>
+                   <button onClick={() => navigate("/reports")} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-indigo-200">Go to Reports</button>
+                </div>
+              </div>
+            )}
+
+            {activeMegaMenu === 'system' && (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div className="col-span-2">
+                   <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">General Settings</h3>
+                   <div className="grid grid-cols-2 gap-4">
+                      {/* Handling nested submenus from your data */}
+                      {menuCategories.system.find(i => i.title === "General Settings")?.submenuItems?.map(sub => (
+                        <div key={sub.id} className="group">
+                           <NavLink to={sub.link} className="block p-3 rounded-xl hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-100 transition-all">
+                             <div className="flex items-center gap-3 mb-1">
+                                <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">{sub.icon && <sub.icon size={16}/>}</div>
+                                <span className="text-sm font-bold text-slate-700">{sub.title}</span>
+                             </div>
+                           </NavLink>
+                        </div>
+                      ))}
+                   </div>
+                </div>
+                <div className="col-span-1 border-l border-slate-100 pl-8">
+                   <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">External</h3>
+                   <div className="space-y-1">
+                      {menuCategories.system.find(i => i.title === "Other Sites")?.submenuItems?.map(sub => (
+                        <a key={sub.id} href={sub.link} target={sub.newTab ? "_blank" : "_self"} rel="noreferrer" className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-indigo-600 text-sm font-medium transition-colors">
+                           <CgWebsite size={14} /> {sub.title} {sub.newTab && <FaExternalLinkAlt size={10} className="opacity-50"/>}
+                        </a>
+                      ))}
+                   </div>
+                </div>
+                <div className="col-span-1 border-l border-slate-100 pl-8">
+                   <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Support</h3>
+                   <div className="space-y-1">
+                      {menuCategories.system.filter(i => ["Setting", "Help & Support"].includes(i.title)).map(item => <MegaMenuItem key={item.id} item={item} />)}
+                   </div>
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+      </nav>
+
+      {/* --- MOBILE MENU (Simplified for touch) --- */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 bg-white z-40 pt-24 px-6 xl:hidden animate-fadeIn overflow-y-auto">
+          <div className="space-y-6 pb-10">
+            {/* Mobile: Overview */}
+            <div>
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Overview</h3>
+              {menuCategories.overview.map(item => <MobileMenuItem key={item.id} item={item} />)}
+            </div>
+            {/* Mobile: Operations */}
+            <div>
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Operations</h3>
+              <div className="space-y-1 pl-2 border-l-2 border-slate-100">
+                 {menuCategories.operations.map(item => <MobileMenuItem key={item.id} item={item} />)}
+              </div>
+            </div>
+             {/* Mobile: Finance */}
+             <div>
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Finance</h3>
+              <div className="space-y-1 pl-2 border-l-2 border-slate-100">
+                 {menuCategories.finance.map(item => <MobileMenuItem key={item.id} item={item} />)}
+              </div>
+            </div>
+            {/* Mobile: System */}
+             <div>
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">System</h3>
+              <div className="space-y-1 pl-2 border-l-2 border-slate-100">
+                 {menuCategories.system.map(item => <MobileMenuItem key={item.id} item={item} />)}
+              </div>
+            </div>
+            <button onClick={handleLogout} className="w-full py-3 text-left text-rose-600 font-bold">Sign Out</button>
+          </div>
+        </div>
+      )}
+
+      {/* --- HOTKEYS MODAL (Command Palette) --- */}
+      {showHotkeys && (
+        <div className="fixed inset-0 z-[60] flex items-start justify-center pt-[20vh]">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowHotkeys(false)}></div>
+          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden relative z-10 animate-fadeInUp">
+            <div className="p-4 border-b border-slate-100 flex items-center gap-3">
+              <HiSearch className="text-slate-400 text-xl" />
+              <input autoFocus type="text" placeholder="Type a command or search..." className="flex-1 bg-transparent border-none outline-none text-lg font-medium text-slate-800" />
+              <span className="text-xs font-bold text-slate-400 border border-slate-200 rounded px-2 py-1">ESC</span>
+            </div>
+            <div className="max-h-[60vh] overflow-y-auto p-2">
+              <div className="px-3 py-2 text-xs font-bold text-slate-400 uppercase">Navigation</div>
+              {[...menuCategories.overview, ...menuCategories.operations].slice(0, 6).map((item, idx) => (
+                <div key={item.id} onClick={() => { navigate(item.link); setShowHotkeys(false); }} className="flex items-center justify-between p-3 hover:bg-indigo-50 rounded-xl cursor-pointer group transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-slate-100 text-slate-600 rounded-lg group-hover:bg-white group-hover:text-indigo-600 group-hover:shadow-sm transition-all">
+                      {item.icon && <item.icon size={16} />}
+                    </div>
+                    <span className="font-medium text-slate-700">{item.title}</span>
+                  </div>
+                  <span className="text-xs font-bold text-slate-300 bg-slate-50 px-2 py-1 rounded">⌘{idx + 1}</span>
+                </div>
               ))}
             </div>
           </div>
-        )}
-      </nav>
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
+        .animate-fadeInUp { animation: fadeInUp 0.2s ease-out; }
+      `}</style>
     </>
+  );
+};
+
+// Helper for Mega Menu Items
+const MegaMenuItem = ({ item }) => {
+  const navigate = useNavigate();
+  return (
+    <NavLink 
+      to={item.link} 
+      onClick={() => window.location.hash = item.link} // Force refresh if needed or just navigate
+      className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 hover:text-indigo-600 text-slate-600 transition-all group"
+    >
+      {item.icon && <item.icon size={18} className="opacity-70 group-hover:opacity-100" />}
+      <span className="text-sm font-semibold">{item.title}</span>
+    </NavLink>
+  );
+};
+
+const MobileMenuItem = ({ item }) => {
+  return (
+    <NavLink to={item.link} className="block py-3 text-base font-medium text-slate-700 hover:text-indigo-600 border-b border-slate-50 last:border-0">
+      {item.title}
+    </NavLink>
   );
 };
 

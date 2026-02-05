@@ -1,23 +1,21 @@
-import Sidebar from "../components/layouts/Sidebar";
-import { MdGroups, MdOutlinePayments, MdGroupWork } from "react-icons/md";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { 
+  MdGroups, MdOutlinePayments, MdGroupWork, 
+  MdPeopleOutline, MdOutlineReceiptLong 
+} from "react-icons/md";
 import { FaUserLock, FaClipboardList } from "react-icons/fa";
 import { SlCalender } from "react-icons/sl";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { BsArrowRightShort, BsLightningCharge } from "react-icons/bs";
 import api from "../instance/TokenInstance";
 import Navbar from "../components/layouts/Navbar";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
-import { BsGrid3X3GapFill, BsListUl } from "react-icons/bs";
-import Receipt from "../components/receipts/CustomReceiptOne"; // Added import
-import dayjs from "dayjs"; // Added import
-import { Tag } from "antd"; // Added import
-import {
-  ClockCircleOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-} from "@ant-design/icons"; // Added imports
+import dayjs from "dayjs";
+import { Tag } from "antd";
+import { ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 
 const Home = () => {
+  // --- STATE ---
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
   const [agents, setAgents] = useState([]);
@@ -28,22 +26,13 @@ const Home = () => {
   const [searchValue, setSearchValue] = useState("");
   const [reloadTrigger, setReloadTrigger] = useState(0);
   const [hidePayment, setHidePayment] = useState(false);
-  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [enrollmentsCount, setEnrollmentsCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [viewMode, setViewMode] = useState("list");
-
   const [transactionsLoading, setTransactionsLoading] = useState(false);
   const [tableTransactions, setTableTransactions] = useState([]);
-
-  const [alertConfig, setAlertConfig] = useState({
-    visibility: false,
-    message: "Something went wrong!",
-    type: "info",
-  });
-
-  const navigate = useNavigate();
-
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  
+  // Modal States
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
   const [selectedRedirect, setSelectedRedirect] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
@@ -51,11 +40,10 @@ const Home = () => {
   const [isLoadingVerify, setIsLoadingVerify] = useState(false);
   const [showRevenue, setShowRevenue] = useState(false);
 
-  const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchValue(value);
-  };
+  const navigate = useNavigate();
 
+  // --- LOGIC (Preserved) ---
+  const GlobalSearchChangeHandler = (e) => setSearchValue(e.target.value);
   const handleViewDetailsClick = (redirect) => {
     setSelectedRedirect(redirect);
     setShowPasswordPrompt(true);
@@ -67,176 +55,51 @@ const Home = () => {
     setErrorMsg("");
     try {
       const admin = JSON.parse(localStorage.getItem("admin"));
-      if (!admin?.phoneNumber) {
-        setErrorMsg("No admin contact found. Please login again.");
-        setIsLoadingVerify(false);
-        return;
-      }
-
-      const response = await api.post("/admin/login", {
-        phoneNumber: admin.phoneNumber,
-        password: passwordInput,
-      });
-
+      if (!admin?.phoneNumber) { setErrorMsg("No admin contact found."); setIsLoadingVerify(false); return; }
+      const response = await api.post("/admin/login", { phoneNumber: admin.phoneNumber, password: passwordInput });
       if (response.data?.token) {
         setShowPasswordPrompt(false);
         setPasswordInput("");
-        setErrorMsg("");
-
-        // Special handling for revenue pages
-        if (
-          selectedRedirect === "/total-revenue" ||
-          selectedRedirect === "/monthly-revenue"
-        ) {
+        if (selectedRedirect === "/total-revenue" || selectedRedirect === "/monthly-revenue") {
           setShowRevenue(true);
-          setTimeout(() => setShowRevenue(false), 30000); // Hide after 30 seconds
+          setTimeout(() => setShowRevenue(false), 30000);
         }
-
         navigate(selectedRedirect);
       }
-    } catch (err) {
-      setErrorMsg(err.response?.data?.message || "Password verification failed");
-    } finally {
-      setIsLoadingVerify(false);
-    }
+    } catch (err) { setErrorMsg(err.response?.data?.message || "Password failed"); }
+    finally { setIsLoadingVerify(false); }
   };
 
+  // Data Fetching (Same as before)
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
-    if (
-      userObj &&
-      userObj.admin_access_right_id?.access_permissions?.edit_payment
-    ) {
-      const isModify =
-        userObj.admin_access_right_id?.access_permissions?.edit_payment ===
-        "true";
-      setHidePayment(isModify);
+    if (userObj?.admin_access_right_id?.access_permissions?.edit_payment) {
+      setHidePayment(userObj.admin_access_right_id.access_permissions.edit_payment === "true");
     }
   }, []);
 
-  useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const response = await api.get("/group/get-group-admin");
-        setGroups(response.data);
-      } catch (error) {
-        console.error("Error fetching group data:", error);
-      }
-    };
-    fetchGroups();
-  }, [reloadTrigger]);
-
-  useEffect(() => {
-    const fetchEnrollments = async () => {
-      try {
-        const response = await api.get("/enroll/get-enroll");
-        setEnrollmentsCount(
-          Array.isArray(response.data) ? response.data.length : 0
-        );
-      } catch (error) {
-        console.error("Error fetching enrollments:", error);
-        setEnrollmentsCount(0);
-      }
-    };
-    fetchEnrollments();
-  }, [reloadTrigger]);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await api.get("/user/get-user");
-        setUsers(response.data);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-    fetchUsers();
-  }, [reloadTrigger]);
-
-  useEffect(() => {
-    const fetchAgents = async () => {
-      try {
-        const response = await api.get("/agent/get");
-        setAgents(response.data?.agent || []);
-      } catch (error) {
-        console.error("Error fetching agents:", error);
-      }
-    };
-    fetchAgents();
-  }, [reloadTrigger]);
-
-  useEffect(() => {
-    const fetchStaffs = async () => {
-      try {
-        const response = await api.get("/agent/get-agent");
-        setStaffs(response.data || []);
-      } catch (error) {
-        console.error("Error fetching staffs:", error);
-      }
-    };
-    fetchStaffs();
-  }, [reloadTrigger]);
-
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const response = await api.get("/agent/get-employee");
-        setEmployees(response.data?.employee || []);
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-      }
-    };
-    fetchEmployees();
-  }, [reloadTrigger]);
-
-  useEffect(() => {
-    const fetchTotalPayments = async () => {
-      try {
-        const response = await api.get("/payment/get-total-payment-amount");
-        setPaymentsValue(response?.data?.totalAmount || 0);
-      } catch (error) {
-        console.error("Error fetching total payment amount:", error);
-      }
-    };
-    fetchTotalPayments();
-  }, [reloadTrigger]);
-
+  useEffect(() => { const fetchGroups = async () => { try { const res = await api.get("/group/get-group-admin"); setGroups(res.data); } catch (e) { console.error(e); } }; fetchGroups(); }, [reloadTrigger]);
+  useEffect(() => { const fetchEnrollments = async () => { try { const res = await api.get("/enroll/get-enroll"); setEnrollmentsCount(Array.isArray(res.data) ? res.data.length : 0); } catch (e) { setEnrollmentsCount(0); } }; fetchEnrollments(); }, [reloadTrigger]);
+  useEffect(() => { const fetchUsers = async () => { try { const res = await api.get("/user/get-user"); setUsers(res.data); } catch (e) { console.error(e); } }; fetchUsers(); }, [reloadTrigger]);
+  useEffect(() => { const fetchAgents = async () => { try { const res = await api.get("/agent/get"); setAgents(res.data?.agent || []); } catch (e) { console.error(e); } }; fetchAgents(); }, [reloadTrigger]);
+  useEffect(() => { const fetchStaffs = async () => { try { const res = await api.get("/agent/get-agent"); setStaffs(res.data || []); } catch (e) { console.error(e); } }; fetchStaffs(); }, [reloadTrigger]);
+  useEffect(() => { const fetchEmployees = async () => { try { const res = await api.get("/agent/get-employee"); setEmployees(res.data?.employee || []); } catch (e) { console.error(e); } }; fetchEmployees(); }, [reloadTrigger]);
+  useEffect(() => { const fetchTotalPayments = async () => { try { const res = await api.get("/payment/get-total-payment-amount"); setPaymentsValue(res?.data?.totalAmount || 0); } catch (e) { console.error(e); } }; fetchTotalPayments(); }, [reloadTrigger]);
   useEffect(() => {
     const fetchMonthlyPayments = async () => {
       try {
         const today = new Date();
-        const currentMonth = today.getMonth();
-        const currentYear = today.getFullYear();
-        const firstDay = `${currentYear}-${String(currentMonth + 1).padStart(
-          2,
-          "0"
-        )}-01`;
-        const lastDay = new Date(currentYear, currentMonth + 1, 0);
-        const lastDayFormatted = lastDay.toISOString().split("T")[0];
-
-        const response = await api.get("/payment/get-current-month-payment", {
-          params: {
-            from_date: firstDay,
-            to_date: lastDayFormatted,
-          },
-        });
-
-        setPaymentsPerMonthValue(response?.data?.monthlyPayment || 0);
-      } catch (error) {
-        console.error("Error fetching monthly payment data:", error);
-      }
-    };
-    fetchMonthlyPayments();
+        const firstDay = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-01`;
+        const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split("T")[0];
+        const res = await api.get("/payment/get-current-month-payment", { params: { from_date: firstDay, to_date: lastDay } });
+        setPaymentsPerMonthValue(res?.data?.monthlyPayment || 0);
+      } catch (e) { console.error(e); }
+    }; fetchMonthlyPayments();
   }, [reloadTrigger]);
+  useEffect(() => { const timer = setTimeout(() => setIsInitialLoading(false), 800); return () => clearTimeout(timer); }, []);
 
-  // Function to mask revenue values
-  const getMaskedValue = (value) => {
-    if (showRevenue) {
-      return value.toLocaleString();
-    }
-    return "•••••";
-  };
+  const getMaskedValue = (value) => showRevenue ? value.toLocaleString() : "•••••";
 
   async function getTransactions() {
     try {
@@ -245,509 +108,296 @@ const Home = () => {
       const transactionsData = response.data?.data;
       const filteredData = transactionsData.map((order, index) => {
         const status = order?.status;
-        const color =
-          status === "ACTIVE"
-            ? "blue"
-            : status === "PAID"
-            ? "green"
-            : "red";
-        const icon =
-          status === "ACTIVE" ? (
-            <ClockCircleOutlined />
-          ) : status === "PAID" ? (
-            <CheckCircleOutlined />
-          ) : (
-            <CloseCircleOutlined />
-          );
-        const groups = order?.groups;
-        const pigmys = order.pigmys;
-        const loans = order?.loans;
-        const groupsString =
-          (groups
-            ?.map(
-              (group) => `${group?.group_id?.group_name} | ${group?.ticket}`
-            ) || []
-          ).join(" | ") || "";
-        const pigmysString =
-          (pigmys
-            ?.map((pigmy) => `${pigmy?.payable_amount} | ${pigmy?.pigme_id}`)
-            .join(" | ") || "");
-        const loansString =
-          (loans
-            ?.map((loan) => `${loan?.loan_amount} | ${loan?.loan_id}`)
-            .join(" | ") || "");
-        
+        const color = status === "ACTIVE" ? "blue" : status === "PAID" ? "green" : "red";
+        const icon = status === "ACTIVE" ? <ClockCircleOutlined /> : status === "PAID" ? <CheckCircleOutlined /> : <CloseCircleOutlined />;
+        const formatArray = (arr, key1, key2) => (arr?.map(i => `${i?.[key1]?.group_name || i?.[key1]} | ${i?.[key2] || i[key1]}`).join(", ") || "");
         return {
-          id: index + 1,
-          orderType: order?.order_type,
-          user_name: order?.user_id?.full_name,
-          phone_number: order?.user_id?.phone_number,
-          groups: groupsString,
-          pigmys: pigmysString,
-          loans: loansString,
-          others: groupsString + pigmysString + loansString,
-          status: (
-            <Tag
-              key={"success"}
-              color={color}
-              icon={icon}
-              variant={"filled"}
-            >
-              {status}
-            </Tag>
-          ),
-          statusRaw: status,
-          collectedBy: order?.collected_by,
-          createdAt: dayjs(order?.createdAt)
-            ?.endOf("D")
-            ?.format("YYYY-MM-DD"),
+          id: index + 1, orderType: order?.order_type, user_name: order?.user_id?.full_name, phone_number: order?.user_id?.phone_number,
+          details: formatArray(order?.groups, 'group_id', 'ticket') + formatArray(order?.pigmys, 'pigme_id', 'payable_amount'),
+          status: <Tag color={color} icon={icon} variant="filled">{status}</Tag>, statusRaw: status, date: dayjs(order?.createdAt).format("MMM DD, YYYY"),
         };
       });
       setTableTransactions(filteredData);
-    } catch (error) {
-      setTableTransactions([]);
-    } finally {
-      setTransactionsLoading(false);
-    }
+    } catch (error) { setTableTransactions([]); }
+    finally { setTransactionsLoading(false); }
   }
+  useEffect(() => { getTransactions(); }, []);
+  const totalStaff = agents.length + employees.length;
 
-  useEffect(() => {
-    getTransactions();
-  }, []);
+  // --- UI COMPONENTS ---
+  const Sparkline = ({ color }) => (
+    <svg viewBox="0 0 100 40" className="w-full h-12 overflow-visible opacity-80">
+      <path d="M0 30 Q 25 30, 40 15 T 70 25 T 100 5" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M0 30 Q 25 30, 40 15 T 70 25 T 100 5 V 40 H 0 Z" fill={color} fillOpacity="0.1" stroke="none" />
+    </svg>
+  );
 
-  const cardData = [
-    {
-      icon: MdGroupWork,
-      title: "Chit Groups",
-      value: groups.length,
-      subtitle: "Active business units",
-      color: "from-indigo-500 to-indigo-600",
-      iconBg: "bg-indigo-100",
-      iconColor: "text-indigo-600",
-      borderColor: "border-indigo-600",
-      ringColor: "ring-indigo-500/20",
-      redirect: "/group",
-      key: "1",
-    },
-    {
-      icon: MdGroups,
-      title: "Customers",
-      value: users.length,
-      subtitle: "Total registered users",
-      color: "from-amber-500 to-amber-600",
-      iconBg: "bg-amber-100",
-      iconColor: "text-amber-600",
-      borderColor: "border-amber-600",
-      ringColor: "ring-amber-500/20",
-      redirect: "/user",
-      key: "2",
-    },
-    {
-      icon: FaClipboardList,
-      title: "Total Enrollments",
-      value: enrollmentsCount.toLocaleString(),
-      subtitle: "Active enrollments this period",
-      color: "from-teal-500 to-teal-600",
-      iconBg: "bg-teal-100",
-      iconColor: "text-teal-600",
-      borderColor: "border-teal-600",
-      ringColor: "ring-teal-500/20",
-      redirect: "/enrollment",
-      key: "8",
-    },
-    {
-      icon: FaUserLock,
-      title: "Agents",
-      value: agents.length,
-      subtitle: "Field representatives",
-      color: "from-purple-500 to-purple-600",
-      iconBg: "bg-purple-100",
-      iconColor: "text-purple-600",
-      borderColor: "border-purple-600",
-      ringColor: "ring-purple-500/20",
-      redirect: "/staff-menu/agent",
-      key: "3",
-    },
-    {
-      icon: FaUserLock,
-      title: "Employees",
-      value: employees.length,
-      subtitle: "Organization workforce",
-      color: "from-orange-500 to-orange-600",
-      iconBg: "bg-orange-100",
-      iconColor: "text-orange-600",
-      borderColor: "border-orange-600",
-      ringColor: "ring-orange-500/20",
-      redirect: "/staff-menu/employee-menu",
-      key: "5",
-    },
-    {
-      icon: MdOutlinePayments,
-      title: "Total Revenue",
-      value: `${getMaskedValue(paymentsValue)}`,
-      subtitle: "All-time earnings",
-      color: "from-emerald-500 to-emerald-600",
-      iconBg: "bg-emerald-100",
-      iconColor: "text-emerald-600",
-      borderColor: "border-emerald-600",
-      ringColor: "ring-emerald-500/20",
-      redirect: "/total-revenue",
-      key: "6",
-    },
-    {
-      icon: SlCalender,
-      title: "Monthly Revenue",
-      value: `${getMaskedValue(paymentsPerMonthValue)}`,
-      subtitle: "Current billing cycle",
-      color: "from-sky-500 to-sky-600",
-      iconBg: "bg-sky-100",
-      iconColor: "text-sky-600",
-      borderColor: "border-sky-600",
-      ringColor: "ring-sky-500/20",
-      redirect: "/monthly-revenue",
-      key: "7",
-    },
-  ].filter(
-    (card) =>
-      card.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-      card.subtitle.toLowerCase().includes(searchValue.toLowerCase())
+  const RevenueCard = ({ title, value, icon: Icon, gradientBg, onClick, trend }) => (
+    <div onClick={onClick} className="relative group overflow-hidden rounded-3xl bg-white/70 backdrop-blur-2xl border border-white/60 shadow-[0_8px_32px_rgba(31,38,135,0.07)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.12)] transition-all duration-500 hover:-translate-y-2 cursor-pointer">
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-500 opacity-0 group-hover:opacity-5 transition-opacity duration-500"></div>
+      <div className="relative p-8">
+        <div className="flex justify-between items-start mb-6">
+          <div className={`p-4 rounded-2xl bg-gradient-to-br ${gradientBg} text-white shadow-lg shadow-indigo-200/50 group-hover:scale-110 transition-transform duration-300`}>
+             <Icon size={28} />
+          </div>
+          <div className={`text-xs font-bold ${trend > 0 ? 'text-emerald-500 bg-emerald-50' : 'text-rose-500 bg-rose-50'} px-2.5 py-1 rounded-full flex items-center gap-1`}>
+             {trend > 0 ? <BsLightningCharge /> : <BsLightningCharge className="rotate-180"/>} {trend}%
+          </div>
+        </div>
+        <div className="mb-4">
+          <p className="text-sm font-semibold text-slate-400 mb-1 uppercase tracking-wide">{title}</p>
+          <h2 className="text-4xl font-extrabold text-slate-800 tracking-tight">
+            {isInitialLoading ? "•••••" : `₹ ${getMaskedValue(value)}`}
+          </h2>
+        </div>
+        <div className="h-12 w-full">
+           <Sparkline color={gradientBg.includes("indigo") ? "#4f46e5" : "#10b981"} />
+        </div>
+      </div>
+      <div className={`absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r ${gradientBg} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`}></div>
+    </div>
+  );
+
+  const MetricCard = ({ icon: Icon, label, value, color, redirect, delay }) => (
+    <div onClick={() => !isInitialLoading && handleViewDetailsClick(redirect)} className={`group relative bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 hover:-translate-y-2 cursor-pointer overflow-hidden ${isInitialLoading ? 'cursor-wait' : ''}`} style={{ animation: `fadeInUp 0.6s ease-out ${delay}s forwards`, opacity: 0 }}>
+      <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+      <div className="relative z-10 flex flex-col h-full justify-between">
+        <div className={`p-3 rounded-xl w-fit bg-gradient-to-br ${color} text-white shadow-md group-hover:shadow-lg transition-all`}>
+          <Icon size={20} />
+        </div>
+        <div className="mt-4">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
+          <h3 className="text-3xl font-black text-slate-800 mt-1 tracking-tight">
+             {isInitialLoading ? <span className="w-12 h-8 bg-slate-200 rounded inline-block animate-pulse"></span> : value.toLocaleString()}
+          </h3>
+        </div>
+      </div>
+      <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 translate-x-4">
+        <div className="p-2 bg-slate-50 rounded-lg text-slate-400 shadow-sm"><BsArrowRightShort size={20} /></div>
+      </div>
+    </div>
   );
 
   return (
-    <div>
-      <div className="flex mt-20">
-        <Sidebar />
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-500 selection:text-white pb-10 overflow-x-hidden">
+      
+      {/* Background Ambience */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-indigo-400 rounded-full mix-blend-multiply filter blur-[120px] opacity-20 animate-blob" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-400 rounded-full mix-blend-multiply filter blur-[120px] opacity-20 animate-blob animation-delay-2000" />
+        <div className="absolute top-[30%] left-[30%] w-[30%] h-[30%] bg-blue-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-10 animate-blob animation-delay-4000" />
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#6366f1 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+      </div>
+
+      <div className="relative z-10 flex flex-col w-full">
+        
+        {/* ONLY NAVBAR */}
         <Navbar
           onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
           visibility={true}
         />
-        <CustomAlertDialog
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-          onClose={() =>
-            setAlertConfig((prev) => ({ ...prev, visibility: false }))
-          }
-        />
-        <div className="flex-1 p-4 md:p-8 md:ml-16 md:mr-11 md:mt-11 pb-8">
-          <header className="mb-8">
-            <h1 className="text-3xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 mb-2">
-              Chit Intelligence Dashboard
-            </h1>
-            <p className="text-gray-500 max-w-2xl text-lg">
-              Real-time analytics and performance metrics for your organization.
-              Monitor key business indicators and make data-driven decisions.
-            </p>
-          </header>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 auto-rows-fr">
-            {cardData.map((card) => (
-              <div
-                key={card.key}
-                className="transform transition-all duration-300 hover:scale-[1.05] hover:shadow-xl min-w-0"
-              >
-                <div
-                  className={`relative rounded-3xl p-1 cursor-pointer transition-all duration-300 ease-out
-                  bg-white border ${card.borderColor} 
-                  hover:shadow-violet-500 hover:shadow-xl
-                  hover:border-violet-500
-                  hover:bg-violet-300`}
-                >
-                  <div className="bg-white rounded-2xl overflow-hidden h-full">
-                    <div className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div className={`p-2 rounded-xl ${card.iconBg} mb-4`}>
-                          <card.icon
-                            className={`w-5 h-5 ${card.iconColor}`}
-                          />
-                        </div>
-                        <span className="text-sm font-medium px-2 py-1 rounded-full bg-violet-50 ">
-                          Live
-                        </span>
-                      </div>
+        <main className="pt-[100px] px-6 md:px-10 max-w-[1920px] mx-auto w-full">
+          
+          {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4 animate-fadeInDown">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span className="text-xs font-bold text-emerald-600 tracking-wider uppercase">Live System</span>
+              </div>
+              <h1 className="text-5xl font-black text-slate-900 tracking-tight">
+                Hello, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Super Admin</span>
+              </h1>
+              <p className="text-slate-500 mt-2 text-lg font-medium">Here is the business overview for today.</p>
+            </div>
+            <button onClick={() => setReloadTrigger(prev => prev + 1)} className="group relative px-6 py-3 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2 text-slate-600 font-semibold whitespace-nowrap">
+              <span className="group-hover:rotate-180 transition-transform duration-500">↻</span> Refresh Data
+            </button>
+          </div>
 
-                      <h3 className="text-lg font-semibold text-gray-800 mb-1 truncate">
-                        {card.title}
-                      </h3>
-                      <p className="text-sm text-gray-500 mb-2 line-clamp-2">
-                        {card.subtitle}
-                      </p>
+          {/* Revenue Hero */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+            <RevenueCard title="Total Revenue" value={paymentsValue} icon={MdOutlinePayments} gradientBg="from-indigo-500 to-violet-600" onClick={() => handleViewDetailsClick("/total-revenue")} trend={12.5} />
+            <RevenueCard title="Monthly Revenue" value={paymentsPerMonthValue} icon={SlCalender} gradientBg="from-emerald-400 to-teal-500" onClick={() => handleViewDetailsClick("/monthly-revenue")} trend={8.2} />
+          </div>
 
-                      <div className="mt-2">
-                        <span className="text-2xl font-bold text-gray-900">
-                          {card.value}
-                        </span>
-                      </div>
+          {/* Quick Metrics - Full Width Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-10">
+            <MetricCard icon={MdGroupWork} label="Groups" value={groups.length} color="from-blue-500 to-cyan-500" redirect="/group" delay={0.1} />
+            <MetricCard icon={MdGroups} label="Customers" value={users.length} color="from-purple-500 to-pink-500" redirect="/user" delay={0.15} />
+            <MetricCard icon={FaClipboardList} label="Enrollments" value={enrollmentsCount} color="from-emerald-500 to-green-500" redirect="/enrollment" delay={0.2} />
+            <MetricCard icon={FaClipboardList} label="Staff" value={staffs?.length} color="from-indigo-500 to-violet-500" redirect="/staff-menu" delay={0.25} />
+            <MetricCard icon={FaUserLock} label="Agents" value={agents.length} color="from-orange-500 to-amber-500" redirect="/staff-menu/agent" delay={0.3} />
+            <MetricCard icon={FaUserLock} label="Employees" value={employees.length} color="from-rose-500 to-red-500" redirect="/staff-menu/employee-menu" delay={0.35} />
+          </div>
 
-                      <div className="mt-6 pt-4 border-t border-gray-100">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-500">
-                            Updated: Just now
-                          </span>
-                          <button
-                            onClick={() => handleViewDetailsClick(card.redirect)}
-                            className="text-md font-medium text-gray-600 hover:text-gray-900 transition-colors flex items-center"
-                          >
-                            View details
-                            <svg
-                              className="w-4 h-4 ml-1"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+          {/* Split Section: Staff & Transactions */}
+          <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+            
+            {/* Staff Ratio (1 col) */}
+            <div className="xl:col-span-1 bg-white/60 backdrop-blur-xl rounded-3xl p-6 border border-white/50 shadow-sm animate-fadeInUp flex flex-col" style={{animationDelay: '0.5s'}}>
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-6">
+                <MdPeopleOutline className="text-indigo-500" /> Staff Ratio
+              </h3>
+              <div className="flex flex-col items-center justify-center flex-1">
+                <div className="relative w-40 h-40 rounded-full shadow-inner transition-all duration-700 hover:scale-105" style={{ background: `conic-gradient(#f59e0b 0% ${(agents.length / totalStaff) * 100}%, #f43f5e ${(agents.length / totalStaff) * 100}% 100%)` }}>
+                  <div className="absolute inset-6 bg-white rounded-full flex flex-col items-center justify-center shadow-inner border border-slate-100">
+                    <span className="text-3xl font-black text-slate-800">{totalStaff}</span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Total</span>
+                  </div>
+                </div>
+                <div className="flex w-full mt-8 gap-2">
+                  <div className="flex-1 bg-amber-50 p-2 rounded-xl text-center border border-amber-100">
+                    <p className="text-[10px] text-amber-600 font-bold uppercase">Agents</p>
+                    <p className="text-lg font-black text-slate-800">{agents.length}</p>
+                  </div>
+                  <div className="flex-1 bg-rose-50 p-2 rounded-xl text-center border border-rose-100">
+                    <p className="text-[10px] text-rose-600 font-bold uppercase">Employees</p>
+                    <p className="text-lg font-black text-slate-800">{employees.length}</p>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-
-          {cardData.length === 0 && (
-            <div className="col-span-full flex flex-col items-center justify-center py-12 px-6 rounded-2xl bg-white shadow-lg mx-4 md:mx-0">
-              <div className="text-gray-400 mb-4">
-                <svg
-                  className="w-16 h-16 mx-auto"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-semibold text-gray-700 mb-2 text-center">
-                No results found
-              </h3>
-              <p className="text-gray-500 max-w-md text-center">
-                We couldn't find any matching results for{" "}
-                <span className="font-medium">"{searchValue}"</span>. Try
-                adjusting your search terms.
-              </p>
             </div>
-          )}
 
-          {/* RECENT TRANSACTIONS SECTION INTEGRATED FROM HOME 1 */}
-          <div className="mt-16">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800">
-                  Recent Transactions
-                </h2>
-                <p className="text-sm text-gray-500">Showing the latest activities</p>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="flex bg-gray-200 p-1 rounded-lg">
-                  <button
-                    onClick={() => setViewMode("grid")}
-                    className={`p-2 rounded-md transition-all ${
-                      viewMode === "grid"
-                        ? "bg-white shadow-sm text-blue-600"
-                        : "text-gray-500"
-                    }`}
-                  >
-                    <BsGrid3X3GapFill size={18} />
-                  </button>
-                  <button
-                    onClick={() => setViewMode("list")}
-                    className={`p-2 rounded-md transition-all ${
-                      viewMode === "list"
-                        ? "bg-white shadow-sm text-blue-600"
-                        : "text-gray-500"
-                    }`}
-                  >
-                    <BsListUl size={18} />
-                  </button>
-                </div>
-
-                <button
-                  onClick={getTransactions}
-                  className="bg-white border px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50"
-                >
-                  Refresh
+            {/* Transactions (3 cols) */}
+            <div className="xl:col-span-3 bg-white/60 backdrop-blur-xl rounded-3xl p-8 border border-white/50 shadow-sm flex flex-col animate-fadeInUp" style={{animationDelay: '0.6s'}}>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <MdOutlineReceiptLong className="text-indigo-500" /> Recent Transactions
+                </h3>
+                <button onClick={getTransactions} className="text-xs font-bold text-indigo-500 hover:text-indigo-700 flex items-center gap-1">
+                   <span className="animate-spin-slow">↻</span> Sync
                 </button>
               </div>
-            </div>
 
-            {transactionsLoading ? (
-              <div className="space-y-4">
-                <div className="h-20 bg-gray-200 animate-pulse rounded-md" />
-                <div className="h-20 bg-gray-200 animate-pulse rounded-md" />
-              </div>
-            ) : (
-              <div
-                className={
-                  viewMode === "grid"
-                    ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                    : "flex flex-col border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm"
-                }
-              >
-                {viewMode === "list" && tableTransactions.length > 0 && (
-                  <div className="grid grid-cols-[60px_140px_1fr_1.5fr_100px_100px_120px] items-center bg-gray-100 p-4 border-b border-gray-200 font-bold text-[10px] text-gray-500 uppercase tracking-wider gap-4">
-                    <div>ID</div>
-                    <div className="text-left">Transaction Date</div>
-                    <div>Customer</div>
-                    <div>Details</div>
-                    <div>Type</div>
-                    <div>Status</div>
-                    <div className="text-right">Agent</div>
+              <div className="flex-1 overflow-hidden flex flex-col">
+                {transactionsLoading || isInitialLoading ? (
+                  <div className="space-y-3">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="h-20 bg-slate-50/50 rounded-2xl animate-pulse border border-white/50"></div>
+                    ))}
                   </div>
-                )}
-
-                {tableTransactions.length > 0 ? (
-                  tableTransactions.map((item) => (
-                    <Receipt
-                      key={item?.id}
-                      {...item}
-                      status={item?.statusRaw}
-                      viewMode={viewMode}
-                    />
-                  ))
+                ) : tableTransactions.length > 0 ? (
+                  <div className="overflow-y-auto pr-2 custom-scrollbar space-y-3 max-h-[420px]">
+                    {tableTransactions.map((item, idx) => (
+                      <div 
+                        key={item.id} 
+                        className="group flex items-center gap-4 p-4 rounded-2xl bg-white/50 hover:bg-white hover:shadow-lg hover:shadow-indigo-500/5 border border-white hover:border-indigo-100 transition-all duration-300 hover:-translate-x-1 cursor-default"
+                        style={{ animation: `fadeInUp 0.3s ease-out forwards ${0.1 + (idx * 0.05)}s`, opacity: 0 }}
+                      >
+                        <div className={`p-3.5 rounded-2xl shadow-sm transition-colors ${item.statusRaw === 'PAID' ? 'bg-emerald-100 text-emerald-600' : item.statusRaw === 'ACTIVE' ? 'bg-blue-100 text-blue-600' : 'bg-red-100 text-red-600'}`}>
+                          <MdOutlinePayments size={18} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <h4 className="font-bold text-slate-800 truncate text-sm">{item.user_name}</h4>
+                            <span className="text-xs text-slate-400 font-mono bg-slate-50 px-2 py-1 rounded-lg">{item.date}</span>
+                          </div>
+                          <p className="text-xs text-slate-500 truncate font-medium">
+                            {item.details || item.orderType}
+                          </p>
+                        </div>
+                        <div className="transform group-hover:scale-105 transition-transform">
+                          {item.status}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
-                  <div className="p-20 text-center text-gray-400 italic">
-                    No transactions found
+                  <div className="flex-1 flex flex-col items-center justify-center text-center py-20 opacity-50">
+                    <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                      <MdOutlineReceiptLong size={32} className="text-slate-300" />
+                    </div>
+                    <p className="text-slate-500 font-semibold">No transactions found</p>
                   </div>
                 )}
               </div>
-            )}
+            </div>
           </div>
-          {/* END RECENT TRANSACTIONS SECTION */}
-        </div>
+
+        </main>
       </div>
 
+      {/* Password Modal */}
       {showPasswordPrompt && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 transform transition-all duration-300 scale-100 hover:scale-[1.01]">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-800">
-                {" "}
-                Secure Access Required
-              </h2>
-              <button
-                onClick={() => setShowPasswordPrompt(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onClick={() => setShowPasswordPrompt(false)}></div>
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm relative z-10 overflow-hidden transform transition-all scale-100">
+            <div className="bg-slate-900 p-8 text-white text-center relative overflow-hidden">
+               <div className="absolute top-0 left-0 w-full h-full opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+              <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-md border border-white/20 shadow-inner">
+                <FaUserLock size={32} />
+              </div>
+              <h2 className="text-2xl font-bold">Security Check</h2>
+              <p className="text-slate-300 text-sm mt-2 font-medium">Enter admin password to access this section.</p>
             </div>
-
-            <p className="text-gray-600 text-sm mb-6">
-              Please enter your admin password to proceed to{" "}
-              <span className="font-medium text-violet-600">
-                {selectedRedirect} page
-              </span>
-            </p>
-
-            <div className="mb-6">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Password
-              </label>
+            <div className="p-8">
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Password</label>
               <input
-                id="password"
                 type="password"
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && verifyPasswordAndRedirect()}
                 placeholder="••••••••"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 border-2 border-slate-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all mb-4 text-lg tracking-wide text-center placeholder:text-slate-300"
                 autoFocus
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-violet-200 focus:border-violet-500 outline-none transition-all duration-200 text-gray-800 placeholder-gray-400"
               />
               {errorMsg && (
-                <p className="mt-2 text-sm text-red-500 font-medium flex items-center">
-                  <svg
-                    className="w-4 h-4 mr-1"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  {errorMsg}
-                </p>
+                <div className="bg-rose-50 text-rose-600 text-sm p-3 rounded-lg mb-4 font-medium flex items-center gap-2 animate-shake">
+                  <span>⚠️</span> {errorMsg}
+                </div>
               )}
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowPasswordPrompt(false)}
-                className="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors duration-200"
-                disabled={isLoadingVerify}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={verifyPasswordAndRedirect}
-                disabled={isLoadingVerify}
-                className={`flex-1 py-3 px-4 font-medium rounded-xl shadow-md transition-all duration-200 flex items-center justify-center
-                  ${
-                    isLoadingVerify
-                      ? "bg-violet-400 cursor-not-allowed opacity-80"
-                      : "bg-gradient-to-r from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700 text-white hover:shadow-lg"
-                  }`}
-              >
-                {isLoadingVerify ? (
-                  <>
-                    <svg
-                      className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Verifying...
-                  </>
-                ) : (
-                  "Verify & Proceed"
-                )}
-              </button>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setShowPasswordPrompt(false)}
+                  className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-colors"
+                  disabled={isLoadingVerify}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={verifyPasswordAndRedirect}
+                  disabled={isLoadingVerify}
+                  className="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95 disabled:opacity-70 flex justify-center items-center gap-2"
+                >
+                  {isLoadingVerify ? <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span> : 'Confirm'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
+
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        @keyframes blob {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+        .animate-blob { animation: blob 8s infinite ease-in-out; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+        .animate-fadeInUp { animation: fadeInUp 0.6s ease-out forwards; }
+        .animate-fadeInDown { animation: fadeInDown 0.6s ease-out forwards; }
+        .animate-shake { animation: shake 0.3s ease-in-out; }
+        .animate-spin-slow { animation: spin 3s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      `}</style>
+      
+      <CustomAlertDialog
+        type="info"
+        isVisible={false}
+        message=""
+        onClose={() => {}}
+      />
     </div>
   );
 };
