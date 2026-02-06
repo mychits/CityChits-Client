@@ -503,7 +503,7 @@ const Group = () => {
           </div>
           <div className="text-sm text-gray-600 space-y-1">
             <p>
-              <span className="font-medium">RM:</span> {group.relationship_manager?.name || "N/A"}
+              <span className="font-medium">Relationship Manager:</span> {group.relationship_manager?.name || "N/A"}
             </p>
             <p>
               <span className="font-medium">Start:</span>{" "}
@@ -593,7 +593,7 @@ const Group = () => {
               <span className="font-medium">{group.group_duration} months</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">RM:</span>
+              <span className="text-gray-500">Relationship Manager:</span>
               <span className="font-medium truncate ml-2">{group.relationship_manager?.name || "N/A"}</span>
             </div>
             <div className="flex justify-between">

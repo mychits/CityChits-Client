@@ -64,6 +64,14 @@ const CustomerView = () => {
   const [isLoadingPayment, setIsLoadingPayment] = useState(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [selectedGroupDetails, setSelectedGroupDetails] = useState(null);
+  
+  // State for Auction Count in Modal
+  const [auctionCount, setAuctionCount] = useState(0);
+  
+  // State for Auction History in Auction History Tab
+  const [selectedGroupAuctions, setSelectedGroupAuctions] = useState([]);
+  const [isAuctionsLoading, setIsAuctionsLoading] = useState(false);
+
   const [hoveredTab, setHoveredTab] = useState(null);
   const GlobalSearchChangeHandler = (e) => {
     setSearchText(e.target.value);
@@ -100,10 +108,53 @@ const CustomerView = () => {
     row8: false,
     row9: false,
   });
-  const handleGroupClick = (auction) => {
-    setSelectedGroupDetails(auction);
-    setIsGroupModalOpen(true);
+
+  // Helper function to format Date of Birth (Removes time)
+  const formatDOB = (dateString) => {
+    if (!dateString) return "—";
+    const d = new Date(dateString);
+    return d.toLocaleDateString("en-GB"); // Formats as DD/MM/YYYY
   };
+
+  // Helper function to fetch auction count
+  const fetchAuctionCount = async (groupId) => {
+    if (!groupId) return 0;
+    try {
+      const response = await api.get(`/auction/get-group-auction/${groupId}`);
+      return response.data.length;
+    } catch (error) {
+      console.error("Error fetching auction count:", error);
+      return 0;
+    }
+  };
+
+  // Helper function to calculate days difference
+  const calculateDaysSince = (dateString) => {
+    if (!dateString) return null;
+    const paymentDate = new Date(dateString);
+    const today = new Date();
+    // Set time to midnight to ensure accurate day calculation
+    paymentDate.setHours(0,0,0,0);
+    today.setHours(0,0,0,0);
+    
+    const diffTime = today - paymentDate;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+    return diffDays;
+  };
+
+  const handleGroupClick = async (auction) => {
+    setSelectedGroupDetails(auction);
+    // Reset count to 0 before fetching to avoid showing old data
+    setAuctionCount(0);
+    setIsGroupModalOpen(true);
+    
+    // Fetch auction count for this specific group
+    if (auction.group_id) {
+      const count = await fetchAuctionCount(auction.group_id);
+      setAuctionCount(count);
+    }
+  };
+
   const calculateCustomerAge = (joiningDate) => {
     if (!joiningDate) return "—";
     const join = new Date(joiningDate);
@@ -128,6 +179,7 @@ const CustomerView = () => {
   const handleCloseModal = () => {
     setIsGroupModalOpen(false);
     setSelectedGroupDetails(null);
+    setAuctionCount(0); // Reset count
   };
   const formatEnrollDate = (iso) => {
     if (!iso) return "—";
@@ -138,6 +190,8 @@ const CustomerView = () => {
       year: "numeric",
     });
   };
+  
+  // Updated InfoBox with text wrapping classes
   const InfoBox = ({ label, value, icon }) => {
     return (
       <div className="flex flex-wrap gap-2 max-w-[calc(10*250px)]">
@@ -146,13 +200,14 @@ const CustomerView = () => {
             {icon && <span className="text-blue-600">{icon}</span>}
             {label}
           </span>
-          <div className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-base font-medium text-gray-800 shadow-sm">
+          <div className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-base font-medium text-gray-800 shadow-sm break-words whitespace-normal">
             {value || "—"}
           </div>
         </div>
       </div>
     );
   };
+  
   const [selectedFile, setSelectedFile] = useState(null);
   const handleUploadPhoto = async () => {
     if (!selectedFile) return;
@@ -468,6 +523,47 @@ const CustomerView = () => {
     };
     fetchRegistrationFee();
   }, [activeTab, selectedGroup, EnrollGroupId.groupId, EnrollGroupId.ticket]);
+
+  // NEW EFFECT: Fetch Auctions for the selected Group in Auction History Tab OR Ledger (if needed)
+  useEffect(() => {
+    const fetchGroupAuctions = async () => {
+      if (
+        (activeTab === "daybook" || activeTab === "auctionHistory") && 
+        EnrollGroupId.groupId && 
+        EnrollGroupId.groupId !== "Loan"
+      ) {
+        setIsAuctionsLoading(true);
+        try {
+          const response = await api.get(`/auction/get-group-auction/${EnrollGroupId.groupId}`);
+          if (response.data) {
+             const formattedAuctions = response.data.map((auc, index) => ({
+               _id: auc._id,
+               id: index + 1,
+               auction_date: auc.auction_date ? auc.auction_date.split("T")[0] : "—",
+               customer_name: auc.user_id?.full_name || "—",
+               ticket: auc.ticket || "—",
+               bid_amount: Number(auc.divident || 0) + Number(auc.commission || 0),
+               win_amount: auc.win_amount || 0,
+               status: auc.isPrized ? "Prized" : "Unprized",
+             }));
+             setSelectedGroupAuctions(formattedAuctions);
+          } else {
+             setSelectedGroupAuctions([]);
+          }
+        } catch (error) {
+          console.error("Error fetching group auctions:", error);
+          setSelectedGroupAuctions([]);
+        } finally {
+          setIsAuctionsLoading(false);
+        }
+      } else {
+        setSelectedGroupAuctions([]);
+      }
+    };
+    fetchGroupAuctions();
+  }, [EnrollGroupId.groupId, activeTab]);
+
+
   useEffect(() => {
     const fetchLastPayment = async () => {
       if (!userId) return;
@@ -645,7 +741,10 @@ const CustomerView = () => {
     const fetchGroupById = async () => {
       try {
         const response = await api.get(`/user/get-user-by-id/${selectedGroup}`);
+    
         setGroup(response.data);
+      
+      
       } catch (error) {
         console.error("Error fetching group ", error);
       }
@@ -808,8 +907,12 @@ const CustomerView = () => {
           `/enroll/get-user-refer-report/${groupId}`
         );
         if (response.data && response.data.length > 0) {
-          setFilteredAuction(response.data);
-          const formattedData = response.data
+          // Filter out deleted enrollments/groups
+          const validData = response.data.filter((item) => !item?.enrollment?.deleted);
+          
+          setFilteredAuction(validData);
+
+          const formattedData = validData
             .map((group, index) => {
               const groupName = group?.enrollment?.group?.group_name || "";
               const tickets = group?.enrollment?.tickets || "";
@@ -872,12 +975,12 @@ const CustomerView = () => {
             return sum + (group?.toBePaidAmount || 0);
           }, 0);
           setNetTotalProfit(totalNetToBePaidAmount);
-          const totalPaidAmount = response.data.reduce(
+          const totalPaidAmount = validData.reduce(
             (sum, group) => sum + (group?.payments?.totalPaidAmount || 0),
             0
           );
           setTotalPaid(totalPaidAmount);
-          const totalProfit = response.data.reduce(
+          const totalProfit = validData.reduce(
             (sum, group) => sum + (group?.profit?.totalProfit || 0),
             0
           );
@@ -1117,6 +1220,18 @@ const CustomerView = () => {
       <div className="absolute top-full left-6 w-3 h-3 bg-white border-l border-b border-gray-200 rotate-45 transform -translate-x-1"></div>
     </div>
   );
+
+  // Columns for Auction History Table
+  const AuctionHistoryColumns = [
+    { key: "id", header: "SL. NO" },
+    { key: "auction_date", header: "Date" },
+    { key: "customer_name", header: "Customer Name" },
+    { key: "ticket", header: "Ticket" },
+    { key: "bid_amount", header: "Bid Amount" },
+    { key: "win_amount", header: "Win Amount" },
+    { key: "status", header: "Status" },
+  ];
+
   if (screenLoading)
     return (
       <div className="w-screen m-24">
@@ -1175,8 +1290,8 @@ const CustomerView = () => {
                         {[
                           {
                             label: "TOTAL GROUPS",
-                            value: TableAuctions ? [...new Set(TableAuctions.map(item => item.group_id))].length || 0 : 0, // Calculate unique groups
-                            icon: <FiUsers className="text-violet-600" />, // Or use a different icon if preferred, e.g., <FiFolder className="text-violet-600" />
+                            value: TableAuctions ? [...new Set(TableAuctions.map(item => item.group_id))].length || 0 : 0,
+                            icon: <FiUsers className="text-violet-600" />,
                           },
                           {
                             label: "TOTAL TICKETS",
@@ -1198,9 +1313,8 @@ const CustomerView = () => {
                           {
                             label: "CUSTOMER STATUS",
                             value: (() => {
-                              const lastPaymentDate = lastPayment?.date
-                                ? new Date(lastPayment.date)
-                                : null;
+                              // Original logic: 3 months check
+                              const lastPaymentDate = lastPayment?.date ? new Date(lastPayment.date) : null;
                               const threeMonthsAgo = new Date();
                               threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
                               if (!lastPaymentDate || lastPaymentDate < threeMonthsAgo) {
@@ -1210,8 +1324,7 @@ const CustomerView = () => {
                             })(),
                             icon: <FiUser className="text-violet-600" />,
                           },
-
-                       {
+                          {
                             label: "APPROVAL STATUS",
                             value: group?.approval_status === "true"
                               ? "Approved"
@@ -1220,7 +1333,6 @@ const CustomerView = () => {
                               : "Approved", 
                             icon: <FiCheckCircle className="text-violet-600" />,
                           },
-
                           {
                             label: "TOTAL  TO BE PAID",
                             value: ` ${(NetTotalprofit || 0).toLocaleString("en-IN")}`,
@@ -1241,40 +1353,30 @@ const CustomerView = () => {
                             value: ` ${(Totalprofit || 0).toLocaleString("en-IN")}`,
                             icon: <BsCurrencyRupee className="text-violet-600" />,
                           },
-
-                          // {
-                          //   label: "LATEST PAYMENT",
-                          //   value: isLoadingPayment
-                          //     ? <CircularLoader color="text-violet-600" size="sm" />
-                          //     : lastPayment?.amount
-                          //       ? `${(lastPayment.amount || 0).toLocaleString("en-IN")} `
-                          //       : 0,  
-                          //        icon: <BsCurrencyRupee className="text-violet-600" />,
-                          // },
-
-                          // {
-                          //   label: "LATEST PAYMENT DATE",
-                          //   value: isLoadingPayment
-                          //     ? <CircularLoader color="text-violet-600" size="sm" />
-                          //     : lastPayment?.date
-                          //       ? ` ${new Date(lastPayment.date).toLocaleDateString("en-GB")}`
-                          //       : 0,
-                          //   icon: <SlCalender className="text-violet-600" />,
-                          // },
                           {
                             label: "LATEST PAYMENT",
                             value: isLoadingPayment ? (
                               <CircularLoader color="text-violet-600" size="sm" />
-                            ) : lastPayment?.amount || lastPayment?.date ? (
-                              <div className="flex flex-col items-start gap-0.5">
-                                <span className="font-bold text-gray-900 text-lg">
-                                  ₹{(lastPayment.amount || 0).toLocaleString("en-IN")}
-                                </span>
-                                <span className="font-bold text-gray-900 text-lg mt-1">
-                                  {lastPayment.date
-                                    ? new Date(lastPayment.date).toLocaleDateString("en-GB")
-                                    : "—"}
-                                </span>
+                            ) : lastPayment?.date ? (
+                              <div className="flex flex-col items-start gap-1">
+                                <div className="flex items-baseline gap-2">
+                                  <span className="font-bold text-gray-900 text-lg">
+                                    ₹{(lastPayment.amount || 0).toLocaleString("en-IN")}
+                                  </span>
+                                  <span className="text-sm text-gray-600">
+                                    {new Date(lastPayment.date).toLocaleDateString("en-GB")}
+                                  </span>
+                                </div>
+                                {/* Red badge logic for > 10 days remains here */}
+                                {(() => {
+                                  const daysDiff = calculateDaysSince(lastPayment.date);
+                                  const isOverdue = daysDiff > 10;
+                                  return (
+                                    <span className={`text-xs font-bold px-2 py-0.5 rounded w-fit ${isOverdue ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                                      {daysDiff} Days Ago
+                                    </span>
+                                  );
+                                })()}
                               </div>
                             ) : (
                               "—"
@@ -1302,7 +1404,7 @@ const CustomerView = () => {
                               </div>
                             </div>
                             <div
-                              className="text-lg font-bold text-gray-900 break-words whitespace-pre-wrap w-full"
+                              className="text-lg font-bold text-gray-900 break-words whitespace-normal w-full"
                               style={{ wordBreak: "break-word" }}
                             >
                               {stat.value}
@@ -1381,6 +1483,15 @@ const CustomerView = () => {
                   >
                     Ledger
                   </button>
+                  <button
+                    className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${activeTab === "auctionHistory"
+                      ? "bg-custom-violet text-white shadow"
+                      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                      }`}
+                    onClick={() => setActiveTab("auctionHistory")}
+                  >
+                    Auction History
+                  </button>
                 </div>
               </div>
               <div className="p-6 pt-8">
@@ -1413,7 +1524,7 @@ const CustomerView = () => {
                     />
                     <InfoBox
                       label="Date of Birth"
-                      value={group.dateofbirth}
+                      value={formatDOB(group.dateofbirth)}
                       icon={<FiCalendar />}
                     />
 
@@ -1434,7 +1545,7 @@ const CustomerView = () => {
                       icon={<FiMapPin />}
                     />
 
-                    <InfoBox
+                    {/* <InfoBox
                       label="Collection Executive"
                       value={
                         group?.collection_executive
@@ -1442,7 +1553,7 @@ const CustomerView = () => {
                           : "—"
                       }
                       icon={<FiUsers />}
-                    />
+                    /> */}
 
                   </div>
                 )}
@@ -1507,7 +1618,6 @@ const CustomerView = () => {
 
                 {activeTab === "docs" && (
                   <div className="space-y-6">
-                    {/* Aadhaar & PAN Numbers */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <InfoBox
                         label="Aadhaar Number"
@@ -1521,9 +1631,7 @@ const CustomerView = () => {
                       />
                     </div>
 
-                    {/* Progress + Documents Side by Side */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {/* Document Completion */}
                       {(() => {
                         const docs = [
                           group.aadhar_frontphoto,
@@ -1558,19 +1666,16 @@ const CustomerView = () => {
                         );
                       })()}
 
-                      {/* Collapsible Aadhaar & PAN */}
                       <Collapse
                         accordion
                         bordered={false}
                         className="bg-white border rounded-lg shadow-sm"
                       >
-                        {/* Aadhaar Section */}
                         <Collapse.Panel
                           header={<span className="font-medium text-gray-800">Aadhaar Documents</span>}
                           key="1"
                         >
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {/* Aadhaar Front */}
                             <div>
                               <p className="text-xs font-medium text-gray-600">Front</p>
                               {group.aadhar_frontphoto ? (
@@ -1591,7 +1696,6 @@ const CustomerView = () => {
                               )}
                             </div>
 
-                            {/* Aadhaar Back */}
                             <div>
                               <p className="text-xs font-medium text-gray-600">Back</p>
                               {group.aadhar_backphoto ? (
@@ -1614,13 +1718,11 @@ const CustomerView = () => {
                           </div>
                         </Collapse.Panel>
 
-                        {/* PAN Section */}
                         <Collapse.Panel
                           header={<span className="font-medium text-gray-800">PAN Documents</span>}
                           key="2"
                         >
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {/* PAN Front */}
                             <div>
                               <p className="text-xs font-medium text-gray-600">Front</p>
                               {group.pan_frontphoto ? (
@@ -1641,7 +1743,6 @@ const CustomerView = () => {
                               )}
                             </div>
 
-                            {/* PAN Back */}
                             <div>
                               <p className="text-xs font-medium text-gray-600">Back</p>
                               {group.pan_backphoto ? (
@@ -1724,6 +1825,7 @@ const CustomerView = () => {
                     )}
                   </div>
                 )}
+
                 {activeTab === "daybook" && (
                   <div className="space-y-6">
                     <div className="flex flex-col md:flex-row gap-4">
@@ -1735,7 +1837,7 @@ const CustomerView = () => {
                         <select
                           value={EnrollGroupId.groupId ? `${EnrollGroupId.groupId}|${EnrollGroupId.ticket}` : ""}
                           onChange={handleEnrollGroup}
-                          className="w-1/5 border border-gray-300 rounded-lg px-7 py-2.5 shadow-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                          className="w-full border border-gray-300 rounded-lg px-7 py-2.5 shadow-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                         >
                           <option value="">Select Group | Ticket</option>
                           {filteredAuction.map((group) =>
@@ -1767,30 +1869,99 @@ const CustomerView = () => {
                         </div>
                       </div>
                     </div>
-                    {(TableEnrolls?.length > 0 || (borrowersData.length > 0 && !basicLoading)) ? (
-                      <DataTable
-                        printHeaderKeys={["Customer Name", "Customer Id", "Phone Number", "Ticket Number", "Group Name", "Start Date", "End Date"]}
-                        printHeaderValues={[
-                          group?.full_name,
-                          group?.customer_id,
-                          group?.phone_number,
-                          EnrollGroupId.ticket,
-                          groupDetails?.group_name,
-                          groupDetails?.start_date ? new Date(groupDetails.start_date).toLocaleDateString("en-GB") : "",
-                          groupDetails?.end_date ? new Date(groupDetails.end_date).toLocaleDateString("en-GB") : "",
-                        ]}
-                        data={EnrollGroupId.groupId === "Loan" ? borrowersData : TableEnrolls}
-                        columns={EnrollGroupId.groupId === "Loan" ? BasicLoanColumns : Basiccolumns}
-                      />
-                    ) : (
-                      <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-violet-100 text-violet-600 mb-4">
-                          <BsCurrencyRupee size={24} />
+
+                    <div className="space-y-4">
+                      <h3 className="font-bold text-gray-700 border-b pb-2">Payment Ledger</h3>
+                      {(TableEnrolls?.length > 0 || (borrowersData.length > 0 && !basicLoading)) ? (
+                        <DataTable
+                          printHeaderKeys={["Customer Name", "Customer Id", "Phone Number", "Ticket Number", "Group Name", "Start Date", "End Date"]}
+                          printHeaderValues={[
+                            group?.full_name,
+                            group?.customer_id,
+                            group?.phone_number,
+                            EnrollGroupId.ticket,
+                            groupDetails?.group_name,
+                            groupDetails?.start_date ? new Date(groupDetails.start_date).toLocaleDateString("en-GB") : "",
+                            groupDetails?.end_date ? new Date(groupDetails.end_date).toLocaleDateString("en-GB") : "",
+                          ]}
+                          data={EnrollGroupId.groupId === "Loan" ? borrowersData : TableEnrolls}
+                          columns={EnrollGroupId.groupId === "Loan" ? BasicLoanColumns : Basiccolumns}
+                        />
+                      ) : (
+                        <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-violet-100 text-violet-600 mb-4">
+                            <BsCurrencyRupee size={24} />
+                          </div>
+                          <h3 className="text-lg font-medium text-gray-900">No transactions found</h3>
+                          <p className="text-gray-500 mt-1">select a group to view transactions</p>
                         </div>
-                        <h3 className="text-lg font-medium text-gray-900">No transactions found</h3>
-                        <p className="text-gray-500 mt-1">select a group to view transactions</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === "auctionHistory" && (
+                  <div className="space-y-6">
+                    <div className="flex flex-col md:flex-row gap-4">
+                      <div className="flex-1">
+                        <label className="mb-1 text-sm font-medium text-gray-700 flex items-center gap-2">
+                          <FiUsers className="text-violet-600" />
+                          Group & Ticket
+                        </label>
+                        <select
+                          value={EnrollGroupId.groupId ? `${EnrollGroupId.groupId}|${EnrollGroupId.ticket}` : ""}
+                          onChange={handleEnrollGroup}
+                          className="w-full border border-gray-300 rounded-lg px-7 py-2.5 shadow-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                        >
+                          <option value="">Select Group | Ticket</option>
+                          {filteredAuction.map((group) =>
+                            group?.enrollment?.group ? (
+                              <option
+                                key={group.enrollment.group._id}
+                                value={`${group.enrollment.group._id}|${group.enrollment.tickets}`}
+                              >
+                                {group.enrollment.group.group_name} | {group.enrollment.tickets}
+                              </option>
+                            ) : null
+                          )}
+                        </select>
                       </div>
-                    )}
+                      <div className="flex flex-wrap gap-2 justify-center items-center">
+                        <div className="px-3 py-1.5 rounded-lg bg-violet-50 text-violet-800 text-lg font-medium flex items-center gap-2">
+                          Total Auctions: {selectedGroupAuctions.length}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center border-b pb-2">
+                        <h3 className="font-bold text-gray-700">Auction History</h3>
+                        {selectedGroupAuctions.length > 0 && (
+                           <span className="text-sm bg-gray-200 text-gray-700 px-3 py-1 rounded-full">
+                              {selectedGroupAuctions.length} Records
+                           </span>
+                        )}
+                      </div>
+                      
+                      {isAuctionsLoading ? (
+                        <div className="flex items-center justify-center py-12">
+                          <CircularLoader isLoading={true} data="Auctions" />
+                        </div>
+                      ) : selectedGroupAuctions.length > 0 ? (
+                        <DataTable
+                          data={selectedGroupAuctions}
+                          columns={AuctionHistoryColumns}
+                        />
+                      ) : (
+                        <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-200 text-gray-500 mb-4">
+                            <FiSearch size={24} />
+                          </div>
+                          <h3 className="text-lg font-medium text-gray-900">No auctions found</h3>
+                          <p className="text-gray-500 mt-1">This group has no auction history yet.</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
@@ -1851,6 +2022,10 @@ const CustomerView = () => {
                   <div className="flex justify-between items-center py-1.5">
                     <span className="text-gray-600">Amount Paid</span>
                     <span className="font-semibold text-gray-800">₹{Number(selectedGroupDetails.paidAmount || 0).toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-1.5">
+                    <span className="text-gray-600">Total Auctions Held</span>
+                    <span className="font-semibold text-gray-800">{auctionCount}</span>
                   </div>
                   <div className="flex justify-between items-center py-1.5 border-t border-gray-200 pt-2.5 mt-1.5">
                     <span className="font-medium"> Total Balance</span>
