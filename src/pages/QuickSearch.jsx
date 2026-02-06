@@ -40,12 +40,13 @@ const QuickSearch = () => {
     type: "info",
   });
 
-  // Filters
+  // Filters - Added "Pan" here
   const filters = [
     { id: "1", filterName: "ID", key: "customer_id" },
     { id: "2", filterName: "Name", key: "name" },
     { id: "3", filterName: "Phone", key: "phone_number" },
-    // { id: "7", filterName: "Type", key: "customer_status" },
+    { id: "4", filterName: "Aadhaar", key: "aadhaar_number" },
+    { id: "5", filterName: "Pan", key: "pan_number" }, 
   ];
 
   const searchableKeys = activeFilters.length > 0
@@ -79,6 +80,9 @@ const QuickSearch = () => {
           pincode: u.pincode,
           customer_id: u.customer_id,
           collection_area: u.collection_area?.route_name,
+          // Mapping database fields
+          aadhaar_number: u.adhaar_no || "—",
+          pan_number: u.pan_no || "—",
           isCustomer: true,
         }));
         setTableUsers(formatted);
@@ -106,8 +110,10 @@ const QuickSearch = () => {
           customer_id: l.leadCode,
           collection_area: l.group_id?.group_name || "—",
           customer_status: "Active",
+          // Mapping database fields (assuming similar schema for leads)
+          aadhaar_number: l.adhaar_no || l.lead_aadhaar || "—",
+          pan_number: l.pan_no || l.lead_pan || "—",
           isLead: true,
-
         }));
 
         setTableLeads(formatted);
@@ -143,6 +149,9 @@ const QuickSearch = () => {
           customer_id: a.employeeCode,
           collection_area: a.designation_id?.title || "—",
           customer_status: "Active",
+          // Mapping database fields
+          aadhaar_number: a.adhaar_no || "—",
+          pan_number: a.pan_no || "—",
           isAgent: true,
         }));
         setTableAgents(formatted);
@@ -170,6 +179,9 @@ const QuickSearch = () => {
           customer_id: e.employeeCode,
           collection_area: e.designation_id?.title || "—",
           customer_status: "Active",
+          // Mapping database fields
+          aadhaar_number: e.adhaar_no || "—",
+          pan_number: e.pan_no || "—",
           isEmployee: true,
         }));
         setTableEmployees(formatted);
@@ -196,6 +208,21 @@ const QuickSearch = () => {
     },
     { dataIndex: "name", title: "Name", key: "name", width: 180 },
     { dataIndex: "phone_number", title: "Phone", key: "phone_number", width: 140 },
+    { 
+      dataIndex: "aadhaar_number", 
+      title: "Aadhaar", 
+      key: "aadhaar_number", 
+      width: 150,
+      render: (text) => <span className="font-mono text-sm">{text}</span>
+    },
+    // Added Pan Column
+    { 
+      dataIndex: "pan_number", 
+      title: "Pan", 
+      key: "pan_number", 
+      width: 140,
+      render: (text) => <span className="font-mono text-sm uppercase">{text}</span>
+    },
     // {
     //   dataIndex: "customer_status",
     //   title: "Status",
@@ -421,7 +448,7 @@ const QuickSearch = () => {
               <div className="relative w-full lg:w-1/3">
                 <input
                   type="text"
-                  placeholder="Search by ID, Name, or Phone..."
+                  placeholder="Search by ID, Name, Phone, Aadhaar, or Pan..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
                   className="w-full rounded-lg border border-gray-300 pl-12 pr-5 py-2.5 text-sm shadow-sm focus:border-violet-600 focus:ring-2 focus:ring-violet-200 outline-none transition"
