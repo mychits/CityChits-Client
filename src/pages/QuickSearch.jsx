@@ -1,15 +1,22 @@
-/* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
-import { Tabs } from "antd";
+import { useEffect, useState, useMemo, useCallback } from "react";
+import { Table, Tooltip, Card, Tabs, Input, Button } from "antd";
 import Sidebar from "../components/layouts/Sidebar";
 import api from "../instance/TokenInstance";
 import CircularLoader from "../components/loaders/CircularLoader";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
-import { Table, Tag, Tooltip, Card } from "antd";
 import Fuse from "fuse.js";
 import { useNavigate } from "react-router-dom";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import Navbar from "../components/layouts/Navbar";
+
+// Static configurations outside component to avoid recreation
+const FILTERS_CONFIG = [
+  { id: "1", filterName: "ID", key: "customer_id" },
+  { id: "2", filterName: "Name", key: "name" },
+  { id: "3", filterName: "Phone", key: "phone_number" },
+  { id: "4", filterName: "Aadhaar", key: "aadhaar_number" },
+  { id: "5", filterName: "Pan", key: "pan_number" },
+];
 
 const QuickSearch = () => {
   const navigate = useNavigate();
@@ -21,16 +28,6 @@ const QuickSearch = () => {
   const [tableEmployees, setTableEmployees] = useState([]);
 
   const [selectedExactMatch, setSelectedExactMatch] = useState(null);
-
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [apiLoaders, setApiLoaders] = useState({
-    users: false,
-    leads: false,
-    agents: false,
-    employees: false
-  });
-
   const [reloadTrigger, setReloadTrigger] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [activeFilters, setActiveFilters] = useState([]);
@@ -40,32 +37,23 @@ const QuickSearch = () => {
     type: "info",
   });
 
-  // Filters - Added "Pan" here
-  const filters = [
-    { id: "1", filterName: "ID", key: "customer_id" },
-    { id: "2", filterName: "Name", key: "name" },
-    { id: "3", filterName: "Phone", key: "phone_number" },
-    { id: "4", filterName: "Aadhaar", key: "aadhaar_number" },
-    { id: "5", filterName: "Pan", key: "pan_number" }, 
-  ];
+  // Consolidated Loading State
+  const [apiLoaders, setApiLoaders] = useState({
+    users: false,
+    leads: false,
+    agents: false,
+    employees: false,
+  });
 
-  const searchableKeys = activeFilters.length > 0
-    ? filters.filter(f => activeFilters.includes(f.id)).map(f => f.key)
-    : filters.map(f => f.key);
+  const isAnyApiLoading = Object.values(apiLoaders).some((loading) => loading);
 
-  const combinedData = [...tableUsers, ...tableLeads, ...tableAgents, ...tableEmployees];
+  // --- Data Fetching ---
 
-  // Function to update loading state
-  const updateApiLoader = (apiName, loading) => {
-    setApiLoaders(prev => ({
-      ...prev,
-      [apiName]: loading
-    }));
-  };
+  const updateApiLoader = useCallback((apiName, loading) => {
+    setApiLoaders((prev) => ({ ...prev, [apiName]: loading }));
+  }, []);
 
-  // Check if any API is still loading
-  const isAnyApiLoading = Object.values(apiLoaders).some(loading => loading);
-
+  // Fetch Users
   useEffect(() => {
     const fetchUsers = async () => {
       updateApiLoader('users', true);
@@ -80,7 +68,6 @@ const QuickSearch = () => {
           pincode: u.pincode,
           customer_id: u.customer_id,
           collection_area: u.collection_area?.route_name,
-          // Mapping database fields
           aadhaar_number: u.adhaar_no || "—",
           pan_number: u.pan_no || "—",
           isCustomer: true,
@@ -93,8 +80,9 @@ const QuickSearch = () => {
       }
     };
     fetchUsers();
-  }, [reloadTrigger]);
+  }, [reloadTrigger, updateApiLoader]);
 
+  // Fetch Leads
   useEffect(() => {
     const fetchLeads = async () => {
       updateApiLoader('leads', true);
@@ -110,16 +98,11 @@ const QuickSearch = () => {
           customer_id: l.leadCode,
           collection_area: l.group_id?.group_name || "—",
           customer_status: "Active",
-          // Mapping database fields (assuming similar schema for leads)
           aadhaar_number: l.adhaar_no || l.lead_aadhaar || "—",
           pan_number: l.pan_no || l.lead_pan || "—",
           isLead: true,
         }));
-
         setTableLeads(formatted);
-
-        console.log(formatted, "hello")
-
       } catch (error) {
         console.error("Error fetching leads:", error);
       } finally {
@@ -127,13 +110,9 @@ const QuickSearch = () => {
       }
     };
     fetchLeads();
-  }, [reloadTrigger]);
+  }, [reloadTrigger, updateApiLoader]);
 
-  useEffect(() => {
-    setSelectedExactMatch(null);
-  }, [searchText]);
-
-
+  // Fetch Agents
   useEffect(() => {
     const fetchAgents = async () => {
       updateApiLoader('agents', true);
@@ -149,7 +128,6 @@ const QuickSearch = () => {
           customer_id: a.employeeCode,
           collection_area: a.designation_id?.title || "—",
           customer_status: "Active",
-          // Mapping database fields
           aadhaar_number: a.adhaar_no || "—",
           pan_number: a.pan_no || "—",
           isAgent: true,
@@ -162,8 +140,9 @@ const QuickSearch = () => {
       }
     };
     fetchAgents();
-  }, [reloadTrigger]);
+  }, [reloadTrigger, updateApiLoader]);
 
+  // Fetch Employees
   useEffect(() => {
     const fetchEmployees = async () => {
       updateApiLoader('employees', true);
@@ -179,7 +158,6 @@ const QuickSearch = () => {
           customer_id: e.employeeCode,
           collection_area: e.designation_id?.title || "—",
           customer_status: "Active",
-          // Mapping database fields
           aadhaar_number: e.adhaar_no || "—",
           pan_number: e.pan_no || "—",
           isEmployee: true,
@@ -192,19 +170,40 @@ const QuickSearch = () => {
       }
     };
     fetchEmployees();
-  }, [reloadTrigger]);
+  }, [reloadTrigger, updateApiLoader]);
 
-  const columns = [
+  // Reset selection when search text changes
+  useEffect(() => {
+    setSelectedExactMatch(null);
+  }, [searchText]);
+
+
+  // --- Computed Values (Memoized for Performance) ---
+
+  // Memoize combined data to avoid recalculating on unrelated renders
+  const combinedData = useMemo(() => [
+    ...tableUsers, 
+    ...tableLeads, 
+    ...tableAgents, 
+    ...tableEmployees
+  ], [tableUsers, tableLeads, tableAgents, tableEmployees]);
+
+  // Memoize active search keys
+  const searchableKeys = useMemo(() => {
+    if (activeFilters.length > 0) {
+      return FILTERS_CONFIG.filter(f => activeFilters.includes(f.id)).map(f => f.key);
+    }
+    return FILTERS_CONFIG.map(f => f.key);
+  }, [activeFilters]);
+
+  // Memoize Columns
+  const columns = useMemo(() => [
     {
       dataIndex: "customer_id",
       title: "ID",
       key: "customer_id",
       width: 120,
-      render: (text, record) => (
-        <span >
-          {text}
-        </span>
-      ),
+      render: (text) => <span>{text}</span>,
     },
     { dataIndex: "name", title: "Name", key: "name", width: 180 },
     { dataIndex: "phone_number", title: "Phone", key: "phone_number", width: 140 },
@@ -215,7 +214,6 @@ const QuickSearch = () => {
       width: 150,
       render: (text) => <span className="font-mono text-sm">{text}</span>
     },
-    // Added Pan Column
     { 
       dataIndex: "pan_number", 
       title: "Pan", 
@@ -223,42 +221,10 @@ const QuickSearch = () => {
       width: 140,
       render: (text) => <span className="font-mono text-sm uppercase">{text}</span>
     },
-    // {
-    //   dataIndex: "customer_status",
-    //   title: "Status",
-    //   key: "customer_status",
-    //   width: 100,
-    //   render: (text, record) => { 
-    //     if (!record) {
-    //       return <Tag color="default">Invalid</Tag>;
-    //     }
-
-    //     let statusText = "Unknown"; 
-    //     let color = "default";
-
-    //     if (record.isCustomer) {
-    //       statusText = record.customer_status || "Active";
-    //       color = record.customer_status?.toLowerCase() === "active" ? "red" : "green";
-    //     } else if (record.isLead) {
-    //       statusText = "Active";
-    //       color = "green";
-    //     } else if (record.isAgent) {
-    //       statusText = "Active";
-    //       color = "green";
-    //     } else if (record.isEmployee) {
-    //       statusText = "Active";
-    //       color = "green";
-    //     }
-
-    //     return <Tag color={color}>{statusText}</Tag>;
-    //   },
-    // },
     {
       key: "action",
       width: 100,
       render: (_, record) => {
-        if (!record) return null;
-
         let route = "#";
         let tooltip = "";
 
@@ -288,23 +254,12 @@ const QuickSearch = () => {
         );
       },
     },
-  ];
+  ], [navigate]);
 
-  const handleFilterToggle = (id) => {
-    setActiveFilters((prev) =>
-      prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
-    );
-  };
+  // --- Search Logic ---
 
-  const renderSearchResults = (tabKey) => {
-    if (isAnyApiLoading) {
-      return (
-        <div className="flex justify-center py-12">
-          <CircularLoader isLoading={true} failure={false} data="Records" />
-        </div>
-      );
-    }
-
+  // Memoize search results for the active tab
+  const getProcessedResults = useCallback((tabKey) => {
     let dataSource = [];
     if (tabKey === "customers") dataSource = tableUsers;
     else if (tabKey === "leads") dataSource = tableLeads;
@@ -312,21 +267,13 @@ const QuickSearch = () => {
     else if (tabKey === "employees") dataSource = tableEmployees;
     else dataSource = combinedData;
 
+    // If no search text, return "all" mode
     if (!searchText.trim()) {
-      return (
-        <div className="overflow-x-auto">
-          <Table
-            pagination={{ pageSize: 10, showSizeChanger: false, hideOnSinglePage: true }}
-            scroll={{ x: "max-content" }}
-            columns={columns}
-            dataSource={dataSource}
-            rowKey="_id"
-            size="middle"
-          />
-        </div>
-      );
+      return { mode: 'all', dataSource };
     }
 
+    // Initialize Fuse
+    // Note: Creating Fuse is expensive, so we do it only when data/search changes
     const fuse = new Fuse(dataSource, {
       includeScore: true,
       keys: searchableKeys,
@@ -337,16 +284,58 @@ const QuickSearch = () => {
     let exactMatches = results.filter(r => r.score <= 0.05).map(r => r.item);
     let relatedMatches = results.filter(r => r.score > 0.05).map(r => r.item);
 
-
+    // Handle manually selected exact match from related
     if (selectedExactMatch) {
-      exactMatches = [selectedExactMatch];
-      relatedMatches = relatedMatches.filter(
-        (item) => item._id !== selectedExactMatch._id
+      // If the selected exact match is already in the exact matches, keep it there
+      if (!exactMatches.find(m => m._id === selectedExactMatch._id)) {
+         exactMatches = [selectedExactMatch];
+      }
+      // Remove from related to avoid duplicates
+      relatedMatches = relatedMatches.filter((item) => item._id !== selectedExactMatch._id);
+    }
+
+    return { mode: 'search', exactMatches, relatedMatches, hasResults: results.length > 0 };
+  }, [searchText, searchableKeys, combinedData, tableUsers, tableLeads, tableAgents, tableEmployees, selectedExactMatch]);
+
+  // --- Handlers ---
+
+  const handleFilterToggle = (id) => {
+    setActiveFilters((prev) =>
+      prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
+    );
+  };
+
+  // --- Render Helpers ---
+
+  const renderContent = (tabKey) => {
+    if (isAnyApiLoading) {
+      return (
+        <div className="flex justify-center py-12">
+          <CircularLoader isLoading={true} failure={false} data="Records" />
+        </div>
       );
     }
 
+    const searchState = getProcessedResults(tabKey);
 
-    if (results.length === 0) {
+    // Case 1: No Search
+    if (searchState.mode === 'all') {
+      return (
+        <div className="overflow-x-auto">
+          <Table
+            pagination={{ pageSize: 10, showSizeChanger: false, hideOnSinglePage: true }}
+            scroll={{ x: "max-content" }}
+            columns={columns}
+            dataSource={searchState.dataSource}
+            rowKey="_id"
+            size="middle"
+          />
+        </div>
+      );
+    }
+
+    // Case 2: No Results Found
+    if (!searchState.hasResults) {
       return (
         <div className="text-center py-12">
           <div className="inline-block p-3 rounded-full bg-gray-100 mb-3">
@@ -363,9 +352,10 @@ const QuickSearch = () => {
       );
     }
 
+    // Case 3: Search Results
     return (
       <div>
-        {exactMatches.length > 0 && (
+        {searchState.exactMatches.length > 0 && (
           <div className="mb-6 p-4 rounded-lg bg-violet-50 border border-violet-200">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-2 h-2 rounded-full bg-violet-600"></div>
@@ -375,38 +365,33 @@ const QuickSearch = () => {
               pagination={false}
               scroll={{ x: "max-content" }}
               columns={columns}
-              dataSource={[exactMatches[0]]}
+              dataSource={[searchState.exactMatches[0]]}
               rowKey="_id"
               size="middle"
             />
           </div>
         )}
 
-        {relatedMatches.length > 0 && (
+        {searchState.relatedMatches.length > 0 && (
           <div>
             <h4 className="text-gray-700 font-medium mb-4 flex items-center gap-2">
               Related Results
               <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">
-                {relatedMatches.length} found
+                {searchState.relatedMatches.length} found
               </span>
             </h4>
             <Table
               pagination={{ pageSize: 8, showSizeChanger: false }}
               scroll={{ x: "max-content" }}
               columns={columns}
-              dataSource={relatedMatches}
+              dataSource={searchState.relatedMatches}
               rowKey="_id"
               size="middle"
               onRow={(record) => ({
-                onClick: () => {
-                  setSelectedExactMatch(record);
-                }
+                onClick: () => setSelectedExactMatch(record),
               })}
-              rowClassName={() =>
-                "cursor-pointer hover:bg-violet-50 transition-all"
-              }
+              rowClassName={() => "cursor-pointer hover:bg-violet-50 transition-all"}
             />
-
           </div>
         )}
       </div>
@@ -458,7 +443,7 @@ const QuickSearch = () => {
               </div>
 
               <div className="flex flex-wrap gap-2.5 justify-center lg:justify-start">
-                {filters.map((filter) => {
+                {FILTERS_CONFIG.map((filter) => {
                   const isActive = activeFilters.includes(filter.id);
                   return (
                     <Tooltip
@@ -468,10 +453,11 @@ const QuickSearch = () => {
                     >
                       <button
                         onClick={() => handleFilterToggle(filter.id)}
-                        className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-all ${isActive
+                        className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-all ${
+                          isActive
                             ? "bg-violet-600 text-white shadow"
                             : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
-                          }`}
+                        }`}
                       >
                         {filter.filterName}
                       </button>
@@ -489,11 +475,11 @@ const QuickSearch = () => {
               animated={false}
               size="large"
               items={[
-                { key: "all", label: "All", children: renderSearchResults("all") },
-                { key: "customers", label: "Customers", children: renderSearchResults("customers") },
-                { key: "leads", label: "Leads", children: renderSearchResults("leads") },
-                { key: "agents", label: "Agents", children: renderSearchResults("agents") },
-                { key: "employees", label: "Employees", children: renderSearchResults("employees") },
+                { key: "all", label: "All", children: renderContent("all") },
+                { key: "customers", label: "Customers", children: renderContent("customers") },
+                { key: "leads", label: "Leads", children: renderContent("leads") },
+                { key: "agents", label: "Agents", children: renderContent("agents") },
+                { key: "employees", label: "Employees", children: renderContent("employees") },
               ]}
             />
           </Card>

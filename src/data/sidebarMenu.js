@@ -160,7 +160,7 @@ const sidebarMenu = [
     //   },
     // ],
   },
- { title: "Penalty Monitor", icon: TbGraph, link: "/penalty-monitor" },
+//  { title: "Penalty Monitor", icon: TbGraph, link: "/penalty-monitor" },
   {
     id: "$7",
     title: "Leads",

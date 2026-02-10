@@ -131,15 +131,15 @@ const settingMenu = [
   //   ],
   // },
 
-      {
-  title: "Penalty Management",
-  icon: RiMoneyRupeeCircleFill,
-  submenu: true,
-  submenuItems: [
-    { title: "Penalty Settings", icon: TiSpanner, link: "/penalty-settings" },
-    { title: "Penalty Monitor", icon: TbGraph, link: "/penalty-monitor" },
-  ],
-},
+//       {
+//   title: "Penalty Management",
+//   icon: RiMoneyRupeeCircleFill,
+//   submenu: true,
+//   submenuItems: [
+//     { title: "Penalty Settings", icon: TiSpanner, link: "/penalty-settings" },
+//     { title: "Penalty Monitor", icon: TbGraph, link: "/penalty-monitor" },
+//   ],
+// },
 
   { id: 7, title: "Profile", icon: CgProfile, link: "/profile" },
   { id: 8, title: "Help & Support", icon: IoIosHelpCircle, link: "/help" },
