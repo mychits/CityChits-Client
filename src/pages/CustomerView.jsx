@@ -37,6 +37,8 @@ import {
   FiFileText,
   FiUsers,
   FiDollarSign,
+  FiHexagon,
+  FiTrendingUp,
 } from "react-icons/fi";
 
 const CustomerView = () => {
@@ -64,10 +66,13 @@ const CustomerView = () => {
   const [isLoadingPayment, setIsLoadingPayment] = useState(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [selectedGroupDetails, setSelectedGroupDetails] = useState(null);
-  
+
   // State for Auction Count in Modal
   const [auctionCount, setAuctionCount] = useState(0);
-  
+
+  // NEW STATE: Total Auctions across all groups
+  const [totalAuctions, setTotalAuctions] = useState(0);
+
   // State for Auction History in Auction History Tab
   const [selectedGroupAuctions, setSelectedGroupAuctions] = useState([]);
   const [isAuctionsLoading, setIsAuctionsLoading] = useState(false);
@@ -134,12 +139,66 @@ const CustomerView = () => {
     const paymentDate = new Date(dateString);
     const today = new Date();
     // Set time to midnight to ensure accurate day calculation
-    paymentDate.setHours(0,0,0,0);
-    today.setHours(0,0,0,0);
-    
+    paymentDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
     const diffTime = today - paymentDate;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
+  };
+  
+  // Helper to get styles for "Days Since Payment" based on logic
+  const getPaymentCardStyles = (days) => {
+    // If 0 days, return null to force default violet styling
+    if (days === 0) {
+      return null;
+    }
+
+    if (days < 3) {
+      return {
+        bg: "from-green-50",
+        border: "border-green-200",
+        label: "text-green-700",
+        iconBg: "bg-green-100",
+        iconText: "text-green-600"
+      };
+    } else if (days >= 3 && days < 7) {
+      // "Thick Green" -> Emerald is more saturated/dense
+      return {
+        bg: "from-emerald-50",
+        border: "border-emerald-200",
+        label: "text-emerald-700",
+        iconBg: "bg-emerald-100",
+        iconText: "text-emerald-600"
+      };
+    } else if (days >= 7 && days < 10) {
+      // "Slight Orange and Green Mix" -> Lime is closest in Tailwind
+      return {
+        bg: "from-lime-50",
+        border: "border-lime-200",
+        label: "text-lime-700", // Darker lime for readability
+        iconBg: "bg-lime-100",
+        iconText: "text-lime-600"
+      };
+    } else if (days >= 10 && days < 15) {
+      // Orange
+      return {
+        bg: "from-orange-50",
+        border: "border-orange-200",
+        label: "text-orange-700",
+        iconBg: "bg-orange-100",
+        iconText: "text-orange-600"
+      };
+    } else {
+      // Red (>= 15)
+      return {
+        bg: "from-red-50",
+        border: "border-red-200",
+        label: "text-red-700",
+        iconBg: "bg-red-100",
+        iconText: "text-red-600"
+      };
+    }
   };
 
   const handleGroupClick = async (auction) => {
@@ -147,7 +206,7 @@ const CustomerView = () => {
     // Reset count to 0 before fetching to avoid showing old data
     setAuctionCount(0);
     setIsGroupModalOpen(true);
-    
+
     // Fetch auction count for this specific group
     if (auction.group_id) {
       const count = await fetchAuctionCount(auction.group_id);
@@ -190,7 +249,7 @@ const CustomerView = () => {
       year: "numeric",
     });
   };
-  
+
   // Updated InfoBox with text wrapping classes
   const InfoBox = ({ label, value, icon }) => {
     return (
@@ -207,7 +266,7 @@ const CustomerView = () => {
       </div>
     );
   };
-  
+
   const [selectedFile, setSelectedFile] = useState(null);
   const handleUploadPhoto = async () => {
     if (!selectedFile) return;
@@ -524,31 +583,42 @@ const CustomerView = () => {
     fetchRegistrationFee();
   }, [activeTab, selectedGroup, EnrollGroupId.groupId, EnrollGroupId.ticket]);
 
+  // NEW EFFECT: Calculate Total Auctions whenever TableAuctions updates
+  useEffect(() => {
+    if (TableAuctions && TableAuctions.length > 0) {
+      const total = TableAuctions.reduce((sum, item) => sum + (item.auctionCount || 0), 0);
+      setTotalAuctions(total);
+    } else {
+      setTotalAuctions(0);
+    }
+  }, [TableAuctions]);
+
+
   // NEW EFFECT: Fetch Auctions for the selected Group in Auction History Tab OR Ledger (if needed)
   useEffect(() => {
     const fetchGroupAuctions = async () => {
       if (
-        (activeTab === "daybook" || activeTab === "auctionHistory") && 
-        EnrollGroupId.groupId && 
+        (activeTab === "daybook" || activeTab === "auctionHistory") &&
+        EnrollGroupId.groupId &&
         EnrollGroupId.groupId !== "Loan"
       ) {
         setIsAuctionsLoading(true);
         try {
           const response = await api.get(`/auction/get-group-auction/${EnrollGroupId.groupId}`);
           if (response.data) {
-             const formattedAuctions = response.data.map((auc, index) => ({
-               _id: auc._id,
-               id: index + 1,
-               auction_date: auc.auction_date ? auc.auction_date.split("T")[0] : "—",
-               customer_name: auc.user_id?.full_name || "—",
-               ticket: auc.ticket || "—",
-               bid_amount: Number(auc.divident || 0) + Number(auc.commission || 0),
-               win_amount: auc.win_amount || 0,
-               status: auc.isPrized ? "Prized" : "Unprized",
-             }));
-             setSelectedGroupAuctions(formattedAuctions);
+            const formattedAuctions = response.data.map((auc, index) => ({
+              _id: auc._id,
+              id: index + 1,
+              auction_date: auc.auction_date ? auc.auction_date.split("T")[0] : "—",
+              customer_name: auc.user_id?.full_name || "—",
+              ticket: auc.ticket || "—",
+              bid_amount: Number(auc.divident || 0) + Number(auc.commission || 0),
+              win_amount: auc.win_amount || 0,
+              status: auc.isPrized ? "Prized" : "Unprized",
+            }));
+            setSelectedGroupAuctions(formattedAuctions);
           } else {
-             setSelectedGroupAuctions([]);
+            setSelectedGroupAuctions([]);
           }
         } catch (error) {
           console.error("Error fetching group auctions:", error);
@@ -567,34 +637,43 @@ const CustomerView = () => {
   useEffect(() => {
     const fetchLastPayment = async () => {
       if (!userId) return;
+
       setIsLoadingPayment(true);
+
       try {
-        const response = await api.get("/user/get-daily-payments");
-        const rawData = response.data;
-        let latestPayment = { date: null, amount: null };
-        for (const user of rawData) {
-          if (user?._id === userId && user?.data) {
-            for (const item of user.data) {
-              const pay = item.payments;
-              if (pay?.latestPaymentDate && pay?.latestPaymentAmount) {
-                latestPayment = {
-                  date: pay.latestPaymentDate,
-                  amount: pay.latestPaymentAmount,
-                };
-              }
-            }
-          }
+        const response = await api.get(
+          `/payment/latest-by-user/${userId}`
+        );
+        console.info(response, "jhsdgjfgsdfg");
+
+        const payment = response.data?.data;
+
+        if (payment) {
+          setLastPayment({
+            date: payment.payment_date,
+            amount: payment.payment_amount,
+          });
+        } else {
+          setLastPayment({
+            date: "N/A",
+            amount: "0",
+          });
         }
-        setLastPayment(latestPayment);
+
       } catch (error) {
         console.error("Error fetching last payment details:", error);
-        setLastPayment({ date: "N/A", amount: "N/A" });
+        setLastPayment({
+          date: "N/A",
+          amount: "0",
+        });
       } finally {
         setIsLoadingPayment(false);
       }
     };
+
     fetchLastPayment();
   }, [userId]);
+
   useEffect(() => {
     const fetchAllLoanPaymentsbyId = async () => {
       setBorrowersData([]);
@@ -741,10 +820,10 @@ const CustomerView = () => {
     const fetchGroupById = async () => {
       try {
         const response = await api.get(`/user/get-user-by-id/${selectedGroup}`);
-    
+
         setGroup(response.data);
-      
-      
+
+
       } catch (error) {
         console.error("Error fetching group ", error);
       }
@@ -909,7 +988,7 @@ const CustomerView = () => {
         if (response.data && response.data.length > 0) {
           // Filter out deleted enrollments/groups
           const validData = response.data.filter((item) => !item?.enrollment?.deleted);
-          
+
           setFilteredAuction(validData);
 
           const formattedData = validData
@@ -962,6 +1041,7 @@ const CustomerView = () => {
                     totalPaidAmount,
                 referred_type: group?.enrollment?.referred_type || "N/A",
                 referrer_name: group?.enrollment?.referrer_name || "N/A",
+                auctionCount: auctionCount, // Added for Total Auctions calculation
               };
             })
             .filter((item) => item !== null);
@@ -1286,7 +1366,7 @@ const CustomerView = () => {
                         <CircularLoader color="text-violet-600" size="lg" />
                       </div>
                     ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                         {[
                           {
                             label: "TOTAL GROUPS",
@@ -1298,6 +1378,11 @@ const CustomerView = () => {
                             value: TableAuctions?.length || 0,
                             icon: <FiUsers className="text-violet-600" />,
                           },
+                          // {
+                          //   label: "TOTAL AUCTIONS", // New Card
+                          //   value: totalAuctions,
+                          //   icon: <FiHexagon className="text-violet-600" />,
+                          // },
                           {
                             label: "JOINED ON",
                             value: group?.createdAt
@@ -1329,10 +1414,11 @@ const CustomerView = () => {
                             value: group?.approval_status === "true"
                               ? "Approved"
                               : group?.approval_status === "false"
-                              ? "Pending"
-                              : "Approved", 
+                                ? "Pending"
+                                : "Approved",
                             icon: <FiCheckCircle className="text-violet-600" />,
                           },
+                      
                           {
                             label: "TOTAL  TO BE PAID",
                             value: ` ${(NetTotalprofit || 0).toLocaleString("en-IN")}`,
@@ -1358,30 +1444,46 @@ const CustomerView = () => {
                             value: isLoadingPayment ? (
                               <CircularLoader color="text-violet-600" size="sm" />
                             ) : lastPayment?.date ? (
-                              <div className="flex flex-col items-start gap-1">
-                                <div className="flex items-baseline gap-2">
-                                  <span className="font-bold text-gray-900 text-lg">
-                                    ₹{(lastPayment.amount || 0).toLocaleString("en-IN")}
-                                  </span>
-                                  <span className="text-sm text-gray-600">
-                                    {new Date(lastPayment.date).toLocaleDateString("en-GB")}
-                                  </span>
+                              <div className="flex flex-col gap-1">
+                                <div className="font-bold text-gray-900">
+                                  ₹{(lastPayment.amount || 0).toLocaleString("en-IN")}
                                 </div>
-                                {/* Red badge logic for > 10 days remains here */}
-                                {(() => {
-                                  const daysDiff = calculateDaysSince(lastPayment.date);
-                                  const isOverdue = daysDiff > 10;
-                                  return (
-                                    <span className={`text-xs font-bold px-2 py-0.5 rounded w-fit ${isOverdue ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
-                                      {daysDiff} Days Ago
-                                    </span>
-                                  );
-                                })()}
+                                <div className="text-xs text-gray-500">
+                                  {new Date(lastPayment.date).toLocaleDateString("en-GB")}
+                                </div>
                               </div>
                             ) : (
                               "—"
                             ),
                             icon: <BsCurrencyRupee className="text-violet-600" />,
+                          },
+                              {
+                            label: "DAYS SINCE PAYMENT",
+                            value: isLoadingPayment ? (
+                              <CircularLoader color="text-violet-600" size="sm" />
+                            ) : (
+                              (() => {
+                                const daysDiff = Math.max(
+                                  0,
+                                  Number(calculateDaysSince(lastPayment?.date)) || 0
+                                );
+                                return (
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-bold text-gray-900">{daysDiff}</span>
+                                    <span className="text-sm text-gray-500">Days</span>
+                                  </div>
+                                );
+                              })()
+                            ),
+                            icon: <FiTrendingUp className="text-violet-600" />,
+                            // Assign custom styles based on days
+                            customStyles: (() => {
+                              const daysDiff = Math.max(
+                                0,
+                                Number(calculateDaysSince(lastPayment?.date)) || 0
+                              );
+                              return getPaymentCardStyles(daysDiff);
+                            })()
                           },
                           {
                             label: "LATEST DISBURSEMENT",
@@ -1390,27 +1492,47 @@ const CustomerView = () => {
                               : ` ${Number(groupPaid || 0).toLocaleString("en-IN")}`,
                             icon: <BsCurrencyRupee className="text-violet-600" />,
                           },
-                        ].map((stat, idx) => (
-                          <div
-                            key={idx}
-                            className="bg-gradient-to-br from-violet-50 to-white rounded-xl shadow-md p-5 flex flex-col gap-3 border border-violet-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs font-semibold text-violet-700 tracking-wide uppercase">
-                                {stat.label}
-                              </span>
-                              <div className="bg-violet-100 p-2 rounded-lg shadow-sm">
-                                {stat.icon}
+                        ].map((stat, idx) => {
+                          // Determine styles: use customStyles if available, otherwise default violet
+                          const styles = stat.customStyles || {
+                            bg: "from-violet-50",
+                            border: "border-violet-100",
+                            label: "text-violet-700",
+                            iconBg: "bg-violet-100",
+                            iconText: "text-violet-600"
+                          };
+
+                          return (
+                            <div
+                              key={idx}
+                              className={`
+                                bg-gradient-to-br ${styles.bg} to-white ${styles.border}
+                                rounded-xl shadow-md p-5 flex flex-col gap-3 border hover:shadow-lg transition-all duration-300 hover:-translate-y-1
+                              `}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span
+                                  className={`text-xs font-semibold tracking-wide uppercase ${styles.label}`}
+                                >
+                                  {stat.label}
+                                </span>
+                                <div
+                                  className={`p-2 rounded-lg shadow-sm ${styles.iconBg}`}
+                                >
+                                  <span className={styles.iconText}>
+                                    {stat.icon}
+                                  </span>
+                                </div>
+                              </div>
+                              <div
+                                className="text-lg font-bold text-gray-900 break-words whitespace-normal w-full"
+                                style={{ wordBreak: "break-word" }}
+                              >
+                                {stat.value}
                               </div>
                             </div>
-                            <div
-                              className="text-lg font-bold text-gray-900 break-words whitespace-normal w-full"
-                              style={{ wordBreak: "break-word" }}
-                            >
-                              {stat.value}
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     )}
                   </div>
@@ -1937,12 +2059,12 @@ const CustomerView = () => {
                       <div className="flex justify-between items-center border-b pb-2">
                         <h3 className="font-bold text-gray-700">Auction History</h3>
                         {selectedGroupAuctions.length > 0 && (
-                           <span className="text-sm bg-gray-200 text-gray-700 px-3 py-1 rounded-full">
-                              {selectedGroupAuctions.length} Records
-                           </span>
+                          <span className="text-sm bg-gray-200 text-gray-700 px-3 py-1 rounded-full">
+                            {selectedGroupAuctions.length} Records
+                          </span>
                         )}
                       </div>
-                      
+
                       {isAuctionsLoading ? (
                         <div className="flex items-center justify-center py-12">
                           <CircularLoader isLoading={true} data="Auctions" />
