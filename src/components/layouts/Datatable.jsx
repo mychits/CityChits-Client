@@ -257,7 +257,7 @@ const DataTable = ({
           <table style="width: 100%; border-collapse: collapse;">
             <thead>
               <tr>
-                ${safeColumns
+                ${exportColumns
                   .filter((col) => col.key.toLowerCase() !== "action")
                   .map((col) => `<th>${col.header}</th>`)
                   .join("")}
@@ -268,7 +268,7 @@ const DataTable = ({
                 .map(
                   (row) => `
                 <tr>
-                  ${safeColumns
+                  ${exportColumns
                     .filter((col) => col.key.toLowerCase() !== "action")
                     .map((col) => `<td>${row[col.key] || "-"}</td>`)
                     .join("")}

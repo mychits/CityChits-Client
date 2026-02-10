@@ -47,7 +47,7 @@ const Payment = () => {
       {
         key: "1",
         label: (
-          <Link to={`/print/${paymentObject?._id}`} className="text-violet-600 ">
+          <Link to={`/print/${paymentObject?._id}`} className="text-blue-600 ">
             Print
           </Link>
         ),
@@ -81,6 +81,7 @@ const Payment = () => {
 
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
+    remarks:"",
     user_id: "",
     receipt_no: "",
     pay_date: today,
@@ -250,30 +251,30 @@ const Payment = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-const handleChange = (e) => {
-  const { name, value } = e.target;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  if (name === "amount") {
-    // Allow digits & ONLY one dot
-    let cleaned = value.replace(/[^0-9.]/g, "");
+    if (name === "amount") {
+      // Allow digits & ONLY one dot
+      let cleaned = value.replace(/[^0-9.]/g, "");
 
-    const dotCount = (cleaned.match(/\./g) || []).length;
-    if (dotCount > 1) return;
+      const dotCount = (cleaned.match(/\./g) || []).length;
+      if (dotCount > 1) return;
 
+      setFormData((prev) => ({
+        ...prev,
+        [name]: cleaned,
+      }));
+
+      return;
+    }
+
+    // Other fields
     setFormData((prev) => ({
       ...prev,
-      [name]: cleaned,
+      [name]: value,
     }));
-
-    return;
-  }
-
-  // Other fields
-  setFormData((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
-};
+  };
 
 
   const handlePaymentAntSelect = (values) => {
@@ -282,25 +283,25 @@ const handleChange = (e) => {
 
 
 
-  
-const formatIndianNumber = (value) => {
-  if (!value) return "";
 
-  value = value.toString().replace(/[^0-9.]/g, "");
+  const formatIndianNumber = (value) => {
+    if (!value) return "";
 
-  const parts = value.split(".");
-  const integerPart = parts[0];
-  const decimalPart = parts[1] ? parts[1].slice(0, 2) : "";
+    value = value.toString().replace(/[^0-9.]/g, "");
 
-  let lastThree = integerPart.slice(-3);
-  let otherNumbers = integerPart.slice(0, -3);
+    const parts = value.split(".");
+    const integerPart = parts[0];
+    const decimalPart = parts[1] ? parts[1].slice(0, 2) : "";
 
-  let formattedInt = otherNumbers
-    ? otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree
-    : lastThree;
+    let lastThree = integerPart.slice(-3);
+    let otherNumbers = integerPart.slice(0, -3);
 
-  return decimalPart ? `${formattedInt}.${decimalPart}` : formattedInt;
-};
+    let formattedInt = otherNumbers
+      ? otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree
+      : lastThree;
+
+    return decimalPart ? `${formattedInt}.${decimalPart}` : formattedInt;
+  };
 
   const columns = [
     { key: "id", header: "SL. NO" },
@@ -449,6 +450,7 @@ const formatIndianNumber = (value) => {
           cheque_date: "",
           cheque_bank_name: "",
           cheque_bank_branch: "",
+          remarks:""
         });
         setAlertConfig({
           visibility: true,
@@ -461,6 +463,7 @@ const formatIndianNumber = (value) => {
       setShowModal(false);
       setSelectedUserId("");
       setFormData({
+        remarks:"",
         user_id: "",
         receipt_no: "",
         pay_date: "",
@@ -565,7 +568,7 @@ const formatIndianNumber = (value) => {
                     <div>
                       <button
                         onClick={() => setShowModal(true)}
-                        className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                        className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
                       >
                         + Add Payment
                       </button>
@@ -669,9 +672,8 @@ const formatIndianNumber = (value) => {
                       </div>
 
                       <div
-                        className={`form-group ${
-                          enrollmentLoading ? "cursor-progress" : ""
-                        }`}
+                        className={`form-group ${enrollmentLoading ? "cursor-progress" : ""
+                          }`}
                       >
                         <label
                           className="block mb-2 text-sm font-medium text-gray-900"
@@ -687,7 +689,7 @@ const formatIndianNumber = (value) => {
                           onChange={handlePaymentAntSelect}
                           loading={enrollmentLoading}
                           value={paymentGroupTickets}
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                         >
                           {filteredEnrollments.map((entry, index) => {
                             const groupName =
@@ -755,7 +757,7 @@ const formatIndianNumber = (value) => {
                               id="pay_date"
                               onChange={handleChange}
                               placeholder=""
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                             />
                             {errors.pay_date && (
                               <p className="text-red-500 text-xs mt-1">
@@ -780,7 +782,7 @@ const formatIndianNumber = (value) => {
                                 onChange={handleChange}
                                 placeholder="Enter Amount"
                                 required
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                               />
                               {errors.amount && (
                                 <p className="text-red-500 text-xs mt-1">
@@ -788,7 +790,7 @@ const formatIndianNumber = (value) => {
                                 </p>
                               )}
                             </div>
-                            <div className="text-violet-900">{numberToIndianWords(formData.amount)}</div>
+                            <div className="text-blue-900">{numberToIndianWords(formData.amount)}</div>
                           </div>
 
                           <div>
@@ -801,7 +803,7 @@ const formatIndianNumber = (value) => {
                             <select
                               name="pay_mode"
                               id="pay_mode"
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                               onChange={handlePaymentModeChange}
                             >
                               <option value="cash">Cash</option>
@@ -822,7 +824,7 @@ const formatIndianNumber = (value) => {
                               <select
                                 name="account_type"
                                 id="account_type"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                                 onChange={handleAccountTypeChange}
                               >
                                 <option value="">Select Account Type</option>
@@ -847,15 +849,15 @@ const formatIndianNumber = (value) => {
                                 placeholder="Individual Amount"
                                 value={formatIndianNumber(
                                   Number(formData.amount) /
-                                    paymentGroupTickets.length
+                                  paymentGroupTickets.length
                                 )}
                                 disabled
                               />
                             </div>
-                            <div className="text-violet-900">
+                            <div className="text-blue-900">
                               {numberToIndianWords(
                                 Number(formData.amount) /
-                                  paymentGroupTickets.length
+                                paymentGroupTickets.length
                               )}
                             </div>
                           </div>
@@ -863,30 +865,30 @@ const formatIndianNumber = (value) => {
 
                         {(paymentMode === "online" ||
                           paymentMode === "online/upi") && (
-                          <div className="mt-4">
-                            <label
-                              className="block mb-2 text-sm font-medium text-gray-900"
-                              htmlFor="transaction_id"
-                            >
-                              Transaction ID{" "}
-                              <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                              type="text"
-                              name="transaction_id"
-                              id="transaction_id"
-                              value={formData.transaction_id}
-                              onChange={handleChange}
-                              placeholder="Enter Transaction ID"
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
-                            />
-                            {errors.transaction_id && (
-                              <p className="text-red-500 text-xs mt-1">
-                                {errors.transaction_id}
-                              </p>
-                            )}
-                          </div>
-                        )}
+                            <div className="mt-4">
+                              <label
+                                className="block mb-2 text-sm font-medium text-gray-900"
+                                htmlFor="transaction_id"
+                              >
+                                Transaction ID{" "}
+                                <span className="text-red-500">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                name="transaction_id"
+                                id="transaction_id"
+                                value={formData.transaction_id}
+                                onChange={handleChange}
+                                placeholder="Enter Transaction ID"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                              />
+                              {errors.transaction_id && (
+                                <p className="text-red-500 text-xs mt-1">
+                                  {errors.transaction_id}
+                                </p>
+                              )}
+                            </div>
+                          )}
 
                         {paymentMode === "cheque" && (
                           <div className="mt-4 space-y-4">
@@ -909,7 +911,7 @@ const formatIndianNumber = (value) => {
                                   value={formData.cheque_number}
                                   onChange={handleChange}
                                   placeholder="Enter Cheque Number"
-                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                                 />
                                 {errors.cheque_number && (
                                   <p className="text-red-500 text-xs mt-1">
@@ -933,7 +935,7 @@ const formatIndianNumber = (value) => {
                                   value={formData.cheque_date.split("T")[0]}
                                   onChange={handleChange}
                                   placeholder="Enter Cheque Date"
-                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                                 />
                                 {errors.cheque_date && (
                                   <p className="text-red-500 text-xs mt-1">
@@ -956,7 +958,7 @@ const formatIndianNumber = (value) => {
                                   value={formData.cheque_bank_name}
                                   onChange={handleChange}
                                   placeholder="Enter Bank Name"
-                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                                 />
                               </div>
 
@@ -974,12 +976,26 @@ const formatIndianNumber = (value) => {
                                   value={formData.cheque_bank_branch}
                                   onChange={handleChange}
                                   placeholder="Enter Bank Branch"
-                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                                 />
                               </div>
                             </div>
                           </div>
                         )}
+
+
+                        <div className="my-4">
+                          <label
+                            className="block mb-2 text-sm font-medium text-gray-900 "
+                            htmlFor="remarks"
+                          >
+                            Remarks
+                          </label>
+                         <textarea name="remarks" id="remarks" value={formData?.remarks} onChange={handleChange} placeholder="Remarks if any..." rows={2}   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
+
+                         </textarea>
+                          
+                        </div>
                       </div>
 
                       <div className="bg-white p-4 rounded-lg border border-gray-200">
@@ -1010,7 +1026,7 @@ const formatIndianNumber = (value) => {
                       <div className="flex justify-end pt-4">
                         <button
                           type="submit"
-                          className="flex items-center gap-2 text-white bg-violet-600 hover:bg-violet-700 focus:ring-2 focus:outline-none focus:ring-violet-300 font-medium rounded-md text-sm px-6 py-3 shadow-sm transition-all"
+                          className="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-6 py-3 shadow-sm transition-all"
                         >
                           Save Payment
                         </button>
@@ -1107,7 +1123,7 @@ const formatIndianNumber = (value) => {
               <h3 className="mb-4 text-xl font-bold text-gray-900">
                 Payment Details
               </h3>
-              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5">
+              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
                 <div className="mb-3 flex gap-x-2">
                   <strong>Group: </strong>{" "}
                   {currentViewGroup?.group_id?.group_name}
@@ -1127,9 +1143,9 @@ const formatIndianNumber = (value) => {
                 <div className="mb-3 flex gap-x-2">
                   <strong>Bid Amount:</strong>{" "}
                   {currentViewGroup?.group_id?.group_value -
-                  currentViewGroup?.win_amount
+                    currentViewGroup?.win_amount
                     ? currentViewGroup?.group_id?.group_value -
-                      currentViewGroup?.win_amount
+                    currentViewGroup?.win_amount
                     : ""}
                 </div>
                 <div className="mb-3 flex gap-x-2">

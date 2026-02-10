@@ -125,6 +125,15 @@ const subMenus = [
     category: "Loan",
     color: "from-cyan-500 to-cyan-600",
   },
+             {
+    id: "42",
+    title: "OutStanding Loan Report",
+    link: "/reports/loan-due-report",
+    category: "Loan",
+    Icon: GiMoneyStack,
+    color: "from-blue-500 to-blue-600",
+    isNew: false,
+  },
    {
     id:"&*DD",
     title: "Pigmy Summary Report",
@@ -363,6 +372,16 @@ const subMenus = [
     link: "/reports/loan-completion-report",
     category: "Customer",
     Icon: GiMoneyStack,
+    color: "from-blue-500 to-blue-600",
+    isNew: false,
+  },
+
+          {
+    id: "43",
+    title: " Reward Points Report",
+    link: "/reports/date-wise-reward-points",
+    category: "Employee",
+    Icon: TfiGift,
     color: "from-blue-500 to-blue-600",
     isNew: false,
   },
