@@ -1,21 +1,21 @@
 import Sidebar from "../components/layouts/Sidebar";
 import { MdGroups, MdOutlinePayments, MdGroupWork } from "react-icons/md";
-import { FaUserLock, FaClipboardList } from "react-icons/fa";
+import { FaUserLock, FaClipboardList, FaCodeBranch } from "react-icons/fa";
 import { SlCalender } from "react-icons/sl";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react"; // Added useCallback
 import { useNavigate } from "react-router-dom";
 import api from "../instance/TokenInstance";
 import Navbar from "../components/layouts/Navbar";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import { BsGrid3X3GapFill, BsListUl } from "react-icons/bs";
-import Receipt from "../components/receipts/CustomReceiptOne"; // Added import
-import dayjs from "dayjs"; // Added import
-import { Tag } from "antd"; // Added import
+import Receipt from "../components/receipts/CustomReceiptOne";
+import dayjs from "dayjs";
+import { Tag } from "antd";
 import {
   ClockCircleOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
-} from "@ant-design/icons"; // Added imports
+} from "@ant-design/icons";
 
 const Home = () => {
   const [groups, setGroups] = useState([]);
@@ -32,6 +32,9 @@ const Home = () => {
   const [enrollmentsCount, setEnrollmentsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [viewMode, setViewMode] = useState("list");
+  
+  // Branch Target State
+  const [targetValue, setTargetValue] = useState(0);
 
   const [transactionsLoading, setTransactionsLoading] = useState(false);
   const [tableTransactions, setTableTransactions] = useState([]);
@@ -61,6 +64,17 @@ const Home = () => {
     setShowPasswordPrompt(true);
     setErrorMsg("");
   };
+
+  // --- Added Branch Target Fetch Logic ---
+  const fetchTotalBranchTarget = useCallback(async () => {
+    try {
+      const response = await api.get("/payment/branch/target");
+      setTargetValue(response?.data?.data?.[0].branchTarget || 0);
+    } catch (error) {
+      console.error("Error fetching branch target amount:", error);
+      setTargetValue(0);
+    }
+  }, []);
 
   const verifyPasswordAndRedirect = async () => {
     setIsLoadingVerify(true);
@@ -126,6 +140,11 @@ const Home = () => {
     };
     fetchGroups();
   }, [reloadTrigger]);
+
+  // --- Added Branch Target Effect ---
+  useEffect(() => {
+    fetchTotalBranchTarget();
+  }, [fetchTotalBranchTarget, reloadTrigger]);
 
   useEffect(() => {
     const fetchEnrollments = async () => {
@@ -316,6 +335,20 @@ const Home = () => {
   }, []);
 
   const cardData = [
+    {
+      // --- Added Branch Target Card ---
+      icon: FaCodeBranch,
+      title: "Branch Target",
+      value: `₹ ${(targetValue ?? 0).toLocaleString("en-IN")}`,
+      subtitle: "Current branch target goal",
+      color: "from-gray-500 to-gray-600",
+      iconBg: "bg-gray-100",
+      iconColor: "text-gray-600",
+      borderColor: "border-gray-600",
+      ringColor: "ring-gray-500/20",
+      redirect: "/staff-menu/employee-menu",
+      key: "0",
+    },
     {
       icon: MdGroupWork,
       title: "Chit Groups",
@@ -540,7 +573,7 @@ const Home = () => {
             </div>
           )}
 
-          {/* RECENT TRANSACTIONS SECTION INTEGRATED FROM HOME 1 */}
+          {/* RECENT TRANSACTIONS SECTION */}
           <div className="mt-16">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
               <div>

@@ -181,6 +181,11 @@ import EmployeeRewardPoints from "../pages/EmployeeRewardPoints";
 import RewardSettings from "../pages/RewardSettings";
 import RewardMenu from "../pages/RewardsMenu";
 
+import CustomerLoanWhatsappMenu from "../pages/CustomerLoanWhatsAppMenu";
+import DueLoanReport from "../pages/DueLoanReport";
+import DateWiseRewardreport from "../pages/DateWiseRewardreport";
+import DueLoanWhatsappMessage from "../pages/DueLoanWhatsappMessage";
+
 const mainRoutes = createBrowserRouter([
   {
     path: "/",
@@ -281,6 +286,15 @@ const mainRoutes = createBrowserRouter([
     path: "/reward-settings",
     element: <RewardSettings/>
   },
+
+      {
+    path: "/market-menu/whatsapp-marketing/loan-whatsapp-marketing",
+  element: (
+    <ProtectedRoute>
+        <CustomerLoanWhatsappMenu />
+      </ProtectedRoute>
+  ),
+},
 
       { path: "customer-view", element: <CustomerView /> },
       { path: "/total-revenue", element: <TotalRevenue /> },
@@ -931,6 +945,8 @@ const mainRoutes = createBrowserRouter([
       },
         {path:"redemtion-points", element: <RedemptionPointsReport/>},
       {path: "loan-completion-report", element: <LoanCompletionReport/>},
+         {path: "loan-due-report", element: <DueLoanReport/>},
+      {path: "date-wise-reward-points", element: <DateWiseRewardreport/>},
     ],
   },
 
@@ -1090,6 +1106,7 @@ const mainRoutes = createBrowserRouter([
       {path: "/market-menu/whatsapp-marketing/lead-whatsapp-marketing/lead-referredby-message", element: <LeadReferredByWhatsappMessage/>},
       {path: "/market-menu/whatsapp-marketing/customer-whatsapp-marketing/customer-welcome-message", element: <CustomerWelcomeWhatsappMessage/>},
       {path: "/market-menu/whatsapp-marketing/customer-whatsapp-marketing/customer-chitplan-message", element: <CustomerChitPlanWhatsappMessage/>},
+       {path: "/market-menu/whatsapp-marketing/loan-whatsapp-marketing/due-loan-message",element: <DueLoanWhatsappMessage/>},
     
    
   

@@ -5,13 +5,18 @@ import api from "../instance/TokenInstance";
 import DataTable from "../components/layouts/Datatable";
 import CircularLoader from "../components/loaders/CircularLoader";
 import CustomerReportPrint from "../components/printFormats/CustomerReportPrint";
-import { Select } from "antd";
+import { Dropdown, Select } from "antd";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import { IoMdDownload } from "react-icons/io";
+import { IoMdMore } from "react-icons/io";
+import { MdAccountBalanceWallet } from "react-icons/md";
 import Fuse from "fuse.js";
+import { numberToIndianWords } from "../helpers/numberToIndianWords";
+import { FiUser, FiBookOpen, FiFileText, FiRepeat } from "react-icons/fi";
+import { FaRupeeSign } from "react-icons/fa";
 const UserReport = () => {
   const [searchParams] = useSearchParams();
   const userId = searchParams.get("user_id");
@@ -86,10 +91,9 @@ const UserReport = () => {
   const [filteredAuction, setFilteredAuction] = useState([]);
   const [groupInfo, setGroupInfo] = useState({});
 
-  const [selectedDate, setSelectedDate] = useState(() => {
-    const today = new Date();
-    return today.toISOString().split("T")[0];
-  });
+
+  const [selectedFromDate, setSelectedFromDate] = useState("");
+  const [selectedToDate, setSelectedToDate] = useState("");
   const [selectedPaymentMode, setSelectedPaymentMode] = useState("");
   const [selectedCustomers, setSelectedCustomers] = useState(
     userId ? userId : ""
@@ -110,9 +114,30 @@ const UserReport = () => {
   const [filteredBorrowerData, setFilteredBorrowerData] = useState([]);
   const [filteredDisbursement, setFilteredDisbursement] = useState([]);
   const [disbursementLoading, setDisbursementLoading] = useState(false);
+  const [statementLoading, setStatementLoading] = useState(false);
+  const [transactionsLoading, setTransactionsLoading] = useState(false);
+
   const [registrationAmount, setRegistrationAmount] = useState(null);
   const [registrationDate, setRegistrationDate] = useState(null);
   const [finalPaymentBalance, setFinalPaymentBalance] = useState(0);
+  // transctions details
+  const [selectedLabel, setSelectedLabel] = useState("50");
+  const [showFilterField, setShowFilterField] = useState(false);
+  const today = new Date();
+  const todayString = today.toISOString().split("T")[0];
+
+  const [hideAccountType, setHideAccountType] = useState("");
+  const [selectedAccountType, setSelectedAccountType] = useState("");
+  const [selectedPaymentFor, setSelectedPaymentFor] = useState([]);
+  const [showAllPaymentModes, setShowAllPaymentModes] = useState(false);
+  const [transactionsTable, setTransactionsTable] = useState([]);
+  const [totalTransactions, setTotalTransactons] = useState(10);
+  const [totalTransactionAmount, setTotalTransactionAmount] = useState(0);
+  const [enrollmentData, setEnrollmentData] = useState([]);
+  const [activeEnrollmentData, setActiveEnrollmentData] = useState("");
+  const [enrollmentDataLoading, setEnrollmentDataLoading] = useState(false);
+
+  const [enrollmentId, setEnrollmentId] = useState("")
   const onGlobalSearchChangeHandler = (e) => {
     setSearchText(e.target.value);
   };
@@ -161,6 +186,131 @@ const UserReport = () => {
     { key: "balance", header: "Balance" },
   ];
 
+  const TransactionsColumns = [
+    { key: "id", header: "SL. NO" },
+    { key: "date", header: "Paid Date" },
+    { key: "transaction_date", header: "Transaction Date" },
+    { key: "group", header: "Group Name" },
+    { key: "category", header: "Category" },
+    { key: "ticket", header: "Ticket" },
+    { key: "receipt", header: "Receipt" },
+    { key: "old_receipt_no", header: "Old Receipt" },
+    { key: "amount", header: "Amount" },
+    { key: "mode", header: "Payment Mode" },
+    ...(hideAccountType
+      ? [{ key: "account_type", header: "Account Type" }]
+      : []),
+    { key: "collected_by", header: "Collected By" },
+    { key: "collection_time", header: "Collection Time" },
+    { key: "action", header: "Action" },
+  ];
+  useEffect(() => {
+    const abortController = new AbortController();
+    const fetchPayments = async () => {
+      if (!selectedGroup) return;
+
+      try {
+        setTransactionsLoading(true);
+
+        const queryParams = { userId: selectedGroup };
+        if (selectedFromDate) queryParams.from_date = selectedFromDate;
+        if (selectedToDate) queryParams.to_date = selectedToDate;
+        if (totalTransactions)
+          queryParams.totalTransactions = totalTransactions;
+        if (selectedPaymentMode?.length)
+          queryParams.pay_type = selectedPaymentMode;
+        if (selectedAccountType) queryParams.account_type = selectedAccountType;
+        if (selectedPaymentFor?.length)
+          queryParams.pay_for = selectedPaymentFor;
+
+        const response = await api.get(`/payment/customer/transactions`, {
+          params: queryParams,
+          signal: abortController.signal,
+        });
+
+        if (response.data && response.data.length > 0) {
+          const totalSum = response.data.reduce(
+            (sum, item) => sum + Number(item.amount || 0),
+            0
+          );
+          setTotalTransactionAmount(totalSum);
+          const formattedData = response.data.map((item, index) => {
+            return {
+              _id: item._id,
+              id: index + 1,
+              group: item?.group_id?.group_name || item?.pay_for || "N/A",
+              name: item?.user_id?.full_name || "Unknown Customer",
+              category: item?.pay_for || "Chit",
+              phone_number: item?.user_id?.phone_number || "N/A",
+              ticket: item?.loan
+                ? item.loan?.loan_id
+                : item?.pigme
+                  ? item.pigme?.pigme_id
+                  : item?.ticket || "N/A",
+              receipt: item?.receipt_no || "N/A",
+              old_receipt_no: item?.old_receipt_no || "-",
+              amount: item?.amount || 0,
+              date: item.pay_date?.split("T")?.[0] || "N/A",
+              transaction_date: item?.createdAt?.split("T")?.[0] || "N/A",
+              mode: item?.pay_type || "N/A",
+              account_type: item?.account_type || "-",
+              collection_time: item?.collection_time || "-",
+              collected_by:
+                item?.collected_by?.name ||
+                item?.admin_type?.admin_name ||
+                "Super Admin",
+              action: (
+                <Dropdown
+                  menu={{
+                    items: [
+                      {
+                        key: "1",
+                        label: (
+                          <Link
+                            target="_blank"
+                            to={`/print/${item._id}`}
+                            className="text-blue-600">
+                            Print
+                          </Link>
+                        ),
+                      },
+                    ],
+                  }}
+                  placement="bottomLeft">
+                  <IoMdMore className="cursor-pointer" />
+                </Dropdown>
+              ),
+            };
+          });
+
+          console.log("Formatted Data Success:", formattedData);
+          setTransactionsTable(formattedData);
+        } else {
+          console.warn("No data returned for these filters:", queryParams);
+          setTransactionsTable([]);
+        }
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          setTransactionsTable([]);
+          setTotalTransactionAmount(0);
+        }
+      } finally {
+        setTransactionsLoading(false);
+      }
+    };
+
+    fetchPayments();
+    return () => abortController.abort();
+  }, [
+    selectedFromDate,
+    selectedToDate,
+    selectedPaymentMode,
+    selectedGroup,
+    selectedAccountType,
+    selectedPaymentFor,
+    totalTransactions,
+    showFilterField,
+  ]);
   useEffect(() => {
     const fetchRegistrationFee = async () => {
       if (
@@ -278,54 +428,6 @@ const UserReport = () => {
 
     fetchRegistrationFee();
   }, [activeTab, selectedGroup, EnrollGroupId.groupId, EnrollGroupId.ticket]);
-
-  // useEffect(() => {
-  //   const fetchAllLoanPaymentsbyId = async () => {
-  //     setBorrowersData([]);
-  //     setBasicLoading(true);
-
-  //     try {
-  //       const response = await api.get(
-  //         `/loan-payment/get-all-loan-payments/${EnrollGroupId.ticket}`
-  //       );
-
-  //       if (response.data && response.data.length > 0) {
-  //         let balance = 0;
-  //         const formattedData = response.data.map((loanPayment, index) => {
-  //           balance += Number(loanPayment.amount);
-  //           return {
-  //             _id: loanPayment._id,
-  //             id: index + 1,
-  //             pay_date: formatPayDate(loanPayment?.pay_date),
-  //             amount: loanPayment.amount,
-  //             receipt_no: loanPayment.receipt_no,
-  //             pay_type: loanPayment.pay_type,
-  //             balance,
-  //           };
-  //         });
-  //         formattedData.push({
-  //           _id: "",
-  //           id: "",
-  //           pay_date: "",
-  //           receipt_no: "",
-  //           amount: "",
-  //           pay_type: "",
-  //           balance,
-  //         });
-  //         setBorrowersData(formattedData);
-  //       } else {
-  //         setBorrowersData([]);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching loan payment data:", error);
-  //       setBorrowersData([]);
-  //     } finally {
-  //       setBasicLoading(false);
-  //     }
-  //   };
-
-  //   if (EnrollGroupId.groupId === "Loan") fetchAllLoanPaymentsbyId();
-  // }, [EnrollGroupId.ticket]);
 
   useEffect(() => {
     const fetchAllLoanPaymentsbyId = async () => {
@@ -503,7 +605,6 @@ const UserReport = () => {
       try {
         setPigmeCustomers([]);
         const response = await api.get(`/payment/pigme/user/${selectedGroup}`);
-        console.info(response.data, "pigme");
         if (response.data) {
           const filteredPigmeData = response.data?.overall_pigme?.map(
             (pigme, index) => ({
@@ -617,7 +718,6 @@ const UserReport = () => {
   const handleEnrollGroup = (event) => {
     const value = event.target.value;
 
-
     if (value) {
       const [groupId, ticket] = value.split("|");
       setEnrollGroupId({ groupId, ticket });
@@ -650,7 +750,8 @@ const UserReport = () => {
       try {
         const response = await api.get(`/payment/get-customer-history`, {
           params: {
-            pay_date: selectedDate,
+            from_date: selectedFromDate,
+            to_date: selectedToDate,
             groupId: selectedAuctionGroupId,
             userId: selectedCustomers,
             pay_type: selectedPaymentMode,
@@ -688,10 +789,151 @@ const UserReport = () => {
     fetchPayments();
   }, [
     selectedAuctionGroupId,
-    selectedDate,
+    selectedToDate,
+    selectedFromDate,
     selectedPaymentMode,
     selectedCustomers,
   ]);
+
+  async function getActiveCustomerEnrollmentData() {
+    try {
+      setEnrollmentDataLoading(true)
+
+      const response = await api.get(`/enroll/customers/${selectedGroup}`)
+      const responseData = response?.data?.data ?? [];
+
+      setEnrollmentData(responseData)
+    } catch (error) {
+      setEnrollmentData([])
+
+    } finally {
+      setEnrollmentDataLoading(false);
+    }
+  }
+  useEffect(() => {
+    if (activeTab === "customerPaymentStatement")
+      getActiveCustomerEnrollmentData()
+  }, [activeTab, selectedGroup]);
+
+
+  async function getCustomerPaymentStatement() {
+    try {
+      setStatementLoading(true);
+      const response = await api.get(`/enroll/customer-payment/statement/${enrollmentId}`);
+      const responseData = response.data?.data?.statement ?? [];
+
+     const filteredResponse = responseData.map((statement, index) => {
+  const balanceValue = Number(statement?.balance || 0);
+  const isNegative = balanceValue < 0;
+
+  return {
+    id: index + 1,
+    // RAW DATA
+    rawDate: `${statement?.date}`.split("T")?.[0] ?? "N/A",
+    rawBalance: balanceValue,
+    rawDescription:statement?.description,
+    rawDue:statement?.due,
+    rawPaid:statement?.paid,
+
+
+    // DECORATED DATA
+    date: (
+      <div className="text-slate-500 text-xs font-medium">
+        {`${statement?.date}`.split("T")?.[0] ?? "N/A"}
+      </div>
+    ),
+    
+    description: (
+      <div className="flex flex-col">
+        <span className="text-slate-900 font-bold text-sm tracking-tight">
+          {statement?.description || "General Payment"}
+        </span>
+        <span className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">
+          Ref: #{index.toString().padStart(4, '0')}
+        </span>
+      </div>
+    ),
+
+    due: (
+       <div className="text-slate-600 font-semibold text-sm">
+         ₹{Number(statement?.due || 0).toLocaleString('en-IN')}
+       </div>
+    ),
+
+    paid: (
+      <div className="text-emerald-600 font-bold text-sm">
+        {statement?.paid > 0 ? `+ ₹${Number(statement?.paid).toLocaleString('en-IN')}` : "—"}
+      </div>
+    ),
+
+    balance: (
+      <div className="flex items-center justify-end gap-3">
+        <div className="text-right">
+          <div className={`text-sm font-black ${isNegative ? "text-rose-600" : "text-green-900"}`}>
+            ₹{Math.abs(balanceValue).toLocaleString('en-IN')}
+          </div>
+          <div className={`text-[9px] font-bold uppercase tracking-widest ${isNegative ? "text-rose-400" : "text-emerald-500"}`}>
+            {isNegative ? "Debit / Outstanding" : "Credit / Settled"}
+          </div>
+        </div>
+        {/* Simple geometric indicator instead of pulsing dots */}
+        <div className={`w-1 h-8 rounded-full ${isNegative ? "bg-rose-200" : "bg-emerald-200"}`} />
+      </div>
+    ),
+  };
+});
+      setActiveEnrollmentData(filteredResponse)
+
+    } catch (error) {
+      setActiveEnrollmentData([])
+    } finally {
+      setStatementLoading(false);
+
+    }
+  }
+  useEffect(() => {
+    if (enrollmentId)
+      getCustomerPaymentStatement()
+  }, [enrollmentId])
+  useEffect(() => {
+    setEnrollmentId(""),
+    setActiveEnrollmentData([]);
+  }, [selectedGroup])
+  const handleEnrollmentChange = (e) => {
+    const value = e.target.value;
+    if (value)
+      setEnrollmentId(value)
+
+  }
+
+
+  const handleTransactionsSelectFilter = (value) => {
+    setSelectedLabel(value);
+    const today = new Date();
+    const formatDate = (date) => date.toISOString().slice(0, 10);
+
+    if (value === "Custom") {
+      setShowFilterField(true);
+      setTotalTransactons(0);
+
+      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      setSelectedFromDate(formatDate(startOfMonth));
+      setSelectedToDate(formatDate(today));
+    } else {
+      setShowFilterField(false);
+      setTotalTransactons(parseInt(value));
+      setSelectedFromDate(""); // Clear dates so they don't interfere with limit logic
+      setSelectedToDate("");
+    }
+  };
+
+  const dayGroup = [
+    { value: "200", label: "Last 200 Transactions" },
+    { value: "100", label: "Last 100 Transactions" },
+    { value: "50", label: "Last 50 Transactions" },
+    { value: "25", label: "Last 25 Transactions" },
+    { value: "Custom", label: "Custom" },
+  ];
   const loanColumns = [
     { key: "sl_no", header: "SL. No" },
     { key: "loan", header: "Loan ID" },
@@ -711,211 +953,92 @@ const UserReport = () => {
     { key: "total_deposited_amount", header: "Total Deposited Amount" },
   ];
 
-  // const handleGroupAuctionChange = async (groupId) => {
-  //   setFilteredAuction([]);
-  //   if (groupId) {
-  //     try {
-  //       const response = await api.post(
-  //         `/enroll/account/${groupId}`
-  //       );
+  const handleGroupAuctionChange = async (userId) => {
+    setFilteredAuction([]);
+    setTableAuctions([]);
+    setCommission(0);
+    setTotalToBePaid(0);
+    setNetTotalProfit(0);
+    setTotalPaid(0);
+    setTotalProfit(0);
 
-  //       if (response.data && response.data.length > 0) {
-  //         setFilteredAuction(response.data);
-  //         console.log(response.data, "resienns");
+    if (!userId) return;
 
-  //         const formattedData = response.data
-  //           .map((group, index) => {
-  //             const groupName = group?.enrollment?.group?.group_name || "";
-  //             const tickets = group?.enrollment?.tickets || "";
-  //             const groupType = group?.enrollment?.group?.group_type;
-  //             const groupInstall =
-  //               parseInt(group?.enrollment?.group?.group_install) || 0;
-  //             const auctionCount = parseInt(group?.auction?.auctionCount) || 0;
-  //             const totalPaidAmount = group?.payments?.totalPaidAmount || 0;
-  //             const totalProfit = group?.profit?.totalProfit || 0;
-  //             const totalPayable = group?.payable?.totalPayable || 0;
-  //             const firstDividentHead =
-  //               group?.firstAuction?.firstDividentHead || 0;
+    // 🔐 Request guard to avoid stale response updates
+    const currentRequestId = Date.now();
+    handleGroupAuctionChange.latestRequest = currentRequestId;
 
-  //             if (!group?.enrollment?.group) {
-  //               return null;
-  //             }
+    try {
+      const response = await api.post(`/enroll/account/${userId}`);
 
-  //             return {
-  //               id: index + 1,
-  //               group: groupName,
-  //               ticket: tickets,
+      // ❌ Ignore old API responses
+      if (handleGroupAuctionChange.latestRequest !== currentRequestId) return;
 
-  //               totalBePaid:
-  //                 groupType === "double"
-  //                   ? groupInstall * auctionCount + groupInstall
-  //                   : totalPayable + groupInstall + totalProfit,
+      if (!response?.data?.length) return;
 
-  //               profit: totalProfit,
+      setFilteredAuction(response.data);
 
-  //               toBePaidAmount:
-  //                 groupType === "double"
-  //                   ? groupInstall * auctionCount + groupInstall
-  //                   : totalPayable + groupInstall + firstDividentHead,
+      const formattedData = response.data
+        .map((group, index) => {
+          const enrollment = group?.enrollment;
+          const grp = enrollment?.group;
+          if (!grp || enrollment?.customer_status !== "Active") return null;
 
-  //               paidAmount: totalPaidAmount,
+          const groupInstall = Number(grp.group_install) || 0;
+          const auctionCount = Number(group?.auction?.auctionCount) || 0;
+          const totalPaid = Number(group?.payments?.totalPaidAmount) || 0;
+          const profit = Number(group?.profit?.totalProfit) || 0;
+          const payable = Number(group?.payable?.totalPayable) || 0;
+          const firstDividend =
+            Number(group?.firstAuction?.firstDividentHead) || 0;
 
-  //               balance:
-  //                 groupType === "double"
-  //                   ? groupInstall * auctionCount +
-  //                   groupInstall -
-  //                   totalPaidAmount
-  //                   : totalPayable +
-  //                   groupInstall +
-  //                   firstDividentHead -
-  //                   totalPaidAmount,
-  //               referred_type: group?.enrollment?.referred_type || "N/A",
-  //               referrer_name: group?.enrollment?.referrer_name || "N/A",
-  //               chit_asking_month: group?.enrollment?.chit_asking_month || "N/A",
-  //               customer_status: group?.enrollment?.customer_status || "N/A",
-  //               removal_reason: group?.enrollment?.removal_reason || "N/A",
-  //               isPrized:
-  //                 group?.enrollment?.isPrized === true
-  //                   ? "Prized"
-  //                   : "Un Prized" || "N/A",
-  //             };
-  //           })
-  //           .filter((item) => item !== null)
-  //           .filter((item) => item.customer_status === "Active");
+          const isDouble = grp.group_type === "double";
 
-  //         setTableAuctions(formattedData);
-  //         setCommission(0);
-  //         console.info(formattedData, "test");
-  //         const totalToBePaidAmount = formattedData
-  //           .filter((summary) => summary.customer_status === "Active")
-  //           .reduce((sum, group) => {
-  //             return sum + (group?.totalBePaid || 0);
-  //           }, 0);
-  //         setTotalToBePaid(totalToBePaidAmount);
+          const totalBePaid = isDouble
+            ? groupInstall * auctionCount + groupInstall
+            : payable + groupInstall + profit;
 
-  //         const totalNetToBePaidAmount = formattedData
-  //           .filter((summary) => summary.customer_status === "Active")
-  //           .reduce((sum, group) => {
-  //             return sum + (group?.toBePaidAmount || 0);
-  //           }, 0);
-  //         setNetTotalProfit(totalNetToBePaidAmount);
+          const toBePaidAmount = isDouble
+            ? totalBePaid
+            : payable + groupInstall + firstDividend;
 
-  //         const totalPaidAmount = formattedData
-  //           .filter((summary) => summary.customer_status === "Active")
-  //           .reduce((sum, group) => sum + (group?.paidAmount || 0), 0);
-  //         setTotalPaid(totalPaidAmount);
+          return {
+            id: index + 1,
+            group: grp.group_name || "",
+            ticket: enrollment.tickets || "",
+            totalBePaid,
+            profit,
+            toBePaidAmount,
+            paidAmount: totalPaid,
+            balance: toBePaidAmount - totalPaid,
+            referred_type: enrollment.referred_type || "N/A",
+            referrer_name: enrollment.referrer_name || "N/A",
+            chit_asking_month: enrollment.chit_asking_month || "N/A",
+            customer_status: enrollment.customer_status,
+            removal_reason: enrollment.removal_reason || "N/A",
+            isPrized: enrollment.isPrized ? "Prized" : "Un Prized",
+          };
+        })
+        .filter(Boolean);
 
-  //         const totalProfit = formattedData
-  //           .filter((summary) => summary.customer_status === "Active")
-  //           .reduce((sum, group) => sum + (group?.profit || 0), 0);
-  //         setTotalProfit(totalProfit);
-  //       } else {
-  //         setFilteredAuction([]);
-  //         setCommission(0);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching enrollment data:", error);
-  //       setFilteredAuction([]);
-  //       setCommission(0);
-  //     }
-  //   } else {
-  //     setFilteredAuction([]);
-  //     setCommission(0);
-  //   }
-  // };
-  
-    const handleGroupAuctionChange = async (userId) => {
-  // 🔴 Clear old data immediately (prevents old data flash)
-  setFilteredAuction([]);
-  setTableAuctions([]);
-  setCommission(0);
-  setTotalToBePaid(0);
-  setNetTotalProfit(0);
-  setTotalPaid(0);
-  setTotalProfit(0);
+      setTableAuctions(formattedData);
 
-  if (!userId) return;
+      // 📊 Totals
+      setTotalToBePaid(
+        formattedData.reduce((sum, row) => sum + row.totalBePaid, 0)
+      );
 
-  // 🔐 Request guard to avoid stale response updates
-  const currentRequestId = Date.now();
-  handleGroupAuctionChange.latestRequest = currentRequestId;
+      setNetTotalProfit(
+        formattedData.reduce((sum, row) => sum + row.toBePaidAmount, 0)
+      );
 
-  try {
-    const response = await api.post(`/enroll/account/${userId}`);
+      setTotalPaid(formattedData.reduce((sum, row) => sum + row.paidAmount, 0));
 
-    // ❌ Ignore old API responses
-    if (handleGroupAuctionChange.latestRequest !== currentRequestId) return;
-
-    if (!response?.data?.length) return;
-
-    setFilteredAuction(response.data);
-
-    const formattedData = response.data
-      .map((group, index) => {
-        const enrollment = group?.enrollment;
-        const grp = enrollment?.group;
-        if (!grp || enrollment?.customer_status !== "Active") return null;
-
-        const groupInstall = Number(grp.group_install) || 0;
-        const auctionCount = Number(group?.auction?.auctionCount) || 0;
-        const totalPaid = Number(group?.payments?.totalPaidAmount) || 0;
-        const profit = Number(group?.profit?.totalProfit) || 0;
-        const payable = Number(group?.payable?.totalPayable) || 0;
-        const firstDividend = Number(group?.firstAuction?.firstDividentHead) || 0;
-
-        const isDouble = grp.group_type === "double";
-
-        const totalBePaid = isDouble
-          ? groupInstall * auctionCount + groupInstall
-          : payable + groupInstall + profit;
-
-        const toBePaidAmount = isDouble
-          ? totalBePaid
-          : payable + groupInstall + firstDividend;
-
-        return {
-          id: index + 1,
-          group: grp.group_name || "",
-          ticket: enrollment.tickets || "",
-          totalBePaid,
-          profit,
-          toBePaidAmount,
-          paidAmount: totalPaid,
-          balance: toBePaidAmount - totalPaid,
-          referred_type: enrollment.referred_type || "N/A",
-          referrer_name: enrollment.referrer_name || "N/A",
-          chit_asking_month: enrollment.chit_asking_month || "N/A",
-          customer_status: enrollment.customer_status,
-          removal_reason: enrollment.removal_reason || "N/A",
-          isPrized: enrollment.isPrized ? "Prized" : "Un Prized",
-        };
-      })
-      .filter(Boolean);
-
-    setTableAuctions(formattedData);
-
-    // 📊 Totals
-    setTotalToBePaid(
-      formattedData.reduce((sum, row) => sum + row.totalBePaid, 0)
-    );
-
-    setNetTotalProfit(
-      formattedData.reduce((sum, row) => sum + row.toBePaidAmount, 0)
-    );
-
-    setTotalPaid(
-      formattedData.reduce((sum, row) => sum + row.paidAmount, 0)
-    );
-
-    setTotalProfit(
-      formattedData.reduce((sum, row) => sum + row.profit, 0)
-    );
-
-  } catch (error) {
-    console.error("Error fetching enrollment data:", error);
-  }
-};
-
+      setTotalProfit(formattedData.reduce((sum, row) => sum + row.profit, 0));
+    } catch (error) {
+      console.error("Error fetching enrollment data:", error);
+    }
+  };
 
   useEffect(() => {
     if (userId) {
@@ -1016,6 +1139,25 @@ const UserReport = () => {
     { key: "balance", header: "Balance" },
   ];
 
+  const CustomerPaymentStatementColumns = [
+    { key: "id", header: "SL. NO" },
+    { key: "date", header: "Due Date" },
+    { key: "description", header: "Description" },
+    { key: "due", header: "Due Amount" },
+    { key: "paid", header: "Paid Amount" },
+    { key: "balance", header: "Balance" },
+
+  ];
+   const CustomerPaymentStatementExportsColumns = [
+    { key: "id", header: "SL. NO" },
+    { key: "rawDate", header: "Due Date" },
+    { key: "rawDescription", header: "Description" },
+    { key: "rawDue", header: "Due Amount" },
+    { key: "rawPaid", header: "Paid Amount" },
+    { key: "rawBalance", header: "Balance" },
+
+  ];
+
   const formatDate = (dateString) => {
     const parts = dateString.split("-");
     if (parts.length === 3) {
@@ -1073,15 +1215,7 @@ const UserReport = () => {
     fetchEnroll();
   }, [selectedGroup, formattedFromDate, formattedToDate]);
 
-  const Datecolumns = [
-    { key: "id", header: "SL. NO" },
-    { key: "name", header: "Customer Name" },
-    { key: "phone_number", header: "Customer Phone Number" },
-    { key: "ticket", header: "Ticket" },
-    { key: "amount_to_be_paid", header: "Amount to be Paid" },
-    { key: "amount_paid", header: "Amount Paid" },
-    { key: "amount_balance", header: "Amount Balance" },
-  ];
+
 
   useEffect(() => {
     if (groupInfo && formData.bid_amount) {
@@ -1140,12 +1274,11 @@ const UserReport = () => {
             </h1>
             <div className="mt-6 mb-8">
               <div className="mb-2">
-                <div className="flex justify-center items-center w-full gap-4 bg-violet-50    p-2 w-30 h-40  rounded-3xl  border   space-x-2  ">
+                <div className="flex justify-center items-center w-full gap-4 bg-blue-50    p-2 w-30 h-40  rounded-3xl  border   space-x-2  ">
                   <div className="mb-2">
                     <label
                       className="block text-lg text-gray-500 text-center  font-semibold mb-2"
-                      htmlFor={"SS"}
-                    >
+                      htmlFor={"SS"}>
                       Customer
                     </label>
                     <Select
@@ -1161,8 +1294,7 @@ const UserReport = () => {
                           .toLowerCase()
                           .includes(input.toLowerCase())
                       }
-                      style={{ height: "50px", width: "600px" }}
-                    >
+                      style={{ height: "50px", width: "600px" }}>
                       {groups.map((group) => (
                         <option key={group._id} value={group._id}>
                           {group.full_name} - {group.phone_number}
@@ -1176,35 +1308,28 @@ const UserReport = () => {
               {selectedGroup && (
                 <>
                   <div className="mt-6 mb-8">
-                    <div className="flex justify-start border-b border-gray-300 mb-4">
-                      <button
-                        className={`px-6 py-2 font-medium ${activeTab === "groupDetails"
-                            ? "border-b-2 border-violet-500 text-violet-500"
-                            : "text-gray-500"
-                          }`}
-                        onClick={() => handleTabChange("groupDetails")}
-                      >
-                        Customer Details
-                      </button>
-                      <button
-                        className={`px-6 py-2 font-medium ${activeTab === "basicReport"
-                            ? "border-b-2 border-violet-500 text-violet-500"
-                            : "text-gray-500"
-                          }`}
-                        onClick={() => handleTabChange("basicReport")}
-                      >
-                        Customer Ledger
-                      </button>
-
-                      <button
-                        className={`px-6 py-2 font-medium ${activeTab === "disbursement"
-                            ? "border-b-2 border-violet-500 text-violet-500"
-                            : "text-gray-500"
-                          }`}
-                        onClick={() => handleTabChange("disbursement")}
-                      >
-                        PayOut | Disbursement
-                      </button>
+                    <div className="mb-8 p-1.5 bg-slate-100/80 backdrop-blur-md rounded-2xl inline-flex items-center gap-1 shadow-inner border border-slate-200/50 overflow-x-auto no-scrollbar max-w-full">
+                      {[
+                        { id: "groupDetails", label: "Customer Details", icon: <FiUser size={16} /> },
+                        { id: "basicReport", label: "Ledger", icon: <FiBookOpen size={16} /> },
+                        { id: "customerPaymentStatement", label: "Statement", icon: <FiFileText size={16} /> },
+                        { id: "transactions", label: "Transactions", icon: <FiRepeat size={16} /> },
+                        { id: "disbursement", label: "Payouts", icon: <FaRupeeSign size={16} /> },
+                      ].map((tab) => (
+                        <button
+                          key={tab.id}
+                          onClick={() => handleTabChange(tab.id)}
+                          className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold tracking-wide transition-all duration-300 whitespace-nowrap ${activeTab === tab.id
+                            ? "bg-white text-blue-600 shadow-sm ring-1 ring-slate-200"
+                            : "text-slate-500 hover:text-slate-800 hover:bg-white/40"
+                            }`}
+                        >
+                          <span className={`${activeTab === tab.id ? "text-blue-500" : "text-slate-400"}`}>
+                            {tab.icon}
+                          </span>
+                          {tab.label}
+                        </button>
+                      ))}
                     </div>
                     <div className="flex justify-end mb-3">
                       <button
@@ -1224,8 +1349,7 @@ const UserReport = () => {
                             customerTransactions
                           )
                         }
-                        className="flex items-center gap-2 px-6 py-2 bg-violet-500 text-white rounded shadow"
-                      >
+                        className="flex items-center gap-2 px-6 py-2 bg-blue-500 text-white rounded shadow">
                         <IoMdDownload size={20} />
                         Download Full Report
                       </button>
@@ -1246,7 +1370,7 @@ const UserReport = () => {
                                   type="text"
                                   placeholder="Search customer details..."
                                   className="w-full pl-12 pr-5 py-3.5 text-gray-800 bg-white border border-gray-200 rounded-full shadow-3xl 
-                   placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-violet-400 
+                   placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 
                    transition-all duration-300 ease-in-out text-sm md:text-base"
                                   value={searchText}
                                   onChange={(e) =>
@@ -1300,8 +1424,7 @@ const UserReport = () => {
                                         results.map(({ item }) => (
                                           <div
                                             key={item.key}
-                                            className="p-1 border-b"
-                                          >
+                                            className="p-1 border-b">
                                             <strong>{item.key}</strong> →{" "}
                                             {item.value || "-"}
                                           </div>
@@ -1327,10 +1450,9 @@ const UserReport = () => {
                                   className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out
         ${visibleRows.row1
                                       ? "bg-gradient-to-r from-green-500 to-green-700 text-white shadow-lg"
-                                      : "bg-gradient-to-r from-violet-700 to-violet-900 text-white shadow-md hover:shadow-lg hover:scale-105"
+                                      : "bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-md hover:shadow-lg hover:scale-105"
                                     }
-      `}
-                                >
+      `}>
                                   {visibleRows.row1
                                     ? "✓ Hide Basic Info"
                                     : "Show Basic Info"}
@@ -1346,10 +1468,9 @@ const UserReport = () => {
                                   className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out
         ${visibleRows.row2
                                       ? "bg-gradient-to-r from-green-500 to-green-700 text-white shadow-lg"
-                                      : "bg-gradient-to-r from-violet-700 to-violet-900 text-white shadow-md hover:shadow-lg hover:scale-105"
+                                      : "bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-md hover:shadow-lg hover:scale-105"
                                     }
-      `}
-                                >
+      `}>
                                   {visibleRows.row2
                                     ? "✓ Hide Address Info"
                                     : "Show Address Info"}
@@ -1365,10 +1486,9 @@ const UserReport = () => {
                                   className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out
         ${visibleRows.row3
                                       ? "bg-gradient-to-r from-green-500 to-green-700 text-white shadow-lg"
-                                      : "bg-gradient-to-r from-violet-700 to-violet-900 text-white shadow-md hover:shadow-lg hover:scale-105"
+                                      : "bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-md hover:shadow-lg hover:scale-105"
                                     }
-      `}
-                                >
+      `}>
                                   {visibleRows.row3
                                     ? "✓ Hide Regional Info"
                                     : "Show Regional Info"}
@@ -1384,10 +1504,9 @@ const UserReport = () => {
                                   className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out
         ${visibleRows.row4
                                       ? "bg-gradient-to-r from-green-500 to-green-700 text-white shadow-lg"
-                                      : "bg-gradient-to-r from-violet-700 to-violet-900 text-white shadow-md hover:shadow-lg hover:scale-105"
+                                      : "bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-md hover:shadow-lg hover:scale-105"
                                     }
-      `}
-                                >
+      `}>
                                   {visibleRows.row4
                                     ? "✓ Hide Referral, Nominee & Bank Details"
                                     : "Show Referral, Nominee & Bank Details"}
@@ -1558,13 +1677,16 @@ const UserReport = () => {
                               <h3 className="text-lg font-medium mb-4">
                                 Enrolled Groups
                               </h3>
-                          
+
                               {TableAuctions &&
                                 TableAuctions.length > 0 &&
                                 !isLoading && (
                                   <div className="mt-5">
                                     <DataTable
-                                      data={filterOption(TableAuctions, searchText)}
+                                      data={filterOption(
+                                        TableAuctions,
+                                        searchText
+                                      )}
                                       columns={Auctioncolumns}
                                       exportedPdfName="Customer Report"
                                       printHeaderKeys={[
@@ -1590,12 +1712,13 @@ const UserReport = () => {
                                   </div>
                                 )}
 
-
                               {filteredBorrowerData &&
                                 filteredBorrowerData.length > 0 &&
                                 !isLoading && (
                                   <div className="mt-10">
-                                    <h3 className="text-lg font-medium mb-4">Loan Details</h3>
+                                    <h3 className="text-lg font-medium mb-4">
+                                      Loan Details
+                                    </h3>
                                     <DataTable
                                       data={filteredBorrowerData}
                                       columns={loanColumns}
@@ -1604,12 +1727,13 @@ const UserReport = () => {
                                   </div>
                                 )}
 
-
                               {filteredPigmeData &&
                                 filteredPigmeData.length > 0 &&
                                 !isLoading && (
                                   <div className="mt-10">
-                                    <h3 className="text-lg font-medium mb-4">Pigme Details</h3>
+                                    <h3 className="text-lg font-medium mb-4">
+                                      Pigme Details
+                                    </h3>
                                     <DataTable
                                       data={filteredPigmeData}
                                       columns={pigmeColumns}
@@ -1618,20 +1742,19 @@ const UserReport = () => {
                                   </div>
                                 )}
 
-
                               {!isLoading &&
                                 TableAuctions.length === 0 &&
                                 filteredBorrowerData.length === 0 &&
                                 filteredPigmeData.length === 0 && (
                                   <div className="p-20 w-full flex justify-center items-center text-gray-500">
-                                    No Chit Group, Loan, or Pigme data found for this customer
+                                    No Chit Group, Loan, or Pigme data found for
+                                    this customer
                                   </div>
                                 )}
 
-
-                              {isLoading && <CircularLoader isLoading={isLoading} />}
-
-
+                              {isLoading && (
+                                <CircularLoader isLoading={isLoading} />
+                              )}
 
                               {!isLoading && TableAuctions.length === 0 && (
                                 <div className="p-40 w-full flex justify-center items-center">
@@ -1710,194 +1833,7 @@ const UserReport = () => {
                       </>
                     )}
 
-                    {/* {activeTab === "basicReport" && (
-                      <>
-                        <div>
-                          <div className="flex gap-4">
-                            <div className="flex flex-col flex-1">
-                              <label className="mb-1 text-sm font-medium text-gray-700">
-                                Groups and Tickets
-                              </label>
-                              <select
-                                value={
-                                  EnrollGroupId.groupId
-                                    ? `${EnrollGroupId.groupId}|${EnrollGroupId.ticket}`
-                                    : ""
-                                }
-                                onChange={handleEnrollGroup}
-                                className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
-                              >
-                                <option value="">Select Group | Ticket</option>
 
-                                {filteredAuction.map((group) => {
-                                  if (group?.enrollment?.group) {
-                                    return (
-                                      <option
-                                        key={group.enrollment.group._id}
-                                        value={`${group.enrollment.group._id}|${group.enrollment.tickets}`}
-                                      >
-                                        {group.enrollment.group.group_name} |{" "}
-                                        {group.enrollment.tickets}
-                                      </option>
-                                    );
-                                  }
-                                  return null;
-                                })}
-
-                                {Array.isArray(loanCustomers)
-                                  ? loanCustomers.map((loan) => (
-                                      <option
-                                        key={loan._id}
-                                        value={`Loan|${loan._id}`}
-                                      >
-                                        {`${loan.loan_id || "N/A"} | ₹${
-                                          loan.loan_amount || 0
-                                        }`}
-                                      </option>
-                                    ))
-                                  : Array.isArray(loanCustomers?.overall_loan)
-                                  ? loanCustomers.overall_loan.map(
-                                      (loan, index) => (
-                                        <option
-                                          key={index}
-                                          value={`Loan|${
-                                            loan?.loan_details?.loan?._id ||
-                                            index
-                                          }`}
-                                        >
-                                          {`${
-                                            loan?.loan_details?.loan?.loan_id ||
-                                            "N/A"
-                                          } | ₹${loan?.loan_value || 0}`}
-                                        </option>
-                                      )
-                                    )
-                                  : null}
-                                  {Array.isArray(pigmeCustomers)
-                                  ? pigmeCustomers.map((pigme) => (
-                                      <option
-                                        key={loan._id}
-                                        value={`Pigme|${pigme._id}`}
-                                      >
-                                        {`${pigme.pigme_id || "N/A"} 
-                                        }`}
-                                      </option>
-                                    ))
-                                  : Array.isArray(pigmeCustomers?.overall_pigme)
-                                  ? pigmeCustomers.overall_pigme.map(
-                                      (pigme, index) => (
-                                        <option
-                                          key={index}
-                                          value={`Pigme|${
-                                            pigme?.pigme_details?.pigme?._id ||
-                                            index
-                                          }`}
-                                        >
-                                          {`${
-                                            pigme?.pigme_details?.pigme?.pigme_id ||
-                                            "N/A"
-                                          } | ₹${pigme?.total_deposited_amount || 0}`}
-                                        </option>
-                                      )
-                                    )
-                                  : null}
-                              </select>
-
-                              {registrationFee.amount > 0 && (
-                                <div className="mt-6 p-4 border rounded bg-gray-100 w-fit text-gray-800 shadow">
-                                  <p className="text-sm font-semibold">
-                                    Registration Fee Info
-                                  </p>
-                                  <p>
-                                    <strong>Amount:</strong> ₹
-                                    {registrationFee.amount}
-                                  </p>
-                                  <p>
-                                    <strong>Date:</strong>{" "}
-                                    {registrationFee.createdAt
-                                      ? new Date(
-                                          registrationFee.createdAt
-                                        ).toLocaleDateString("en-GB")
-                                      : "N/A"}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="mt-6 flex justify-center gap-8 flex-wrap">
-                              <input
-                                type="text"
-                                value={`Registration Fee: ₹${
-                                  registrationAmount || 0
-                                }`}
-                                readOnly
-                                className="px-4 py-2 border rounded font-semibold w-60 text-center bg-green-100 text-green-800 border-green-400"
-                              />
-
-                              <input
-                                type="text"
-                                value={`Payment Balance: ₹${finalPaymentBalance}`}
-                                readOnly
-                                className="px-4 py-2 border rounded font-semibold w-60 text-center bg-violet-100 text-violet-800 border-violet-400"
-                              />
-
-                              <input
-                                type="text"
-                                value={`Total: ₹${
-                                  Number(finalPaymentBalance) +
-                                  Number(registrationAmount || 0)
-                                }`}
-                                readOnly
-                                className="px-4 py-2 border rounded font-semibold w-60 text-center bg-purple-100 text-purple-800 border-purple-400"
-                              />
-                            </div>
-                          </div>
-
-                          {(TableEnrolls && TableEnrolls.length > 0) ||
-                          (borrowersData.length > 0 && !basicLoading) ? (
-                            <div className="mt-10">
-                              <DataTable
-                                exportedPdfName="Customer Ledger Report"
-                                printHeaderKeys={[
-                                  "Customer Name",
-                                  "Customer Id",
-                                  "Phone Number",
-                                  "Ticket Number",
-                                  "Group Name",
-                                  "Start Date",
-                                  "End Date",
-                                ]}
-                                printHeaderValues={[
-                                  group.full_name,
-                                  group.customer_id,
-                                  group.phone_number,
-                                  EnrollGroupId.ticket,
-                                  groupDetails.group_name,
-                                  new Date(
-                                    groupDetails.start_date
-                                  ).toLocaleDateString("en-GB"),
-                                  new Date(
-                                    groupDetails.end_date
-                                  ).toLocaleDateString("en-GB"),
-                                ]}
-                                data={
-                                  EnrollGroupId.groupId === "Loan"
-                                    ? borrowersData
-                                    : TableEnrolls
-                                }
-                                columns={
-                                  EnrollGroupId.groupId === "Loan"
-                                    ? BasicLoanColumns
-                                    : Basiccolumns
-                                }
-                              />
-                            </div>
-                          ) : (
-                            <CircularLoader isLoading={basicLoading} />
-                          )}
-                        </div>
-                      </>
-                    )} */}
                     {activeTab === "basicReport" && (
                       <>
                         <div>
@@ -1913,18 +1849,19 @@ const UserReport = () => {
                                     : ""
                                 }
                                 onChange={handleEnrollGroup}
-                                className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md"
-                              >
+                                className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md">
                                 <option value="">Select Group | Ticket</option>
 
-                                {/* ✅ CHIT Groups */}
                                 {filteredAuction.map((group) => {
-                                  if (group?.enrollment?.group && group?.enrollment?.customer_status === "Active") {
+                                  if (
+                                    group?.enrollment?.group &&
+                                    group?.enrollment?.customer_status ===
+                                    "Active"
+                                  ) {
                                     return (
                                       <option
                                         key={group.enrollment.group._id}
-                                        value={`${group.enrollment.group._id}|${group.enrollment.tickets}`}
-                                      >
+                                        value={`${group.enrollment.group._id}|${group.enrollment.tickets}`}>
                                         {group.enrollment.group.group_name} |{" "}
                                         {group.enrollment.tickets}
                                       </option>
@@ -1941,8 +1878,7 @@ const UserReport = () => {
                                           loan?.loan_details?.loan?._id || index
                                         }
                                         value={`Loan|${loan?.loan_details?.loan?._id || index
-                                          }`}
-                                      >
+                                          }`}>
                                         {loan?.loan_details?.loan?.loan_id ||
                                           "N/A"}{" "}
                                         | ₹{loan?.loan_value || 0}
@@ -1960,8 +1896,7 @@ const UserReport = () => {
                                         }
                                         value={`Pigme|${pigme?.pigme_details?.pigme?._id ||
                                           index
-                                          }`}
-                                      >
+                                          }`}>
                                         {pigme?.pigme_details?.pigme
                                           ?.pigme_id || "N/A"}{" "}
                                         | ₹{pigme?.total_deposited_amount || 0}
@@ -1984,7 +1919,7 @@ const UserReport = () => {
                               type="text"
                               value={`Payment Balance: ₹${finalPaymentBalance}`}
                               readOnly
-                              className="px-4 py-2 border rounded font-semibold w-60 text-center bg-violet-100 text-violet-800 border-violet-400"
+                              className="px-4 py-2 border rounded font-semibold w-60 text-center bg-blue-100 text-blue-800 border-blue-400"
                             />
                             <input
                               type="text"
@@ -1996,7 +1931,6 @@ const UserReport = () => {
                             />
                           </div>
 
-                          {/* ✅ Corrected Data Display */}
                           {(TableEnrolls?.length > 0 ||
                             borrowersData?.length > 0 ||
                             pigmeCustomerData?.length > 0) &&
@@ -2073,6 +2007,293 @@ const UserReport = () => {
                         )}
                       </div>
                     )}
+
+
+                    {activeTab === "customerPaymentStatement" && (
+                      <div className="flex flex-col flex-1">
+                        <label className="mb-1 text-sm  text-gray-700 font-bold">
+                          Customer Payment Statement
+                        </label>
+                        {(function () { console.log(enrollmentData, "thi is enrollment data") })()}
+                        <div className="flex flex-col flex-1">
+                          <label className="mb-1 text-sm font-medium text-gray-700">
+                            Groups and Tickets
+                          </label>
+                          <select
+                            value={
+                              enrollmentId
+                            }
+                            onChange={handleEnrollmentChange}
+                            className="border border-gray-300 rounded px-6 py-2 shadow-sm outline-none w-full max-w-md">
+                            <option value="">Select Group | Ticket</option>
+
+                            {enrollmentData.map((e) => {
+
+                              return (
+                                <option
+                                  key={e?._id}
+                                  value={`${e?._id}`}>
+                                  {e?.group_id?.group_name} |{" "}
+                                  {e?.tickets}
+                                </option>
+                              );
+
+                            })}
+
+
+
+
+                          </select>
+                        </div>
+                        {statementLoading ? (
+                          <CircularLoader />
+                        ) : activeEnrollmentData?.length > 0 ? (
+                          <div className="mt-10">
+                            <DataTable
+                              data={activeEnrollmentData}
+                              columns={CustomerPaymentStatementColumns}
+                              exportCols={CustomerPaymentStatementExportsColumns}
+                              exportedPdfName={`Customer Statement Report`}
+                              exportedFileName={`Customer Statement.csv`}
+
+                            />
+                          </div>
+                        ) : (
+                          <div className="p-40  w-full flex justify-center items-center ">
+                            No Customer Payment Statement Found
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {activeTab === "transactions" && (
+                      <div className="flex flex-col flex-1">
+                        <label className="m-4 text-sm  text-gray-700 font-bold">
+                          Transactions
+                        </label>
+
+                        <div className="my-6 relative overflow-hidden group bg-gradient-to-br from-white to-blue-50 border border-blue-100 rounded-2xl p-4 shadow-sm transition-all duration-300 hover:shadow-md hover:border-blue-300">
+                          {/* Subtle Background Icon Decoration */}
+                          <div className="absolute -right-2 -bottom-2 text-blue-100/40 group-hover:text-blue-200/50 transition-colors">
+                            <MdAccountBalanceWallet size={80} />
+                          </div>
+
+                          <div className="relative z-10 flex items-center gap-4">
+                            {/* Icon Container */}
+                            <div className="flex items-center justify-center w-12 h-12 bg-blue-600 rounded-xl shadow-lg shadow-blue-200">
+                              <MdAccountBalanceWallet className="text-white text-2xl" />
+                            </div>
+
+                            <div className="flex flex-col">
+                              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">
+                                Total Amount
+                              </span>
+                              <div className="flex items-baseline gap-1">
+                                <span className="text-sm font-bold text-blue-600">
+                                  ₹
+                                </span>
+                                <span className="text-2xl font-black text-slate-800 tracking-tight">
+                                  {totalTransactionAmount.toLocaleString(
+                                    "en-IN"
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Real-time Words Conversion - keeping consistency with your payroll style */}
+                          {totalTransactionAmount > 0 && (
+                            <div className="mt-3 pt-3 border-t border-blue-100/50">
+                              <p className="text-[10px] font-medium text-blue-500 italic leading-tight">
+                                {numberToIndianWords(totalTransactionAmount)}{" "}
+                                Only
+                              </p>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                          <div className="space-y-2">
+                            <label className="block text-sm font-medium text-slate-700">
+                              Date Range
+                            </label>
+                            <Select
+                              showSearch
+                              popupMatchSelectWidth={false}
+                              onChange={handleTransactionsSelectFilter}
+                              value={selectedLabel || undefined}
+                              placeholder="Last 50 Transactions"
+                              filterOption={(input, option) =>
+                                option.children
+                                  .toString()
+                                  .toLowerCase()
+                                  .includes(input.toLowerCase())
+                              }
+                              className="w-full"
+                              style={{ height: "44px" }}>
+                              {dayGroup.map((time) => (
+                                <Select.Option
+                                  key={time.value}
+                                  value={time.value}>
+                                  {time.label}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          </div>
+
+                          {/* Date Field */}
+                          {showFilterField && (
+                            <>
+                              <div className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-700">
+                                  From Date
+                                </label>
+                                <input
+                                  type="date"
+                                  value={selectedFromDate}
+                                  onChange={(e) =>
+                                    setSelectedFromDate(e.target.value)
+                                  }
+                                  className="w-full h-11 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-700">
+                                  To Date
+                                </label>
+                                <input
+                                  type="date"
+                                  value={selectedToDate}
+                                  onChange={(e) =>
+                                    setSelectedToDate(e.target.value)
+                                  }
+                                  className="w-full h-11 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
+                                />
+                              </div>
+                            </>
+                          )}
+
+                          <div className="space-y-2">
+                            <label className="block text-sm font-medium text-slate-700">
+                              Payment Mode
+                            </label>
+
+                            <Select
+                              mode="multiple"
+                              value={selectedPaymentMode || undefined}
+                              showSearch
+                              placeholder="Select payment mode"
+                              popupMatchSelectWidth={false}
+                              onChange={(modes) => {
+                                setSelectedPaymentMode(modes);
+                              }}
+                              filterOption={(input, option) =>
+                                option.label
+                                  .toString()
+                                  .toLowerCase()
+                                  .includes(input.toLowerCase())
+                              }
+                              className="w-full"
+                              style={{ height: "44px" }}
+                              options={[
+                                { label: "Cash", value: "cash" },
+                                { label: "Online", value: "online" },
+                                {
+                                  label: "Payment Link",
+                                  value: "Payment Link",
+                                },
+                              ]}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="block text-sm font-medium text-slate-700">
+                              Payment For
+                            </label>
+
+                            <Select
+                              mode="multiple"
+                              value={selectedPaymentFor}
+                              showSearch
+                              placeholder="Select payment for"
+                              popupMatchSelectWidth={false}
+                              onChange={(modes) => {
+                                setSelectedPaymentFor(modes);
+                              }}
+                              filterOption={(input, option) =>
+                                option.label
+                                  .toString()
+                                  .toLowerCase()
+                                  .includes(input.toLowerCase())
+                              }
+                              className="w-full"
+                              style={{ height: "44px" }}
+                              options={[
+                                { label: "Chit", value: "Chit" },
+                                { label: "Pigme", value: "Pigme" },
+                                { label: "Loan", value: "Loan" },
+                              ]}
+                            />
+                          </div>
+
+                          {showAllPaymentModes && (
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-slate-700">
+                                Account Type
+                              </label>
+                              <Select
+                                value={selectedAccountType}
+                                showSearch
+                                placeholder="Select account type"
+                                popupMatchSelectWidth={false}
+                                onChange={(groupId) =>
+                                  setSelectedAccountType(groupId)
+                                }
+                                filterOption={(input, option) =>
+                                  option.children
+                                    .toString()
+                                    .toLowerCase()
+                                    .includes(input.toLowerCase())
+                                }
+                                className="w-full"
+                                style={{ height: "44px" }}>
+                                <Select.Option value="">
+                                  All Types
+                                </Select.Option>
+                                <Select.Option value="suspense">
+                                  Suspense
+                                </Select.Option>
+                                <Select.Option value="credit">
+                                  Credit
+                                </Select.Option>
+                                <Select.Option value="adjustment">
+                                  Adjustment
+                                </Select.Option>
+                                <Select.Option value="others">
+                                  Others
+                                </Select.Option>
+                              </Select>
+                            </div>
+                          )}
+                        </div>
+
+                        {transactionsLoading ? (
+                          <CircularLoader />
+                        ) : transactionsTable?.length > 0 ? (
+                          <div className="mt-10">
+                            <DataTable
+                              data={transactionsTable}
+                              columns={TransactionsColumns}
+                              exportedPdfName={`Transactions Report`}
+                              exportedFileName={`Transactions Report.csv`}
+                            />
+                          </div>
+                        ) : (
+                          <div className="p-40  w-full flex justify-center items-center ">
+                            No Transactions Found
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </>
               )}
@@ -2085,3 +2306,5 @@ const UserReport = () => {
 };
 
 export default UserReport;
+
+// Date Range in transaction section is not working properly why
