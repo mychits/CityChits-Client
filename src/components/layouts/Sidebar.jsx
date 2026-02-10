@@ -176,7 +176,7 @@ const Sidebar = ({
             </ul>
           </div>
         </div>
-      )}
+      )}  
 
       {/* Mobile Overlay */}
       {showMobileSidebar && (

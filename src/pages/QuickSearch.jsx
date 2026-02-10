@@ -1,29 +1,29 @@
-/* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
-import { Tabs } from "antd";
+import React, { useEffect, useState } from "react";
+import { Tabs, Tag, Tooltip } from "antd";
 import Sidebar from "../components/layouts/Sidebar";
 import api from "../instance/TokenInstance";
-import CircularLoader from "../components/loaders/CircularLoader";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
-import { Table, Tag, Tooltip, Card } from "antd";
+import { Table } from "antd";
 import Fuse from "fuse.js";
 import { useNavigate } from "react-router-dom";
-import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import Navbar from "../components/layouts/Navbar";
+import { 
+  MdPerson, MdGroup, MdOutlinePersonSearch, MdBadge, 
+  MdSearch, MdFilterList, MdRefresh 
+} from "react-icons/md";
+import { BsArrowRightShort, BsArrowUpRight } from "react-icons/bs";
+import { HiTrendingUp, HiTrendingDown } from "react-icons/hi"; // Keeping trend icons if needed later, removing unused
 
 const QuickSearch = () => {
   const navigate = useNavigate();
 
-  // States for all entity types
+  // States
   const [tableUsers, setTableUsers] = useState([]);
   const [tableLeads, setTableLeads] = useState([]);
   const [tableAgents, setTableAgents] = useState([]);
   const [tableEmployees, setTableEmployees] = useState([]);
-
   const [selectedExactMatch, setSelectedExactMatch] = useState(null);
 
-
-  const [isLoading, setIsLoading] = useState(false);
   const [apiLoaders, setApiLoaders] = useState({
     users: false,
     leads: false,
@@ -42,10 +42,9 @@ const QuickSearch = () => {
 
   // Filters
   const filters = [
-    { id: "1", filterName: "ID", key: "customer_id" },
-    { id: "2", filterName: "Name", key: "name" },
-    { id: "3", filterName: "Phone", key: "phone_number" },
-    // { id: "7", filterName: "Type", key: "customer_status" },
+    { id: "1", filterName: "ID", key: "customer_id", icon: <MdBadge size={16} /> },
+    { id: "2", filterName: "Name", key: "name", icon: <MdPerson size={16} /> },
+    { id: "3", filterName: "Phone", key: "phone_number", icon: <MdOutlinePersonSearch size={16} /> },
   ];
 
   const searchableKeys = activeFilters.length > 0
@@ -54,17 +53,15 @@ const QuickSearch = () => {
 
   const combinedData = [...tableUsers, ...tableLeads, ...tableAgents, ...tableEmployees];
 
-  // Function to update loading state
   const updateApiLoader = (apiName, loading) => {
-    setApiLoaders(prev => ({
-      ...prev,
-      [apiName]: loading
-    }));
+    setApiLoaders(prev => ({ ...prev, [apiName]: loading }));
   };
 
-  // Check if any API is still loading
   const isAnyApiLoading = Object.values(apiLoaders).some(loading => loading);
+  const isDataEmpty = tableUsers.length === 0 && tableLeads.length === 0 && tableAgents.length === 0 && tableEmployees.length === 0;
+  const showInitialLoader = isDataEmpty && isAnyApiLoading;
 
+  // --- Data Fetching ---
   useEffect(() => {
     const fetchUsers = async () => {
       updateApiLoader('users', true);
@@ -105,15 +102,9 @@ const QuickSearch = () => {
           pincode: l.pincode || "—",
           customer_id: l.leadCode,
           collection_area: l.group_id?.group_name || "—",
-          customer_status: "Active",
           isLead: true,
-
         }));
-
         setTableLeads(formatted);
-
-        console.log(formatted, "hello")
-
       } catch (error) {
         console.error("Error fetching leads:", error);
       } finally {
@@ -122,11 +113,6 @@ const QuickSearch = () => {
     };
     fetchLeads();
   }, [reloadTrigger]);
-
-  useEffect(() => {
-    setSelectedExactMatch(null);
-  }, [searchText]);
-
 
   useEffect(() => {
     const fetchAgents = async () => {
@@ -142,7 +128,6 @@ const QuickSearch = () => {
           pincode: a.pincode || "—",
           customer_id: a.employeeCode,
           collection_area: a.designation_id?.title || "—",
-          customer_status: "Active",
           isAgent: true,
         }));
         setTableAgents(formatted);
@@ -169,7 +154,6 @@ const QuickSearch = () => {
           pincode: e.pincode || "—",
           customer_id: e.employeeCode,
           collection_area: e.designation_id?.title || "—",
-          customer_status: "Active",
           isEmployee: true,
         }));
         setTableEmployees(formatted);
@@ -182,53 +166,50 @@ const QuickSearch = () => {
     fetchEmployees();
   }, [reloadTrigger]);
 
+  useEffect(() => {
+    setSelectedExactMatch(null);
+  }, [searchText]);
+
+  // Columns for Ant Table
   const columns = [
     {
       dataIndex: "customer_id",
       title: "ID",
       key: "customer_id",
-      width: 120,
-      render: (text, record) => (
-        <span >
+      width: 140,
+      render: (text) => (
+        <span className="font-mono text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200 font-medium tracking-wide">
           {text}
         </span>
       ),
     },
-    { dataIndex: "name", title: "Name", key: "name", width: 180 },
-    { dataIndex: "phone_number", title: "Phone", key: "phone_number", width: 140 },
-    // {
-    //   dataIndex: "customer_status",
-    //   title: "Status",
-    //   key: "customer_status",
-    //   width: 100,
-    //   render: (text, record) => { 
-    //     if (!record) {
-    //       return <Tag color="default">Invalid</Tag>;
-    //     }
-
-    //     let statusText = "Unknown"; 
-    //     let color = "default";
-
-    //     if (record.isCustomer) {
-    //       statusText = record.customer_status || "Active";
-    //       color = record.customer_status?.toLowerCase() === "active" ? "red" : "green";
-    //     } else if (record.isLead) {
-    //       statusText = "Active";
-    //       color = "green";
-    //     } else if (record.isAgent) {
-    //       statusText = "Active";
-    //       color = "green";
-    //     } else if (record.isEmployee) {
-    //       statusText = "Active";
-    //       color = "green";
-    //     }
-
-    //     return <Tag color={color}>{statusText}</Tag>;
-    //   },
-    // },
+    { 
+      dataIndex: "name", 
+      title: "Name", 
+      key: "name", 
+      render: (text, record) => (
+        <div className="flex items-center gap-3">
+           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+             record.isCustomer ? 'bg-indigo-100 text-indigo-600' : 
+             record.isLead ? 'bg-amber-100 text-amber-600' : 
+             record.isAgent ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600'
+           }`}>
+             {text ? text.charAt(0).toUpperCase() : '?'}
+           </div>
+           <span className="font-bold text-slate-800">{text}</span>
+        </div>
+      )
+    },
+    { 
+      dataIndex: "phone_number", 
+      title: "Phone", 
+      key: "phone_number",
+      render: (text) => <span className="text-slate-600 font-medium">{text}</span>
+    },
     {
       key: "action",
       width: 100,
+      align: 'right',
       render: (_, record) => {
         if (!record) return null;
 
@@ -237,25 +218,28 @@ const QuickSearch = () => {
 
         if (record.isLead) {
           route = `/reports/lead-report?lead_id=${record._id}`;
-          tooltip = "View Lead";
+          tooltip = "View Lead Details";
         } else if (record.isAgent) {
           route = `/staff-menu/agent?agent_id=${record._id}`;
-          tooltip = "View Agent";
+          tooltip = "View Agent Profile";
         } else if (record.isEmployee) {
           route = `/staff-menu/employee-menu/employee?employee_id=${record._id}`;
-          tooltip = "View Employee";
+          tooltip = "View Employee Profile";
         } else {
           route = `/customer-view?user_id=${record._id}`;
-          tooltip = "View Customer";
+          tooltip = "View Customer Profile";
         }
 
         return (
           <Tooltip title={tooltip}>
             <button
-              onClick={() => navigate(route)}
-              className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-md border border-gray-300 text-gray-700 hover:bg-violet-600 hover:text-white hover:shadow transition"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(route);
+              }}
+              className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 bg-white hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 transition-all duration-300 shadow-sm hover:shadow-md"
             >
-              <EyeOutlined className="text-lg" /> <span>View</span>
+              View <BsArrowRightShort size={18} />
             </button>
           </Tooltip>
         );
@@ -270,10 +254,12 @@ const QuickSearch = () => {
   };
 
   const renderSearchResults = (tabKey) => {
-    if (isAnyApiLoading) {
+    if (isAnyApiLoading && !showInitialLoader) {
       return (
-        <div className="flex justify-center py-12">
-          <CircularLoader isLoading={true} failure={false} data="Records" />
+        <div className="space-y-3 p-4">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-16 bg-slate-50 rounded-2xl animate-pulse border border-slate-100"></div>
+          ))}
         </div>
       );
     }
@@ -287,14 +273,19 @@ const QuickSearch = () => {
 
     if (!searchText.trim()) {
       return (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto pr-2">
           <Table
-            pagination={{ pageSize: 10, showSizeChanger: false, hideOnSinglePage: true }}
+            pagination={{ pageSize: 8, showSizeChanger: false, className: "custom-pagination" }}
             scroll={{ x: "max-content" }}
             columns={columns}
             dataSource={dataSource}
             rowKey="_id"
             size="middle"
+            showHeader={false} 
+            rowClassName={() => `glass-table-row animate-fadeIn`}
+            onRow={(record, index) => ({
+                style: { animationDelay: `${index * 0.05}s` }
+            })}
           />
         </div>
       );
@@ -310,76 +301,71 @@ const QuickSearch = () => {
     let exactMatches = results.filter(r => r.score <= 0.05).map(r => r.item);
     let relatedMatches = results.filter(r => r.score > 0.05).map(r => r.item);
 
-
     if (selectedExactMatch) {
       exactMatches = [selectedExactMatch];
-      relatedMatches = relatedMatches.filter(
-        (item) => item._id !== selectedExactMatch._id
-      );
+      relatedMatches = relatedMatches.filter((item) => item._id !== selectedExactMatch._id);
     }
-
 
     if (results.length === 0) {
       return (
-        <div className="text-center py-12">
-          <div className="inline-block p-3 rounded-full bg-gray-100 mb-3">
-            <SearchOutlined className="text-xl text-gray-400" />
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="w-20 h-20 bg-slate-100 rounded-3xl flex items-center justify-center mb-6">
+            <MdSearch className="text-4xl text-slate-300" />
           </div>
-          <p className="text-gray-500">
-            No matches found in{" "}
-            <span className="font-medium">
-              {tabKey === "all" ? "all records" : tabKey}
-            </span>
-            .
-          </p>
+          <h3 className="text-xl font-bold text-slate-800">No results found</h3>
+          <p className="text-slate-500 mt-2">Try adjusting your search criteria or filters.</p>
         </div>
       );
     }
 
     return (
-      <div>
+      <div className="space-y-6 animate-fadeIn">
+        {/* Exact Matches Section */}
         {exactMatches.length > 0 && (
-          <div className="mb-6 p-4 rounded-lg bg-violet-50 border border-violet-200">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-2 h-2 rounded-full bg-violet-600"></div>
-              <h4 className="text-violet-800 font-medium">Exact Match</h4>
-            </div>
-            <Table
-              pagination={false}
-              scroll={{ x: "max-content" }}
-              columns={columns}
-              dataSource={[exactMatches[0]]}
-              rowKey="_id"
-              size="middle"
-            />
+          <div className="relative overflow-hidden rounded-3xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-white p-1">
+             <div className="p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="p-1.5 rounded-lg bg-indigo-600 text-white shadow-lg shadow-indigo-200">
+                    <BsArrowUpRight size={14} />
+                  </div>
+                  <h4 className="text-indigo-900 font-bold uppercase tracking-wider text-xs">Best Match</h4>
+                </div>
+                <Table
+                  pagination={false}
+                  scroll={{ x: "max-content" }}
+                  columns={columns}
+                  dataSource={[exactMatches[0]]}
+                  rowKey="_id"
+                  size="middle"
+                  showHeader={false}
+                  rowClassName={() => "glass-table-row bg-white/80 hover:bg-white"}
+                />
+             </div>
           </div>
         )}
 
+        {/* Related Matches */}
         {relatedMatches.length > 0 && (
           <div>
-            <h4 className="text-gray-700 font-medium mb-4 flex items-center gap-2">
-              Related Results
-              <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">
-                {relatedMatches.length} found
-              </span>
+            <h4 className="text-slate-400 font-bold uppercase tracking-widest text-xs mb-4 flex items-center gap-2 ml-2">
+              Other Results <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10px]">{relatedMatches.length}</span>
             </h4>
-            <Table
-              pagination={{ pageSize: 8, showSizeChanger: false }}
-              scroll={{ x: "max-content" }}
-              columns={columns}
-              dataSource={relatedMatches}
-              rowKey="_id"
-              size="middle"
-              onRow={(record) => ({
-                onClick: () => {
-                  setSelectedExactMatch(record);
-                }
-              })}
-              rowClassName={() =>
-                "cursor-pointer hover:bg-violet-50 transition-all"
-              }
-            />
-
+            <div className="overflow-x-auto pr-2">
+              <Table
+                pagination={{ pageSize: 6, showSizeChanger: false, className: "custom-pagination" }}
+                scroll={{ x: "max-content" }}
+                columns={columns}
+                dataSource={relatedMatches}
+                rowKey="_id"
+                size="middle"
+                showHeader={false}
+                rowClassName="glass-table-row cursor-pointer hover:bg-white/60"
+                onRow={(record, index) => ({
+                    onClick: () => setSelectedExactMatch(record),
+                    style: { animationDelay: `${index * 0.05}s` }
+                })}
+              />
+            </div>
           </div>
         )}
       </div>
@@ -387,91 +373,225 @@ const QuickSearch = () => {
   };
 
   return (
-    <div>
-      <div className="flex mt-20">
-        <Sidebar />
-        <Navbar
-          onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
-          visibility={true}
-        />
-        <CustomAlertDialog
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
-        />
+    <div className="min-h-screen bg-slate-50">
+      <Navbar
+        onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
+        visibility={true}
+      />
 
-        <div className="flex-1 p-4 md:p-8 md:mr-11 pb-8">
-          {/* Header */}
-          <header className="mb-6">
-            <h1 className="text-3xl sm:text-3xl font-bold text-gray-500 mb-2">
-              AI <span className="text-violet-700">Search</span>
-            </h1>
-            <p className="text-gray-600 max-w-2xl">
-              Search across your data. Switch tabs to focus on a specific type.
-            </p>
-          </header>
-
-          {/* Search & Filters */}
-          <Card
-            className="mb-6 shadow-sm border border-gray-200 rounded-xl"
-            bodyStyle={{ padding: "1.25rem" }}
-          >
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-              <div className="relative w-full lg:w-1/3">
-                <input
-                  type="text"
-                  placeholder="Search by ID, Name, or Phone..."
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 pl-12 pr-5 py-2.5 text-sm shadow-sm focus:border-violet-600 focus:ring-2 focus:ring-violet-200 outline-none transition"
-                  autoFocus
-                />
-                <SearchOutlined className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
-              </div>
-
-              <div className="flex flex-wrap gap-2.5 justify-center lg:justify-start">
-                {filters.map((filter) => {
-                  const isActive = activeFilters.includes(filter.id);
-                  return (
-                    <Tooltip
-                      key={filter.id}
-                      title={`Search by ${filter.filterName}`}
-                      placement="top"
-                    >
-                      <button
-                        onClick={() => handleFilterToggle(filter.id)}
-                        className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-all ${isActive
-                            ? "bg-violet-600 text-white shadow"
-                            : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
-                          }`}
-                      >
-                        {filter.filterName}
-                      </button>
-                    </Tooltip>
-                  );
-                })}
-              </div>
+      <main className="pt-28 pb-12 px-6 mx-auto">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+              <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Data Discovery</span>
             </div>
-          </Card>
+            <h1 className="text-4xl font-bold text-slate-900 mb-2">
+              Global Search
+            </h1>
+            <p className="text-slate-600">
+              Find customers, leads, agents, and employees instantly.
+            </p>
+          </div>
+          
+          <button 
+            onClick={() => setReloadTrigger(prev => prev + 1)} 
+            className="px-6 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-700 transition-all flex items-center gap-2 shadow-sm"
+          >
+            <span className={`${reloadTrigger > 0 ? 'animate-spin' : ''}`}><MdRefresh size={18}/></span>
+            Refresh Index
+          </button>
+        </div>
 
-          {/* Tabs */}
-          <Card className="shadow-md border border-gray-200 rounded-xl overflow-hidden">
+        {/* Search Hero Card */}
+        <div className="bg-white border border-slate-200 rounded-3xl p-8 mb-8 shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div className="flex flex-col xl:flex-row gap-6 items-start xl:items-center justify-between">
+            
+            {/* Search Input */}
+            <div className="relative w-full xl:w-1/2 group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <MdSearch className="text-slate-400 text-xl group-focus-within:text-indigo-600 transition-colors" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search by ID, Name, Phone Number..."
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white outline-none transition-all text-slate-800 placeholder:text-slate-400 font-medium text-lg"
+                autoFocus
+              />
+            </div>
+
+            {/* Filter Toggles */}
+            <div className="flex flex-wrap gap-3 w-full xl:w-auto items-center">
+              <div className="flex items-center gap-2 text-slate-400 font-semibold text-sm mr-2">
+                 <MdFilterList /> Filters:
+              </div>
+              {filters.map((filter) => {
+                const isActive = activeFilters.includes(filter.id);
+                return (
+                  <Tooltip key={filter.id} title={`Search by ${filter.filterName}`} placement="top">
+                    <button
+                      onClick={() => handleFilterToggle(filter.id)}
+                      className={`flex items-center gap-2 px-5 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 border ${
+                        isActive
+                          ? "bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-200"
+                          : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-700 hover:bg-indigo-50"
+                      }`}
+                    >
+                      {filter.icon} {filter.filterName}
+                    </button>
+                  </Tooltip>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Results Container */}
+        <div className="bg-white border border-slate-200 rounded-3xl p-8 min-h-[500px] shadow-sm">
+          {showInitialLoader ? (
+             <div className="flex flex-col items-center justify-center py-20">
+                <div className="w-16 h-16 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
+                <p className="text-slate-500 font-medium animate-pulse">Indexing Database...</p>
+             </div>
+          ) : (
             <Tabs
               defaultActiveKey="all"
               animated={false}
               size="large"
+              className="search-tabs"
               items={[
-                { key: "all", label: "All", children: renderSearchResults("all") },
-                { key: "customers", label: "Customers", children: renderSearchResults("customers") },
-                { key: "leads", label: "Leads", children: renderSearchResults("leads") },
-                { key: "agents", label: "Agents", children: renderSearchResults("agents") },
-                { key: "employees", label: "Employees", children: renderSearchResults("employees") },
+                { 
+                  key: "all", 
+                  label: <span className="font-semibold text-slate-600 px-2">All Records</span>, 
+                  children: renderSearchResults("all") 
+                },
+                { 
+                  key: "customers", 
+                  label: <span className="font-semibold text-slate-600 px-2">Customers</span>, 
+                  children: renderSearchResults("customers") 
+                },
+                { 
+                  key: "leads", 
+                  label: <span className="font-semibold text-slate-600 px-2">Leads</span>, 
+                  children: renderSearchResults("leads") 
+                },
+                { 
+                  key: "agents", 
+                  label: <span className="font-semibold text-slate-600 px-2">Agents</span>, 
+                  children: renderSearchResults("agents") 
+                },
+                { 
+                  key: "employees", 
+                  label: <span className="font-semibold text-slate-600 px-2">Employees</span>, 
+                  children: renderSearchResults("employees") 
+                },
               ]}
             />
-          </Card>
+          )}
         </div>
-      </div>
+
+      </main>
+
+      <CustomAlertDialog
+        type={alertConfig.type}
+        isVisible={alertConfig.visibility}
+        message={alertConfig.message}
+        onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
+      />
+
+      <style jsx global>{`
+        /* Antd Table Customization to match Dashboard */
+        .ant-table-wrapper .ant-table-pagination.ant-pagination {
+          margin: 20px 0 0 0;
+        }
+        .custom-pagination .ant-pagination-item {
+          background: #fff;
+          border-color: #e2e8f0;
+          border-radius: 8px;
+          transition: all 0.3s;
+        }
+        .custom-pagination .ant-pagination-item:hover {
+          border-color: #818cf8;
+          color: #4f46e5;
+        }
+        .custom-pagination .ant-pagination-item-active {
+          background: #4f46e5;
+          border-color: #4f46e5;
+        }
+        .custom-pagination .ant-pagination-item-active a {
+          color: white;
+          font-weight: bold;
+        }
+        
+        .glass-table-row {
+          background: #fff;
+          transition: all 0.2s ease-in-out;
+          margin-bottom: 12px;
+          border-radius: 16px;
+          border: 1px solid #f1f5f9;
+          box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .glass-table-row:hover {
+          border-color: #c7d2fe;
+          background: #f8fafc;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .ant-table-tbody > tr > td {
+          border-bottom: none !important;
+          padding: 16px 24px !important;
+        }
+        .ant-table-thead > tr > th {
+          background: transparent !important;
+          border-bottom: none !important;
+          color: #94a3b8;
+          font-weight: 700;
+          text-transform: uppercase;
+          font-size: 0.75rem;
+          letter-spacing: 0.05em;
+          padding-bottom: 16px;
+        }
+        
+        /* Tab Customization */
+        .search-tabs > .ant-tabs-nav {
+          margin-bottom: 32px;
+          border-bottom: 1px solid #f1f5f9;
+        }
+        .search-tabs > .ant-tabs-nav .ant-tabs-nav-wrap {
+          justify-content: flex-start;
+        }
+        .search-tabs > .ant-tabs-nav .ant-tabs-tab {
+          padding: 12px 20px;
+          margin: 0 4px 0 0;
+          border-radius: 12px;
+          background: transparent;
+          border: none;
+          transition: all 0.3s;
+          color: #64748b;
+        }
+        .search-tabs > .ant-tabs-nav .ant-tabs-tab:hover {
+          color: #4f46e5;
+          background: #f1f5f9;
+        }
+        .search-tabs > .ant-tabs-nav .ant-tabs-tab-active {
+          background: #eef2ff;
+          color: #4f46e5;
+        }
+        .search-tabs > .ant-tabs-ink-bar {
+          display: none;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.4s ease-out forwards; }
+      `}</style>
     </div>
   );
 };

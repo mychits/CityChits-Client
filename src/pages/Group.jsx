@@ -3,16 +3,33 @@ import { useEffect, useState } from "react";
 import Sidebar from "../components/layouts/Sidebar";
 import Modal from "../components/modals/Modal";
 import api from "../instance/TokenInstance";
-import DataTable from "../components/layouts/Datatable"; // Import DataTable
+import DataTable from "../components/layouts/Datatable";
 import { Dropdown, Menu, Select } from "antd";
 import { IoMdMore } from "react-icons/io";
-import { MdLibraryAdd, MdViewList, MdGridView, MdClose, MdSearch, MdFilterList } from "react-icons/md";
+import { 
+  MdLibraryAdd, 
+  MdViewList, 
+  MdGridView, 
+  MdClose, 
+  MdSearch, 
+  MdFilterList,
+  MdTrendingUp,
+  MdPeople,
+  MdAccountBalance,
+  MdCalendarToday,
+  MdRefresh,
+  MdViewModule,
+  MdOutlineAttachMoney,
+  MdGroupWork
+} from "react-icons/md";
+import { BsArrowRightShort, BsArrowUpRight } from "react-icons/bs";
+import { HiSparkles } from "react-icons/hi";
 import CustomAlert from "../components/alerts/CustomAlert";
 import CircularLoader from "../components/loaders/CircularLoader";
 import Navbar from "../components/layouts/Navbar";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import Fuse from "fuse.js";
-import handleEnrollmentRequestPrint from "../components/printFormats/enrollmentRequestPrint"; // Import print utility
+import handleEnrollmentRequestPrint from "../components/printFormats/enrollmentRequestPrint";
 
 const { Option } = Select;
 
@@ -25,7 +42,7 @@ const formatDateISO = (date) => {
 
 const Group = () => {
   const [groups, setGroups] = useState([]);
-  const [TableGroups, setTableGroups] = useState([]); // State for DataTable compatible data
+  const [TableGroups, setTableGroups] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -75,7 +92,7 @@ const Group = () => {
     message: "",
     type: "info",
   });
-  const [viewMode, setViewMode] = useState("grid"); // Added 'table' as a possible view mode
+  const [viewMode, setViewMode] = useState("grid");
 
   useEffect(() => {
     const getEmployees = async () => {
@@ -108,7 +125,6 @@ const Group = () => {
         const res = await api.get("/group/get-group-admin");
         setGroups(res.data || []);
 
-        // Prepare data for DataTable
         const formattedData = res.data.map((group, index) => ({
           id: index + 1,
           _id: group._id,
@@ -119,7 +135,7 @@ const Group = () => {
           group_members: group.group_members,
           group_duration: group.group_duration,
           reg_fee: group.reg_fee,
-          relationship_manager: group.relationship_manager?.name || "N/A", // Access nested property
+          relationship_manager: group.relationship_manager?.name || "N/A",
           start_date: group.start_date ? new Date(group.start_date).toLocaleDateString() : "N/A",
           end_date: group.end_date ? new Date(group.end_date).toLocaleDateString() : "N/A",
           minimum_bid: group.minimum_bid,
@@ -140,7 +156,7 @@ const Group = () => {
                       key: "1",
                       label: (
                         <div
-                          className="text-blue-600"
+                          className="text-indigo-600"
                           onClick={() => handleUpdateModalOpen(group._id)}
                         >
                           Edit
@@ -163,7 +179,7 @@ const Group = () => {
                       label: (
                         <div
                           onClick={() => handleShareClick(group._id)}
-                          className="text-green-600"
+                          className="text-emerald-600"
                         >
                           Share Link
                         </div>
@@ -183,13 +199,13 @@ const Group = () => {
       } catch (err) {
         console.error("Error fetching groups", err);
         setGroups([]);
-        setTableGroups([]); // Ensure TableGroups is also cleared on error
+        setTableGroups([]);
       } finally {
         setIsLoading(false);
       }
     };
     fetchGroups();
-  }, [reloadTrigger]); // Include reloadTrigger to refetch data when it changes
+  }, [reloadTrigger]);
 
   const onGlobalSearchChangeHandler = (e) => {
     setSearchText(e.target.value);
@@ -274,7 +290,7 @@ const Group = () => {
       });
       setAlertConfig({ visibility: true, message: "Group added successfully", type: "success" });
       setShowModal(false);
-      setReloadTrigger((p) => p + 1); // Trigger refetch
+      setReloadTrigger((p) => p + 1);
       setFormData({
         group_name: "",
         group_type: "",
@@ -341,7 +357,7 @@ const Group = () => {
       await api.put(`/group/update-group/${currentUpdateGroup._id}`, updateFormData);
       setAlertConfig({ visibility: true, message: "Group updated successfully", type: "success" });
       setShowModalUpdate(false);
-      setReloadTrigger((p) => p + 1); // Trigger refetch
+      setReloadTrigger((p) => p + 1);
     } catch (err) {
       console.error("Error updating group", err);
       setAlertConfig({ visibility: true, message: "Failed to update group", type: "error" });
@@ -374,7 +390,7 @@ const Group = () => {
       await api.delete(`/group/delete-group/${currentGroup._id}`);
       setAlertConfig({ visibility: true, message: "Group deleted successfully", type: "success" });
       setShowModalDelete(false);
-      setReloadTrigger((p) => p + 1); // Trigger refetch
+      setReloadTrigger((p) => p + 1);
       setCurrentGroup(null);
     } catch (err) {
       console.error("Error deleting group", err);
@@ -439,7 +455,16 @@ const Group = () => {
   const currentGroups = preFilteredGroups.slice(indexOfFirstGroup, indexOfLastGroup);
   const totalPages = Math.ceil(preFilteredGroups.length / currentGroupsPerPage);
 
-  // Define columns for DataTable
+  // Statistics calculation
+  const totalGroupValue = groups.reduce((sum, g) => sum + Number(g.group_value || 0), 0);
+  const totalMembers = groups.reduce((sum, g) => sum + Number(g.group_members || 0), 0);
+  const activeGroups = groups.filter(g => {
+    const today = new Date();
+    const startDate = new Date(g.start_date);
+    const endDate = g.end_date ? new Date(g.end_date) : null;
+    return startDate <= today && (!endDate || endDate >= today);
+  }).length;
+
   const columns = [
     { key: "id", header: "SL. NO" },
     { key: "group_name", header: "Group Name" },
@@ -465,16 +490,16 @@ const Group = () => {
 
   const InputField = ({ name, label, value, onChange, error, type = "text", placeholder }) => (
     <div className="w-full">
-      <label className="block mb-2 text-sm font-medium text-gray-700">{label}</label>
+      <label className="block mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">{label}</label>
       <input
         type={type}
         name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder || `Enter ${label}`}
-        className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-600 focus:border-purple-600 w-full p-2.5"
+        className="w-full px-4 py-3 rounded-2xl bg-slate-50 border-2 border-slate-200 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100 outline-none transition-all duration-200 text-slate-800"
       />
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p className="text-red-500 text-xs mt-1.5 font-medium">{error}</p>}
     </div>
   );
 
@@ -482,57 +507,61 @@ const Group = () => {
     const menu = (
       <Menu>
         <Menu.Item key="1" onClick={() => handleUpdateModalOpen(group._id)}>
-          <span className="text-blue-600">Edit</span>
+          <span className="text-indigo-600 font-medium">Edit</span>
         </Menu.Item>
         <Menu.Item key="2" onClick={() => handleDeleteModalOpen(group._id)}>
-          <span className="text-red-600">Delete</span>
+          <span className="text-red-600 font-medium">Delete</span>
         </Menu.Item>
         <Menu.Item key="3" onClick={() => handleShareClick(group._id)}>
-          <span className="text-green-600">Share Link</span>
+          <span className="text-emerald-600 font-medium">Share Link</span>
         </Menu.Item>
       </Menu>
     );
     return (
-      <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <div className="group bg-white border border-slate-200 rounded-3xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-6 hover:shadow-lg hover:border-indigo-200 transition-all duration-300">
         <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-baseline gap-2 mb-1">
-            <h3 className="text-lg font-semibold text-gray-800 truncate">{group.group_name}</h3>
-            <span className="px-2 py-0.5 bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-xs font-medium rounded-full capitalize">
-              {group.group_type || "N/A"}
-            </span>
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600">
+              <MdGroupWork className="text-xl" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-900 truncate group-hover:text-indigo-600 transition-colors">{group.group_name}</h3>
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">{group.group_type || "Standard"} Group</span>
+            </div>
           </div>
-          <div className="text-sm text-gray-600 space-y-1">
-            <p>
-              <span className="font-medium">RM:</span> {group.relationship_manager?.name || "N/A"}
+          <div className="flex flex-wrap items-center gap-6 text-sm text-slate-600">
+            <p className="flex items-center gap-2 font-medium">
+              <MdPeople className="text-slate-400" />
+              {group.relationship_manager?.name || "N/A"}
             </p>
-            <p>
-              <span className="font-medium">Start:</span>{" "}
+            <p className="flex items-center gap-2 font-medium">
+              <MdCalendarToday className="text-slate-400" />
               {group.start_date ? new Date(group.start_date).toLocaleDateString() : "N/A"}
             </p>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-3 w-full sm:w-auto sm:flex-none text-center">
-          <div className="bg-gradient-to-br from-purple-50 to-indigo-50 px-3 py-2 rounded-lg border border-purple-100">
-            <p className="text-sm font-bold text-purple-800">{group.group_members}</p>
-            <p className="text-xs text-gray-600">Tickets</p>
+        <div className="grid grid-cols-3 gap-4 w-full sm:w-auto">
+          <div className="text-center px-4 py-3 bg-slate-50 rounded-2xl border border-slate-100">
+            <p className="text-lg font-bold text-slate-900">{group.group_members}</p>
+            <p className="text-xs text-slate-500 font-medium">Tickets</p>
           </div>
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-3 py-2 rounded-lg border border-blue-100">
-            <p className="text-sm font-bold text-blue-800">
+          <div className="text-center px-4 py-3 bg-slate-50 rounded-2xl border border-slate-100">
+            <p className="text-lg font-bold text-slate-900">
               ₹{Number(group.group_install).toLocaleString()}
             </p>
-            <p className="text-xs text-gray-600">Inst.</p>
+            <p className="text-xs text-slate-500 font-medium">Installment</p>
           </div>
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 px-3 py-2 rounded-lg border border-green-100">
-            <p className="text-sm font-bold text-green-800">
+          <div className="text-center px-4 py-3 bg-slate-50 rounded-2xl border border-slate-100">
+            <p className="text-lg font-bold text-slate-900">
               ₹{Number(group.group_value).toLocaleString()}
             </p>
-            <p className="text-xs text-gray-600">Chit</p>
+            <p className="text-xs text-slate-500 font-medium">Value</p>
           </div>
         </div>
         <div className="flex-shrink-0">
           <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
-            <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-              <IoMdMore className="text-xl cursor-pointer text-gray-500 hover:text-purple-700 transition-colors" />
+            <button className="p-3 rounded-2xl hover:bg-slate-50 transition-all duration-300 border border-transparent hover:border-slate-200">
+              <IoMdMore className="text-2xl cursor-pointer text-slate-400 hover:text-indigo-600 transition-colors" />
             </button>
           </Dropdown>
         </div>
@@ -544,64 +573,66 @@ const Group = () => {
     const menu = (
       <Menu>
         <Menu.Item key="1" onClick={() => handleUpdateModalOpen(group._id)}>
-          <span className="text-blue-600">Edit</span>
+          <span className="text-indigo-600 font-medium">Edit</span>
         </Menu.Item>
         <Menu.Item key="2" onClick={() => handleDeleteModalOpen(group._id)}>
-          <span className="text-red-600">Delete</span>
+          <span className="text-red-600 font-medium">Delete</span>
         </Menu.Item>
         <Menu.Item key="3" onClick={() => handleShareClick(group._id)}>
-          <span className="text-green-600">Share Link</span>
+          <span className="text-emerald-600 font-medium">Share Link</span>
         </Menu.Item>
       </Menu>
     );
     return (
-      <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden hover:-translate-y-1 border border-gray-100">
-        <div className="h-2 bg-gradient-to-r from-purple-500 to-indigo-500"></div>
-        <div className="p-5">
-          <div className="flex justify-between items-start mb-4">
-            <div className="flex-1">
-              <h3 className="font-semibold text-gray-800 text-lg leading-tight truncate">{group.group_name}</h3>
-              <p className="text-xs text-gray-600 capitalize mt-1">{group.group_type} Group</p>
+      <div className="group bg-white border border-slate-200 rounded-3xl p-6 hover:shadow-lg hover:border-indigo-200 transition-all duration-300 relative overflow-hidden">
+        <div className="absolute top-0 right-0 z-10 p-4">
+          <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
+            <button className="p-2 rounded-xl bg-white hover:bg-slate-50 transition-all duration-300 border border-slate-200 shadow-sm">
+              <IoMdMore className="text-xl cursor-pointer text-slate-400 hover:text-indigo-600" />
+            </button>
+          </Dropdown>
+        </div>
+        <div className="mb-6 pr-8">
+          <div className="flex items-center gap-3 mb-3">
+             <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600">
+              <MdGroupWork className="text-xl" />
             </div>
-            <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
-              <button className="p-1 rounded-full hover:bg-gray-100 transition-colors">
-                <IoMdMore className="text-xl cursor-pointer text-gray-500 hover:text-purple-700" />
-              </button>
-            </Dropdown>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{group.group_type || "Standard"}</span>
           </div>
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="text-center p-2 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-lg border border-purple-100">
-              <p className="text-lg font-bold text-purple-800">{group.group_members}</p>
-              <p className="text-xs text-gray-600">Tickets</p>
-            </div>
-            <div className="text-center p-2 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
-              <p className="text-lg font-bold text-blue-800">
-                ₹{Number(group.group_install).toLocaleString()}
-              </p>
-              <p className="text-xs text-gray-600">Instalment</p>
-            </div>
-            <div className="text-center p-2 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-100">
-              <p className="text-lg font-bold text-green-800">
-                ₹{Number(group.group_value).toLocaleString()}
-              </p>
-              <p className="text-xs text-gray-600">Chit Amount</p>
-            </div>
+          <h3 className="font-bold text-slate-900 text-2xl leading-tight truncate group-hover:text-indigo-600 transition-colors">{group.group_name}</h3>
+        </div>
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          <div className="text-center p-3 bg-slate-50 rounded-2xl border border-slate-100">
+            <p className="text-xl font-bold text-slate-900">{group.group_members}</p>
+            <p className="text-xs text-slate-500 font-medium">Tickets</p>
           </div>
-          <div className="space-y-2 text-sm text-gray-700">
-            <div className="flex justify-between">
-              <span className="text-gray-500">Period:</span>
-              <span className="font-medium">{group.group_duration} months</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">RM:</span>
-              <span className="font-medium truncate ml-2">{group.relationship_manager?.name || "N/A"}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Start Date:</span>
-              <span className="font-medium">
-                {group.start_date ? new Date(group.start_date).toLocaleDateString() : "N/A"}
-              </span>
-            </div>
+          <div className="text-center p-3 bg-slate-50 rounded-2xl border border-slate-100">
+            <p className="text-xl font-bold text-slate-900">
+              ₹{Number(group.group_install).toLocaleString()}
+            </p>
+            <p className="text-xs text-slate-500 font-medium">Installment</p>
+          </div>
+          <div className="text-center p-3 bg-slate-50 rounded-2xl border border-slate-100">
+            <p className="text-xl font-bold text-slate-900">
+              ₹{Number(group.group_value).toLocaleString()}
+            </p>
+            <p className="text-xs text-slate-500 font-medium">Chit Amt</p>
+          </div>
+        </div>
+        <div className="space-y-3 text-sm bg-slate-50/50 rounded-2xl p-4 border border-slate-100">
+          <div className="flex justify-between items-center">
+            <span className="text-slate-500 font-medium">Duration</span>
+            <span className="font-bold text-slate-900">{group.group_duration} months</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-slate-500 font-medium">Manager</span>
+            <span className="font-bold text-slate-900 truncate ml-2 max-w-[150px]">{group.relationship_manager?.name || "N/A"}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-slate-500 font-medium">Start Date</span>
+            <span className="font-bold text-slate-900">
+              {group.start_date ? new Date(group.start_date).toLocaleDateString() : "N/A"}
+            </span>
           </div>
         </div>
       </div>
@@ -611,7 +642,7 @@ const Group = () => {
   const renderGroups = (groupsToRender) => {
     if (viewMode === "grid") {
       return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {groupsToRender.map((g) => (
             <GroupCard key={g._id} group={g} />
           ))}
@@ -625,24 +656,21 @@ const Group = () => {
           ))}
         </div>
       );
-    } else { // Table view
-      // Filter TableGroups based on preFilteredGroups to maintain consistency with search/filter
+    } else {
       const filteredTableGroups = TableGroups.filter(tableGroup => 
         preFilteredGroups.some(filteredGroup => filteredGroup._id === tableGroup._id)
       );
 
-
-
       return (
-        <DataTable
-          catcher="_id" // Use the unique ID field
-          data={filteredTableGroups} // Pass the data for the current page if handling pagination externally
-          columns={columns}
-          exportedPdfName="Groups" // Name for the exported PDF
-          exportedFileName={`Groups.csv`} // Name for the exported CSV
-          // pagination={true} // Enable if DataTable handles pagination internally
-          // totalRecords={filteredTableGroups.length} // Pass total count if using DataTable's pagination
-        />
+        <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+          <DataTable
+            catcher="_id"
+            data={filteredTableGroups}
+            columns={columns}
+            exportedPdfName="Groups"
+            exportedFileName={`Groups.csv`}
+          />
+        </div>
       );
     }
   };
@@ -650,15 +678,15 @@ const Group = () => {
   const RelatedPagination = () => {
     if (totalRelatedPages <= 1) return null;
     return (
-      <div className="flex justify-center items-center gap-2 mt-6">
+      <div className="flex justify-center items-center gap-3 mt-8">
         <button
           onClick={() => setCurrentPageRelated((p) => Math.max(p - 1, 1))}
           disabled={currentPageRelated === 1}
-          className="px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-2xl hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 font-semibold"
         >
           Previous
         </button>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           {[...Array(Math.min(5, totalRelatedPages))].map((_, i) => {
             let pageNum;
             if (totalRelatedPages <= 5) {
@@ -674,31 +702,20 @@ const Group = () => {
               <button
                 key={pageNum}
                 onClick={() => setCurrentPageRelated(pageNum)}
-                className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${currentPageRelated === pageNum
-                    ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white"
-                    : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+                className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300 font-semibold ${currentPageRelated === pageNum
+                    ? "bg-indigo-600 text-white shadow-md"
+                    : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300"
                   }`}
               >
                 {pageNum}
               </button>
             );
           })}
-          {totalRelatedPages > 5 && (
-            <span className="px-2 text-gray-500">...</span>
-          )}
-          {totalRelatedPages > 5 && (
-            <button
-              onClick={() => setCurrentPageRelated(totalRelatedPages)}
-              className="w-8 h-8 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 flex items-center justify-center"
-            >
-              {totalRelatedPages}
-            </button>
-          )}
         </div>
         <button
           onClick={() => setCurrentPageRelated((p) => Math.min(p + 1, totalRelatedPages))}
           disabled={currentPageRelated === totalRelatedPages}
-          className="px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-2xl hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 font-semibold"
         >
           Next
         </button>
@@ -717,33 +734,33 @@ const Group = () => {
     for (let i = startPage; i <= endPage; i++) pageNumbers.push(i);
 
     return (
-      <div className="flex justify-center items-center gap-2 mt-6">
+      <div className="flex justify-center items-center gap-3 mt-8">
         <button
           onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
           disabled={currentPage === 1}
-          className="px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-2xl hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 font-semibold"
         >
           Previous
         </button>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           {startPage > 1 && (
             <>
               <button
                 onClick={() => setCurrentPage(1)}
-                className="w-8 h-8 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 flex items-center justify-center"
+                className="w-11 h-11 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 flex items-center justify-center font-semibold transition-all duration-300"
               >
                 1
               </button>
-              {startPage > 2 && <span className="px-2 text-gray-500">...</span>}
+              {startPage > 2 && <span className="px-2 text-slate-400 font-bold">...</span>}
             </>
           )}
           {pageNumbers.map((num) => (
             <button
               key={num}
               onClick={() => setCurrentPage(num)}
-              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${currentPage === num
-                  ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white"
-                  : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+              className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300 font-semibold ${currentPage === num
+                  ? "bg-indigo-600 text-white shadow-md"
+                  : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300"
                 }`}
             >
               {num}
@@ -751,10 +768,10 @@ const Group = () => {
           ))}
           {endPage < totalPages && (
             <>
-              {endPage < totalPages - 1 && <span className="px-2 text-gray-500">...</span>}
+              {endPage < totalPages - 1 && <span className="px-2 text-slate-400 font-bold">...</span>}
               <button
                 onClick={() => setCurrentPage(totalPages)}
-                className="w-8 h-8 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 flex items-center justify-center"
+                className="w-11 h-11 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 flex items-center justify-center font-semibold transition-all duration-300"
               >
                 {totalPages}
               </button>
@@ -764,7 +781,7 @@ const Group = () => {
         <button
           onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
           disabled={currentPage === totalPages}
-          className="px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-2xl hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 font-semibold"
         >
           Next
         </button>
@@ -775,7 +792,7 @@ const Group = () => {
   return (
     <>
       <div className="flex mt-20">
-        <Sidebar />
+
         <Navbar
           onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
           visibility={true}
@@ -786,102 +803,167 @@ const Group = () => {
           message={alertConfig.message}
           onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
         />
-        <div className="flex-grow flex flex-col bg-gray-50">
-          <main className="flex-grow overflow-auto p-6">
+        <div className="flex-grow flex flex-col bg-slate-50 min-h-screen">
+          <main className="flex-grow overflow-auto p-6 md:p-8">
+            
             {/* Header Section */}
-            <div className="mb-6 mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <h3 className="text-2xl font-bold text-gray-800">Groups</h3>
-              <div className="flex items-center gap-3">
-                {/* View Toggle Buttons - Added Table View */}
-                <div className="flex bg-white rounded-lg p-1 shadow-sm border border-gray-200">
+            <div className="mb-8">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+                    <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Chit Fund</span>
+                  </div>
+                  <h1 className="text-4xl font-bold text-slate-900 mb-2">Groups Management</h1>
+                  <p className="text-slate-600">Manage and monitor all your chit groups efficiently.</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  {/* View Toggle */}
+                  <div className="flex bg-white rounded-2xl p-1.5 shadow-sm border border-slate-200">
+                    <button
+                      onClick={() => setViewMode("grid")}
+                      className={`px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all duration-300 font-semibold text-sm ${
+                        viewMode === "grid"
+                          ? "bg-indigo-50 text-indigo-700"
+                          : "text-slate-500 hover:text-slate-700"
+                      }`}
+                    >
+                      <MdGridView className="text-lg" />
+                      <span className="hidden sm:inline">Grid</span>
+                    </button>
+                    <button
+                      onClick={() => setViewMode("list")}
+                      className={`px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all duration-300 font-semibold text-sm ${
+                        viewMode === "list"
+                          ? "bg-indigo-50 text-indigo-700"
+                          : "text-slate-500 hover:text-slate-700"
+                      }`}
+                    >
+                      <MdViewList className="text-lg" />
+                      <span className="hidden sm:inline">List</span>
+                    </button>
+                    <button
+                      onClick={() => setViewMode("table")}
+                      className={`px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all duration-300 font-semibold text-sm ${
+                        viewMode === "table"
+                          ? "bg-indigo-50 text-indigo-700"
+                          : "text-slate-500 hover:text-slate-700"
+                      }`}
+                    >
+                      <MdViewList className="text-lg" />
+                      <span className="hidden sm:inline">Table</span>
+                    </button>
+                  </div>
                   <button
-                    onClick={() => setViewMode("grid")}
-                    className={`p-2 rounded-md flex items-center gap-1 transition-colors ${
-                      viewMode === "grid"
-                        ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-sm"
-                        : "text-gray-600 hover:text-gray-900"
-                    }`}
-                    title="Grid View"
+                    onClick={() => {
+                      setShowModal(true);
+                      setErrors({});
+                    }}
+                    className="shrink-0 px-6 py-3 bg-indigo-600 text-white rounded-2xl hover:bg-indigo-700 flex items-center gap-2 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 font-semibold"
                   >
-                    <MdGridView />
-                    <span className="hidden sm:inline">Grid</span>
-                  </button>
-                  <button
-                    onClick={() => setViewMode("list")}
-                    className={`p-2 rounded-md flex items-center gap-1 transition-colors ${
-                      viewMode === "list"
-                        ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-sm"
-                        : "text-gray-600 hover:text-gray-900"
-                    }`}
-                    title="List View"
-                  >
-                    <MdViewList />
-                    <span className="hidden sm:inline">List</span>
-                  </button>
-                  <button
-                    onClick={() => setViewMode("table")} // Add table view toggle
-                    className={`p-2 rounded-md flex items-center gap-1 transition-colors ${
-                      viewMode === "table"
-                        ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-sm"
-                        : "text-gray-600 hover:text-gray-900"
-                    }`}
-                    title="Table View"
-                  >
-                    <MdViewList /> 
-                    <span className="hidden sm:inline">Table</span>
+                    <MdLibraryAdd className="text-xl" /> 
+                    <span className="hidden sm:inline">Add New Group</span>
+                    <span className="sm:hidden">Add</span>
                   </button>
                 </div>
-                <button
-                  onClick={() => {
-                    setShowModal(true);
-                    setErrors({});
-                  }}
-                  className="shrink-0 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 flex items-center gap-1 transition-all duration-200 shadow-md"
-                >
-                  <MdLibraryAdd /> Add New Group
-                </button>
+              </div>
+
+              {/* Statistics Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="p-3 rounded-2xl bg-indigo-50 text-indigo-600">
+                      <MdAccountBalance className="text-2xl" />
+                    </div>
+                    <div className="p-1.5 bg-indigo-50 rounded-full text-indigo-600">
+                      <MdTrendingUp className="text-sm" />
+                    </div>
+                  </div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Groups</p>
+                  <p className="text-3xl font-bold text-slate-900">{groups.length}</p>
+                </div>
+
+                <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="p-3 rounded-2xl bg-blue-50 text-blue-600">
+                      <MdTrendingUp className="text-2xl" />
+                    </div>
+                     <div className="p-1.5 bg-blue-50 rounded-full text-blue-600">
+                      <MdTrendingUp className="text-sm" />
+                    </div>
+                  </div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Active Groups</p>
+                  <p className="text-3xl font-bold text-slate-900">{activeGroups}</p>
+                </div>
+
+                <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-600">
+                      <MdPeople className="text-2xl" />
+                    </div>
+                     <div className="p-1.5 bg-emerald-50 rounded-full text-emerald-600">
+                      <MdTrendingUp className="text-sm" />
+                    </div>
+                  </div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Members</p>
+                  <p className="text-3xl font-bold text-slate-900">{totalMembers}</p>
+                </div>
+
+                <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="p-3 rounded-2xl bg-amber-50 text-amber-600">
+                      <MdOutlineAttachMoney className="text-2xl" />
+                    </div>
+                     <div className="p-1.5 bg-amber-50 rounded-full text-amber-600">
+                      <MdTrendingUp className="text-sm" />
+                    </div>
+                  </div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Value</p>
+                  <p className="text-3xl font-bold text-slate-900">₹{(totalGroupValue / 100000).toFixed(1)}L</p>
+                </div>
               </div>
             </div>
+
             {/* Search and Filter Section */}
-            <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <MdSearch className="text-gray-500" />
-                  <span className="font-medium text-gray-700">Search & Filter</span>
+            <div className="mb-8 bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+              <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-indigo-50 rounded-xl text-indigo-600">
+                    <MdFilterList className="text-xl" />
+                  </div>
+                  <span className="font-bold text-slate-800">Advanced Filters</span>
                 </div>
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="p-1 rounded hover:bg-gray-100 transition-colors sm:hidden"
+                  className="sm:hidden p-2 rounded-xl hover:bg-slate-50 transition-all duration-300"
                 >
-                  {showFilters ? <MdClose /> : <MdFilterList />}
+                  {showFilters ? <MdClose className="text-xl" /> : <MdFilterList className="text-xl" />}
                 </button>
               </div>
-              <div className={`p-4 ${showFilters ? 'block' : 'hidden sm:block'}`}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+              <div className={`p-6 ${showFilters ? 'block' : 'hidden sm:block'}`}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-gray-700">Group Type</label>
+                    <label className="block mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Group Type</label>
                     <select
                       name="groupType"
                       value={filters.groupType}
                       onChange={handleFilterChange}
-                      className="bg-white border border-gray-300 rounded-lg p-2 w-full focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border-2 border-slate-200 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100 outline-none transition-all duration-200 font-medium text-slate-800"
                     >
-                      <option value="">All</option>
+                      <option value="">All Types</option>
                       <option value="divident">Dividend</option>
                       <option value="double">Double</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-gray-700">
-                      Relationship Manager
-                    </label>
+                    <label className="block mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Relationship Manager</label>
                     <select
                       name="relationshipManager"
                       value={filters.relationshipManager}
                       onChange={handleFilterChange}
-                      className="bg-white border border-gray-300 rounded-lg p-2 w-full focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border-2 border-slate-200 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100 outline-none transition-all duration-200 font-medium text-slate-800"
                     >
-                      <option value="">All</option>
+                      <option value="">All Managers</option>
                       {(Array.isArray(employees) ? employees : []).map((emp) => (
                         <option key={emp._id} value={emp._id}>
                           {emp.name} | {emp.phone_number}
@@ -890,9 +972,7 @@ const Group = () => {
                     </select>
                   </div>
                   <div className="lg:col-span-2">
-                    <label className="block mb-2 text-sm font-medium text-gray-700">
-                      Date Range
-                    </label>
+                    <label className="block mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date Range</label>
                     <select
                       value={filters.dateRange}
                       onChange={(e) => {
@@ -946,7 +1026,7 @@ const Group = () => {
                           startDateTo: to,
                         }));
                       }}
-                      className="bg-white border border-gray-300 rounded-lg p-2 w-full focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border-2 border-slate-200 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100 outline-none transition-all duration-200 font-medium text-slate-800"
                     >
                       <option value="all">All Time</option>
                       <option value="today">Today</option>
@@ -957,9 +1037,9 @@ const Group = () => {
                       <option value="custom">Custom Range</option>
                     </select>
                     {filters.dateRange === "custom" && (
-                      <div className="grid grid-cols-2 gap-2 mt-2">
+                      <div className="grid grid-cols-2 gap-3 mt-3">
                         <div>
-                          <label className="block text-sm text-gray-600">From</label>
+                          <label className="block text-xs text-slate-500 font-semibold mb-1 uppercase">From</label>
                           <input
                             type="date"
                             value={filters.startDateFrom}
@@ -969,11 +1049,11 @@ const Group = () => {
                                 startDateFrom: e.target.value,
                               }))
                             }
-                            className="bg-white border border-gray-300 rounded p-1 text-sm w-full focus:ring-purple-500 focus:border-purple-500"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-50 border-2 border-slate-200 text-sm focus:border-indigo-500 outline-none"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm text-gray-600">To</label>
+                          <label className="block text-xs text-slate-500 font-semibold mb-1 uppercase">To</label>
                           <input
                             type="date"
                             value={filters.startDateTo}
@@ -983,21 +1063,21 @@ const Group = () => {
                                 startDateTo: e.target.value,
                               }))
                             }
-                            className="bg-white border border-gray-300 rounded p-1 text-sm w-full focus:ring-purple-500 focus:border-purple-500"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-50 border-2 border-slate-200 text-sm focus:border-indigo-500 outline-none"
                           />
                         </div>
                       </div>
                     )}
                   </div>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <div className="flex-1 relative">
-                    <MdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <MdSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-xl" />
                     <input
-                      placeholder="Search by group, RM, or chit amount"
+                      placeholder="Search by group name, manager, or amount..."
                       value={searchText}
                       onChange={onGlobalSearchChangeHandler}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full pl-12 pr-4 py-3.5 border-2 border-slate-200 rounded-2xl bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition-all duration-200 font-medium text-slate-800"
                     />
                   </div>
                   <button
@@ -1013,33 +1093,39 @@ const Group = () => {
                       setCurrentPage(1);
                       setCurrentPageRelated(1);
                     }}
-                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                    className="px-6 py-3.5 bg-white border border-slate-200 text-slate-700 rounded-2xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-300 font-semibold flex items-center gap-2 justify-center"
                   >
+                    <MdRefresh className="text-lg" />
                     Clear Filters
                   </button>
                 </div>
               </div>
             </div>
+
             {/* Content Section */}
             {isLoading ? (
-              <div className="py-12">
+              <div className="py-20">
                 <CircularLoader isLoading={isLoading} failure={false} data={"Group Data"} />
               </div>
             ) : isSearching ? (
               <>
                 {exactMatch && (
-                  <div className="mb-6 p-4 rounded-xl bg-green-50 border border-green-200">
-                    <div className="flex items-center gap-2 mb-3">
-                      <h4 className="font-medium text-green-800">Exact Match</h4>
+                  <div className="mb-8 p-6 rounded-3xl bg-white border-2 border-indigo-100 shadow-sm">
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="p-2 bg-indigo-100 rounded-xl text-indigo-600">
+                        <BsArrowUpRight className="text-lg" />
+                      </div>
+                      <h4 className="font-bold text-indigo-900 text-lg uppercase tracking-wider">Perfect Match</h4>
                     </div>
                     {renderGroups([exactMatch])}
                   </div>
                 )}
                 {relatedMatches.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="text-gray-700 font-medium mb-4 flex items-center gap-2">
+                  <div className="mb-8">
+                    <h4 className="text-slate-500 font-bold uppercase tracking-widest text-xs mb-5 flex items-center gap-3">
+                      <MdSearch className="text-lg" />
                       Related Results
-                      <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                      <span className="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-semibold">
                         {relatedMatches.length} found
                       </span>
                     </h4>
@@ -1048,11 +1134,13 @@ const Group = () => {
                   </div>
                 )}
                 {!exactMatch && relatedMatches.length === 0 && (
-                  <div className="col-span-full p-12 bg-white rounded-xl shadow-sm text-center text-gray-600">
+                  <div className="col-span-full p-16 bg-white border border-slate-200 rounded-3xl shadow-sm text-center">
                     <div className="flex flex-col items-center">
-                      <MdSearch className="text-4xl mb-3 text-gray-400" />
-                      <p className="text-lg font-medium">No groups found</p>
-                      <p className="text-sm mt-1">Try adjusting your search or filters</p>
+                      <div className="p-6 bg-slate-100 rounded-full mb-5">
+                        <MdSearch className="text-5xl text-slate-400" />
+                      </div>
+                      <p className="text-2xl font-bold text-slate-800 mb-2">No groups found</p>
+                      <p className="text-slate-600">Try adjusting your search terms or filters</p>
                     </div>
                   </div>
                 )}
@@ -1062,24 +1150,41 @@ const Group = () => {
                 {groups.length > 0 ? (
                   renderGroups(currentGroups)
                 ) : (
-                  <div className="col-span-full p-12 bg-white rounded-xl shadow-sm text-center text-gray-600">
+                  <div className="col-span-full p-16 bg-white border border-slate-200 rounded-3xl shadow-sm text-center">
                     <div className="flex flex-col items-center">
-                      <MdLibraryAdd className="text-4xl mb-3 text-gray-400" />
-                      <p className="text-lg font-medium">No groups found</p>
-                      <p className="text-sm mt-1">Create your first group to get started</p>
+                      <div className="p-6 bg-indigo-50 rounded-full mb-5">
+                        <MdLibraryAdd className="text-5xl text-indigo-400" />
+                      </div>
+                      <p className="text-2xl font-bold text-slate-800 mb-2">No groups yet</p>
+                      <p className="text-slate-600 mb-6">Create your first group to get started</p>
+                      <button
+                        onClick={() => {
+                          setShowModal(true);
+                          setErrors({});
+                        }}
+                        className="px-6 py-3 bg-indigo-600 text-white rounded-2xl hover:bg-indigo-700 flex items-center gap-2 transition-all duration-300 shadow-md font-semibold"
+                      >
+                        <MdLibraryAdd /> Create First Group
+                      </button>
                     </div>
                   </div>
                 )}
-                {viewMode !== 'table' && <Pagination />} {/* Hide pagination for table view if DataTable handles it */}
+                {viewMode !== 'table' && <Pagination />}
               </>
             )}
           </main>
         </div>
       </div>
+
       {/* Add Group Modal */}
-      <Modal isVisible={showModal} onClose={() => setShowModal(false)} borderColor="purple-600">
-        <div className="py-6 px-5 lg:px-8 text-left">
-          <h3 className="mb-5 text-xl font-bold text-purple-700">Add New Group</h3>
+      <Modal isVisible={showModal} onClose={() => setShowModal(false)} borderColor="indigo-500">
+        <div className="py-8 px-6 lg:px-8 text-left">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 bg-indigo-600 rounded-2xl text-white">
+              <MdLibraryAdd className="text-2xl" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-900">Add New Group</h3>
+          </div>
           <form className="space-y-5" onSubmit={handleSubmit} noValidate>
             <InputField
               name="group_name"
@@ -1089,7 +1194,7 @@ const Group = () => {
               error={errors.group_name}
             />
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Group Type</label>
+              <label className="block mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Group Type</label>
               <Select
                 showSearch
                 placeholder="Select Group Type"
@@ -1103,9 +1208,9 @@ const Group = () => {
                 <Option value="divident">Dividend</Option>
                 <Option value="double">Double</Option>
               </Select>
-              {errors.group_type && <p className="text-red-500 text-sm mt-1">{errors.group_type}</p>}
+              {errors.group_type && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.group_type}</p>}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <InputField
                 name="group_value"
                 label="Group Value"
@@ -1123,7 +1228,7 @@ const Group = () => {
                 type="number"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <InputField
                 name="group_members"
                 label="Members"
@@ -1141,7 +1246,7 @@ const Group = () => {
                 type="number"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <InputField
                   name="reg_fee"
@@ -1153,7 +1258,7 @@ const Group = () => {
                 />
               </div>
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900">
+                <label className="block mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                   Relationship Manager
                 </label>
                 <Select
@@ -1173,11 +1278,11 @@ const Group = () => {
                   ))}
                 </Select>
                 {errors.relationship_manager && (
-                  <p className="text-red-500 text-sm mt-1">{errors.relationship_manager}</p>
+                  <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.relationship_manager}</p>
                 )}
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <InputField
                 name="start_date"
                 label="Start Date"
@@ -1195,7 +1300,7 @@ const Group = () => {
                 error={errors.end_date}
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <InputField
                 name="minimum_bid"
                 label="Min Bid %"
@@ -1213,7 +1318,7 @@ const Group = () => {
                 type="number"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <InputField
                 name="commission"
                 label="Agent Commission %"
@@ -1236,7 +1341,7 @@ const Group = () => {
                 type="number"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <InputField
                 name="daily_installment"
                 label="Daily Installment"
@@ -1262,10 +1367,10 @@ const Group = () => {
                 type="text"
               />
             </div>
-            <div className="w-full flex justify-end">
+            <div className="w-full flex justify-end pt-4">
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-md"
+                className="px-8 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
                 Save Group
               </button>
@@ -1273,14 +1378,20 @@ const Group = () => {
           </form>
         </div>
       </Modal>
+
       {/* Update Group Modal */}
       <Modal
         isVisible={showModalUpdate}
         onClose={() => setShowModalUpdate(false)}
-        borderColor="purple-600"
+        borderColor="blue-500"
       >
-        <div className="py-6 px-5 lg:px-8 text-left">
-          <h3 className="mb-5 text-xl font-bold text-purple-700">Update Group</h3>
+        <div className="py-8 px-6 lg:px-8 text-left">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 bg-blue-600 rounded-2xl text-white">
+              <MdLibraryAdd className="text-2xl" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-900">Update Group</h3>
+          </div>
           <form className="space-y-5" onSubmit={handleUpdate} noValidate>
             <InputField
               name="group_name"
@@ -1290,7 +1401,7 @@ const Group = () => {
               error={errors.group_name}
             />
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900">Group Type</label>
+              <label className="block mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Group Type</label>
               <Select
                 showSearch
                 placeholder="Select Group Type"
@@ -1301,9 +1412,9 @@ const Group = () => {
                 <Option value="divident">Dividend</Option>
                 <Option value="double">Double</Option>
               </Select>
-              {errors.group_type && <p className="text-red-500 text-sm mt-1">{errors.group_type}</p>}
+              {errors.group_type && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.group_type}</p>}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <InputField
                 name="group_value"
                 label="Group Value"
@@ -1321,7 +1432,7 @@ const Group = () => {
                 type="number"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <InputField
                 name="group_members"
                 label="Members"
@@ -1339,7 +1450,7 @@ const Group = () => {
                 type="number"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <InputField
                   name="reg_fee"
@@ -1351,7 +1462,7 @@ const Group = () => {
                 />
               </div>
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900">
+                <label className="block mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                   Relationship Manager
                 </label>
                 <Select
@@ -1368,11 +1479,11 @@ const Group = () => {
                   ))}
                 </Select>
                 {errors.relationship_manager && (
-                  <p className="text-red-500 text-sm mt-1">{errors.relationship_manager}</p>
+                  <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.relationship_manager}</p>
                 )}
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <InputField
                 name="start_date"
                 label="Start Date"
@@ -1390,7 +1501,7 @@ const Group = () => {
                 error={errors.end_date}
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <InputField
                 name="minimum_bid"
                 label="Min Bid %"
@@ -1408,7 +1519,7 @@ const Group = () => {
                 type="number"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <InputField
                 name="commission"
                 label="Agent Commission %"
@@ -1431,7 +1542,7 @@ const Group = () => {
                 type="number"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <InputField
                 name="daily_installment"
                 label="Daily Installment"
@@ -1457,10 +1568,10 @@ const Group = () => {
                 type="text"
               />
             </div>
-            <div className="w-full flex justify-end">
+            <div className="w-full flex justify-end pt-4">
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-md"
+                className="px-8 py-3.5 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
                 Save Changes
               </button>
@@ -1468,37 +1579,45 @@ const Group = () => {
           </form>
         </div>
       </Modal>
+
       {/* Delete Group Modal */}
       <Modal
         isVisible={showModalDelete}
         onClose={() => setShowModalDelete(false)}
-        borderColor="red-600"
+        borderColor="red-500"
       >
-        <div className="py-6 px-5 lg:px-8 text-left">
-          <h3 className="mb-4 text-xl font-bold text-gray-900">Delete Group</h3>
-          <p className="mb-4 text-sm text-gray-700">
-            To confirm deletion, type the group name{" "}
-            <strong className="text-red-600">{currentGroup?.group_name}</strong> below and press Delete.
-          </p>
+        <div className="py-8 px-6 lg:px-8 text-left">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-3 bg-red-500 rounded-2xl text-white">
+              <MdClose className="text-2xl" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-900">Delete Group</h3>
+          </div>
+          <div className="bg-red-50 border border-red-100 rounded-2xl p-5 mb-5">
+            <p className="text-sm text-red-800 font-medium">
+              To confirm deletion, type the group name{" "}
+              <strong className="text-red-900 bg-white px-2 py-1 rounded border border-red-200">{currentGroup?.group_name}</strong> below and press Delete.
+            </p>
+          </div>
           <input
             type="text"
             value={deletionGroupName}
             onChange={(e) => setDeletionGroupName(e.target.value)}
-            className="bg-white border border-gray-300 rounded-lg w-full p-2.5 mb-4"
+            className="w-full px-4 py-3 rounded-2xl bg-slate-50 border-2 border-slate-200 mb-6 focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-100 outline-none font-medium"
             placeholder="Type exact group name to confirm"
           />
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-3">
             <button
               onClick={() => setShowModalDelete(false)}
-              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+              className="px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-2xl hover:bg-slate-50 transition-all duration-300 font-semibold"
             >
               Cancel
             </button>
             <button
               onClick={handleDeleteGroup}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              className="px-6 py-3 bg-red-600 text-white rounded-2xl hover:bg-red-700 transition-all duration-300 font-semibold shadow-md"
             >
-              Delete
+              Delete Group
             </button>
           </div>
         </div>

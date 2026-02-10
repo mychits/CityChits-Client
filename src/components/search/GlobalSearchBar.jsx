@@ -17,9 +17,7 @@ const GlobalSearchBar = ({ onGlobalSearchChangeHandler, visibility }) => {
             <FiSearch className="text-xs" />
         </div>
       </div>
-      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-        <span className="text-[10px] font-bold text-slate-400 border border-slate-200 rounded px-1.5 py-0.5">⌘K</span>
-      </div>
+     
     </div>
   );
 };
