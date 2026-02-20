@@ -23,10 +23,7 @@ const OverDueMessage = () => {
   const [notifier, contextHolder] = notification.useNotification();
   const [selectAll, setSelectAll] = useState(false);
   const groupOptions = [...new Set(usersData.map((u) => u.groupName))];
-  const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchText(value);
-  };
+
   const filteredUsers = useMemo(() => {
     const filtered = filterOption(
       usersData.filter((u) => {
@@ -252,17 +249,17 @@ useEffect(() => {
   ];
 
   return (
-    <div className="w-screen">
+   <div className="flex-1">
       <div className="flex mt-30">
-       <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
+        <Navbar
+          onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
+          visibility={true}
+        />
+        <Sidebar/>
        
           <div className="flex-grow p-7">
             <h1 className="text-2xl font-bold text-center mt-32">
-              Whatsapp Outstanding [Overdue] Messages
+              Whatsapp Outstanding [Over Due] Messages
             </h1>
             {contextHolder}
             <div className="mt-6 mb-8">
@@ -374,10 +371,10 @@ useEffect(() => {
                   data={filteredUsers}
                   columns={Auctioncolumns}
                   catcher="_id"
-                  exportedPdfName="Outstanding [Overdue] Whatsapp Message"
+                  exportedPdfName="Overdue Whatsapp Message"
                   printHeaderKeys={["Group Name"]}
                   printHeaderValues={[groupFilter]}
-                  exportedFileName={`Outstanding [Overdue] Whatsapp Message.csv`}
+                  exportedFileName={`Overdue Whatsapp Message.csv`}
                 />
               </div>
                 )}

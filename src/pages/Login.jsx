@@ -35,7 +35,6 @@ const Login = () => {
       setLoading(true);
       const response = await api.post("/admin/login", { phoneNumber, password });
 
-      // ✅ Save token & admin to localStorage
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("admin", JSON.stringify(response.data.admin));
 

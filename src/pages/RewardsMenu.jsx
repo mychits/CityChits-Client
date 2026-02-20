@@ -12,9 +12,9 @@ const RewardsMenu = () => {
       title: "Employee Reward Points",
       description: "Manage Employee Reward points",
       icon: <FaGifts className="w-8 h-8" />,
-      color: "from-blue-600 to-blue-700",
-      lightColor: "bg-blue-50",
-      borderColor: "border-blue-200",
+      color: "from-violet-600 to-violet-700",
+      lightColor: "bg-violet-50",
+      borderColor: "border-violet-200",
       href: "/reward-menu/employee-reward-points",
       stats: "Employee Rewards Information",
     },
@@ -23,9 +23,9 @@ const RewardsMenu = () => {
       title: "Customer Reward Points",
       description: "Manage Customer Reward points",
       icon: <FaGifts className="w-8 h-8" />,
-      color: "from-blue-600 to-blue-700",
-      lightColor: "bg-blue-50",
-      borderColor: "border-blue-200",
+      color: "from-violet-600 to-violet-700",
+      lightColor: "bg-violet-50",
+      borderColor: "border-violet-200",
       href: "/reward-menu/customer-reward-points",
       stats: "Customer Rewards Information",
     },
@@ -93,10 +93,10 @@ const RewardsMenu = () => {
                 </Link>
               ))}
             </div>
-              <div className="mt-16 p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
+              <div className="mt-16 p-8 bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl border border-violet-100">
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <Zap className="w-6 h-6 text-blue-600 mt-1" />
+                <Zap className="w-6 h-6 text-violet-600 mt-1" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">Quick Tips</h3>

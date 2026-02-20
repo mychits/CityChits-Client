@@ -316,10 +316,10 @@ const ConvertedLead = () => {
       </div>
 
       {/* SUMMARY — SAME AS NON-CONVERTED */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="bg-violet-50 border border-violet-200 rounded-lg p-4 mb-4 grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="text-center">
           <p className="text-gray-600 text-sm">Total Converted Leads</p>
-          <p className="text-xl font-bold text-blue-700">{totalConverted}</p>
+          <p className="text-xl font-bold text-violet-700">{totalConverted}</p>
         </div>
 
         <div className="text-center">
@@ -354,7 +354,7 @@ const ConvertedLead = () => {
               return (
                 <li key={ref} className="flex justify-between border-b py-1">
                   <span className="font-medium text-gray-800">{ref}</span>
-                  <span className="font-bold text-blue-700">{count}</span>
+                  <span className="font-bold text-violet-700">{count}</span>
                 </li>
               );
             })}
@@ -669,9 +669,9 @@ const ConvertedLead = () => {
 
 //       {/* ---------- SUMMARY BOXES ---------- */}
 //       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-//         <div className="bg-blue-50 border p-3 rounded text-center">
+//         <div className="bg-violet-50 border p-3 rounded text-center">
 //           <p className="text-gray-600 text-sm">Converted Leads</p>
-//           <p className="text-xl font-bold text-blue-700">{convertedLeads.length}</p>
+//           <p className="text-xl font-bold text-violet-700">{convertedLeads.length}</p>
 //         </div>
 
 //         <div className="bg-yellow-50 border p-3 rounded text-center">

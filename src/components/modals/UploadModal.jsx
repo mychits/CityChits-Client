@@ -92,7 +92,7 @@ const UploadModal = ({ show, onClose, onSubmit, groups, selectedGroupId, handleG
             </button>
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition duration-200"
+              className="bg-violet-500 text-white px-4 py-2 rounded shadow-md hover:bg-violet-600 transition duration-200"
             >
               Upload
             </button>

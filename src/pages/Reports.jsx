@@ -131,7 +131,7 @@ const subMenus = [
     link: "/reports/loan-due-report",
     category: "Loan",
     Icon: GiMoneyStack,
-    color: "from-blue-500 to-blue-600",
+    color: "from-violet-500 to-violet-600",
     isNew: false,
   },
    {
@@ -319,7 +319,7 @@ const subMenus = [
   //   link: "/reports/salary-remaining",
   //   category: "Employee",
   //  Icon: MdCancel,
-  //  color: "from-blue-500 to-blue-600",
+  //  color: "from-violet-500 to-violet-600",
   // },
      {
     id:"29",
@@ -363,7 +363,7 @@ const subMenus = [
     link: "/reports/redemtion-points",
     category: "Employee",
     Icon: TfiGift,
-    color: "from-blue-500 to-blue-600",
+    color: "from-violet-500 to-violet-600",
     isNew: false,
   },
    {
@@ -372,7 +372,7 @@ const subMenus = [
     link: "/reports/loan-completion-report",
     category: "Customer",
     Icon: GiMoneyStack,
-    color: "from-blue-500 to-blue-600",
+    color: "from-violet-500 to-violet-600",
     isNew: false,
   },
 
@@ -382,7 +382,7 @@ const subMenus = [
     link: "/reports/date-wise-reward-points",
     category: "Employee",
     Icon: TfiGift,
-    color: "from-blue-500 to-blue-600",
+    color: "from-violet-500 to-violet-600",
     isNew: false,
   },
   

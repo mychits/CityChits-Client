@@ -408,7 +408,7 @@ sections.forEach((sec) => {
                       key: "3",
                       label: (
                         <div
-                          className="text-blue-600"
+                          className="text-violet-600"
                           onClick={() => {
                             handlePrint(borrower._id);
                           }}
@@ -676,8 +676,8 @@ sections.forEach((sec) => {
         <div className="flex mt-20">
           <Sidebar />
 
-          <div className="flex-grow p-7">
-            <div className="mt-6 mb-8">
+           <div className="flex-grow p-7 overflow-x-auto">
+  <div className="mt-6 mb-8 min-w-max">
               <div className="flex justify-between items-center w-full">
                 <h1 className="text-2xl font-semibold">Loans</h1>
                 <button
@@ -685,7 +685,7 @@ sections.forEach((sec) => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                  className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
                 >
                   + Add Loan
                 </button>
@@ -727,7 +727,7 @@ sections.forEach((sec) => {
                   value={formData.borrower}
                   onChange={handleChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="" selected hidden>
                     Select Borrower Name
@@ -737,7 +737,7 @@ sections.forEach((sec) => {
                   ))}
                 </select> */}
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   placeholder="Select Or Search  Borrower Name "
                   popupMatchSelectWidth={false}
                   showSearch
@@ -779,7 +779,7 @@ sections.forEach((sec) => {
                     id="loan_amount"
                     placeholder="Enter Loan Amount"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.loan_amount && (
                     <p className="text-red-500 text-sm mt-1">
@@ -802,7 +802,7 @@ sections.forEach((sec) => {
                     id="tenure"
                     placeholder="Enter Tenure in Days"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.tenure && (
                     <p className="text-red-500 text-sm mt-1">{errors.tenure}</p>
@@ -826,7 +826,7 @@ sections.forEach((sec) => {
                     id="service_charges"
                     placeholder="Enter Service Charges"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.service_charges && (
                     <p className="text-red-500 text-sm mt-1">
@@ -851,7 +851,7 @@ sections.forEach((sec) => {
                     onChange={handleChange}
                     id="daily_payment_amount"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.daily_payment_amount && (
                     <p className="text-red-500 text-sm mt-1">
@@ -878,7 +878,7 @@ sections.forEach((sec) => {
                     id="document_charges"
                     placeholder="Enter Documentation Charges"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.document_charges && (
                     <p className="text-red-500 text-sm mt-1">
@@ -902,7 +902,7 @@ sections.forEach((sec) => {
                     onChange={handleChange}
                     id="loan_sanction_date"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.loan_sanction_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -928,7 +928,7 @@ sections.forEach((sec) => {
                     id="start_date"
                     placeholder="Enter the Date"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.start_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -951,7 +951,7 @@ sections.forEach((sec) => {
                     id="end_date"
                     placeholder="Enter End Date"
                     readOnly
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.end_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -966,7 +966,7 @@ sections.forEach((sec) => {
                     Referred Type <span className="text-red-500">*</span>
                   </label>
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
                     placeholder="Select Referred Type"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1005,7 +1005,7 @@ sections.forEach((sec) => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                       placeholder="Select Or Search Referred Customer"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1037,7 +1037,7 @@ sections.forEach((sec) => {
                       <span className="text-red-500">*</span>
                     </label>
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                       placeholder="Select or Search Referred Agent"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1072,7 +1072,7 @@ sections.forEach((sec) => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                       placeholder="Select Or Search Referred Employee"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1115,10 +1115,10 @@ sections.forEach((sec) => {
                     id="note"
                     placeholder="Specify Note if any!"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   <div
-                    className="bg-blue-700 hover:bg-blue-800 w-10 h-10 flex justify-center items-center rounded-md"
+                    className="bg-violet-700 hover:bg-violet-800 w-10 h-10 flex justify-center items-center rounded-md"
                     onClick={() => {
                       window.open("Calculator:///");
                     }}
@@ -1130,8 +1130,8 @@ sections.forEach((sec) => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
+                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
                 >
                   Save Loan
                 </button>
@@ -1161,7 +1161,7 @@ sections.forEach((sec) => {
                   value={updateFormData.borrower}
                   onChange={handleChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="" selected hidden>
                     Select Borrower Name
@@ -1171,7 +1171,7 @@ sections.forEach((sec) => {
                   ))}
                 </select> */}
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   placeholder="Select Or Search Borrower Name"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1212,7 +1212,7 @@ sections.forEach((sec) => {
                     id="loan_amount"
                     placeholder="Enter Loan Amount"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.loan_amount && (
                     <p className="text-red-500 text-sm mt-1">
@@ -1235,7 +1235,7 @@ sections.forEach((sec) => {
                     id="tenure"
                     placeholder="Enter Tenure in Days"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.tenure && (
                     <p className="text-red-500 text-sm mt-1">{errors.tenure}</p>
@@ -1259,7 +1259,7 @@ sections.forEach((sec) => {
                     id="service_charges"
                     placeholder="Enter Service Charges"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.service_charges && (
                     <p className="text-red-500 text-sm mt-1">
@@ -1284,7 +1284,7 @@ sections.forEach((sec) => {
                     onChange={handleInputChange}
                     id="daily_payment_amount"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.daily_payment_amount && (
                     <p className="text-red-500 text-sm mt-1">
@@ -1310,7 +1310,7 @@ sections.forEach((sec) => {
                     id="document_charges"
                     placeholder="Enter Documentation Charges"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.document_charges && (
                     <p className="text-red-500 text-sm mt-1">
@@ -1334,7 +1334,7 @@ sections.forEach((sec) => {
                     onChange={handleInputChange}
                     id="loan_sanction_date"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.loan_sanction_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -1360,7 +1360,7 @@ sections.forEach((sec) => {
                     id="start_date"
                     placeholder="Enter the Date"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.start_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -1383,7 +1383,7 @@ sections.forEach((sec) => {
                     id="end_date"
                     placeholder="Enter End Date"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.end_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -1398,7 +1398,7 @@ sections.forEach((sec) => {
                     Referred Type <span className="text-red-500">*</span>
                   </label>
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
                     placeholder="Select Referred Type"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1437,7 +1437,7 @@ sections.forEach((sec) => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                       placeholder="Select Or Search Referred Customer"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1469,7 +1469,7 @@ sections.forEach((sec) => {
                       <span className="text-red-500">*</span>
                     </label>
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                       placeholder="Select or Search Referred Agent"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1504,7 +1504,7 @@ sections.forEach((sec) => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                       placeholder="Select Or Search Referred Employee"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1547,10 +1547,10 @@ sections.forEach((sec) => {
                     id="note"
                     placeholder="Specify Note if any!"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   <div
-                    className="bg-blue-700 hover:bg-blue-800 w-10 h-10 flex justify-center items-center rounded-md"
+                    className="bg-violet-700 hover:bg-violet-800 w-10 h-10 flex justify-center items-center rounded-md"
                     onClick={() => {
                       window.open("Calculator:///");
                     }}
@@ -1562,8 +1562,8 @@ sections.forEach((sec) => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
+                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
                 >
                   Update Loan
                 </button>
@@ -1607,13 +1607,13 @@ sections.forEach((sec) => {
                     id="borrowerName"
                     placeholder="Enter the Borrower Name"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Delete
                 </button>

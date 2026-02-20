@@ -5,7 +5,7 @@ import api from "../instance/TokenInstance";
 import { fieldSize } from "../data/fieldSize";
 import Modal from "../components/modals/Modal";
 import DataTable from "../components/layouts/Datatable";
-import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
+import CustomAlert from "../components/alerts/CustomAlert";
 import { FaWhatsappSquare } from "react-icons/fa";
 import { Select, Dropdown, notification } from "antd";
 import { IoMdMore } from "react-icons/io";
@@ -123,9 +123,9 @@ const MobileAppEnroll = () => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     const userObj = JSON.parse(user);
-    const adminId = userObj?._id;
+     const adminId = userObj?._id;
     if (adminId) {
-      setAdmin(userObj?._id);
+      setAdmin(userObj._id);
     } else {
       setAdmin("");
     }
@@ -694,17 +694,16 @@ const MobileAppEnroll = () => {
     <>
       <div>
         <div className="flex mt-20">
-            <Sidebar />
-        <Navbar
-          onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
-          visibility={true}
-        />
-        <CustomAlertDialog
-          type={alertConfig.type}
-          isVisible={alertConfig.visibility}
-          message={alertConfig.message}
-          onClose={() => setAlertConfig((prev) => ({ ...prev, visibility: false }))}
-        />
+          <Navbar
+            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <Sidebar />
+          <CustomAlert
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+          />
           <div className="flex-grow p-7">
             <h1 className="text-2xl font-semibold mb-16">Mobile App Enrollments</h1>
             <div className="mb-20">

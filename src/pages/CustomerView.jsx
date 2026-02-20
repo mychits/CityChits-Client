@@ -256,7 +256,7 @@ const CustomerView = () => {
       <div className="flex flex-wrap gap-2 max-w-[calc(10*250px)]">
         <div className="flex flex-col w-[250px]">
           <span className="text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
-            {icon && <span className="text-blue-600">{icon}</span>}
+            {icon && <span className="text-violet-600">{icon}</span>}
             {label}
           </span>
           <div className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-base font-medium text-gray-800 shadow-sm break-words whitespace-normal">
@@ -1774,7 +1774,7 @@ const CustomerView = () => {
                               <span
                                 className={`text-xs font-medium px-2 py-0.5 rounded-full ${percent === 100
                                   ? "bg-green-100 text-green-700"
-                                  : "bg-blue-100 text-blue-700"
+                                  : "bg-violet-100 text-violet-700"
                                   }`}
                               >
                                 {percent}%
@@ -1809,7 +1809,7 @@ const CustomerView = () => {
                                     }`}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-sm text-blue-600 hover:underline"
+                                  className="text-sm text-violet-600 hover:underline"
                                 >
                                   Aadhaar Front Document
                                 </a>
@@ -1829,7 +1829,7 @@ const CustomerView = () => {
                                     }`}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-sm text-blue-600 hover:underline"
+                                  className="text-sm text-violet-600 hover:underline"
                                 >
                                   Aadhaar Back Document
                                 </a>
@@ -1856,7 +1856,7 @@ const CustomerView = () => {
                                     }`}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-sm text-blue-600 hover:underline"
+                                  className="text-sm text-violet-600 hover:underline"
                                 >
                                   PAN Front Document
                                 </a>
@@ -1876,7 +1876,7 @@ const CustomerView = () => {
                                     }`}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-sm text-blue-600 hover:underline"
+                                  className="text-sm text-violet-600 hover:underline"
                                 >
                                   PAN Back Document
                                 </a>
@@ -1959,7 +1959,7 @@ const CustomerView = () => {
                         <select
                           value={EnrollGroupId.groupId ? `${EnrollGroupId.groupId}|${EnrollGroupId.ticket}` : ""}
                           onChange={handleEnrollGroup}
-                          className="w-full border border-gray-300 rounded-lg px-7 py-2.5 shadow-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                          className="w-full border border-gray-300 rounded-lg px-7 py-2.5 shadow-sm outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                         >
                           <option value="">Select Group | Ticket</option>
                           {filteredAuction.map((group) =>
@@ -1980,7 +1980,7 @@ const CustomerView = () => {
                         </select>
                       </div>
                       <div className="flex flex-wrap gap-2 justify-center items-center">
-                        <div className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-800 text-lg font-medium flex items-center gap-2">
+                        <div className="px-3 py-1.5 rounded-lg bg-violet-50 text-violet-800 text-lg font-medium flex items-center gap-2">
                           Reg Fee: ₹{registrationAmount || 0}
                         </div>
                         <div className="px-3 py-1.5 rounded-lg bg-green-50 text-green-800 text-lg font-medium flex items-center gap-2">
@@ -2033,7 +2033,7 @@ const CustomerView = () => {
                         <select
                           value={EnrollGroupId.groupId ? `${EnrollGroupId.groupId}|${EnrollGroupId.ticket}` : ""}
                           onChange={handleEnrollGroup}
-                          className="w-full border border-gray-300 rounded-lg px-7 py-2.5 shadow-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                          className="w-full border border-gray-300 rounded-lg px-7 py-2.5 shadow-sm outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                         >
                           <option value="">Select Group | Ticket</option>
                           {filteredAuction.map((group) =>
@@ -2102,7 +2102,7 @@ const CustomerView = () => {
             onCancel={handleCloseModal}
             footer={null}
             width={600}
-            className="blue-modal"
+            className="violet-modal"
           >
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">

@@ -83,7 +83,7 @@
 //       <div className="mb-10">
 //         <h1 className="text-2xl font-bold text-gray-800">
 //           Reports —{" "}
-//           <span className="text-blue-600">User Mobile Tracking Report</span>
+//           <span className="text-violet-600">User Mobile Tracking Report</span>
 //         </h1>
 //       </div>
 
@@ -289,7 +289,7 @@
 //     <div className="p-3">
 //       <div className="mb-10">
 //         <h1 className="text-2xl font-bold text-gray-800">
-//           Reports — <span className="text-blue-600">User Mobile Tracking Report</span>
+//           Reports — <span className="text-violet-600">User Mobile Tracking Report</span>
 //         </h1>
 //       </div>
 
@@ -544,7 +544,7 @@
 //   return (
 //     <div className="p-3">
 //       <h1 className="text-2xl font-bold text-gray-800 mb-8">
-//         Reports — <span className="text-blue-600">User Mobile Tracking Report</span>
+//         Reports — <span className="text-violet-600">User Mobile Tracking Report</span>
 //       </h1>
 
 //       {/* FILTERS */}
@@ -794,7 +794,7 @@ import { Select } from "antd";
 //               <div className="flex justify-between items-center w-full">
 //                 <h1 className="text-2xl font-semibold">
 //                   Reports —{" "}
-//                   <span className="text-blue-600">
+//                   <span className="text-violet-600">
 //                     User Mobile Tracking Report
 //                   </span>
 //                 </h1>
@@ -865,14 +865,14 @@ import { Select } from "antd";
 //                 <>
 //                   <input
 //                     type="date"
-//                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 h-10 p-2.5"
+//                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 h-10 p-2.5"
 //                     value={selectedFromDate}
 //                     onChange={(e) => setSelectedFromDate(e.target.value)}
 //                   />
 
 //                   <input
 //                     type="date"
-//                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 h-10 p-2.5"
+//                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 h-10 p-2.5"
 //                     value={selectedDate}
 //                     onChange={(e) => setSelectedDate(e.target.value)}
 //                   />
@@ -1048,15 +1048,15 @@ import { Select } from "antd";
 //             <div className="mt-6 mb-8">
 //               <h1 className="text-2xl font-semibold">
 //                 Reports —{" "}
-//                 <span className="text-blue-600">
+//                 <span className="text-violet-600">
 //                   User Mobile Tracking Report
 //                 </span>
 //               </h1>
 //             </div>
 
 //             {/* TOP CUSTOMER COUNT BAR */}
-//             <div className="mb-5 p-4 bg-blue-50 border border-blue-300 rounded-lg">
-//               <h2 className="text-xl font-semibold text-blue-700">
+//             <div className="mb-5 p-4 bg-violet-50 border border-violet-300 rounded-lg">
+//               <h2 className="text-xl font-semibold text-violet-700">
 //                 Total Customers Added: {trackTableData.length}{" "}
 //                 <span className="text-gray-700 text-lg">
 //                   ({getTopDisplayFilter()})
@@ -1358,7 +1358,7 @@ const UserRegistrationSourceSummaryReport = () => {
             <div className="mt-6 mb-8">
               <h1 className="text-2xl font-semibold">
                 Reports —{" "}
-                <span className="text-blue-600">
+                <span className="text-violet-600">
                   User Mobile Tracking Report
                 </span>
               </h1>
@@ -1370,14 +1370,14 @@ const UserRegistrationSourceSummaryReport = () => {
                 <h2 className="text-xl font-semibold mb-4 text-gray-800">Report Summary</h2>
                 
                 {/* TOTAL CUSTOMERS CARD */}
-                <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-xl shadow-lg mb-6">
+                <div className="bg-gradient-to-r from-violet-500 to-violet-600 text-white p-6 rounded-xl shadow-lg mb-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-blue-100 text-sm uppercase tracking-wide">
+                      <p className="text-violet-100 text-sm uppercase tracking-wide">
                         Total Customers Added
                       </p>
                       <p className="text-3xl font-bold mt-1">{totalCustomers}</p>
-                      <p className="text-blue-100 text-sm mt-1">
+                      <p className="text-violet-100 text-sm mt-1">
                         {getTopDisplayFilter()}
                       </p>
                     </div>
@@ -1396,7 +1396,7 @@ const UserRegistrationSourceSummaryReport = () => {
                   <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold text-gray-800">Referral Types</h3>
-                      <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                      <span className="bg-violet-100 text-violet-800 text-xs font-medium px-2.5 py-0.5 rounded">
                         {Object.keys(referredTypeCount).length} Types
                       </span>
                     </div>
@@ -1407,13 +1407,13 @@ const UserRegistrationSourceSummaryReport = () => {
                         .map(([type, count]) => (
                           <div key={type} className="flex items-center justify-between">
                             <div className="flex items-center">
-                              <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                              <div className="w-2 h-2 bg-violet-500 rounded-full mr-3"></div>
                               <span className="text-gray-700 text-sm truncate max-w-xs">{type}</span>
                             </div>
                             <div className="flex items-center">
                               <div className="w-24 bg-gray-200 rounded-full h-2 mr-3">
                                 <div 
-                                  className="bg-blue-500 h-2 rounded-full" 
+                                  className="bg-violet-500 h-2 rounded-full" 
                                   style={{ width: `${(count / totalCustomers) * 100}%` }}
                                 ></div>
                               </div>
@@ -1423,7 +1423,7 @@ const UserRegistrationSourceSummaryReport = () => {
                         ))}
                       {Object.keys(referredTypeCount).length > 5 && (
                         <div className="text-center pt-2">
-                          <button className="text-blue-600 text-sm font-medium">View All Types</button>
+                          <button className="text-violet-600 text-sm font-medium">View All Types</button>
                         </div>
                       )}
                     </div>

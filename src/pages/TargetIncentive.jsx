@@ -11,6 +11,7 @@ import { FileTextOutlined, DollarOutlined } from "@ant-design/icons";
 import { FaMoneyBill } from "react-icons/fa";
 import { MdPayments } from "react-icons/md";
 import { FiTarget } from "react-icons/fi";
+import { numberToIndianWords } from "../helpers/numberToIndianWords";
 
 const { TabPane } = Tabs;
 
@@ -59,6 +60,10 @@ const TargetIncentive = () => {
     total_gross_group_value: 0,
     total_gross_enrollments: 0,
   });
+
+  // ✅ Helper to sanitize string amounts to numbers for word conversion
+  const parseAmount = (val) =>
+    parseFloat(val?.toString().replace(/[^0-9.-]+/g, "")) || 0;
 
   useEffect(() => {
     const today = new Date();
@@ -332,10 +337,8 @@ const TargetIncentive = () => {
       setSelectedMonth(tempSelectedMonth);
       const [year, month] = tempSelectedMonth.split("-");
       startDate = `${year}-${month}-01`;
-
       const lastDay = new Date(year, month, 0).getDate();
       endDate = `${year}-${month}-${String(lastDay).padStart(2, "0")}`;
-
       setFromDate(startDate);
       setToDate(endDate);
     } else {
@@ -347,7 +350,6 @@ const TargetIncentive = () => {
     setLoading(true);
     setAgentLoading(true);
     try {
-      // Always fetch both reports regardless of active tab
       if (selectedEmployeeId === "ALL") {
         setSelectedEmployeeDetails(null);
         setTargetData({
@@ -385,10 +387,14 @@ const TargetIncentive = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!commissionForm.agent_id) newErrors.agent_id = "Please select an agent";
+    if (!commissionForm.agent_id)
+      newErrors.agent_id = "Please select an agent";
     if (!commissionForm.amount || isNaN(commissionForm.amount))
       newErrors.amount = "Please enter a valid amount";
-    if (commissionForm.pay_type === "online" && !commissionForm.transaction_id)
+    if (
+      commissionForm.pay_type === "online" &&
+      !commissionForm.transaction_id
+    )
       newErrors.transaction_id = "Transaction ID is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -455,8 +461,8 @@ const TargetIncentive = () => {
   ).padStart(2, "0")}`;
 
   return (
-    <div className="w-screen min-h-screen bg-gray-50">
-      <div className="flex">
+    <div className="flex-1 min-h-screen bg-gray-50">
+      <div className="flex-1">
         <Navbar visibility={true} />
         <div className="flex-grow p-8">
           {/* Header Section */}
@@ -502,6 +508,7 @@ const TargetIncentive = () => {
                   ))}
                 </Select>
               </div>
+
               {/* Date Selection Mode */}
               <div className="flex flex-col">
                 <label className="block text-sm font-semibold text-gray-700 mb-3">
@@ -521,6 +528,7 @@ const TargetIncentive = () => {
                   </Radio.Group>
                 </div>
               </div>
+
               {/* Date Picker Fields */}
               {dateSelectionMode === "month" ? (
                 <div className="flex flex-col">
@@ -532,7 +540,7 @@ const TargetIncentive = () => {
                     value={tempSelectedMonth || ""}
                     max={currentMonth}
                     onChange={handleTempMonthChange}
-                    className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-11"
+                    className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 h-11"
                   />
                 </div>
               ) : (
@@ -546,7 +554,7 @@ const TargetIncentive = () => {
                       value={tempFromDate || ""}
                       max={tempToDate || currentMonth}
                       onChange={(e) => setTempFromDate(e.target.value)}
-                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-11"
+                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 h-11"
                     />
                   </div>
                   <div className="flex flex-col">
@@ -559,12 +567,13 @@ const TargetIncentive = () => {
                       min={tempFromDate || ""}
                       max={currentMonth}
                       onChange={(e) => setTempToDate(e.target.value)}
-                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-11"
+                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 h-11"
                     />
                   </div>
                 </>
               )}
             </div>
+
             {/* Filter Button */}
             <div className="flex justify-end">
               <button
@@ -587,46 +596,34 @@ const TargetIncentive = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <Link
                     to="/target-menu/target"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group"
                   >
                     <FiTarget
-                      className="text-blue-600 group-hover:scale-110 transition-transform"
+                      className="text-violet-600 group-hover:scale-110 transition-transform"
                       size={24}
                     />
-                    <span className="font-medium text-gray-700 group-hover:text-blue-600">
+                    <span className="font-medium text-gray-700 group-hover:text-violet-600">
                       Set Target
                     </span>
                   </Link>
                   <Link
                     to="/reports/target-commission"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group"
                   >
-                    <DollarOutlined className="text-blue-600 group-hover:scale-110 transition-transform text-lg" />
-                    <span className="font-medium text-gray-700 group-hover:text-blue-600">
+                    <DollarOutlined className="text-violet-600 group-hover:scale-110 transition-transform text-lg" />
+                    <span className="font-medium text-gray-700 group-hover:text-violet-600">
                       Incentive Report
                     </span>
                   </Link>
-                  {/* <Link
-                    to="/target-commission-incentive"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
-                  >
-                    <MdPayments
-                      className="text-blue-600 group-hover:scale-110 transition-transform"
-                      size={24}
-                    />
-                    <span className="font-medium text-gray-700 group-hover:text-blue-600">
-                      Incentive / Commission Payout
-                    </span>
-                  </Link> */}
                   <Link
                     to="/payment-menu/payment-in-out-menu/payment-out/salary-payment"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group"
                   >
                     <FaMoneyBill
-                      className="text-blue-600 group-hover:scale-110 transition-transform"
+                      className="text-violet-600 group-hover:scale-110 transition-transform"
                       size={24}
                     />
-                    <span className="font-medium text-gray-700 group-hover:text-blue-600">
+                    <span className="font-medium text-gray-700 group-hover:text-violet-600">
                       Salary Payout
                     </span>
                   </Link>
@@ -636,7 +633,9 @@ const TargetIncentive = () => {
               {/* Employee Details */}
               {isFiltering &&
                 ((dateSelectionMode === "month" && selectedMonth) ||
-                  (dateSelectionMode === "date-range" && fromDate && toDate)) &&
+                  (dateSelectionMode === "date-range" &&
+                    fromDate &&
+                    toDate)) &&
                 (selectedEmployeeId === "ALL" || selectedEmployeeDetails) && (
                   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
                     {selectedEmployeeId !== "ALL" &&
@@ -645,7 +644,6 @@ const TargetIncentive = () => {
                           <h3 className="text-lg font-semibold text-gray-800 mb-4">
                             Employee Information
                           </h3>
-
                           {/* Row 1 */}
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                             <div>
@@ -658,7 +656,6 @@ const TargetIncentive = () => {
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-gray-50 text-gray-900 font-medium mt-1"
                               />
                             </div>
-
                             <div>
                               <label className="text-xs font-semibold text-gray-600 uppercase">
                                 Email
@@ -669,7 +666,6 @@ const TargetIncentive = () => {
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-gray-50 text-gray-900 font-medium mt-1"
                               />
                             </div>
-
                             <div>
                               <label className="text-xs font-semibold text-gray-600 uppercase">
                                 Phone
@@ -683,7 +679,6 @@ const TargetIncentive = () => {
                               />
                             </div>
                           </div>
-
                           {/* Row 2 */}
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                             <div>
@@ -698,7 +693,6 @@ const TargetIncentive = () => {
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-gray-50 text-gray-900 font-medium mt-1"
                               />
                             </div>
-
                             <div>
                               <label className="text-xs font-semibold text-gray-600 uppercase">
                                 PAN
@@ -709,7 +703,6 @@ const TargetIncentive = () => {
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-gray-50 text-gray-900 font-medium mt-1"
                               />
                             </div>
-
                             <div>
                               <label className="text-xs font-semibold text-gray-600 uppercase">
                                 Pincode
@@ -721,7 +714,6 @@ const TargetIncentive = () => {
                               />
                             </div>
                           </div>
-
                           {/* Row 3 */}
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                             <div>
@@ -734,7 +726,6 @@ const TargetIncentive = () => {
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-gray-50 text-gray-900 font-medium mt-1"
                               />
                             </div>
-
                             <div>
                               <label className="text-xs font-semibold text-gray-600 uppercase">
                                 Joining Date
@@ -752,10 +743,10 @@ const TargetIncentive = () => {
                               />
                             </div>
                           </div>
-
                           <hr className="my-6" />
                         </>
                       )}
+
                     {/* Summary Section */}
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
                       Commission Summary
@@ -770,16 +761,26 @@ const TargetIncentive = () => {
                           readOnly
                           className="w-full bg-transparent text-2xl font-bold text-green-700 mt-2 border-0"
                         />
+                        <span className="text-xs font-mono text-green-700 mt-1 block">
+                          {numberToIndianWords(
+                            parseAmount(commissionTotalDetails?.actual_business)
+                          )}
+                        </span>
                       </div>
-                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
+                      <div className="bg-gradient-to-br from-violet-50 to-violet-100 border border-violet-200 rounded-lg p-4">
                         <label className="text-xs font-semibold text-gray-600 uppercase">
                           Net Incentive (1% each)
                         </label>
                         <input
                           value={commissionTotalDetails?.total_actual || "-"}
                           readOnly
-                          className="w-full bg-transparent text-2xl font-bold text-blue-700 mt-2 border-0"
+                          className="w-full bg-transparent text-2xl font-bold text-violet-700 mt-2 border-0"
                         />
+                        <span className="text-xs font-mono text-violet-700 mt-1 block">
+                          {numberToIndianWords(
+                            parseAmount(commissionTotalDetails?.total_actual)
+                          )}
+                        </span>
                       </div>
                       <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4">
                         <label className="text-xs font-semibold text-gray-600 uppercase">
@@ -791,14 +792,6 @@ const TargetIncentive = () => {
                           className="w-full bg-transparent text-2xl font-bold text-purple-700 mt-2 border-0"
                         />
                       </div>
-                      {/* <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-4">
-                        <label className="text-xs font-semibold text-gray-600 uppercase">Net Groups</label>
-                        <input
-                          value={commissionTotalDetails?.total_groups || "-"}
-                          readOnly
-                          className="w-full bg-transparent text-2xl font-bold text-orange-700 mt-2 border-0"
-                        />
-                      </div> */}
                     </div>
                   </div>
                 )}
@@ -833,23 +826,27 @@ const TargetIncentive = () => {
                           )}
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
+                          <div className="bg-gradient-to-br from-violet-50 to-violet-100 border border-violet-200 rounded-lg p-4">
                             <label className="text-xs font-semibold text-gray-600 uppercase">
                               Target Set
                             </label>
-                            <p className="text-2xl font-bold text-blue-700 mt-2">
+                            <p className="text-2xl font-bold text-violet-700 mt-2">
                               {`${targetData.target?.toLocaleString("en-IN")}`}
                             </p>
+                            <span className="text-xs font-mono text-violet-700 mt-1 block">
+                              {numberToIndianWords(targetData.target || 0)}
+                            </span>
                           </div>
                           <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-4">
                             <label className="text-xs font-semibold text-gray-600 uppercase">
                               Achieved
                             </label>
                             <p className="text-2xl font-bold text-green-700 mt-2">
-                              {`${targetData.achieved?.toLocaleString(
-                                "en-IN"
-                              )}`}
+                              {`${targetData.achieved?.toLocaleString("en-IN")}`}
                             </p>
+                            <span className="text-xs font-mono text-green-700 mt-1 block">
+                              {numberToIndianWords(targetData.achieved || 0)}
+                            </span>
                           </div>
                           <div className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 rounded-lg p-4">
                             <label className="text-xs font-semibold text-gray-600 uppercase">
@@ -858,8 +855,13 @@ const TargetIncentive = () => {
                             <p className="text-2xl font-bold text-amber-700 mt-2">
                               {`${(
                                 targetData?.difference ?? "0"
-                              ).toLocaleString("en-IN")}`}
+                              )?.toLocaleString("en-IN")}`}
                             </p>
+                            <span className="text-xs font-mono text-amber-700 mt-1 block">
+                              {numberToIndianWords(
+                                Math.abs(targetData?.difference || 0)
+                              )}
+                            </span>
                           </div>
                           <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-lg p-4">
                             <label className="text-xs font-semibold text-gray-600 uppercase">
@@ -874,18 +876,26 @@ const TargetIncentive = () => {
                                 }
                               )}`}
                             </p>
+                            <span className="text-xs font-mono text-emerald-700 mt-1 block">
+                              {numberToIndianWords(
+                                targetData.incentiveAmount || 0
+                              )}
+                            </span>
                           </div>
                         </div>
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-5">
-                          <p className="text-sm font-semibold text-blue-800 mb-3">
+                        <div className="bg-violet-50 border border-violet-200 rounded-lg p-5">
+                          <p className="text-sm font-semibold text-violet-800 mb-3">
                             Incentive Breakdown
                           </p>
                           <ul className="space-y-2">
                             <li className="text-sm text-gray-700 flex items-center gap-2">
-                              <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                              <span className="w-2 h-2 bg-violet-600 rounded-full"></span>
                               <span>
                                 Up to target (0%):{" "}
                                 <span className="font-semibold">0.00</span>
+                              </span>
+                              <span className="text-xs font-mono text-violet-700 ml-2">
+                                ({numberToIndianWords(0)})
                               </span>
                             </li>
                             {targetData.achieved > targetData.target && (
@@ -904,12 +914,21 @@ const TargetIncentive = () => {
                                     })}
                                   </span>
                                 </span>
+                                <span className="text-xs font-mono text-green-700 ml-2">
+                                  (
+                                  {numberToIndianWords(
+                                    (targetData.achieved - targetData.target) *
+                                      0.01
+                                  )}
+                                  )
+                                </span>
                               </li>
                             )}
                           </ul>
                         </div>
                       </div>
                     )}
+
                   {/* Data Table */}
                   {loading ? (
                     <div className="flex justify-center py-20">
@@ -961,17 +980,19 @@ const TargetIncentive = () => {
                                   toDate
                                 ).toLocaleDateString()}`
                             : "-",
-                          `${
+                          `₹${
                             targetData?.target?.toLocaleString("en-IN") || "0"
-                          }`,
-                          `${
+                          } (${numberToIndianWords(targetData?.target || 0)})`,
+                          `₹${
                             targetData?.achieved?.toLocaleString("en-IN") || "0"
-                          }`,
-                          `${
+                          } (${numberToIndianWords(targetData?.achieved || 0)})`,
+                          `₹${
                             targetData?.remaining?.toLocaleString("en-IN") ||
                             "0"
-                          }`,
-                          `${
+                          } (${numberToIndianWords(
+                            targetData?.remaining || 0
+                          )})`,
+                          `₹${
                             targetData?.incentiveAmount?.toLocaleString(
                               "en-IN",
                               {
@@ -979,27 +1000,39 @@ const TargetIncentive = () => {
                                 maximumFractionDigits: 2,
                               }
                             ) || "0.00"
-                          }`,
-                          `${
+                          } (${numberToIndianWords(
+                            targetData?.incentiveAmount || 0
+                          )})`,
+                          `₹${
                             commissionTotalDetails?.actual_business?.toLocaleString(
                               "en-IN"
                             ) || "0"
-                          }`,
-                          `${
+                          } (${numberToIndianWords(
+                            parseAmount(commissionTotalDetails?.actual_business)
+                          )})`,
+                          `₹${
                             commissionTotalDetails?.total_actual?.toLocaleString(
                               "en-IN"
                             ) || "0"
-                          }`,
-                          `${
+                          } (${numberToIndianWords(
+                            parseAmount(commissionTotalDetails?.total_actual)
+                          )})`,
+                          `₹${
                             commissionTotalDetails?.expected_business?.toLocaleString(
                               "en-IN"
                             ) || "0"
-                          }`,
-                          `${
+                          } (${numberToIndianWords(
+                            parseAmount(
+                              commissionTotalDetails?.expected_business
+                            )
+                          )})`,
+                          `₹${
                             commissionTotalDetails?.total_estimated?.toLocaleString(
                               "en-IN"
                             ) || "0"
-                          }`,
+                          } (${numberToIndianWords(
+                            parseAmount(commissionTotalDetails?.total_estimated)
+                          )})`,
                           commissionTotalDetails?.total_customers || "0",
                           commissionTotalDetails?.total_groups || "0",
                         ]}
@@ -1014,19 +1047,20 @@ const TargetIncentive = () => {
                     </div>
                   ) : (
                     isFiltering &&
-                    ((dateSelectionMode === "month" && selectedMonth) ||
-                      (dateSelectionMode === "date-range" &&
-                        fromDate &&
-                        toDate)) &&
-                    selectedEmployeeDetails?.name && (
-                      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-                        <p className="text-gray-500 text-lg font-medium">
-                          No incentive data found for the selected period.
-                        </p>
-                      </div>
-                    )
+                      ((dateSelectionMode === "month" && selectedMonth) ||
+                        (dateSelectionMode === "date-range" &&
+                          fromDate &&
+                          toDate)) &&
+                      selectedEmployeeDetails?.name && (
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+                          <p className="text-gray-500 text-lg font-medium">
+                            No incentive data found for the selected period.
+                          </p>
+                        </div>
+                      )
                   )}
                 </TabPane>
+
                 {/* Gross Incentive Report Tab */}
                 <TabPane tab="Gross Incentive Report" key="gross-incentive">
                   {/* Gross Incentive Summary Section */}
@@ -1055,8 +1089,14 @@ const TargetIncentive = () => {
                               readOnly
                               className="w-full bg-transparent text-2xl font-bold text-green-700 mt-2 border-0"
                             />
+                            <span className="text-xs font-mono text-green-700 mt-1 block">
+                              {numberToIndianWords(
+                                grossIncentiveSummary.total_gross_group_value ||
+                                  0
+                              )}
+                            </span>
                           </div>
-                          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
+                          <div className="bg-gradient-to-br from-violet-50 to-violet-100 border border-violet-200 rounded-lg p-4">
                             <label className="text-xs font-semibold text-gray-600 uppercase">
                               Gross Incentive Value
                             </label>
@@ -1067,8 +1107,14 @@ const TargetIncentive = () => {
                                 ) || "-"
                               }
                               readOnly
-                              className="w-full bg-transparent text-2xl font-bold text-blue-700 mt-2 border-0"
+                              className="w-full bg-transparent text-2xl font-bold text-violet-700 mt-2 border-0"
                             />
+                            <span className="text-xs font-mono text-violet-700 mt-1 block">
+                              {numberToIndianWords(
+                                grossIncentiveSummary.total_gross_incentive_value ||
+                                  0
+                              )}
+                            </span>
                           </div>
                           <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4">
                             <label className="text-xs font-semibold text-gray-600 uppercase">
@@ -1086,6 +1132,7 @@ const TargetIncentive = () => {
                         </div>
                       </div>
                     )}
+
                   {/* Data Table */}
                   {loading ? (
                     <div className="flex justify-center py-20">
@@ -1130,19 +1177,22 @@ const TargetIncentive = () => {
                                   toDate
                                 ).toLocaleDateString()}`
                             : "-",
-                          `${
+                          `₹${
                             grossIncentiveSummary.total_gross_group_value?.toLocaleString(
                               "en-IN"
                             ) || "0"
-                          }`,
-                          `${
+                          } (${numberToIndianWords(
+                            grossIncentiveSummary.total_gross_group_value || 0
+                          )})`,
+                          `₹${
                             grossIncentiveSummary.total_gross_incentive_value?.toLocaleString(
                               "en-IN"
                             ) || "0"
-                          }`,
-                          `${
-                            grossIncentiveSummary.total_gross_enrollments || "0"
-                          }`,
+                          } (${numberToIndianWords(
+                            grossIncentiveSummary.total_gross_incentive_value ||
+                              0
+                          )})`,
+                          `${grossIncentiveSummary.total_gross_enrollments || "0"}`,
                         ]}
                         exportedFileName={`GrossIncentiveReport-${
                           selectedEmployeeDetails?.name || "all"
@@ -1155,17 +1205,17 @@ const TargetIncentive = () => {
                     </div>
                   ) : (
                     isFiltering &&
-                    ((dateSelectionMode === "month" && selectedMonth) ||
-                      (dateSelectionMode === "date-range" &&
-                        fromDate &&
-                        toDate)) &&
-                    selectedEmployeeDetails?.name && (
-                      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-                        <p className="text-gray-500 text-lg font-medium">
-                          No gross incentive data found for the selected period.
-                        </p>
-                      </div>
-                    )
+                      ((dateSelectionMode === "month" && selectedMonth) ||
+                        (dateSelectionMode === "date-range" &&
+                          fromDate &&
+                          toDate)) &&
+                      selectedEmployeeDetails?.name && (
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+                          <p className="text-gray-500 text-lg font-medium">
+                            No gross incentive data found for the selected period.
+                          </p>
+                        </div>
+                      )
                   )}
                 </TabPane>
               </Tabs>

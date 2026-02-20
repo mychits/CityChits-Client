@@ -5,7 +5,7 @@ export default {
 	safelist: [
 		{
 			pattern:
-				/bg-(primary|custom-blue|custom-yellow|custom-violet|custom-green|custom-dark-green|custom-pink|custom-orange|custom-purple)/,
+				/bg-(primary|custom-violet|custom-yellow|custom-violet|custom-green|custom-dark-green|custom-pink|custom-orange|custom-purple)/,
 			variants: ["hover"],
 		},
 	],
@@ -17,11 +17,11 @@ export default {
 				secondary: "#316FE8",
 				"primary-variant": "#EBEBF3",
 				"secondary-variant": "#326FEA",
-				"custom-blue": "#024CAA",
+				"custom-violet": "#024CAA",
 				"custom-yellow": "#7D8D52",
 				"custom-violet": "#6E30CF",
 				"custom-green": "#04A6C6",
-				"custom-dark-blue": "#316FE8",
+				"custom-dark-violet": "#316FE8",
 				"custom-dark-green": "#227B94",
 				"custom-pink": "#E75480",
 				"custom-orange": "#9D4EDD",

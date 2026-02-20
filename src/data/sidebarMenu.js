@@ -45,6 +45,8 @@ import { FaGifts } from "react-icons/fa";
 
 import { MdAdminPanelSettings } from "react-icons/md";
 
+
+
 const sidebarMenu = [
   {
     id: "$1",
@@ -73,7 +75,7 @@ const sidebarMenu = [
     title: "Groups ",
     icon: UsergroupAddOutlined,
     link: "/group",
-    activeColor: "custom-blue",
+    activeColor: "custom-violet",
   },
   {
     id: ids.three,
@@ -431,6 +433,13 @@ const sidebarMenu = [
     link: "/help",
     activeColor: "primary",
   },
+        {
+        id: "#5",
+        title: "Visitor Details",
+        icon: IoIosHelpCircle,
+        isHeading: true,
+        link: "/visitorsection"
+      },
 ];
 
 export default sidebarMenu;

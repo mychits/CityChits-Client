@@ -114,7 +114,7 @@ import {Select} from "antd"
 //             {/* Search Button */}
 //             <button
 //               onClick={fetchRewardPoints}
-//               className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700"
+//               className="bg-violet-600 text-white rounded px-4 py-2 hover:bg-violet-700"
 //             >
 //               {loading ? "Loading..." : "Search"}
 //             </button>
@@ -341,7 +341,7 @@ import {Select} from "antd"
 //             {/* Search */}
 //             <button
 //               onClick={handleSearch}
-//               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+//               className="bg-violet-600 text-white px-4 py-2 rounded hover:bg-violet-700"
 //             >
 //               {loading ? "Loading..." : "Search"}
 //             </button>
@@ -621,7 +621,7 @@ const RedemptionPointsReport = () => {
 
             <button
               onClick={handleSearch}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              className="bg-violet-600 text-white px-4 py-2 rounded hover:bg-violet-700"
             >
               {loading ? "Loading..." : "Search"}
             </button>
@@ -629,7 +629,7 @@ const RedemptionPointsReport = () => {
 
           {tableData.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-white shadow rounded p-4 border-l-4 border-blue-600">
+              <div className="bg-white shadow rounded p-4 border-l-4 border-violet-600">
                 <p className="text-sm text-gray-500">Total Records</p>
                 <p className="text-2xl font-bold">{summary.totalRecords}</p>
               </div>

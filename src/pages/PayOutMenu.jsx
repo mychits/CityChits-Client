@@ -11,10 +11,10 @@ const PayOutMenu = () => {
       id: "#1",
       title: "Chit",
       description: "Manage customer chit payment out transaction information.",
-      icon: <TicketCheck size={28} className="text-blue-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
+      icon: <TicketCheck size={28} className="text-violet-600" />,
+       color: "from-violet-600 to-violet-700",
+          lightColor: "bg-violet-50",
+          borderColor: "border-violet-200",
       href:"/payment-menu/payment-in-out-menu/general-payment-out/chit",
       stats: "Chit Payment Out Information"
     },
@@ -23,9 +23,9 @@ const PayOutMenu = () => {
       title: "Incentive",
       description: "Manage Employee Incentive  payment out transaction information.",
       icon: <HiCurrencyRupee size={28} className="text-yellow-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
+       color: "from-violet-600 to-violet-700",
+          lightColor: "bg-violet-50",
+          borderColor: "border-violet-200",
        href:"/salary-incentive",
        stats: "Incentive Information"
     },
@@ -34,9 +34,9 @@ const PayOutMenu = () => {
       title: "Salary",
       description: "Manage Employee salary information.",
       icon: <Briefcase size={28} className="text-purple-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
+       color: "from-violet-600 to-violet-700",
+          lightColor: "bg-violet-50",
+          borderColor: "border-violet-200",
        href:"/payment-menu/payment-in-out-menu/payment-out/salary-payment",
        stats: "Employee Salary Out Information"
 
@@ -48,9 +48,9 @@ const PayOutMenu = () => {
       title: "Advances",
       description: "Manage Employee advance payment information.",
       icon: <TbCash  size={28} className="text-purple-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
+       color: "from-violet-600 to-violet-700",
+          lightColor: "bg-violet-50",
+          borderColor: "border-violet-200",
        href:"/payment-menu/payment-in-out-menu/payment-out/advance-payment",
        stats: "Employee Advance Payment Information"
 
@@ -60,9 +60,9 @@ const PayOutMenu = () => {
       title: "Petty Cash",
       description: "Manage Petty Cash information.",
       icon: <Banknote size={28} className="text-yellow-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
+       color: "from-violet-600 to-violet-700",
+          lightColor: "bg-violet-50",
+          borderColor: "border-violet-200",
        href:"/payment-menu/payment-in-out-menu/payment-out/petty-cash",
        stats: "Petty cash Information"
 
@@ -72,9 +72,9 @@ const PayOutMenu = () => {
       title: "Others",
       description: "Manage Others information.",
       icon: <MoreHorizontal size={28} className="text-gray-600" />,
-       color: "from-blue-600 to-blue-700",
-          lightColor: "bg-blue-50",
-          borderColor: "border-blue-200",
+       color: "from-violet-600 to-violet-700",
+          lightColor: "bg-violet-50",
+          borderColor: "border-violet-200",
        href:"/payment-menu/payment-in-out-menu/payment-out/others",
        stats: "Other payment out Information"
 
@@ -143,10 +143,10 @@ const PayOutMenu = () => {
                 </Link>
               ))}
             </div>
-              <div className="mt-16 p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
+              <div className="mt-16 p-8 bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl border border-violet-100">
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <Zap className="w-6 h-6 text-blue-600 mt-1" />
+                <Zap className="w-6 h-6 text-violet-600 mt-1" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">Quick Tips</h3>

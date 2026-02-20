@@ -738,7 +738,7 @@ const Payroll = () => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200">
+                  className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200">
                   + Add Employee
                 </button>
               </div>
@@ -780,7 +780,7 @@ const Payroll = () => {
                   id="name"
                   placeholder="Enter the Full Name"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
                 {errors.name && (
                   <p className="mt-2 text-sm text-red-600">{errors.name}</p>
@@ -803,7 +803,7 @@ const Payroll = () => {
                     id="email"
                     placeholder="Enter Email"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.email && (
                     <p className="mt-2 text-sm text-red-600">{errors.email}</p>
@@ -825,7 +825,7 @@ const Payroll = () => {
                     id="phone_number"
                     placeholder="Enter Phone Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.phone_number && (
                     <p className="mt-2 text-sm text-red-600">
@@ -851,7 +851,7 @@ const Payroll = () => {
                     id="password"
                     placeholder="Enter Password"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.password && (
                     <p className="mt-2 text-sm text-red-600">
@@ -875,7 +875,7 @@ const Payroll = () => {
                     id="pincode"
                     placeholder="Enter Pincode"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.pincode && (
                     <p className="mt-2 text-sm text-red-600">
@@ -901,7 +901,7 @@ const Payroll = () => {
                     id="adhaar_no"
                     placeholder="Enter Adhaar Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.adhaar_no && (
                     <p className="mt-2 text-sm text-red-600">
@@ -925,7 +925,7 @@ const Payroll = () => {
                     id="pan_no"
                     placeholder="Enter Pan Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.pan_no && (
                     <p className="mt-2 text-sm text-red-600">{errors.pan_no}</p>
@@ -946,7 +946,7 @@ const Payroll = () => {
                   id="address"
                   placeholder="Enter the Address"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
                 {errors.address && (
                   <p className="mt-2 text-sm text-red-600">{errors.address}</p>
@@ -1031,7 +1031,7 @@ const Payroll = () => {
                     }
                     id="joining_date"
                     placeholder="Enter Employee Joining Date"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.joining_date && (
                     <p className="mt-2 text-sm text-red-600">
@@ -1054,7 +1054,7 @@ const Payroll = () => {
                     }
                     id="leaving_date"
                     placeholder="Enter Leaving Date"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
               </div>
@@ -1074,7 +1074,7 @@ const Payroll = () => {
                     }
                     id="dob"
                     placeholder="Enter Employee Date of Birth"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.dob && (
                     <p className="mt-2 text-sm text-red-600">{errors.dob}</p>
@@ -1128,7 +1128,7 @@ const Payroll = () => {
                     id="alternate_number"
                     placeholder="Enter Alternate Phone Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.alternate_number && (
                     <p className="mt-2 text-sm text-red-600">
@@ -1154,7 +1154,7 @@ const Payroll = () => {
                     id="total_allocated_leaves"
                     placeholder="Enter total allocated leaves"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.total_allocated_leaves && (
                     <p className="mt-2 text-sm text-red-600">
@@ -1181,7 +1181,7 @@ const Payroll = () => {
                     id="emergency_contact_person"
                     placeholder="Enter Emergency Contact Person Name"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.emergency_contact_person && (
                     <p className="mt-2 text-sm text-red-600">
@@ -1206,7 +1206,7 @@ const Payroll = () => {
                       id="emergency_contact_number_0"
                       placeholder="Enter Default Emergency Phone Number"
                       required
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                   {formData.emergency_contact_number
@@ -1227,7 +1227,7 @@ const Payroll = () => {
                           }
                           id={`emergency_contact_number_${index + 1}`}
                           placeholder="Enter Additional Emergency Phone Number"
-                          className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                          className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                         />
                         {index > 0 && (
                           <button
@@ -1244,7 +1244,7 @@ const Payroll = () => {
                   <button
                     type="button"
                     onClick={() => addPhoneField(formData, setFormData)}
-                    className="mt-2 text-blue-600 text-sm">
+                    className="mt-2 text-violet-600 text-sm">
                     + Add Another
                   </button>
                 </div>
@@ -1267,9 +1267,9 @@ const Payroll = () => {
                     id="salary"
                     placeholder="Enter Your Salary"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
-                  <span className="ml-2 font-medium font-mono text-blue-600">
+                  <span className="ml-2 font-medium font-mono text-violet-600">
                     {numberToIndianWords(formData.salary || 0)}
                   </span>
                   {errors.salary && (
@@ -1291,7 +1291,7 @@ const Payroll = () => {
                   <button
                     type="button"
                     onClick={() => addAdditionalSalaryField(false)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm font-semibold hover:bg-blue-100 transition-colors border border-blue-200">
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-50 text-violet-700 rounded-lg text-sm font-semibold hover:bg-violet-100 transition-colors border border-violet-200">
                     <HiOutlinePlusCircle size={18} />
                     Add Component
                   </button>
@@ -1322,7 +1322,7 @@ const Payroll = () => {
                                 e.target.value
                               )
                             }
-                            className={`bg-white border-slate-200 ${fieldSize.height} rounded-xl focus:border-blue-500 hover:border-blue-400 shadow-sm w-full transition-all`}
+                            className={`bg-white border-slate-200 ${fieldSize.height} rounded-xl focus:border-violet-500 hover:border-violet-400 shadow-sm w-full transition-all`}
                           />
                         </div>
 
@@ -1339,10 +1339,10 @@ const Payroll = () => {
                                 e.target.value
                               )
                             }
-                            className={`bg-white border-slate-200 ${fieldSize.height} rounded-xl focus:border-blue-500 hover:border-blue-400 shadow-sm w-full transition-all`}
+                            className={`bg-white border-slate-200 ${fieldSize.height} rounded-xl focus:border-violet-500 hover:border-violet-400 shadow-sm w-full transition-all`}
                           />
                           {item.value > 0 && (
-                            <p className="text-[10px] font-medium text-blue-500 mt-1.5 px-1 italic">
+                            <p className="text-[10px] font-medium text-violet-500 mt-1.5 px-1 italic">
                               {numberToIndianWords(item.value)} Only
                             </p>
                           )}
@@ -1396,9 +1396,9 @@ const Payroll = () => {
                       }
                       id="basic"
                       placeholder="Enter Fixed Employee Basic Salary"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5 `}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(formData.earnings?.basic || 0)}
                     </span>
                   </div>
@@ -1422,9 +1422,9 @@ const Payroll = () => {
                       }
                       id="hra"
                       placeholder="Enter Fixed House Rent Allowance"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(formData.earnings?.hra || 0)}
                     </span>
                   </div>
@@ -1450,9 +1450,9 @@ const Payroll = () => {
                       }
                       id="travel_allowance"
                       placeholder="Enter Fixed Employee Travel Allowance"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(
                         formData.earnings?.travel_allowance || 0
                       )}
@@ -1478,9 +1478,9 @@ const Payroll = () => {
                       }
                       id="medical_allowance"
                       placeholder="Enter Fixed Medical Allowance"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(
                         formData.earnings?.medical_allowance || 0
                       )}
@@ -1508,9 +1508,9 @@ const Payroll = () => {
                       }
                       id="basket_of_benifits"
                       placeholder="Enter Fixed Employee Basket of Benifits"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(
                         formData.earnings?.basket_of_benifits || 0
                       )}
@@ -1536,9 +1536,9 @@ const Payroll = () => {
                       }
                       id="performance_bonus"
                       placeholder="Enter Fixed Performance Bonus"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(
                         formData.earnings?.performance_bonus || 0
                       )}
@@ -1566,9 +1566,9 @@ const Payroll = () => {
                       }
                       id="other_allowances"
                       placeholder="Enter Fixed Other Allowance"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(
                         formData.earnings?.other_allowances || 0
                       )}
@@ -1594,9 +1594,9 @@ const Payroll = () => {
                       }
                       id="conveyance"
                       placeholder="Enter Fixed Conveyance"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(formData.earnings?.conveyance || 0)}
                     </span>
                   </div>
@@ -1630,9 +1630,9 @@ const Payroll = () => {
                       }
                       id="income_tax"
                       placeholder="Enter Fixed Employee Income Tax"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(
                         formData.deductions?.income_tax || 0
                       )}
@@ -1658,9 +1658,9 @@ const Payroll = () => {
                       }
                       id="esi"
                       placeholder="Enter Fixed Employees' State Insurance"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(formData.deductions?.esi || 0)}
                     </span>
                   </div>
@@ -1686,9 +1686,9 @@ const Payroll = () => {
                       }
                       id="epf"
                       placeholder="Enter Fixed Employees' Provident Fund"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(formData.deductions?.epf || 0)}
                     </span>
                   </div>
@@ -1712,9 +1712,9 @@ const Payroll = () => {
                       }
                       id="professional_tax"
                       placeholder="Enter Fixed Employees' Professional Tax"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(
                         formData.deductions?.professional_tax || 0
                       )}
@@ -1726,8 +1726,8 @@ const Payroll = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800
-            focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black">
+                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800
+            focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black">
                   Save Employee
                 </button>
               </div>
@@ -1758,7 +1758,7 @@ const Payroll = () => {
                   id="update_name"
                   placeholder="Enter the Full Name"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
                 {errors.name && (
                   <p className="mt-2 text-sm text-red-600">{errors.name}</p>
@@ -1781,7 +1781,7 @@ const Payroll = () => {
                     id="update_email"
                     placeholder="Enter Email"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.email && (
                     <p className="mt-2 text-sm text-red-600">{errors.email}</p>
@@ -1803,7 +1803,7 @@ const Payroll = () => {
                     id="update_phone_number"
                     placeholder="Enter Phone Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.phone_number && (
                     <p className="mt-2 text-sm text-red-600">
@@ -1829,7 +1829,7 @@ const Payroll = () => {
                     id="update_password"
                     placeholder="Enter Password"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.password && (
                     <p className="mt-2 text-sm text-red-600">
@@ -1853,7 +1853,7 @@ const Payroll = () => {
                     id="update_pincode"
                     placeholder="Enter Pincode"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.pincode && (
                     <p className="mt-2 text-sm text-red-600">
@@ -1879,7 +1879,7 @@ const Payroll = () => {
                     id="update_adhaar_no"
                     placeholder="Enter Adhaar Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.adhaar_no && (
                     <p className="mt-2 text-sm text-red-600">
@@ -1903,7 +1903,7 @@ const Payroll = () => {
                     id="update_pan_no"
                     placeholder="Enter Pan Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.pan_no && (
                     <p className="mt-2 text-sm text-red-600">{errors.pan_no}</p>
@@ -1926,7 +1926,7 @@ const Payroll = () => {
                   id="update_address"
                   placeholder="Enter the Address"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
                 {errors.address && (
                   <p className="mt-2 text-sm text-red-600">{errors.address}</p>
@@ -2012,7 +2012,7 @@ const Payroll = () => {
                     }
                     id="update_joining_date"
                     placeholder="Enter Employee Joining Date"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.joining_date && (
                     <p className="mt-2 text-sm text-red-600">
@@ -2041,7 +2041,7 @@ const Payroll = () => {
                     }
                     id="update_leaving_date"
                     placeholder="Enter Leaving Date"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
               </div>
@@ -2067,7 +2067,7 @@ const Payroll = () => {
                     }
                     id="update_dob"
                     placeholder="Enter Employee Date of Birth"
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.dob && (
                     <p className="mt-2 text-sm text-red-600">{errors.dob}</p>
@@ -2121,7 +2121,7 @@ const Payroll = () => {
                     id="update_alternate_number"
                     placeholder="Enter Alternate Phone Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
 
                   {errors.alternate_number && (
@@ -2147,7 +2147,7 @@ const Payroll = () => {
                     id="update_total_allocated_leaves"
                     placeholder="Enter total leaves"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.total_allocated_leaves && (
                     <p className="mt-2 text-sm text-red-600">
@@ -2174,7 +2174,7 @@ const Payroll = () => {
                     id="update_emergency_contact_person"
                     placeholder="Enter Emergency Contact Person Name"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.emergency_contact_person && (
                     <p className="mt-2 text-sm text-red-600">
@@ -2204,7 +2204,7 @@ const Payroll = () => {
                       id="update_emergency_contact_number_0"
                       placeholder="Enter Default Emergency Phone Number"
                       required
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                   {updateFormData.emergency_contact_number
@@ -2227,7 +2227,7 @@ const Payroll = () => {
                           }
                           id={`update_emergency_contact_number_${index + 1}`}
                           placeholder="Enter Additional Emergency Phone Number"
-                          className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                          className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                         />
                         <button
                           type="button"
@@ -2248,7 +2248,7 @@ const Payroll = () => {
                     onClick={() =>
                       addPhoneField(updateFormData, setUpdateFormData)
                     }
-                    className="mt-2 text-blue-600 text-sm">
+                    className="mt-2 text-violet-600 text-sm">
                     + Add Another
                   </button>
                 </div>
@@ -2271,9 +2271,9 @@ const Payroll = () => {
                     id="update_salary"
                     placeholder="Enter Salary"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
-                  <span className="ml-2 font-medium font-mono text-blue-600">
+                  <span className="ml-2 font-medium font-mono text-violet-600">
                     {numberToIndianWords(updateFormData.salary || 0)}
                   </span>
                   {errors.salary && (
@@ -2296,7 +2296,7 @@ const Payroll = () => {
                   <button
                     type="button"
                     onClick={() => addAdditionalSalaryField(true)} // 'true' for Update logic
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm font-semibold hover:bg-blue-100 transition-colors border border-blue-200">
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-50 text-violet-700 rounded-lg text-sm font-semibold hover:bg-violet-100 transition-colors border border-violet-200">
                     <HiOutlinePlusCircle size={18} />
                     Add Component
                   </button>
@@ -2328,7 +2328,7 @@ const Payroll = () => {
                                 true
                               )
                             }
-                            className={`bg-white border-slate-200 ${fieldSize.height} rounded-xl focus:border-blue-500 hover:border-blue-400 shadow-sm w-full transition-all`}
+                            className={`bg-white border-slate-200 ${fieldSize.height} rounded-xl focus:border-violet-500 hover:border-violet-400 shadow-sm w-full transition-all`}
                           />
                         </div>
 
@@ -2346,10 +2346,10 @@ const Payroll = () => {
                                 true
                               )
                             }
-                            className={`bg-white border-slate-200 ${fieldSize.height} rounded-xl focus:border-blue-500 hover:border-blue-400 shadow-sm w-full transition-all`}
+                            className={`bg-white border-slate-200 ${fieldSize.height} rounded-xl focus:border-violet-500 hover:border-violet-400 shadow-sm w-full transition-all`}
                           />
                           {item.value > 0 && (
-                            <p className="text-[10px] font-medium text-blue-500 mt-1.5 px-1 italic">
+                            <p className="text-[10px] font-medium text-violet-500 mt-1.5 px-1 italic">
                               {numberToIndianWords(item.value)} Only
                             </p>
                           )}
@@ -2409,9 +2409,9 @@ const Payroll = () => {
                       }
                       id="update_basic"
                       placeholder="Enter Employee Fixed Basic Salary"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(updateFormData.earnings?.basic || 0)}
                     </span>
                   </div>
@@ -2440,9 +2440,9 @@ const Payroll = () => {
                       }
                       id="update_hra"
                       placeholder="Enter Fixed House Rent Allowance"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(updateFormData.earnings?.hra || 0)}
                     </span>
                   </div>
@@ -2473,9 +2473,9 @@ const Payroll = () => {
                       }
                       id="update_travel_allowance"
                       placeholder="Enter Fixed Employee Travel Allowance"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(
                         updateFormData.earnings?.travel_allowance || 0
                       )}
@@ -2506,9 +2506,9 @@ const Payroll = () => {
                       }
                       id="update_medical_allowance"
                       placeholder="Enter Fixed Medical Allowance"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(
                         updateFormData.earnings?.medical_allowance || 0
                       )}
@@ -2541,9 +2541,9 @@ const Payroll = () => {
                       }
                       id="update_basket_of_benifits"
                       placeholder="Enter Fixed Employee Basket of Benifits"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(
                         updateFormData.earnings?.basket_of_benifits || 0
                       )}
@@ -2574,9 +2574,9 @@ const Payroll = () => {
                       }
                       id="update_performance_bonus"
                       placeholder="Enter Fixed Performance Bonus"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(
                         updateFormData.earnings?.performance_bonus || 0
                       )}
@@ -2609,9 +2609,9 @@ const Payroll = () => {
                       }
                       id="update_other_allowances"
                       placeholder="Enter Fixed Other Allowance"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(
                         updateFormData.earnings?.other_allowances || 0
                       )}
@@ -2642,9 +2642,9 @@ const Payroll = () => {
                       }
                       id="update_conveyance"
                       placeholder="Enter Fixed Conveyance"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(
                         updateFormData.earnings?.conveyance || 0
                       )}
@@ -2685,9 +2685,9 @@ const Payroll = () => {
                       }
                       id="update_income_tax"
                       placeholder="Enter Fixed Employee Income Tax"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(
                         updateFormData.deductions?.income_tax || 0
                       )}
@@ -2718,9 +2718,9 @@ const Payroll = () => {
                       }
                       id="update_esi"
                       placeholder="Enter Fixed Employees' State Insurance"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(updateFormData.deductions?.esi || 0)}
                     </span>
                   </div>
@@ -2751,9 +2751,9 @@ const Payroll = () => {
                       }
                       id="update_epf"
                       placeholder="Enter Fixed Employees' Provident Fund"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(updateFormData.deductions?.epf || 0)}
                     </span>
                   </div>
@@ -2782,9 +2782,9 @@ const Payroll = () => {
                       }
                       id="update_professional_tax"
                       placeholder="Enter Fixed Employees' Professional Tax"
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
-                    <span className="ml-2 font-medium font-mono text-blue-600">
+                    <span className="ml-2 font-medium font-mono text-violet-600">
                       {numberToIndianWords(
                         updateFormData.deductions?.professional_tax || 0
                       )}
@@ -2796,8 +2796,8 @@ const Payroll = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-            focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
+            focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                   Update Employee
                 </button>
               </div>
@@ -2837,13 +2837,13 @@ const Payroll = () => {
                     id="delete_employee_name"
                     placeholder="Enter the employee Full Name"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-        focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+        focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                   Delete
                 </button>
               </form>

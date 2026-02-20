@@ -1,7 +1,7 @@
 
 import noDataFoundImage from "../../assets/images/noDataFound.svg";
 const CircularLoader = ({
-  color = "text-blue-600",
+  color = "text-violet-600",
   isLoading =true,
   failure = false,
   data="data"
@@ -27,8 +27,8 @@ const CircularLoader = ({
               alt="No Data Found image"
               className="w-3/4 h-1/2"
             />
-            <div className="text-center text-2xl font-bold text-blue-700">
-              No <span className="text-blue-800">
+            <div className="text-center text-2xl font-bold text-violet-700">
+              No <span className="text-violet-800">
               {data}
                 </span> Found
             </div>

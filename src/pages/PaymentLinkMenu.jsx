@@ -29,13 +29,13 @@ const PaymentLinkMenu = () => {
       description: "Manage customer Bulk chit payment link transaction information.",
       subtitle: "Bulk Mode",
       icon: PiLinkSimpleBreakFill,
-      gradient: "from-blue-500 via-indigo-500 to-purple-500",
-      bgGradient: "from-blue-50 via-indigo-50 to-purple-50",
+      gradient: "from-violet-500 via-indigo-500 to-purple-500",
+      bgGradient: "from-violet-50 via-indigo-50 to-purple-50",
       href: "/payment-menu/payment-in-out-menu/pay-in-menu/payment-link-menu/chit-bulk-payment",
       stats: "Bulk Chit Payment Link Information",
       secondaryIcon: ArrowUpRight,
-      iconColor: "text-blue-600",
-      bgColor: "bg-blue-100"
+      iconColor: "text-violet-600",
+      bgColor: "bg-violet-100"
     },
     {
       id: 3,

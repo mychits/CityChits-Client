@@ -102,7 +102,7 @@
 //         api.open({
 //           message: "No changes made",
 //           description: "No fields were changed",
-//           className: "bg-blue-500 rounded-lg font-semibold text-white",
+//           className: "bg-violet-500 rounded-lg font-semibold text-white",
 //         });
 //         return;
 //       }
@@ -175,13 +175,13 @@
 //               </button>
 //             </div>
 
-//             <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-100 mb-6">
+//             <div className="bg-gradient-to-r from-violet-50 to-violet-100 rounded-xl p-5 border border-violet-100 mb-6">
 //               <div className="flex justify-between items-center">
 //                 <div>
-//                   <h3 className="text-sm font-medium text-blue-800">
+//                   <h3 className="text-sm font-medium text-violet-800">
 //                     Payment Summary
 //                   </h3>
-//                   <p className="text-xs text-blue-600 mt-1">
+//                   <p className="text-xs text-violet-600 mt-1">
 //                     Period:{" "}
 //                     {new Date(
 //                       salary.payout_metadata.date_range.from
@@ -193,7 +193,7 @@
 //                   </p>
 //                 </div>
 //                 <div className="text-right">
-//                   <p className="text-lg font-bold text-blue-900">
+//                   <p className="text-lg font-bold text-violet-900">
 //                     ₹
 //                     {(
 //                       parseFloat(
@@ -201,7 +201,7 @@
 //                       ) + parseFloat(salary.payout_metadata.other_payments || 0)
 //                     ).toFixed(2)}
 //                   </p>
-//                   <p className="text-xs text-blue-600">Total Payment Amount</p>
+//                   <p className="text-xs text-violet-600">Total Payment Amount</p>
 //                 </div>
 //               </div>
 //             </div>
@@ -210,7 +210,7 @@
 //               {/* Payment Date Section */}
 //               <div className="border-b border-gray-100 pb-4">
 //                 <h3 className="font-medium text-gray-900 mb-3 flex items-center">
-//                   <FaCalendar className="mr-2 text-blue-500" />
+//                   <FaCalendar className="mr-2 text-violet-500" />
 //                   Payment Date
 //                 </h3>
 //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -240,7 +240,7 @@
 //                       className={`w-full px-3 py-2 border rounded-md ${
 //                         errors.pay_date
 //                           ? "border-red-500"
-//                           : "border-gray-300 focus:border-blue-500"
+//                           : "border-gray-300 focus:border-violet-500"
 //                       }`}
 //                       min={salary.payout_metadata.date_range.from}
 //                       max={new Date().toISOString().split("T")[0]}
@@ -289,7 +289,7 @@
 //                       className={`w-full px-3 py-2 border rounded-md ${
 //                         errors.total_paid_amount
 //                           ? "border-red-500"
-//                           : "border-gray-300 focus:border-blue-500"
+//                           : "border-gray-300 focus:border-violet-500"
 //                       }`}
 //                       placeholder="Enter payment amount"
 //                     />
@@ -319,7 +319,7 @@
 //                     className={`w-full px-3 py-2 border rounded-md ${
 //                       errors.other_payments
 //                         ? "border-red-500"
-//                         : "border-gray-300 focus:border-blue-500"
+//                         : "border-gray-300 focus:border-violet-500"
 //                     }`}
 //                     placeholder="Enter additional payments"
 //                   />
@@ -391,7 +391,7 @@
 //                       className={`w-full px-3 py-2 border rounded-md ${
 //                         errors.transaction_id
 //                           ? "border-red-500"
-//                           : "border-gray-300 focus:border-blue-500"
+//                           : "border-gray-300 focus:border-violet-500"
 //                       }`}
 //                       placeholder="Enter transaction ID"
 //                     />
@@ -417,7 +417,7 @@
 //                   className={`w-full px-3 py-2 border rounded-md ${
 //                     errors.note
 //                       ? "border-red-500"
-//                       : "border-gray-300 focus:border-blue-500"
+//                       : "border-gray-300 focus:border-violet-500"
 //                   }`}
 //                   rows="3"
 //                   placeholder="Add any notes about this payment..."
@@ -441,7 +441,7 @@
 //                   disabled={!hasChanges || loading}
 //                   className={`px-5 py-2.5 rounded-lg text-white font-medium transition-colors ${
 //                     hasChanges && !loading
-//                       ? "bg-blue-600 hover:bg-blue-700"
+//                       ? "bg-violet-600 hover:bg-violet-700"
 //                       : "bg-gray-400 cursor-not-allowed"
 //                   }`}
 //                 >
@@ -645,7 +645,7 @@ const originalOtherPayments = Array.isArray(salary?.payout_metadata?.other_payme
   //       api.open({
   //         message: "No changes made",
   //         description: "No fields were changed",
-  //         className: "bg-blue-500 rounded-lg font-semibold text-white",
+  //         className: "bg-violet-500 rounded-lg font-semibold text-white",
   //       });
   //       return;
   //     }
@@ -731,7 +731,7 @@ const handleSubmit = async (e) => {
       api.open({
         message: "No changes made",
         description: "No fields were changed",
-        className: "bg-blue-500 rounded-lg font-semibold text-white",
+        className: "bg-violet-500 rounded-lg font-semibold text-white",
       });
       return;
     }
@@ -806,13 +806,13 @@ const handleSubmit = async (e) => {
               </button>
             </div>
 
-            <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-100 mb-6">
+            <div className="bg-gradient-to-r from-violet-50 to-violet-100 rounded-xl p-5 border border-violet-100 mb-6">
               <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="text-sm font-medium text-blue-800">
+                  <h3 className="text-sm font-medium text-violet-800">
                     Payment Summary
                   </h3>
-                  <p className="text-xs text-blue-600 mt-1">
+                  <p className="text-xs text-violet-600 mt-1">
                     Period:{" "}
                     {new Date(
                       salary.payout_metadata.date_range.from
@@ -824,7 +824,7 @@ const handleSubmit = async (e) => {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg font-bold text-blue-900">
+                  <p className="text-lg font-bold text-violet-900">
                     ₹
                     {(
                       parseFloat(
@@ -832,7 +832,7 @@ const handleSubmit = async (e) => {
                       ) + parseFloat(salary.payout_metadata.other_payments || 0)
                     ).toFixed(2)}
                   </p>
-                  <p className="text-xs text-blue-600">Total Payment Amount</p>
+                  <p className="text-xs text-violet-600">Total Payment Amount</p>
                 </div>
               </div>
             </div>
@@ -841,7 +841,7 @@ const handleSubmit = async (e) => {
               {/* Payment Date Section */}
               <div className="border-b border-gray-100 pb-4">
                 <h3 className="font-medium text-gray-900 mb-3 flex items-center">
-                  <FaCalendar className="mr-2 text-blue-500" />
+                  <FaCalendar className="mr-2 text-violet-500" />
                   Payment Date
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -870,7 +870,7 @@ const handleSubmit = async (e) => {
                       }
                       className={`w-full px-3 py-2 border rounded-md ${errors.pay_date
                           ? "border-red-500"
-                          : "border-gray-300 focus:border-blue-500"
+                          : "border-gray-300 focus:border-violet-500"
                         }`}
                       min={salary.payout_metadata.date_range.from}
                       max={new Date().toISOString().split("T")[0]}
@@ -918,7 +918,7 @@ const handleSubmit = async (e) => {
                       }
                       className={`w-full px-3 py-2 border rounded-md ${errors.total_paid_amount
                           ? "border-red-500"
-                          : "border-gray-300 focus:border-blue-500"
+                          : "border-gray-300 focus:border-violet-500"
                         }`}
                       placeholder="Enter payment amount"
                     />
@@ -948,7 +948,7 @@ const handleSubmit = async (e) => {
                     className={`w-full px-3 py-2 border rounded-md ${
                       errors.other_payments
                         ? "border-red-500"
-                        : "border-gray-300 focus:border-blue-500"
+                        : "border-gray-300 focus:border-violet-500"
                     }`}
                     placeholder="Enter additional payments"
                   />
@@ -981,7 +981,7 @@ const handleSubmit = async (e) => {
                           onChange={(e) =>
                             handleOtherPaymentChange(index, "description", e.target.value)
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-500"
                         />
                       </div>
                       <div>
@@ -997,7 +997,7 @@ const handleSubmit = async (e) => {
                           onChange={(e) =>
                             handleOtherPaymentChange(index, "amount", e.target.value)
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-500"
                         />
                       </div>
                       <div className="flex items-end">
@@ -1081,7 +1081,7 @@ const handleSubmit = async (e) => {
                       }
                       className={`w-full px-3 py-2 border rounded-md ${errors.transaction_id
                           ? "border-red-500"
-                          : "border-gray-300 focus:border-blue-500"
+                          : "border-gray-300 focus:border-violet-500"
                         }`}
                       placeholder="Enter transaction ID"
                     />
@@ -1106,7 +1106,7 @@ const handleSubmit = async (e) => {
                   }
                   className={`w-full px-3 py-2 border rounded-md ${errors.note
                       ? "border-red-500"
-                      : "border-gray-300 focus:border-blue-500"
+                      : "border-gray-300 focus:border-violet-500"
                     }`}
                   rows="3"
                   placeholder="Add any notes about this payment..."
@@ -1129,7 +1129,7 @@ const handleSubmit = async (e) => {
                   type="submit"
                   disabled={!hasChanges || loading}
                   className={`px-5 py-2.5 rounded-lg text-white font-medium transition-colors ${hasChanges && !loading
-                      ? "bg-blue-600 hover:bg-blue-700"
+                      ? "bg-violet-600 hover:bg-violet-700"
                       : "bg-gray-400 cursor-not-allowed"
                     }`}
                 >

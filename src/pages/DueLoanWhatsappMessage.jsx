@@ -223,7 +223,7 @@ const CustomerDueLoanWhatsAppMessage = () => {
             <>
               {/* SUMMARY CARDS */}
               <div className="grid grid-cols-2 gap-6 mt-8 mb-6">
-                <div className="bg-blue-100 p-6 rounded-xl shadow flex justify-between">
+                <div className="bg-violet-100 p-6 rounded-xl shadow flex justify-between">
                   <div>
                     <p>Total Due Customers</p>
                     <p className="text-3xl font-bold">

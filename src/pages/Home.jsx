@@ -1,8 +1,8 @@
 import Sidebar from "../components/layouts/Sidebar";
 import { MdGroups, MdOutlinePayments, MdGroupWork } from "react-icons/md";
-import { FaUserLock, FaClipboardList, FaCodeBranch } from "react-icons/fa";
+import { FaUserLock, FaClipboardList, FaCodeBranch, FaBriefcase, FaUserTie, FaBullhorn, FaCheckCircle, FaChartBar } from "react-icons/fa";
 import { SlCalender } from "react-icons/sl";
-import { useEffect, useState, useCallback } from "react"; // Added useCallback
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../instance/TokenInstance";
 import Navbar from "../components/layouts/Navbar";
@@ -16,6 +16,9 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
+import { Link } from "react-router-dom"; // Added Link for shortcuts
+import { IoIosHelpCircle } from "react-icons/io";
+import { SiQuicklook } from "react-icons/si";
 
 const Home = () => {
   const [groups, setGroups] = useState([]);
@@ -266,7 +269,7 @@ const Home = () => {
         const status = order?.status;
         const color =
           status === "ACTIVE"
-            ? "blue"
+            ? "violet"
             : status === "PAID"
             ? "green"
             : "red";
@@ -333,6 +336,59 @@ const Home = () => {
   useEffect(() => {
     getTransactions();
   }, []);
+
+  // Shortcuts from V1
+  const shortcuts = [
+    {
+      label: "Marketing",
+      icon: FaBullhorn,
+      path: "/marketing-menu",
+      bg: "bg-pink-50 hover:bg-pink-100",
+      text: "text-pink-700",
+    },
+    {
+      label: "Help & Support",
+      icon: IoIosHelpCircle,
+      path: "/help",
+      bg: "bg-violet-50 hover:bg-violet-100",
+      text: "text-violet-700",
+    },
+    {
+      label: "Accounts",
+      icon: FaBriefcase,
+      path: "/payment-menu",
+      bg: "bg-indigo-50 hover:bg-indigo-100",
+      text: "text-indigo-700",
+    },
+    {
+      label: "Approvals",
+      icon: FaCheckCircle,
+      path: "/approval-menu",
+      bg: "bg-green-50 hover:bg-green-100",
+      text: "text-green-700",
+    },
+    {
+      label: "Reports",
+      icon: FaChartBar,
+      path: "/reports",
+      bg: "bg-purple-50 hover:bg-purple-100",
+      text: "text-purple-700",
+    },
+    {
+      label: "Quick Search",
+      icon: SiQuicklook,
+      path: "/quick-search",
+      bg: "bg-yellow-50 hover:bg-yellow-100",
+      text: "text-yellow-700",
+    },
+    {
+      label: "HR",
+      icon: FaUserTie,
+      path: "/hr-menu",
+      bg: "bg-orange-50 hover:bg-orange-100",
+      text: "text-orange-700",
+    },
+  ];
 
   const cardData = [
     {
@@ -462,7 +518,7 @@ const Home = () => {
             setAlertConfig((prev) => ({ ...prev, visibility: false }))
           }
         />
-        <div className="flex-1 p-4 md:p-8 md:ml-16 md:mr-11 md:mt-11 pb-8">
+        <div className="flex-1 p-4 md:p-8 md:ml-16 md:mr-11  pb-8">
           <header className="mb-8">
             <h1 className="text-3xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600 mb-2">
               Chit Intelligence Dashboard
@@ -471,7 +527,35 @@ const Home = () => {
               Real-time analytics and performance metrics for your organization.
               Monitor key business indicators and make data-driven decisions.
             </p>
+
+              <div className="mb-8 flex flex-wrap gap-3 justify-end">
+            {shortcuts.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.label}
+                  to={item.path}
+                  className={`group flex flex-col items-center justify-center
+        w-24 h-20 rounded-xl transition
+        ${item.bg}`}
+                >
+                  <Icon
+                    className={`text-2xl ${item.text} 
+          group-hover:scale-110 transition-transform`}
+                  />
+
+                  <span className={`text-xs font-medium mt-1 ${item.text}`}>
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+
           </header>
+
+          {/* --- SHORTCUTS SECTION (ADDED HERE) --- */}
+        
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 auto-rows-fr">
             {cardData.map((card) => (
@@ -589,7 +673,7 @@ const Home = () => {
                     onClick={() => setViewMode("grid")}
                     className={`p-2 rounded-md transition-all ${
                       viewMode === "grid"
-                        ? "bg-white shadow-sm text-blue-600"
+                        ? "bg-white shadow-sm text-violet-600"
                         : "text-gray-500"
                     }`}
                   >
@@ -599,7 +683,7 @@ const Home = () => {
                     onClick={() => setViewMode("list")}
                     className={`p-2 rounded-md transition-all ${
                       viewMode === "list"
-                        ? "bg-white shadow-sm text-blue-600"
+                        ? "bg-white shadow-sm text-violet-600"
                         : "text-gray-500"
                     }`}
                   >

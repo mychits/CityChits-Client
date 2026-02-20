@@ -8,6 +8,7 @@ import filterOption from "../helpers/filterOption";
 import { FaWhatsapp } from "react-icons/fa";
 import { notification } from "antd";
 import { MdMarkEmailRead } from "react-icons/md";
+import Sidebar from "../components/layouts/Sidebar";
 
 const DueEmail = () => {
   const [searchText, setSearchText] = useState("");
@@ -215,7 +216,6 @@ const DueEmail = () => {
 
   const Auctioncolumns = [
     { key: "sl_no", header: "SL. NO" },
-     { key: "checkBoxs", header: "Select User" },
     { key: "userName", header: "Customer Name" },
     { key: "userPhone", header: "Phone Number" },
     { key: "customerId", header: "Customer Id" },
@@ -226,28 +226,32 @@ const DueEmail = () => {
     { key: "totalToBePaid", header: "Amount to be Paid" },
     { key: "amountPaid", header: "Paid Amount" },
     { key: "balance", header: "Balance" },
-   
+    { key: "checkBoxs", header: "Select User" },
   ];
 
   return (
-    <div className="">
-      <div className=" mt-30">
+    <div className="w-screen">
+      <div className="flex mt-30">
         <Navbar
           onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
           visibility={true}
         />
-        {isLoading ? (
+        <Sidebar />
+        
+          <div className="flex-grow p-7 mt-36">
+            <h1 className="text-2xl font-bold text-center">
+              Outstanding Email Messages
+            </h1>
+            {contextHolder}
+                {isLoading ? (
           <div className="w-full">
             <CircularLoader color="text-green-600" />
           </div>
         ) : (
-          <div className="flex-grow p-7">
-            <h1 className="text-2xl font-bold text-center">
-              Email Due Messages
-            </h1>
-            {contextHolder}
             <div className="mt-6 mb-8">
+            
               <div className="flex justify-start border-b border-gray-300 mb-4"></div>
+              
               <div className="mt-10">
                 <div className="flex flex-wrap items-center gap-4 mb-6">
                   <div>
@@ -290,12 +294,17 @@ const DueEmail = () => {
                   data={filteredUsers}
                   columns={Auctioncolumns}
                   catcher="_id"
-                  exportedFileName={`CustomerReport.csv`}
+                  exportedPdfName="Due Email"
+                  printHeaderKeys={["Group Name"]}
+                  printHeaderValues={[groupFilter]}
+                  exportedFileName={`Due Email.csv`}
                 />
               </div>
+              
             </div>
+            )}
           </div>
-        )}
+        
       </div>
     </div>
   );

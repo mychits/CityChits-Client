@@ -12,7 +12,9 @@ import CircularLoader from "../components/loaders/CircularLoader";
 import handleEnrollmentRequestPrint from "../components/printFormats/enrollmentRequestPrint";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import { fieldSize } from "../data/fieldSize";
+import PageWrapper from "../components/modals/PageWrapper";
 import dayjs from "dayjs"
+import ReConfirmModal from "../components/modals/ReConfirmModal";
 const User = () => {
   const [users, setUsers] = useState([]);
   const [TableUsers, setTableUsers] = useState([]);
@@ -35,6 +37,7 @@ const User = () => {
     type: "info",
   });
   const [errors, setErrors] = useState({});
+   const [showConfirm, setShowConfirm] = useState(false);
 
   const [formData, setFormData] = useState({
     full_name: "",
@@ -218,7 +221,7 @@ const User = () => {
                           onClick={() =>
                             handleEnrollmentRequestPrint(group?._id)
                           }
-                          className=" text-blue-600 "
+                          className=" text-violet-600 "
                         >
                           Print
                         </div>
@@ -380,6 +383,15 @@ const User = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  const handleReconfirmation = (e) => {  
+  e.preventDefault();
+
+  const isValid = validateForm("addCustomer");
+  if (!isValid) return;
+
+  // ✅ Just open reconfirm modal
+  setShowConfirm(true);
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -444,6 +456,7 @@ const User = () => {
             message: "An unexpected error occurred. Please try again.",
             visibility: true,
           });
+           setShowConfirm(false);
         }
       }
     }
@@ -699,8 +712,8 @@ const User = () => {
             }
           />
 
-          <div className="flex-grow p-7">
-            <div className="mt-6 mb-8">
+            <div className="flex-grow p-7 overflow-x-auto">
+  <div className="mt-6 mb-8 min-w-max">
               <div className="flex justify-between items-center w-full">
                 <h1 className="text-2xl font-semibold">Customers</h1>
 
@@ -709,7 +722,7 @@ const User = () => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                  className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
                 >
                   + Add Customer
                 </button>
@@ -736,11 +749,12 @@ const User = () => {
           </div>
         </div>
         <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
+          {/* <PageWrapper isVisible={showModal} onClose={() => setShowModal(false)}> */}
           <div className="py-6 px-5 lg:px-8 text-left">
             <h3 className="mb-4 text-xl font-bold text-gray-900">
               Add Customer
             </h3>
-            <form className="space-y-6" onSubmit={handleSubmit} noValidate>
+             <form className="space-y-6" onSubmit={handleReconfirmation} noValidate>
               <div>
                 <label
                   className="block mb-2 text-sm font-medium text-gray-900"
@@ -756,7 +770,7 @@ const User = () => {
                   id="name"
                   placeholder="Enter the Full Name"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
                 {errors.full_name && (
                   <p className="mt-2 text-sm text-red-600">
@@ -780,7 +794,7 @@ const User = () => {
                     id="text"
                     placeholder="Enter Email"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.email && (
                     <p className="mt-2 text-sm text-red-600">{errors.email}</p>
@@ -801,7 +815,7 @@ const User = () => {
                     id="text"
                     placeholder="Enter Phone Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.phone_number && (
                     <p className="mt-2 text-sm text-red-600">
@@ -826,7 +840,7 @@ const User = () => {
                     id="text"
                     placeholder="Enter Password"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.password && (
                     <p className="mt-2 text-sm text-red-600">
@@ -849,7 +863,7 @@ const User = () => {
                     id="text"
                     placeholder="Enter Pincode"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.pincode && (
                     <p className="mt-2 text-sm text-red-600">
@@ -874,7 +888,7 @@ const User = () => {
                     id="text"
                     placeholder="Enter Adhaar Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.adhaar_no && (
                     <p className="mt-2 text-sm text-red-600">
@@ -897,7 +911,7 @@ const User = () => {
                     id="text"
                     placeholder="Enter Pan Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.pan_no && (
                     <p className="mt-2 text-sm text-red-600">{errors.pan_no}</p>
@@ -960,15 +974,26 @@ const User = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Save Customer
                 </button>
               </div>
             </form>
           </div>
-        </Modal>
+        {showConfirm  &&  (
+  <ReConfirmModal
+   isOpen={showConfirm}
+  title="Confirm Details"
+  data={formData}
+  onCancel={() => setShowConfirm(false)}
+  onConfirm={handleSubmit}
+
+  />
+)}
+              </Modal>
+        {/* </PageWrapper> */}
         <Modal
           isVisible={showModalUpdate}
           onClose={() => setShowModalUpdate(false)}
@@ -1052,7 +1077,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                     {errors.full_name && (
                       <p className="mt-2 text-sm text-red-600">
@@ -1085,7 +1110,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                     {errors.email && (
                       <p className="mt-2 text-sm text-red-600">
@@ -1115,7 +1140,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                     {errors.phone_number && (
                       <p className="mt-2 text-sm text-red-600">
@@ -1148,7 +1173,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                     {errors.adhaar_no && (
                       <p className="mt-2 text-sm text-red-600">
@@ -1178,7 +1203,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                     {errors.pan_no && (
                       <p className="mt-2 text-sm text-red-600">
@@ -1210,7 +1235,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.address && (
                     <p className="mt-2 text-sm text-red-600">
@@ -1242,7 +1267,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                     {errors.pincode && (
                       <p className="mt-2 text-sm text-red-600">
@@ -1272,7 +1297,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1343,7 +1368,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       onChange={handleInputChange}
                       id="date"
                       placeholder="Enter the Date of Birth"
@@ -1446,7 +1471,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1509,7 +1534,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1536,7 +1561,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
 
@@ -1561,7 +1586,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1626,7 +1651,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                     {/* )} */}
                   </div>
@@ -1654,7 +1679,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
 
@@ -1685,7 +1710,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1755,7 +1780,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1782,7 +1807,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
 
@@ -1807,7 +1832,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1833,7 +1858,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
 
@@ -1858,7 +1883,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1866,8 +1891,8 @@ const User = () => {
                 <div className="w-full flex justify-end">
                   <button
                     type="submit"
-                    className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                   >
                     Update
                   </button>
@@ -1912,13 +1937,13 @@ const User = () => {
                     id="groupName"
                     placeholder="Enter the User Full Name"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Delete
                 </button>

@@ -538,20 +538,20 @@ const SalaryPayment = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Link
                 to="/hr-menu/salary-management"
-                className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group">
                 <RiMoneyRupeeCircleFill
-                  className="text-blue-600 group-hover:scale-110 transition-transform"
+                  className="text-violet-600 group-hover:scale-110 transition-transform"
                   size={24}
                 />
-                <span className="font-medium text-gray-700 group-hover:text-blue-600">
+                <span className="font-medium text-gray-700 group-hover:text-violet-600">
                   HR / Salary Management
                 </span>
               </Link>
               <Link
                 to="/staff-menu/employee-menu/employee-statement"
-                className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
-                <MdOutlineMan className="text-blue-600 group-hover:scale-110 transition-transform text-lg" />
-                <span className="font-medium text-gray-700 group-hover:text-blue-600">
+                className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group">
+                <MdOutlineMan className="text-violet-600 group-hover:scale-110 transition-transform text-lg" />
+                <span className="font-medium text-gray-700 group-hover:text-violet-600">
                   Employees / Employee Statement
                 </span>
               </Link>
@@ -726,8 +726,8 @@ const SalaryPayment = () => {
                 />
               </div>
             </div>
-            <div className="bg-blue-50 p-4 rounded-lg mb-4">
-              <h3 className="text-lg font-semibold text-blue-800 mb-4">
+            <div className="bg-violet-50 p-4 rounded-lg mb-4">
+              <h3 className="text-lg font-semibold text-violet-800 mb-4">
                 Attendance Details
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -794,7 +794,7 @@ const SalaryPayment = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-blue-50 p-4 rounded-lg mb-4">
+            <div className="bg-violet-50 p-4 rounded-lg mb-4">
               <h3 className="font-semibold text-lg mb-3">
                 Incentive Adjustment
               </h3>
@@ -942,8 +942,8 @@ const SalaryPayment = () => {
                 )}
               </Form.List>
             </div>
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl shadow-sm border border-blue-200 mb-6">
-              <h3 className="text-xl font-bold text-blue-900 mb-6 pb-3 border-b border-blue-300">
+            <div className="bg-gradient-to-br from-violet-50 to-violet-100 p-6 rounded-xl shadow-sm border border-violet-200 mb-6">
+              <h3 className="text-xl font-bold text-violet-900 mb-6 pb-3 border-b border-violet-300">
                 Payment Details
               </h3>
 

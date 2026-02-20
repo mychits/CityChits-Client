@@ -17,7 +17,7 @@ const ErrorBoundaryHandler = () => {
         <div className="flex items-center justify-center gap-6">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 bg-blue-900 text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition"
+            className="flex items-center gap-2 bg-violet-900 text-white px-4 py-2 rounded-xl hover:bg-violet-600 transition"
           >
             <FiArrowLeftCircle className="text-xl" />
             Go Back

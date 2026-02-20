@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { PrinterOutlined, DownloadOutlined } from "@ant-design/icons";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import dayjs from "dayjs";
 
 // const SalarySlipPrint = () => {
 //   const params = useParams();
@@ -610,7 +611,7 @@ import html2canvas from "html2canvas";
 //               onClick={() => setPrintFormat(format.key)}
 //               className={`p-4 rounded-xl border-2 transition-all duration-300 ${
 //                 printFormat === format.key
-//                   ? 'border-blue-500 bg-blue-50 shadow-md transform scale-105'
+//                   ? 'border-violet-500 bg-violet-50 shadow-md transform scale-105'
 //                   : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm'
 //               }`}
 //             >
@@ -631,7 +632,7 @@ import html2canvas from "html2canvas";
 //               type="primary"
 //               icon={<PrinterOutlined />}
 //               onClick={handlePrint}
-//               className="bg-blue-600 hover:bg-blue-700"
+//               className="bg-violet-600 hover:bg-violet-700"
 //             >
 //               Print
 //             </Button>
@@ -1552,7 +1553,7 @@ import html2canvas from "html2canvas";
 //               onClick={() => setPrintFormat(format.key)}
 //               className={`p-4 rounded-xl border-2 transition-all duration-300 ${
 //                 printFormat === format.key
-//                   ? 'border-blue-500 bg-blue-50 shadow-md transform scale-105'
+//                   ? 'border-violet-500 bg-violet-50 shadow-md transform scale-105'
 //                   : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm'
 //               }`}
 //             >
@@ -1573,7 +1574,7 @@ import html2canvas from "html2canvas";
 //               type="primary"
 //               icon={<PrinterOutlined />}
 //               onClick={handlePrint}
-//               className="bg-blue-600 hover:bg-blue-700"
+//               className="bg-violet-600 hover:bg-violet-700"
 //             >
 //               Print
 //             </Button>
@@ -2512,7 +2513,7 @@ import html2canvas from "html2canvas";
 //               onClick={() => setPrintFormat(format.key)}
 //               className={`p-4 rounded-xl border-2 transition-all duration-300 ${
 //                 printFormat === format.key
-//                   ? 'border-blue-500 bg-blue-50 shadow-md transform scale-105'
+//                   ? 'border-violet-500 bg-violet-50 shadow-md transform scale-105'
 //                   : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm'
 //               }`}
 //             >
@@ -2533,7 +2534,7 @@ import html2canvas from "html2canvas";
 //               type="primary"
 //               icon={<PrinterOutlined />}
 //               onClick={handlePrint}
-//               className="bg-blue-600 hover:bg-blue-700"
+//               className="bg-violet-600 hover:bg-violet-700"
 //             >
 //               Print
 //             </Button>
@@ -3462,7 +3463,7 @@ const totalOtherDeduction = totalDeductions + underPaidAmount;
               </div>
               <div class="meta-info">
               
-                Date: <strong>${new Date().toLocaleDateString()}</strong>
+                Date: <strong>${dayjs().format("DD-MM-YYYY")}</strong>
               </div>
             </div>
             <div class="payslip-title">SALARY SLIP</div>
@@ -4129,7 +4130,7 @@ const totalOtherDeduction = totalDeductions + underPaidAmount;
               onClick={() => setPrintFormat(format.key)}
               className={`p-4 rounded-xl border-2 transition-all duration-300 ${
                 printFormat === format.key
-                  ? "border-blue-500 bg-blue-50 shadow-md transform scale-105"
+                  ? "border-violet-500 bg-violet-50 shadow-md transform scale-105"
                   : "border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm"
               }`}
             >
@@ -4151,7 +4152,7 @@ const totalOtherDeduction = totalDeductions + underPaidAmount;
               type="primary"
               icon={<PrinterOutlined />}
               onClick={handlePrint}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-violet-600 hover:bg-violet-700"
             >
               Print
             </Button>

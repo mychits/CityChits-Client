@@ -58,7 +58,7 @@ const IndividualChitPaymentLink = () => {
       {
         key: "1",
         label: (
-          <Link to={`/print/${group._id}`} className="text-blue-600 ">
+          <Link to={`/print/${group._id}`} className="text-violet-600 ">
             Print
           </Link>
         ),
@@ -590,7 +590,7 @@ const IndividualChitPaymentLink = () => {
                     <div>
                       <button
                         onClick={() => setShowModal(true)}
-                        className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                        className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
                       >
                         + Add Payment Link
                       </button>
@@ -692,7 +692,7 @@ const IndividualChitPaymentLink = () => {
                       placeholder="Select Group | Ticket"
                       onChange={handlePaymentAntSelect}
                       value={paymentGroupTickets}
-                      className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full ${fieldSize.height}`}
+                      className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full ${fieldSize.height}`}
                     >
                       {filteredAuction.map((entry, index) => {
                         const groupName =
@@ -751,7 +751,7 @@ const IndividualChitPaymentLink = () => {
                           onChange={handleChange}
                           placeholder="Enter Amount"
                           required
-                          className="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+                          className="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 p-2.5"
                         />
                       </div>
                       {errors.amount && (
@@ -793,7 +793,7 @@ const IndividualChitPaymentLink = () => {
                       min={tomorrowFormatted} // Prevent selecting past dates
                       value={formData.expiry}
                       onChange={handleChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
 
@@ -846,8 +846,8 @@ const IndividualChitPaymentLink = () => {
                   <div className="flex justify-end pt-4">
                     <button
                       type="submit"
-                      className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 active:bg-blue-900 
-                   border-2 border-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 
+                      className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 active:bg-violet-900 
+                   border-2 border-violet-700 focus:ring-4 focus:outline-none focus:ring-violet-300 
                    font-medium rounded-lg text-sm px-5 py-2.5 transition-colors duration-200"
                     >
                       Add Payment Link
@@ -869,7 +869,7 @@ const IndividualChitPaymentLink = () => {
               <h3 className="mb-4 text-xl font-bold text-gray-900">
                 Payment Details
               </h3>
-              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
+              <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5">
                 <div className="mb-3 flex gap-x-2">
                   <strong>Group: </strong>{" "}
                   {currentViewGroup?.group_id?.group_name}

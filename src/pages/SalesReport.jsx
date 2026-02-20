@@ -3,13 +3,8 @@ import api from "../instance/TokenInstance";
 import DataTable from "../components/layouts/Datatable";
 import Navbar from "../components/layouts/Navbar";
 import CircularLoader from "../components/loaders/CircularLoader";
-import Sidebar from "../components/layouts/Sidebar";
-import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 
- const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchText(value);
-  };
+import { numberToIndianWords } from "../helpers/numberToIndianWords"
 
 const formatDate = (date) => date.toISOString().split("T")[0];
 
@@ -90,20 +85,20 @@ const SalesReport = () => {
         Object.values(monthMap).length > 0 ? Object.values(monthMap)[0] : 0;
 
       // Step 2: Aggregate total target between fromDate & toDate
-   let total = 0;
-let loop = new Date(fromDate);
-const end = new Date(toDate);
-while (loop <= end) {
-  const year = loop.getFullYear();
-  const month = loop.getMonth(); // 0-based index
-  const key = `${year}-${month}`;
-  const monthTarget = monthMap[key] ?? defaultTarget;
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const perDayTarget = monthTarget / daysInMonth;
+      let total = 0;
+      let loop = new Date(fromDate);
+      const end = new Date(toDate);
+      while (loop <= end) {
+        const year = loop.getFullYear();
+        const month = loop.getMonth(); // 0-based index
+        const key = `${year}-${month}`;
+        const monthTarget = monthMap[key] ?? defaultTarget;
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const perDayTarget = monthTarget / daysInMonth;
 
-  total += perDayTarget;
-  loop.setDate(loop.getDate() + 1);
-}
+        total += perDayTarget;
+        loop.setDate(loop.getDate() + 1);
+      }
 
 
       // Step 3: Get achieved value via enroll commission
@@ -264,13 +259,9 @@ while (loop <= end) {
   ];
 
   return (
-    <div className="w-screen min-h-screen">
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
-
-      <div className="p-6">
+    <div className="flex-1 min-h-screen">
+      <Navbar />
+      <div className="flex-1 p-6">
         <h1 className="text-3xl font-bold text-center mb-6">Reports - Sales</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -315,7 +306,7 @@ while (loop <= end) {
         {selectedAgentDetails && (
           <>
             <div className="bg-gray-100 p-4 rounded shadow mb-6">
-              <h2 className="font-bold text-lg text-blue-800 mb-3">
+              <h2 className="font-bold text-lg text-violet-800 mb-3">
                 Agent Details
               </h2>
               <div className="grid md:grid-cols-3 gap-4">
@@ -398,6 +389,9 @@ while (loop <= end) {
                     readOnly
                     className="border font-semibold px-3 py-2 rounded w-full"
                   />
+                  <span className={`text-sm font-mono text-green-700 pl-3`}>
+                    {numberToIndianWords(targetData.target || 0)}
+                  </span>
                 </div>
                 <div>
                   <label> Achieved</label>
@@ -406,6 +400,9 @@ while (loop <= end) {
                     readOnly
                     className="border font-semibold px-3 py-2 rounded w-full"
                   />
+                  <span className={`text-sm font-mono text-green-700 pl-3`}>
+                    {numberToIndianWords(targetData.achieved || 0)}
+                  </span>
                 </div>
                 <div>
                   <label> Remaining</label>
@@ -414,6 +411,9 @@ while (loop <= end) {
                     readOnly
                     className="border font-semibold px-3 py-2 rounded w-full"
                   />
+                  <span className={`text-sm font-mono text-green-700 pl-3`}>
+                    {numberToIndianWords(targetData.remaining || 0)}
+                  </span>
                 </div>
               </div>
             </div>
@@ -422,36 +422,45 @@ while (loop <= end) {
 
         <div className="flex flex-wrap gap-6 mb-4 items-center px-2">
           <div className="flex flex-col">
-            <label className="font-semibold text-blue-700 mb-1">
+            <label className="font-semibold text-violet-700 mb-1">
               Total Leads:
             </label>
             <input
               readOnly
               value={totalLeads.toLocaleString("en-IN")}
-              className="border rounded px-3 py-1 w-[150px] text-center text-blue-700 font-medium"
+              className="border rounded px-3 py-1 w-[150px] text-center text-violet-700 font-medium"
             />
+            <span className={`text-sm font-mono text-violet-700 pl-3`}>
+              {numberToIndianWords(totalLeads || 0)}
+            </span>
           </div>
 
           <div className="flex flex-col">
-            <label className="font-semibold text-blue-700 mb-1">
+            <label className="font-semibold text-violet-700 mb-1">
               Total Customers:
             </label>
             <input
               readOnly
               value={totalCustomers.toLocaleString("en-IN")}
-              className="border rounded px-3 py-1 w-[150px] text-center text-blue-700 font-medium"
+              className="border rounded px-3 py-1 w-[150px] text-center text-violet-700 font-medium"
             />
+            <span className={`text-sm font-mono text-violet-700 pl-3`}>
+              {numberToIndianWords(totalCustomers || 0)}
+            </span>
           </div>
 
           <div className="flex flex-col">
-            <label className="font-semibold text-blue-700 mb-1">
+            <label className="font-semibold text-violet-700 mb-1">
               Total Sales:
             </label>
             <input
               readOnly
               value={`₹${totalSales.toLocaleString("en-IN")}`}
-              className="border rounded px-3 py-1 w-[150px] text-center text-blue-700 font-medium"
+              className="border rounded px-3 py-1 w-[150px] text-center text-violet-700 font-medium"
             />
+            <span className={`text-sm font-mono text-violet-700 pl-3`}>
+              {numberToIndianWords(totalSales || 0)}
+            </span>
           </div>
         </div>
 
@@ -466,33 +475,33 @@ while (loop <= end) {
           //   exportedFileName="SalesReport.csv"
           // />
           <DataTable
-  data={tableReportData}
-  columns={columns}
-  exportedFileName="SalesReport.csv"
-  exportedPdfName="Sales Report"
-  printHeaderKeys={[
-    "Agent Name",
-    "From Date",
-    "To Date",
-    "Total Leads",
-    "Total Customers",
-    "Total Sales",
-    "Target Set",
-    "Achieved",
-    "Remaining",
-  ]}
-  printHeaderValues={[
-    selectedAgentDetails?.name || "All Agents",
-    fromDate || "-",
-    toDate || "-",
-    totalLeads.toLocaleString("en-IN"),
-    totalCustomers.toLocaleString("en-IN"),
-    `₹${totalSales.toLocaleString("en-IN")}`,
-    `₹${targetData.target.toLocaleString("en-IN")}`,
-    `₹${targetData.achieved.toLocaleString("en-IN")}`,
-    `₹${targetData.remaining.toLocaleString("en-IN")}`,
-  ]}
-/>
+            data={tableReportData}
+            columns={columns}
+            exportedFileName="SalesReport.csv"
+            exportedPdfName="Sales Report"
+            printHeaderKeys={[
+              "Agent Name",
+              "From Date",
+              "To Date",
+              "Total Leads",
+              "Total Customers",
+              "Total Sales",
+              "Target Set",
+              "Achieved",
+              "Remaining",
+            ]}
+            printHeaderValues={[
+              selectedAgentDetails?.name || "All Agents",
+              fromDate || "-",
+              toDate || "-",
+              totalLeads.toLocaleString("en-IN"),
+              totalCustomers.toLocaleString("en-IN"),
+              `₹${totalSales.toLocaleString("en-IN")}`,
+              `₹${targetData.target.toLocaleString("en-IN")}`,
+              `₹${targetData.achieved.toLocaleString("en-IN")}`,
+              `₹${targetData.remaining.toLocaleString("en-IN")}`,
+            ]}
+          />
         )}
       </div>
     </div>

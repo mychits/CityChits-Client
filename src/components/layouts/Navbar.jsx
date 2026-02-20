@@ -35,7 +35,7 @@ const Navbar = ({
     {
       title: "Unverified Customers",
       href: "/approval-menu/un-approved-customer",
-      color: "text-blue-400",
+      color: "text-violet-400",
     },
     {
       title: "Mobile Enrollments",
@@ -223,8 +223,8 @@ const Navbar = ({
                         <div className="flex items-center gap-2">
                           <span
                             className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-                              item.color === "text-blue-400"
-                                ? "bg-blue-900 text-blue-300"
+                              item.color === "text-violet-400"
+                                ? "bg-violet-900 text-violet-300"
                                 : item.color === "text-amber-400"
                                 ? "bg-amber-900 text-amber-300"
                                 : item.color === "text-green-400"

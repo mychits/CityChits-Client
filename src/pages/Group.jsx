@@ -140,7 +140,7 @@ const Group = () => {
                       key: "1",
                       label: (
                         <div
-                          className="text-blue-600"
+                          className="text-violet-600"
                           onClick={() => handleUpdateModalOpen(group._id)}
                         >
                           Edit
@@ -482,7 +482,7 @@ const Group = () => {
     const menu = (
       <Menu>
         <Menu.Item key="1" onClick={() => handleUpdateModalOpen(group._id)}>
-          <span className="text-blue-600">Edit</span>
+          <span className="text-violet-600">Edit</span>
         </Menu.Item>
         <Menu.Item key="2" onClick={() => handleDeleteModalOpen(group._id)}>
           <span className="text-red-600">Delete</span>
@@ -516,8 +516,8 @@ const Group = () => {
             <p className="text-sm font-bold text-purple-800">{group.group_members}</p>
             <p className="text-xs text-gray-600">Tickets</p>
           </div>
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-3 py-2 rounded-lg border border-blue-100">
-            <p className="text-sm font-bold text-blue-800">
+          <div className="bg-gradient-to-br from-violet-50 to-indigo-50 px-3 py-2 rounded-lg border border-violet-100">
+            <p className="text-sm font-bold text-violet-800">
               ₹{Number(group.group_install).toLocaleString()}
             </p>
             <p className="text-xs text-gray-600">Inst.</p>
@@ -544,7 +544,7 @@ const Group = () => {
     const menu = (
       <Menu>
         <Menu.Item key="1" onClick={() => handleUpdateModalOpen(group._id)}>
-          <span className="text-blue-600">Edit</span>
+          <span className="text-violet-600">Edit</span>
         </Menu.Item>
         <Menu.Item key="2" onClick={() => handleDeleteModalOpen(group._id)}>
           <span className="text-red-600">Delete</span>
@@ -574,8 +574,8 @@ const Group = () => {
               <p className="text-lg font-bold text-purple-800">{group.group_members}</p>
               <p className="text-xs text-gray-600">Tickets</p>
             </div>
-            <div className="text-center p-2 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
-              <p className="text-lg font-bold text-blue-800">
+            <div className="text-center p-2 bg-gradient-to-br from-violet-50 to-indigo-50 rounded-lg border border-violet-100">
+              <p className="text-lg font-bold text-violet-800">
                 ₹{Number(group.group_install).toLocaleString()}
               </p>
               <p className="text-xs text-gray-600">Instalment</p>
