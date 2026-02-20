@@ -19,6 +19,20 @@ import { useNavigate } from "react-router-dom";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import Navbar from "../components/layouts/Navbar";
 
+// --- Custom Hook for Debouncing ---
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+  return debouncedValue;
+}
+
 // Static configurations
 const FILTERS_CONFIG = [
   { id: "1", filterName: "ID", key: "customer_id" },
@@ -30,6 +44,7 @@ const FILTERS_CONFIG = [
 
 const QuickSearch = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("all"); // Track active tab
 
   // States
   const [tableUsers, setTableUsers] = useState([]);
@@ -38,8 +53,9 @@ const QuickSearch = () => {
   const [tableEmployees, setTableEmployees] = useState([]);
   const [selectedExactMatch, setSelectedExactMatch] = useState(null);
   const [reloadTrigger, setReloadTrigger] = useState(0);
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState(""); // Raw input
   const [activeFilters, setActiveFilters] = useState([]);
+  
   const [alertConfig, setAlertConfig] = useState({
     visibility: false,
     message: "Something went wrong!",
@@ -146,32 +162,19 @@ const QuickSearch = () => {
 
   // --- Computed Values ---
   
-  // UPDATED LOGIC: Filtering Logic for combinedData
+  // Optimized: Only runs when underlying data changes
   const combinedData = useMemo(() => {
-    // 1. Collect all Customer phone numbers for quick lookup (Condition 1)
     const customerPhoneSet = new Set(tableUsers.map(user => user.phone_number));
-
-    // 2. Filter Leads:
-    //    a. Remove leads that exist in Customers (Condition 1)
-    //    b. Remove duplicate leads within the Leads list (Condition 2)
     const uniqueLeadsMap = new Map();
 
     tableLeads.forEach(lead => {
-      // Condition 1: If phone exists in Customer, skip this Lead
-      if (customerPhoneSet.has(lead.phone_number)) {
-        return;
-      }
-
-      // Condition 2: If we haven't seen this phone number in Leads yet, add it
-      // Map.set(key, value) will only keep the first entry for a specific key
+      if (customerPhoneSet.has(lead.phone_number)) return;
       if (!uniqueLeadsMap.has(lead.phone_number)) {
         uniqueLeadsMap.set(lead.phone_number, lead);
       }
     });
 
     const finalLeads = Array.from(uniqueLeadsMap.values());
-
-    // Combine: Customers + Filtered Leads + Agents + Employees
     return [
       ...tableUsers,
       ...finalLeads,
@@ -217,18 +220,6 @@ const QuickSearch = () => {
         return <Tag color={info.color}>{info.label}</Tag>;
       },
     },
-    // {
-    //   title: "Status", key: "approval_status", width: 100,
-    //   render: (_, record) => {
-    //     const status = getApprovalStatus(record);
-    //     if (!status) return <span className="text-gray-400">—</span>;
-    //     return (
-    //       <Tag icon={status.text === "Approved" ? <CheckCircleOutlined /> : <ClockCircleOutlined />} color={status.color}>
-    //         {status.text}
-    //       </Tag>
-    //     );
-    //   },
-    // },
     { dataIndex: "customer_id", title: "ID", key: "customer_id", width: 120 },
     { dataIndex: "name", title: "Name", key: "name", width: 180 },
     { dataIndex: "phone_number", title: "Phone", key: "phone_number", width: 140 },
@@ -260,30 +251,61 @@ const QuickSearch = () => {
     },
   ], [navigate]);
 
-  // --- Search Logic ---
-  const getProcessedResults = useCallback((tabKey) => {
-    let dataSource = [];
-    if (tabKey === "customers") dataSource = tableUsers;
-    else if (tabKey === "leads") dataSource = tableLeads; // Note: Individual tabs still show raw data, or could apply filter too. Usually tabs show raw.
-    else if (tabKey === "agents") dataSource = tableAgents;
-    else if (tabKey === "employees") dataSource = tableEmployees;
-    else dataSource = combinedData; // 'All' tab uses the filtered data
+  // --- Optimized Search Logic ---
+  
+  // 1. Debounce the search text
+  const debouncedSearchText = useDebounce(searchText, 300);
 
-    if (!searchText.trim()) return { mode: 'all', dataSource };
+  // 2. Determine current data source based on active tab
+  const currentDataSource = useMemo(() => {
+    if (activeTab === "customers") return tableUsers;
+    if (activeTab === "leads") return tableLeads;
+    if (activeTab === "agents") return tableAgents;
+    if (activeTab === "employees") return tableEmployees;
+    return combinedData;
+  }, [activeTab, tableUsers, tableLeads, tableAgents, tableEmployees, combinedData]);
 
-    const fuse = new Fuse(dataSource, { includeScore: true, keys: searchableKeys, threshold: 0.3 });
-    const results = fuse.search(searchText);
-    
-    let exactMatches = results.filter(r => r.score <= 0.05).map(r => r.item);
-    let relatedMatches = results.filter(r => r.score > 0.05).map(r => r.item);
+  // 3. Create Fuse Instance ONLY when data or keys change (Expensive Operation)
+  const fuseInstance = useMemo(() => {
+    if (!currentDataSource || currentDataSource.length === 0) return null;
+    return new Fuse(currentDataSource, { 
+      includeScore: true, 
+      keys: searchableKeys, 
+      threshold: 0.3 
+    });
+  }, [currentDataSource, searchableKeys]);
+
+  // 4. Perform Search ONLY when debounced text changes (Fast Operation)
+  const rawSearchResults = useMemo(() => {
+    if (!debouncedSearchText.trim() || !fuseInstance) return [];
+    return fuseInstance.search(debouncedSearchText);
+  }, [debouncedSearchText, fuseInstance]);
+
+  // 5. Process results for UI
+  const getProcessedResults = useCallback(() => {
+    if (!debouncedSearchText.trim()) {
+      return { mode: 'all', dataSource: currentDataSource };
+    }
+
+    if (rawSearchResults.length === 0) {
+      return { mode: 'search', hasResults: false };
+    }
+
+    let exactMatches = rawSearchResults.filter(r => r.score <= 0.05).map(r => r.item);
+    let relatedMatches = rawSearchResults.filter(r => r.score > 0.05).map(r => r.item);
 
     if (selectedExactMatch) {
       if (!exactMatches.find(m => m._id === selectedExactMatch._id)) exactMatches = [selectedExactMatch];
       relatedMatches = relatedMatches.filter((item) => item._id !== selectedExactMatch._id);
     }
 
-    return { mode: 'search', exactMatches, relatedMatches, hasResults: results.length > 0 };
-  }, [searchText, searchableKeys, combinedData, tableUsers, tableLeads, tableAgents, tableEmployees, selectedExactMatch]);
+    return { 
+      mode: 'search', 
+      exactMatches, 
+      relatedMatches, 
+      hasResults: true 
+    };
+  }, [debouncedSearchText, currentDataSource, rawSearchResults, selectedExactMatch]);
 
   const handleFilterToggle = (id) => {
     setActiveFilters((prev) => prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]);
@@ -291,12 +313,12 @@ const QuickSearch = () => {
 
   // --- Render Helpers ---
 
-  const renderContent = (tabKey) => {
+  const renderContent = () => {
     if (isAnyApiLoading) {
       return <div className="flex justify-center py-12"><CircularLoader isLoading={true} failure={false} data="Records" /></div>;
     }
 
-    const searchState = getProcessedResults(tabKey);
+    const searchState = getProcessedResults();
 
     // Case 1: No Search
     if (searchState.mode === 'all') {
@@ -312,7 +334,7 @@ const QuickSearch = () => {
       return (
         <div className="text-center py-12">
           <div className="inline-block p-3 rounded-full bg-gray-100 mb-3"><SearchOutlined className="text-xl text-gray-400" /></div>
-          <p className="text-gray-500">No matches found in <span className="font-medium">{tabKey === "all" ? "all records" : tabKey}</span>.</p>
+          <p className="text-gray-500">No matches found in <span className="font-medium">{activeTab === "all" ? "all records" : activeTab}</span>.</p>
         </div>
       );
     }
@@ -460,7 +482,14 @@ const QuickSearch = () => {
           <Card className="mb-6 shadow-sm border border-gray-200 rounded-xl" bodyStyle={{ padding: "1.25rem" }}>
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
               <div className="relative w-full lg:w-1/3">
-                <input type="text" placeholder="Search by ID, Name, Phone, Aadhaar, or Pan..." value={searchText} onChange={(e) => setSearchText(e.target.value)} className="w-full rounded-lg border border-gray-300 pl-12 pr-5 py-2.5 text-sm shadow-sm focus:border-violet-600 focus:ring-2 focus:ring-violet-200 outline-none transition" autoFocus />
+                <input 
+                  type="text" 
+                  placeholder="Search by ID, Name, Phone, Aadhaar, or Pan..." 
+                  value={searchText} 
+                  onChange={(e) => setSearchText(e.target.value)} 
+                  className="w-full rounded-lg border border-gray-300 pl-12 pr-5 py-2.5 text-sm shadow-sm focus:border-violet-600 focus:ring-2 focus:ring-violet-200 outline-none transition" 
+                  autoFocus 
+                />
                 <SearchOutlined className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
               </div>
               <div className="flex flex-wrap gap-2.5 justify-center lg:justify-start">
@@ -479,13 +508,20 @@ const QuickSearch = () => {
           </Card>
 
           <Card className="shadow-md border border-gray-200 rounded-xl overflow-hidden">
-            <Tabs defaultActiveKey="all" animated={false} size="large" items={[
-              { key: "all", label: "All", children: renderContent("all") },
-              { key: "customers", label: "Customers", children: renderContent("customers") },
-              { key: "leads", label: "Leads", children: renderContent("leads") },
-              { key: "agents", label: "Agents", children: renderContent("agents") },
-              { key: "employees", label: "Employees", children: renderContent("employees") },
-            ]} />
+            <Tabs 
+              defaultActiveKey="all" 
+              animated={false} 
+              size="large" 
+              activeKey={activeTab}
+              onChange={(key) => setActiveTab(key)}
+              items={[
+                { key: "all", label: "All", children: renderContent() },
+                { key: "customers", label: "Customers", children: renderContent() },
+                { key: "leads", label: "Leads", children: renderContent() },
+                { key: "agents", label: "Agents", children: renderContent() },
+                { key: "employees", label: "Employees", children: renderContent() },
+              ]} 
+            />
           </Card>
         </div>
       </div>

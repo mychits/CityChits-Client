@@ -2578,7 +2578,7 @@ dayjs.extend(duration);
 //                   : item.Status === "Present"
 //                     ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
 //                     : item.Status === "Half Day"
-//                       ? "bg-blue-500 text-white hover:brightness-95"
+//                       ? "bg-violet-500 text-white hover:brightness-95"
 //                       : "bg-red-100 text-red-700 hover:bg-red-200"
 //                 }`}
 //             >
@@ -2826,9 +2826,9 @@ dayjs.extend(duration);
 //               </span>
 //             </div>
 
-//             <div className="p-4 bg-blue-50 rounded-lg shadow-md border border-slate-200 text-center">
+//             <div className="p-4 bg-violet-50 rounded-lg shadow-md border border-slate-200 text-center">
 //               <span className="text-sm font-semibold block">Half Day</span>
-//               <span className="text-xl font-bold text-blue-700">
+//               <span className="text-xl font-bold text-violet-700">
 //                 {summaryStats.halfday}
 //               </span>
 //             </div>
@@ -2903,10 +2903,6 @@ const EmployeeAttendanceReport = () => {
     const month = String(d.getMonth() + 1).padStart(2, "0");
     const year = d.getFullYear();
     return `${day}-${month}-${year}`;
-  };
-  const GlobalSearchChangeHandler = (e) => {
-    const { value } = e.target;
-    setSearchText(value);
   };
 
   // Format date for backend (yyyy-mm-dd)
@@ -3333,21 +3329,21 @@ if (loginTime && logoutTime) {
   ];
 
   return (
-    <div className="w-screen bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
-      <div className="flex">
-           <Sidebar />
-          <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-            visibility={true}
-          />
-          <CustomAlertDialog
-            type={alertConfig.type}
-            isVisible={alertConfig.visibility}
-            message={alertConfig.message}
-            onClose={() =>
-              setAlertConfig((prev) => ({ ...prev, visibility: false }))
-            }
-          />
+     <div className="w-screen h-screen bg-gradient-to-br from-slate-50 to-slate-100 overflow-x-hidden overflow-y-auto">
+     <div className="flex ">
+        <Navbar
+          onGlobalSearchChangeHandler={(e) => setSearchText(e.target.value)}
+          visibility={true}
+        />
+        <Sidebar />
+        <CustomAlertDialog
+          type={alertConfig.type}
+          isVisible={alertConfig.visibility}
+          message={alertConfig.message}
+          onClose={() =>
+            setAlertConfig((prev) => ({ ...prev, visibility: false }))
+          }
+        />
         <div className="flex-grow p-8 mt-20">
           {/* Header Section */}
           <div className="mb-8">
@@ -3440,9 +3436,9 @@ if (loginTime && logoutTime) {
               </span>
             </div>
 
-            <div className="p-4 bg-blue-50 rounded-lg shadow-md border border-slate-200 text-center">
+            <div className="p-4 bg-violet-50 rounded-lg shadow-md border border-slate-200 text-center">
               <span className="text-sm font-semibold block">Half Day</span>
-              <span className="text-xl font-bold text-blue-700">
+              <span className="text-xl font-bold text-violet-700">
                 {summaryStats.halfday}
               </span>
             </div>

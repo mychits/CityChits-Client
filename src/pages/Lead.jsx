@@ -155,7 +155,7 @@ const Lead = () => {
                       key: "3",
                       label: (
                         <div
-                          className="text-blue-600"
+                          className="text-violet-600"
                           onClick={() => handleAssignTask(group._id, group.lead_type_name)}
                         >
                           Assign Task
@@ -633,7 +633,7 @@ const Lead = () => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                  className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
                 >
                   + Add Lead
                 </button>
@@ -736,7 +736,7 @@ const Lead = () => {
                   id="name"
                   placeholder="Enter the Lead Name"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
                 {errors.lead_name && (
                   <p className="mt-1 text-sm text-red-500">
@@ -760,7 +760,7 @@ const Lead = () => {
                     id="text"
                     placeholder="Enter Phone Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.lead_phone && (
                     <p className="mt-1 text-sm text-red-500">
@@ -819,7 +819,7 @@ const Lead = () => {
                   value={formData.group_id}
                   onChange={handleChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="">Select Group</option>
                   {groups.map((group) => (
@@ -896,7 +896,7 @@ const Lead = () => {
                     </label>
                   
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       placeholder="Select Or Search Customer"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -938,7 +938,7 @@ const Lead = () => {
                     </label>
                   
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       placeholder="Select Or Search Agent"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -979,7 +979,7 @@ const Lead = () => {
                     </label>
                    
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       placeholder="Select Or Search Employee"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1024,7 +1024,7 @@ const Lead = () => {
                   id="text"
                   placeholder="Specify note if any!"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
               </div>
 
@@ -1041,7 +1041,7 @@ const Lead = () => {
                   value={formData.lead_needs}
                   onChange={handleChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="">Select Lead Needs and Goals</option>
                   <option value="savings">Savings</option>
@@ -1092,8 +1092,8 @@ const Lead = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-                                focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
+                                focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Save Lead
                 </button>
@@ -1129,7 +1129,7 @@ const Lead = () => {
                   id="name"
                   placeholder="Enter the Group Name"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
                 {errors.lead_name && (
                   <p className="mt-1 text-sm text-red-500">
@@ -1153,7 +1153,7 @@ const Lead = () => {
                     id="text"
                     placeholder="Enter Lead Phone Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.lead_phone && (
                     <p className="mt-1 text-sm text-red-500">
@@ -1212,7 +1212,7 @@ const Lead = () => {
                   value={updateFormData.group_id}
                   onChange={handleInputChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="">Select Group</option>
                   {groups.map((group) => (
@@ -1253,7 +1253,7 @@ const Lead = () => {
                   value={updateFormData.lead_type}
                   onChange={handleInputChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="">Select Lead Source Type</option>
                   <option value="social">Social Media</option>
@@ -1308,7 +1308,7 @@ const Lead = () => {
                       value={updateFormData.lead_customer}
                       onChange={handleInputChange}
                       required
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     >
                       <option value="">Select Customer</option>
                       {users.map((user) => (
@@ -1318,7 +1318,7 @@ const Lead = () => {
                       ))}
                     </select> */}
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       placeholder="Select Or Search Customers"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1363,7 +1363,7 @@ const Lead = () => {
                       value={updateFormData.lead_agent}
                       onChange={handleInputChange}
                       required
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     >
                       <option value="">Select Agent</option>
                       {agents.map((agent) => (
@@ -1413,7 +1413,7 @@ const Lead = () => {
                     </label>
                   
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       placeholder="Select Or Search Employee"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1457,7 +1457,7 @@ const Lead = () => {
                 id="text"
                 placeholder="Specify note if any!"
                 required
-                className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
               />
               <div className="w-full">
                 <label
@@ -1472,7 +1472,7 @@ const Lead = () => {
                   value={updateFormData.lead_needs}
                   onChange={handleInputChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="">Select Lead Needs and Goals</option>
                   <option value="savings">Savings</option>
@@ -1510,8 +1510,8 @@ const Lead = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Update
                 </button>
@@ -1551,7 +1551,7 @@ const Lead = () => {
                     placeholder="Enter the Group Name"
                     readOnly
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.full_name && (
                     <p className="mt-1 text-sm text-red-500">
@@ -1574,7 +1574,7 @@ const Lead = () => {
                     id="text"
                     placeholder="Enter Email"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                
                 </div>
@@ -1596,7 +1596,7 @@ const Lead = () => {
                     placeholder="Enter Lead Phone Number"
                     readOnly
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.phone_number && (
                     <p className="mt-1 text-sm text-red-500">
@@ -1721,7 +1721,7 @@ const Lead = () => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                       placeholder="Select Or Search Customers"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1807,7 +1807,7 @@ const Lead = () => {
                     id="text"
                     placeholder="Enter Password"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.password && (
                     <p className="mt-2 text-sm text-red-600">
@@ -1830,7 +1830,7 @@ const Lead = () => {
                     id="text"
                     placeholder="Enter Pincode"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.pincode && (
                     <p className="mt-2 text-sm text-red-600">
@@ -1868,7 +1868,7 @@ const Lead = () => {
                   Select Payment Type <span className="text-red-500 ">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   placeholder="Select Payment Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1907,7 +1907,7 @@ const Lead = () => {
                     id="text"
                     placeholder="Enter Adhaar Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.adhaar_no && (
                     <p className="mt-2 text-sm text-red-600">
@@ -1931,7 +1931,7 @@ const Lead = () => {
                     id="text"
                     placeholder="Enter Pan Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.pan_no && (
                     <p className="mt-2 text-sm text-red-600">{errors.pan_no}</p>
@@ -1953,7 +1953,7 @@ const Lead = () => {
                   id="text"
                   placeholder="Specify note if any!"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                 />
               </div>
               <div className="flex flex-row justify-between space-x-4">
@@ -1972,7 +1972,7 @@ const Lead = () => {
                     id="text"
                     placeholder="Enter Number of Tickets"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                   {errors.no_of_tickets && (
                     <p className="mt-1 text-sm text-red-500">
@@ -2019,8 +2019,8 @@ const Lead = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Convert To Customer
                 </button>
@@ -2064,13 +2064,13 @@ const Lead = () => {
                     id="groupName"
                     placeholder="Enter the Lead Name"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   />
                 </div>
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Delete
                 </button>

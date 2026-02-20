@@ -789,7 +789,7 @@ const Staff = () => {
                 {/* <select
                   value={selectedManagerId}
                   onChange={handleManager}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="" hidden>
                     Select Designation
@@ -856,7 +856,7 @@ const Staff = () => {
                 <button
                   type="submit"
                   className="w-1/4 text-white bg-violet-700 hover:bg-violet-800
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
                 >
                   Save Staff
                 </button>
@@ -1066,7 +1066,7 @@ const Staff = () => {
                 {/* <select
                   value={selectedManagerId}
                   onChange={handleManager}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="" hidden>
                     Select Designation
@@ -1228,7 +1228,7 @@ const Staff = () => {
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Delete
                 </button>

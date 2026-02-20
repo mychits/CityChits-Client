@@ -1266,9 +1266,9 @@ const { RangePicker } = DatePicker;
 //               ₹{totals.totalExpected?.toLocaleString() || 0}
 //             </p>
 //           </div>
-//           <div className="bg-blue-100 border border-blue-400 rounded-lg p-4 w-60 text-center">
+//           <div className="bg-violet-100 border border-violet-400 rounded-lg p-4 w-60 text-center">
 //             <h3 className="text-sm font-medium text-gray-600">Paid Salary</h3>
-//             <p className="text-xl font-semibold text-blue-800">
+//             <p className="text-xl font-semibold text-violet-800">
 //               ₹{totals.totalPaid?.toLocaleString() || 0}
 //             </p>
 //           </div>
@@ -1441,9 +1441,9 @@ const { RangePicker } = DatePicker;
 //             <p className="text-sm text-gray-600">Expected Salary</p>
 //             <p className="text-lg font-semibold text-green-700">{summary.totalExpectedSalary}</p>
 //           </div>
-//           <div className="bg-blue-100 p-4 rounded-lg text-center w-60 border border-blue-400">
+//           <div className="bg-violet-100 p-4 rounded-lg text-center w-60 border border-violet-400">
 //             <p className="text-sm text-gray-600">Paid Salary</p>
-//             <p className="text-lg font-semibold text-blue-700">{summary.totalPaidSalary}</p>
+//             <p className="text-lg font-semibold text-violet-700">{summary.totalPaidSalary}</p>
 //           </div>
 //           <div className="bg-red-100 p-4 rounded-lg text-center w-60 border border-red-400">
 //             <p className="text-sm text-gray-600">Remaining Salary</p>
@@ -1634,9 +1634,9 @@ const { RangePicker } = DatePicker;
 //             <p className="text-sm text-gray-600">Expected Salary</p>
 //             <p className="text-lg font-semibold text-green-700">{summary.totalExpectedSalary}</p>
 //           </div>
-//           <div className="bg-blue-100 p-4 rounded-lg text-center w-60 border border-blue-400">
+//           <div className="bg-violet-100 p-4 rounded-lg text-center w-60 border border-violet-400">
 //             <p className="text-sm text-gray-600">Paid Salary</p>
-//             <p className="text-lg font-semibold text-blue-700">{summary.totalPaidSalary}</p>
+//             <p className="text-lg font-semibold text-violet-700">{summary.totalPaidSalary}</p>
 //           </div>
 //           {/* <div className="bg-red-100 p-4 rounded-lg text-center w-60 border border-red-400">
 //             <p className="text-sm text-gray-600">Remaining Salary</p>
@@ -1851,9 +1851,9 @@ const SalaryRemainingReport = () => {
           {summary.totalExpectedSalary || "₹0"}
         </p>
       </div>
-      <div className="bg-blue-100 p-4 rounded-lg text-center w-60 border border-blue-400 shadow-sm">
+      <div className="bg-violet-100 p-4 rounded-lg text-center w-60 border border-violet-400 shadow-sm">
         <p className="text-sm text-gray-600">Paid Salary</p>
-        <p className="text-lg font-semibold text-blue-700">
+        <p className="text-lg font-semibold text-violet-700">
           {summary.totalPaidSalary || "₹0"}
         </p>
       </div>
@@ -2124,9 +2124,9 @@ const SalaryRemainingReport = () => {
 //                 {summary.totalExpectedSalary || "₹0"}
 //               </p>
 //             </div>
-//             <div className="bg-blue-100 p-4 rounded-lg text-center w-60 border border-blue-400 shadow-sm">
+//             <div className="bg-violet-100 p-4 rounded-lg text-center w-60 border border-violet-400 shadow-sm">
 //               <p className="text-sm text-gray-600">Paid Salary</p>
-//               <p className="text-lg font-semibold text-blue-700">
+//               <p className="text-lg font-semibold text-violet-700">
 //                 {summary.totalPaidSalary || "₹0"}
 //               </p>
 //             </div>

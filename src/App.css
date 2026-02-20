@@ -88,7 +88,7 @@ html, body {
 }
 
 /* Ensure Ant Design tags respect your color scheme */
-.ant-tag-geekblue {
+.ant-tag-geekviolet {
   background: #e6f7ff !important;
   border-color: #91d5ff !important;
   color: #1890ff !important;

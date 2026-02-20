@@ -14,7 +14,6 @@ import { IoMdMore } from "react-icons/io";
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
-import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import { FiMail } from "react-icons/fi";
 const Enroll = () => {
   const [groups, setGroups] = useState([]);
@@ -130,19 +129,30 @@ const Enroll = () => {
   });
 
 
-  const GlobalSearchChangeHandler = (e) => {
+  const onGlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
     setSearchText(value);
   };
-  useEffect(() => {
-    const user = localStorage.getItem("user");
-    const userObj = JSON.parse(user);
-    const adminId = userObj?._id;
-    if (adminId) {
-      setAdmin(userObj?._id);
+   useEffect(() => {
+    try {
 
-      setFormData((prev) => ({ ...prev, created_by: adminId }));
-    } else {
+      const adminStr = localStorage.getItem("admin");
+      if (adminStr) {
+        const adminObj = JSON.parse(adminStr);
+        const adminId = adminObj?._id;
+
+        if (adminId) {
+          setAdmin(adminObj?._id);
+          setFormData((prev) => ({ ...prev, created_by: adminId }));
+        } else {
+          setAdmin("");
+        }
+      } else {
+        // Handle case where user is not logged in
+        setAdmin("");
+      }
+    } catch (error) {
+      console.error("Error parsing admin from localStorage:", error);
       setAdmin("");
     }
   }, []);
@@ -925,18 +935,15 @@ const Enroll = () => {
     <>
       <div>
         <div className="flex mt-20">
-              <Sidebar />
           <Navbar
-            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
             visibility={true}
           />
-          <CustomAlertDialog
+          <Sidebar />
+          <CustomAlert
             type={alertConfig.type}
             isVisible={alertConfig.visibility}
             message={alertConfig.message}
-            onClose={() =>
-              setAlertConfig((prev) => ({ ...prev, visibility: false }))
-            }
           />
           <div className="flex-grow p-7">
             <h1 className="text-2xl font-semibold">Enrollments</h1>
@@ -970,7 +977,7 @@ const Enroll = () => {
                 </Select>
                 <button
                   onClick={() => setShowModal(true)}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                  className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
                 >
                   + Add Enrollment
                 </button>
@@ -1016,7 +1023,7 @@ const Enroll = () => {
                   Group <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
                   placeholder="Select or Search Group"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1046,7 +1053,7 @@ const Enroll = () => {
                   Customer <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
                   placeholder="Select or Search Customer"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1112,7 +1119,7 @@ const Enroll = () => {
                   Payment Type <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
                   placeholder="Select Payment Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1155,7 +1162,7 @@ const Enroll = () => {
                   Referred Type <span className="text-red-500">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
                   placeholder="Select Referred Type"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1192,7 +1199,7 @@ const Enroll = () => {
                   </label>
 
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                     placeholder="Select Or Search Referred Customer"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1228,7 +1235,7 @@ const Enroll = () => {
                   </label>
 
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                     placeholder="Select Or Search Referred Leads"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1256,7 +1263,7 @@ const Enroll = () => {
                 <div className="w-full">
                   <label className="block mb-2 text-sm font-medium text-gray-900">Select Referred Agent{" "} <span className="text-red-500">*</span></label>
                   <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                   placeholder="Select or Search Referred Agent"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1289,7 +1296,7 @@ const Enroll = () => {
                   </label>
 
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                     placeholder="Select Or Search Referred Employee"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -1332,14 +1339,14 @@ const Enroll = () => {
                     placeholder="Enter the Number of Tickets"
                     required
                     max={availableTicketsAdd.length}
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
                   />
                   {errors.no_of_tickets && (
                     <p className="mt-1 text-xs text-red-600">
                       {errors.no_of_tickets}
                     </p>
                   )}
-                  <p className="mt-1 text-xs text-blue-800 text-center">
+                  <p className="mt-1 text-xs text-violet-800 text-center">
                     Only {availableTicketsAdd.length} tickets left
                   </p>
                 </div>
@@ -1422,7 +1429,7 @@ const Enroll = () => {
                       ? "bg-gray-600 hover:bg-gray-700"
                       : enrollmentStep === "continue"
                       ? "bg-green-600 hover:bg-green-700"
-                      : "bg-blue-700 hover:bg-blue-800"
+                      : "bg-violet-700 hover:bg-violet-800"
                   }`}
                 >
                   {loading
@@ -1623,7 +1630,7 @@ const Enroll = () => {
                 <div className="w-full">
                   <label className="block mb-2 text-sm font-medium text-gray-900">Select Referred Agent{" "} <span className="text-red-500">*</span></label>
                   <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                   placeholder="Select or Search Referred Agent"
                   popupMatchSelectWidth={false}
                   showSearch
@@ -1742,7 +1749,7 @@ const Enroll = () => {
 
               <button
                 type="submit"
-                className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                className="w-full text-white bg-violet-700 hover:bg-violet-800 focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
               >
                 Update
               </button>

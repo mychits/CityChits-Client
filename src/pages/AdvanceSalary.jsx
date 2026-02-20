@@ -235,7 +235,7 @@ useEffect(() => {
                 setFormData(initialForm);
                 setShowModal(true);
               }}
-              className="bg-blue-950 text-white px-4 py-2 rounded">
+              className="bg-violet-950 text-white px-4 py-2 rounded">
               + Add Advance
             </button>
           </div>
@@ -257,8 +257,8 @@ useEffect(() => {
         <Drawer
           title={
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                <FaRupeeSign className="text-blue-600" />
+              <div className="w-8 h-8 bg-violet-100 rounded-lg flex items-center justify-center">
+                <FaRupeeSign className="text-violet-600" />
               </div>
               <span className="text-lg font-semibold">
                 {editId ? "Edit Advance Payment" : "New Advance Payment"}
@@ -294,7 +294,7 @@ useEffect(() => {
                     label={`${emp.name} ${emp.employeeCode}`} // 🔑 searchable text
                   >
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-xs font-medium text-blue-700">
+                      <div className="w-6 h-6 bg-violet-100 rounded-full flex items-center justify-center text-xs font-medium text-violet-700">
                         {emp.name.charAt(0).toUpperCase()}
                       </div>
                       {emp.name} | {emp.employeeCode}
@@ -320,7 +320,7 @@ useEffect(() => {
               <div className="relative">
                 <input
                   type="date"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition"
                   value={formData.pay_date}
                   onChange={(e) =>
                     setFormData({ ...formData, pay_date: e.target.value })
@@ -341,7 +341,7 @@ useEffect(() => {
                 <input
                   type="number"
                   step="0.01"
-                  className="w-full border border-gray-300 rounded-lg pl-8 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  className="w-full border border-gray-300 rounded-lg pl-8 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition"
                   placeholder="0.00"
                   value={formData.amount}
                   onChange={(e) =>
@@ -350,8 +350,8 @@ useEffect(() => {
                 />
               </div>
               {formData.amount && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
-                  <p className="text-blue-700 text-xs font-medium uppercase tracking-wide">
+                <div className="bg-violet-50 border border-violet-200 rounded-lg px-3 py-2">
+                  <p className="text-violet-700 text-xs font-medium uppercase tracking-wide">
                     {numberToIndianWords(formData.amount)}
                   </p>
                 </div>
@@ -398,7 +398,7 @@ useEffect(() => {
                 </label>
                 <input
                   type="text"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition"
                   placeholder={
                     formData.pay_type === "cheque"
                       ? "Enter cheque number"
@@ -416,7 +416,7 @@ useEffect(() => {
             <div className="pt-4 border-t border-gray-200">
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                className="w-full bg-gradient-to-r from-violet-600 to-violet-700 text-white py-3 rounded-lg hover:from-violet-700 hover:to-violet-800 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
                 {editId ? "Update Advance Payment" : "Save Advance Payment"}
               </button>
             </div>

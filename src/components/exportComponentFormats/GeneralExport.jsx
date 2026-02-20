@@ -28,15 +28,15 @@ const GeneralExport = ({onDownloadPdf,onPrintReceipt,onSendGmail}) => {
       <div className="flex justify-around items-center space-x-8 py-6">
 
   <div className="flex flex-col items-center text-center" onClick={onDownloadPdf}>
-    <div className="p-3 bg-blue-50 rounded-full shadow-lg hover:bg-blue-100 transition duration-300">
-      <FaDownload className="text-blue-800 text-2xl" />
+    <div className="p-3 bg-violet-50 rounded-full shadow-lg hover:bg-violet-100 transition duration-300">
+      <FaDownload className="text-violet-800 text-2xl" />
     </div>
-    <span className="mt-2 text-lg font-semibold text-blue-800 select-none">Download PDF</span>
+    <span className="mt-2 text-lg font-semibold text-violet-800 select-none">Download PDF</span>
   </div>
 
 
   <div className="flex flex-col items-center text-center" onClick={onPrintReceipt}>
-    <div className="p-3 bg-blue-50 rounded-full shadow-lg hover:bg-blue-100 transition duration-300">
+    <div className="p-3 bg-violet-50 rounded-full shadow-lg hover:bg-violet-100 transition duration-300">
       <IoMdPrint className="text-gray-800 text-2xl" />
     </div>
     <span className="mt-2 text-lg font-semibold text-gray-800 select-none">
@@ -46,7 +46,7 @@ const GeneralExport = ({onDownloadPdf,onPrintReceipt,onSendGmail}) => {
 
 
   <div className="flex flex-col items-center text-center" onClick={onSendGmail}>
-    <div className="p-3 bg-blue-50 rounded-full shadow-lg hover:bg-blue-100 transition duration-300">
+    <div className="p-3 bg-violet-50 rounded-full shadow-lg hover:bg-violet-100 transition duration-300">
       <BiLogoGmail className="text-gray-800 text-2xl" />
     </div>
     <span className="mt-2 text-lg font-semibold text-gray-800 select-none">Resolving soon...</span> 

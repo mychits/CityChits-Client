@@ -14,7 +14,7 @@ const data = [
     description: "Manage employee designations and roles",
     path: "/designation",
     icon: <IoPeopleOutline size={28} />,
-    gradient: "from-blue-500 to-blue-600",
+    gradient: "from-violet-500 to-violet-600",
   },
   {
     title: "Administrative Privileges",

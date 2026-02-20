@@ -121,7 +121,7 @@ import imageInput from "../../assets/images/Agent.png";
 
 //             // Main box
 //             doc.setDrawColor(0);
-//             doc.setFillColor(0, 38, 124); // blue background
+//             doc.setFillColor(0, 38, 124); // violet background
 //             doc.roundedRect(x, y, boxWidth, boxHeight, radius, radius, "FD");
 
 //             // Center-aligned text inside the box
@@ -213,7 +213,7 @@ import imageInput from "../../assets/images/Agent.png";
 
 //             // Main background box
 //             doc.setDrawColor(0);
-//             doc.setFillColor(0, 38, 124); // Blue
+//             doc.setFillColor(0, 38, 124); // violet
 //             doc.rect(x, y, boxWidth, boxHeight, "FD");
 
 //             // Render each line, centered
@@ -302,11 +302,11 @@ const handleGuarantorPrint = async (id) => {
     const doc = new jsPDF("p", "mm", "a4");
     //doc.setFillColor(201, 216, 250);
 
-    // doc.setFillColor(201, 216, 250); // Light blue
+    // doc.setFillColor(201, 216, 250); // Light violet
     // doc.rect(0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height, 'F');
 
      const setBackground = () => {
-      doc.setFillColor(201, 216, 250); // Light Blue color
+      doc.setFillColor(201, 216, 250); // Light violet color
       doc.rect(0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height, 'F'); // Fill the whole page with color
     };
      

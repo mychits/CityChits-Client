@@ -3,7 +3,7 @@ const Receipt = ({ id, orderType, user_name, others, status, collectedBy, create
   const getStatusStyles = (stat) => {
     switch (stat?.toUpperCase()) {
       case 'PAID': return 'bg-green-100 text-green-700 border-green-200';
-      case 'ACTIVE': return 'bg-blue-100 text-blue-700 border-blue-200';
+      case 'ACTIVE': return 'bg-violet-100 text-violet-700 border-violet-200';
       default: return 'bg-red-100 text-red-700 border-red-200';
     }
   };

@@ -797,7 +797,7 @@ const CustomerRewards = () => {
               className={`px-6 py-2 rounded ${
                 isLoading
                   ? "bg-gray-400"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
+                  : "bg-violet-600 text-white hover:bg-violet-700"
               }`}
             >
               {isLoading ? "Processing..." : "Create Reward"}

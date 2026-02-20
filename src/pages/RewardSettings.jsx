@@ -102,7 +102,7 @@ import SettingSidebar from '../components/layouts/SettingSidebar';
 //             <button
 //               onClick={updateSettings}
 //               disabled={loading}
-//               className="bg-blue-600 text-white px-6 py-2 rounded w-full"
+//               className="bg-violet-600 text-white px-6 py-2 rounded w-full"
 //             >
 //               {loading ? "Updating..." : "Update Settings"}
 //             </button>
@@ -225,7 +225,7 @@ import { FiEdit2, FiSave, FiX, FiCheckCircle } from 'react-icons/fi';
 //               {!isEditing && (
 //                 <button
 //                   onClick={handleEdit}
-//                   className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+//                   className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded-lg hover:bg-violet-700 transition-colors"
 //                 >
 //                   <FiEdit2 />
 //                   Edit Settings
@@ -247,9 +247,9 @@ import { FiEdit2, FiSave, FiX, FiCheckCircle } from 'react-icons/fi';
 
 //             {/* Reward Points Table */}
 //             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-//               <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-5">
+//               <div className="bg-gradient-to-r from-violet-600 to-violet-700 text-white p-5">
 //                 <h2 className="text-xl font-semibold">Current Reward Points Settings</h2>
-//                 <p className="text-blue-100 mt-1">Manage your reward points configuration</p>
+//                 <p className="text-violet-100 mt-1">Manage your reward points configuration</p>
 //               </div>
               
 //               <div className="p-6">
@@ -268,12 +268,12 @@ import { FiEdit2, FiSave, FiX, FiCheckCircle } from 'react-icons/fi';
 //                         {isEditing ? (
 //                           <input
 //                             type="number"
-//                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
 //                             value={tempSettings.pigmy_reward_points ?? ""}
 //                             onChange={(e) => handleInputChange("pigmy_reward_points", e.target.value)}
 //                           />
 //                         ) : (
-//                           <span className="text-xl font-bold text-blue-600">{settings.pigmy_reward_points}</span>
+//                           <span className="text-xl font-bold text-violet-600">{settings.pigmy_reward_points}</span>
 //                         )}
 //                       </td>
 //                       <td className="py-4 px-4 text-gray-600">Points awarded for pigmy enrollments</td>
@@ -285,12 +285,12 @@ import { FiEdit2, FiSave, FiX, FiCheckCircle } from 'react-icons/fi';
 //                         {isEditing ? (
 //                           <input
 //                             type="number"
-//                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
 //                             value={tempSettings.loan_reward_points ?? ""}
 //                             onChange={(e) => handleInputChange("loan_reward_points", e.target.value)}
 //                           />
 //                         ) : (
-//                           <span className="text-xl font-bold text-blue-600">{settings.loan_reward_points}</span>
+//                           <span className="text-xl font-bold text-violet-600">{settings.loan_reward_points}</span>
 //                         )}
 //                       </td>
 //                       <td className="py-4 px-4 text-gray-600">Points awarded for each loan join</td>
@@ -304,7 +304,7 @@ import { FiEdit2, FiSave, FiX, FiCheckCircle } from 'react-icons/fi';
 //                             <span className="mr-2 text-gray-600">₹</span>
 //                             <input
 //                               type="number"
-//                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
 //                               value={tempSettings.reward_point_value ?? ""}
 //                               onChange={(e) => handleInputChange("reward_point_value", e.target.value)}
 //                             />
@@ -325,12 +325,12 @@ import { FiEdit2, FiSave, FiX, FiCheckCircle } from 'react-icons/fi';
 //                         {isEditing ? (
 //                           <input
 //                             type="number"
-//                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
 //                             value={tempSettings.enrollment_divisor ?? ""}
 //                             onChange={(e) => handleInputChange("enrollment_divisor", e.target.value)}
 //                           />
 //                         ) : (
-//                           <span className="text-xl font-bold text-blue-600">{settings.enrollment_divisor}</span>
+//                           <span className="text-xl font-bold text-violet-600">{settings.enrollment_divisor}</span>
 //                         )}
 //                       </td>
 //                       <td className="py-4 px-4 text-gray-600">Reward Points are awarded at the rate of one point for every ₹1 lakh of chit enrollment value, calculated as: (Chit Enrollment Group Value ÷ Enrollment Divisor).</td>
@@ -372,14 +372,14 @@ import { FiEdit2, FiSave, FiX, FiCheckCircle } from 'react-icons/fi';
 //                 </div>
 //                 <div>
 //                   <h4 className="font-medium text-gray-700 mb-2">Current Configuration Summary</h4>
-//                   <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+//                   <div className="bg-violet-50 rounded-lg p-4 border border-violet-100">
 //                     <div className="flex justify-between items-center mb-2">
 //                       <span className="text-gray-600">Pigmy Points:</span>
-//                       <span className="font-bold text-blue-600">{settings.pigmy_reward_points} pts</span>
+//                       <span className="font-bold text-violet-600">{settings.pigmy_reward_points} pts</span>
 //                     </div>
 //                     <div className="flex justify-between items-center mb-2">
 //                       <span className="text-gray-600">Loan Points:</span>
-//                       <span className="font-bold text-blue-600">{settings.loan_reward_points} pts</span>
+//                       <span className="font-bold text-violet-600">{settings.loan_reward_points} pts</span>
 //                     </div>
 //                     <div className="flex justify-between items-center">
 //                       <span className="text-gray-600">Point Value:</span>
@@ -494,7 +494,7 @@ const RewardSettings = () => {
               {!isEditing && (
                 <button
                   onClick={handleEdit}
-                  className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded-lg hover:bg-violet-700 transition-colors"
                 >
                   <FiEdit2 />
                   Edit Settings
@@ -516,9 +516,9 @@ const RewardSettings = () => {
 
             {/* Reward Points Table */}
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-5">
+              <div className="bg-gradient-to-r from-violet-600 to-violet-700 text-white p-5">
                 <h2 className="text-xl font-semibold">Current Reward Points Settings</h2>
-                <p className="text-blue-100 mt-1">Manage your reward points configuration</p>
+                <p className="text-violet-100 mt-1">Manage your reward points configuration</p>
               </div>
               
               <div className="p-6">
@@ -539,7 +539,7 @@ const RewardSettings = () => {
                             <span className="mr-2 text-gray-600">₹</span>
                             <input
                               type="number"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
                               value={tempSettings.reward_point_value ?? ""}
                               onChange={(e) => handleInputChange("reward_point_value", e.target.value)}
                             />
@@ -559,12 +559,12 @@ const RewardSettings = () => {
                         {isEditing ? (
                           <input
                             type="number"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
                             value={tempSettings.pigmy_reward_points ?? ""}
                             onChange={(e) => handleInputChange("pigmy_reward_points", e.target.value)}
                           />
                         ) : (
-                          <span className="text-xl font-bold text-blue-600">{settings.pigmy_reward_points}</span>
+                          <span className="text-xl font-bold text-violet-600">{settings.pigmy_reward_points}</span>
                         )}
                       </td>
                       <td className="py-4 px-4 text-gray-600">Points awarded for pigmy enrollments</td>
@@ -576,12 +576,12 @@ const RewardSettings = () => {
                         {isEditing ? (
                           <input
                             type="number"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
                             value={tempSettings.loan_reward_points ?? ""}
                             onChange={(e) => handleInputChange("loan_reward_points", e.target.value)}
                           />
                         ) : (
-                          <span className="text-xl font-bold text-blue-600">{settings.loan_reward_points}</span>
+                          <span className="text-xl font-bold text-violet-600">{settings.loan_reward_points}</span>
                         )}
                       </td>
                       <td className="py-4 px-4 text-gray-600">Points awarded for each loan join</td>
@@ -595,12 +595,12 @@ const RewardSettings = () => {
                         {isEditing ? (
                           <input
                             type="number"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
                             value={tempSettings.enrollment_divisor ?? ""}
                             onChange={(e) => handleInputChange("enrollment_divisor", e.target.value)}
                           />
                         ) : (
-                          <span className="text-xl font-bold text-blue-600">{settings.enrollment_divisor}</span>
+                          <span className="text-xl font-bold text-violet-600">{settings.enrollment_divisor}</span>
                         )}
                       </td>
                       <td className="py-4 px-4 text-gray-600">Reward Points are awarded at the rate of one point for every ₹1 lakh of chit enrollment value</td>
@@ -612,12 +612,12 @@ const RewardSettings = () => {
                         {isEditing ? (
                           <input
                             type="number"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
                             value={tempSettings.auction_pay_reward_value ?? ""}
                             onChange={(e) => handleInputChange("auction_pay_reward_value", e.target.value)}
                           />
                         ) : (
-                          <span className="text-xl font-bold text-blue-600">{settings.auction_pay_reward_value}</span>
+                          <span className="text-xl font-bold text-violet-600">{settings.auction_pay_reward_value}</span>
                         )}
                       </td>
                       <td className="py-4 px-4 text-gray-600">Points awarded for successful auction payments</td>
@@ -629,12 +629,12 @@ const RewardSettings = () => {
                         {isEditing ? (
                           <input
                             type="number"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
                             value={tempSettings.payment_link_reward_value ?? ""}
                             onChange={(e) => handleInputChange("payment_link_reward_value", e.target.value)}
                           />
                         ) : (
-                          <span className="text-xl font-bold text-blue-600">{settings.payment_link_reward_value}</span>
+                          <span className="text-xl font-bold text-violet-600">{settings.payment_link_reward_value}</span>
                         )}
                       </td>
                       <td className="py-4 px-4 text-gray-600">Points awarded for payments made through payment links</td>
@@ -646,12 +646,12 @@ const RewardSettings = () => {
                         {isEditing ? (
                           <input
                             type="number"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
                             value={tempSettings.customer_referral_value ?? ""}
                             onChange={(e) => handleInputChange("customer_referral_value", e.target.value)}
                           />
                         ) : (
-                          <span className="text-xl font-bold text-blue-600">{settings.customer_referral_value}</span>
+                          <span className="text-xl font-bold text-violet-600">{settings.customer_referral_value}</span>
                         )}
                       </td>
                       <td className="py-4 px-4 text-gray-600">Points awarded for successful customer referrals</td>
@@ -695,18 +695,18 @@ const RewardSettings = () => {
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-700 mb-2">Current Configuration Summary</h4>
-                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+                  <div className="bg-violet-50 rounded-lg p-4 border border-violet-100">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-gray-600">Pigmy Points:</span>
-                      <span className="font-bold text-blue-600">{settings.pigmy_reward_points} pts</span>
+                      <span className="font-bold text-violet-600">{settings.pigmy_reward_points} pts</span>
                     </div>
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-gray-600">Loan Points:</span>
-                      <span className="font-bold text-blue-600">{settings.loan_reward_points} pts</span>
+                      <span className="font-bold text-violet-600">{settings.loan_reward_points} pts</span>
                     </div>
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-gray-600">Referral Value:</span>
-                      <span className="font-bold text-blue-600">{settings.customer_referral_value} pts</span>
+                      <span className="font-bold text-violet-600">{settings.customer_referral_value} pts</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">Point Value:</span>

@@ -104,7 +104,7 @@ const { RangePicker } = DatePicker;
 //                           onClick={() =>
 //                             handleEnrollmentRequestPrint(group?._id)
 //                           }
-//                           className=" text-blue-600 "
+//                           className=" text-violet-600 "
 //                         >
 //                           Print
 //                         </div>
@@ -325,7 +325,7 @@ const { RangePicker } = DatePicker;
 //                       label: (
 //                         <div
 //                           onClick={() => handleEnrollmentRequestPrint(group?._id)}
-//                           className="text-blue-600"
+//                           className="text-violet-600"
 //                         >
 //                           Print
 //                         </div>
@@ -582,7 +582,7 @@ const UnApprovedCustomerReport = () => {
                       label: (
                         <div
                           onClick={() => handleEnrollmentRequestPrint(group?._id)}
-                          className="text-blue-600"
+                          className="text-violet-600"
                         >
                           Print
                         </div>
@@ -686,7 +686,7 @@ const UnApprovedCustomerReport = () => {
               <h2 className="text-xl font-semibold mb-4 text-gray-800">Summary</h2>
               
               {/* TOTAL UNAPPROVED CUSTOMERS CARD */}
-              <div className="bg-gradient-to-r from-blue-600 to-blue-600 text-white p-6 rounded-xl shadow-lg mb-6">
+              <div className="bg-gradient-to-r from-violet-600 to-violet-600 text-white p-6 rounded-xl shadow-lg mb-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-red-100 text-sm uppercase tracking-wide">
@@ -712,7 +712,7 @@ const UnApprovedCustomerReport = () => {
                 <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-800">Collection Areas</h3>
-                    <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                    <span className="bg-violet-100 text-violet-800 text-xs font-medium px-2.5 py-0.5 rounded">
                       {Object.keys(collectionAreaCount).length} Areas
                     </span>
                   </div>
@@ -723,13 +723,13 @@ const UnApprovedCustomerReport = () => {
                       .map(([area, count]) => (
                         <div key={area} className="flex items-center justify-between">
                           <div className="flex items-center">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                            <div className="w-2 h-2 bg-violet-500 rounded-full mr-3"></div>
                             <span className="text-gray-700 text-sm truncate max-w-xs">{area}</span>
                           </div>
                           <div className="flex items-center">
                             <div className="w-24 bg-gray-200 rounded-full h-2 mr-3">
                               <div 
-                                className="bg-blue-500 h-2 rounded-full" 
+                                className="bg-violet-500 h-2 rounded-full" 
                                 style={{ width: `${(count / totalUnapprovedCustomers) * 100}%` }}
                               ></div>
                             </div>
@@ -739,7 +739,7 @@ const UnApprovedCustomerReport = () => {
                       ))}
                     {Object.keys(collectionAreaCount).length > 5 && (
                       <div className="text-center pt-2">
-                        <button className="text-blue-600 text-sm font-medium">View All Areas</button>
+                        <button className="text-violet-600 text-sm font-medium">View All Areas</button>
                       </div>
                     )}
                   </div>

@@ -245,7 +245,7 @@ import SettingSidebar from '../components/layouts/SettingSidebar';
 
 //             <button
 //               onClick={createRewardPoints}
-//               className="bg-blue-600 text-white px-6 py-2 rounded"
+//               className="bg-violet-600 text-white px-6 py-2 rounded"
 //             >
 //               Create Reward Points
 //             </button>
@@ -589,7 +589,7 @@ const EmployeeRewardPoints = () => {
               className={`px-6 py-2 rounded ${
                 isLoading
                   ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
+                  : "bg-violet-600 text-white hover:bg-violet-700"
               }`}
             >
               {isLoading ? "Processing..." : "Create Reward Points"}

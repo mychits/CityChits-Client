@@ -298,13 +298,13 @@ const groupOptions = [
 //       </div>
 
 //       {/* SUMMARY BOX */}
-// <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+// <div className="bg-violet-50 border border-violet-200 rounded-lg p-4 mb-4">
 
 //   {/* TOP SUMMARY 4-BOX GRID */}
 //   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
 //     <div className="text-center">
 //       <p className="text-gray-600 text-sm">Total Non-Converted Leads</p>
-//       <p className="text-xl font-bold text-blue-700">{leadTableData.length}</p>
+//       <p className="text-xl font-bold text-violet-700">{leadTableData.length}</p>
 //     </div>
 
 //     <div className="text-center">
@@ -363,7 +363,7 @@ const groupOptions = [
 //           return (
 //             <li key={ref} className="flex justify-between border-b py-1">
 //               <span className="font-medium text-gray-800">{ref}</span>
-//               <span className="font-bold text-blue-700">{count}</span>
+//               <span className="font-bold text-violet-700">{count}</span>
 //             </li>
 //           );
 //         })}
@@ -653,13 +653,13 @@ const NonConvertedLead = () => {
       </div>
 
       {/* SUMMARY */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+      <div className="bg-violet-50 border border-violet-200 rounded-lg p-4 mb-4">
 
         {/* TOP SUMMARY */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
           <div className="text-center">
             <p className="text-sm text-gray-600">Total Non-Converted Leads</p>
-            <p className="text-xl font-bold text-blue-700">{leadTableData.length}</p>
+            <p className="text-xl font-bold text-violet-700">{leadTableData.length}</p>
           </div>
 
           <div className="text-center">
@@ -719,7 +719,7 @@ const NonConvertedLead = () => {
                 return (
                   <li key={ref} className="flex justify-between border-b py-1">
                     <span className="font-medium text-gray-800">{ref}</span>
-                    <span className="font-bold text-blue-700">{count}</span>
+                    <span className="font-bold text-violet-700">{count}</span>
                   </li>
                 );
               })}

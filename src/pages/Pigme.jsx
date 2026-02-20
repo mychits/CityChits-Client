@@ -417,7 +417,7 @@ const Pigme = () => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
+                  className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
                 >
                   + Add Pigmy
                 </button>
@@ -460,7 +460,7 @@ const Pigme = () => {
                   value={formData.customer}
                   onChange={handleChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="" selected hidden>
                     Select Customer Name
@@ -470,7 +470,7 @@ const Pigme = () => {
                   ))}
                 </select> */}
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   placeholder="Select Or Search  customer Name "
                   popupMatchSelectWidth={false}
                   showSearch
@@ -508,7 +508,7 @@ const Pigme = () => {
                   value={formData.maturity_period}
                   onChange={handleChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="" selected hidden>
                     Select Maturity Period
@@ -518,7 +518,7 @@ const Pigme = () => {
                   <option value="monthly">Monthly</option>
                 </select> */}
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   placeholder="Select Or Search  customer Name "
                   popupMatchSelectWidth={false}
                   showSearch
@@ -556,7 +556,7 @@ const Pigme = () => {
                     Referred Type <span className="text-red-500">*</span>
                   </label>
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
                     placeholder="Select Referred Type"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -595,7 +595,7 @@ const Pigme = () => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                       placeholder="Select Or Search Referred Customer"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -627,7 +627,7 @@ const Pigme = () => {
                       <span className="text-red-500">*</span>
                     </label>
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                       placeholder="Select or Search Referred Agent"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -662,7 +662,7 @@ const Pigme = () => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                       placeholder="Select Or Search Referred Employee"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -706,7 +706,7 @@ const Pigme = () => {
                     id="maturity_interest"
                     placeholder="Enter Interest"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
                 <div className="w-1/2">
@@ -724,7 +724,7 @@ const Pigme = () => {
                     id="start_date"
                     placeholder="Enter the Date"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                   {errors.start_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -791,7 +791,7 @@ const Pigme = () => {
                     id="tenure"
                     placeholder="Enter Payable Amount"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-4"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-4"
                   />
                   {errors.payable_amount && (
                     <p className="text-red-500 text-sm mt-1">
@@ -816,10 +816,10 @@ const Pigme = () => {
                     id="note"
                     placeholder="Specify Note if any!"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full  p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full  p-2.5"
                   />
                   <div
-                    className="bg-blue-700 hover:bg-blue-800 w-10 h-10 flex justify-center items-center rounded-md"
+                    className="bg-violet-700 hover:bg-violet-800 w-10 h-10 flex justify-center items-center rounded-md"
                     onClick={() => {
                       window.open("Calculator:///");
                     }}
@@ -831,8 +831,8 @@ const Pigme = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
+                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
                 >
                   Save Pigmy
                 </button>
@@ -862,7 +862,7 @@ const Pigme = () => {
                   value={updateFormData.customer}
                   onChange={handleInputChange}
                   required
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                 >
                   <option value="" selected hidden>
                     Select Customer Name
@@ -872,7 +872,7 @@ const Pigme = () => {
                   ))}
                 </select> */}
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   placeholder="Select Or Search  customer Name "
                   popupMatchSelectWidth={false}
                   showSearch
@@ -905,7 +905,7 @@ const Pigme = () => {
                   Select Payment Type <span className="text-red-500 ">*</span>
                 </label>
                 <Select
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
                   placeholder="Select Or Search  customer Name "
                   popupMatchSelectWidth={false}
                   showSearch
@@ -943,7 +943,7 @@ const Pigme = () => {
                     Referred Type <span className="text-red-500">*</span>
                   </label>
                   <Select
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full`}
                     placeholder="Select Referred Type"
                     popupMatchSelectWidth={false}
                     showSearch
@@ -982,7 +982,7 @@ const Pigme = () => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                       placeholder="Select Or Search Referred Customer"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1014,7 +1014,7 @@ const Pigme = () => {
                       <span className="text-red-500">*</span>
                     </label>
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                       placeholder="Select or Search Referred Agent"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1049,7 +1049,7 @@ const Pigme = () => {
                     </label>
 
                     <Select
-                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full `}
+                      className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full `}
                       placeholder="Select Or Search Referred Employee"
                       popupMatchSelectWidth={false}
                       showSearch
@@ -1093,7 +1093,7 @@ const Pigme = () => {
                     id="maturity_interest"
                     placeholder="Interest"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
                 <div className="w-1/2">
@@ -1111,7 +1111,7 @@ const Pigme = () => {
                     id="start_date"
                     placeholder="Enter the Date"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                   {errors.start_date && (
                     <p className="text-red-500 text-sm mt-1">
@@ -1178,7 +1178,7 @@ const Pigme = () => {
                     id="tenure"
                     placeholder="Enter Payable Amount"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-4"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-4"
                   />
                   {errors.payable_amount && (
                     <p className="text-red-500 text-sm mt-1">
@@ -1203,10 +1203,10 @@ const Pigme = () => {
                     id="note"
                     placeholder="Specify Note if any!"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full  p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full  p-2.5"
                   />
                   <div
-                    className="bg-blue-700 hover:bg-blue-800 w-10 h-10 flex justify-center items-center rounded-md"
+                    className="bg-violet-700 hover:bg-violet-800 w-10 h-10 flex justify-center items-center rounded-md"
                     onClick={() => {
                       window.open("Calculator:///");
                     }}
@@ -1218,8 +1218,8 @@ const Pigme = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800
-              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
+                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800
+              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
                 >
                   Update Pigmy
                 </button>
@@ -1264,13 +1264,13 @@ const Pigme = () => {
                     id="borrowerName"
                     placeholder="Enter the Pigmy Customer Name"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Delete
                 </button>

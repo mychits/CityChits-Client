@@ -16,6 +16,7 @@ import {
   FiUsers,
   FiCreditCard,
 } from "react-icons/fi";
+import { numberToIndianWords } from "../helpers/numberToIndianWords"
 
 const CollectionExecutiveReport = () => {
   const [groups, setGroups] = useState([]);
@@ -52,7 +53,7 @@ const CollectionExecutiveReport = () => {
   const [selectedCollectionExecutive, setSelectedCollectionExecutive] = useState("");
   const [payments, setPayments] = useState([]);
   const [showAllPaymentModes, setShowAllPaymentModes] = useState(false);
-  const [employees,setEmployees] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [formData, setFormData] = useState({
     group_id: "",
     user_id: "",
@@ -62,7 +63,7 @@ const CollectionExecutiveReport = () => {
     amount: "",
     pay_type: "cash",
     transaction_id: "",
-    collection_executive:"",
+    collection_executive: "",
   });
   const [alertConfig, setAlertConfig] = useState({
     visibility: false,
@@ -81,7 +82,7 @@ const CollectionExecutiveReport = () => {
     ) {
       const showPaymentsModes =
         userObj.admin_access_right_id?.access_permissions?.edit_payment ===
-        "true"
+          "true"
           ? true
           : false;
       setShowAllPaymentModes(showPaymentsModes);
@@ -98,7 +99,7 @@ const CollectionExecutiveReport = () => {
     ) {
       const isModify =
         userObj.admin_access_right_id?.access_permissions?.edit_payment ===
-        "true"
+          "true"
           ? true
           : false;
       setHideAccountType(isModify);
@@ -109,7 +110,7 @@ const CollectionExecutiveReport = () => {
       try {
         const [emplys] = await Promise.all([
           api.get("/agent/collection-executive"),
-        
+
         ]);
         const emps = emplys?.data?.collectionExecutive.map((emp) => ({
           _id: emp?._id?._id,
@@ -118,9 +119,9 @@ const CollectionExecutiveReport = () => {
           selected_type: "agent_type",
         }));
         setEmployees(emps);
-       
+
       } catch (error) {
-     
+
         setEmployees([]);
       }
     })();
@@ -280,7 +281,7 @@ const CollectionExecutiveReport = () => {
             userId: selectedCustomers,
             pay_type: selectedPaymentMode,
             account_type: selectedAccountType,
-            collection_executive:selectedCollectionExecutive
+            collection_executive: selectedCollectionExecutive
           },
           signal: abortController.signal,
         });
@@ -330,7 +331,7 @@ const CollectionExecutiveReport = () => {
                           <Link
                             target="_blank"
                             to={`/print/${group._id}`}
-                            className="text-blue-600 "
+                            className="text-violet-600 "
                           >
                             Print
                           </Link>
@@ -390,7 +391,7 @@ const CollectionExecutiveReport = () => {
       ? [{ key: "account_type", header: "Account Type" }]
       : []),
     { key: "collected_by", header: "Collected By" },
-   
+
     { key: "action", header: "Action" },
   ];
 
@@ -504,7 +505,7 @@ const CollectionExecutiveReport = () => {
   return (
     <>
       <div className="min-w-screen bg-gray-50 min-h-screen">
-        <div className="flex mt-30">
+        <div className="flex-1 mt-30">
           <Navbar
             onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
             visibility={true}
@@ -528,7 +529,7 @@ const CollectionExecutiveReport = () => {
             {/* Filters Section */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
               <div className="flex items-center gap-3 mb-6">
-                <FiFilter className="text-blue-600" size={20} />
+                <FiFilter className="text-violet-600" size={20} />
                 <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
               </div>
 
@@ -580,7 +581,7 @@ const CollectionExecutiveReport = () => {
                     className="w-full"
                     size="large"
                   >
-                  
+
                     {employees.map((group) => (
                       <Select.Option key={group?._id} value={group?._id}>
                         {group?.full_name} - {group.phone_number}
@@ -600,7 +601,7 @@ const CollectionExecutiveReport = () => {
                         type="date"
                         value={selectedFromDate}
                         onChange={(e) => setSelectedFromDate(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none"
                       />
                     </div>
                     <div>
@@ -611,7 +612,7 @@ const CollectionExecutiveReport = () => {
                         type="date"
                         value={selectedDate}
                         onChange={(e) => setSelectedDate(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none"
                       />
                     </div>
                   </>
@@ -739,16 +740,28 @@ const CollectionExecutiveReport = () => {
             <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-md border border-gray-100 p-6 mb-6 hover:shadow-lg transition-all duration-300">
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
-                  <p className="text-sm font-semibold text-gray-500 tracking-wide uppercase">
+                  {/* Label */}
+                  <p className="text-xs font-semibold text-gray-500 tracking-widest uppercase mb-3">
                     Total Amount
                   </p>
-                  <p className="text-4xl font-extrabold text-gray-900 mt-1">
+
+                  {/* Amount */}
+                  <p className="text-4xl font-bold text-gray-900 leading-none">
                     ₹{payments || 0}
                   </p>
-                  <p className="text-xs text-gray-400 mt-1">
+
+                  {/* Amount in Words */}
+                  <p className="text-sm text-green-700 mt-2 leading-relaxed max-w-md">
+                    {numberToIndianWords(payments || 0)}
+                  </p>
+
+                  {/* Date */}
+                  <p className="text-xs text-gray-400 mt-4">
                     Updated as of {new Date().toLocaleDateString()}
                   </p>
                 </div>
+
+
 
                 <div className="relative"></div>
               </div>
@@ -800,7 +813,7 @@ const CollectionExecutiveReport = () => {
                   <select
                     value={selectedGroupId}
                     onChange={handleGroup}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   >
                     <option value="">Select Group</option>
                     {groups.map((group) => (
@@ -822,7 +835,7 @@ const CollectionExecutiveReport = () => {
                     value={`${formData.user_id}-${formData.ticket}`}
                     onChange={handleChangeUser}
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   >
                     <option value="">Select Customer</option>
                     {filteredUsers.map((user) => (
@@ -850,7 +863,7 @@ const CollectionExecutiveReport = () => {
                       id="receipt_no"
                       placeholder="Receipt No."
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -867,7 +880,7 @@ const CollectionExecutiveReport = () => {
                       id="pay_date"
                       onChange={handleChange}
                       placeholder=""
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -886,7 +899,7 @@ const CollectionExecutiveReport = () => {
                       id="amount"
                       onChange={handleChange}
                       placeholder="Enter Amount"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -899,7 +912,7 @@ const CollectionExecutiveReport = () => {
                     <select
                       name="pay_mode"
                       id="pay_mode"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                       onChange={handlePaymentModeChange}
                     >
                       <option value="cash">Cash</option>
@@ -922,14 +935,14 @@ const CollectionExecutiveReport = () => {
                       value={formData.transaction_id}
                       onChange={handleChange}
                       placeholder="Enter Transaction ID"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                 )}
                 <button
                   type="submit"
-                  className="w-full text-white bg-blue-700 hover:bg-blue-800
-                              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-full text-white bg-violet-700 hover:bg-violet-800
+                              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Add
                 </button>
@@ -944,7 +957,7 @@ const CollectionExecutiveReport = () => {
               <h3 className="mb-4 text-xl font-bold text-gray-900">
                 View Auction
               </h3>
-              <form className="space-y-6" onSubmit={() => {}}>
+              <form className="space-y-6" onSubmit={() => { }}>
                 <div>
                   <label
                     className="block mb-2 text-sm font-medium text-gray-900"
@@ -956,11 +969,11 @@ const CollectionExecutiveReport = () => {
                     type="text"
                     name="group_id"
                     value={currentUpdateGroup?.group_id?.group_name}
-                    onChange={() => {}}
+                    onChange={() => { }}
                     id="name"
                     placeholder="Enter the Group Name"
                     readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
@@ -978,7 +991,7 @@ const CollectionExecutiveReport = () => {
                       id="group_value"
                       placeholder="select group to check"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -995,7 +1008,7 @@ const CollectionExecutiveReport = () => {
                       id="group_install"
                       placeholder="select group to check"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -1010,11 +1023,11 @@ const CollectionExecutiveReport = () => {
                     type="text"
                     name="group_id"
                     value={`${currentUpdateGroup?.user_id?.full_name} | ${currentUpdateGroup?.ticket}`}
-                    onChange={() => {}}
+                    onChange={() => { }}
                     id="name"
                     placeholder="Enter the User Name"
                     readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
 
@@ -1032,11 +1045,11 @@ const CollectionExecutiveReport = () => {
                       currentUpdateGroup?.group_id?.group_value -
                       currentUpdateGroup?.win_amount
                     }
-                    onChange={() => {}}
+                    onChange={() => { }}
                     id="name"
                     placeholder="Enter the Bid Amount"
                     readOnly
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                   />
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
@@ -1054,7 +1067,7 @@ const CollectionExecutiveReport = () => {
                       id="commission"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -1071,7 +1084,7 @@ const CollectionExecutiveReport = () => {
                       id="win_amount"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -1090,7 +1103,7 @@ const CollectionExecutiveReport = () => {
                       id="divident"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -1107,7 +1120,7 @@ const CollectionExecutiveReport = () => {
                       id="divident_head"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -1124,7 +1137,7 @@ const CollectionExecutiveReport = () => {
                       id="payable"
                       placeholder=""
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -1140,11 +1153,11 @@ const CollectionExecutiveReport = () => {
                       type="date"
                       name="auction_date"
                       value={currentUpdateGroup?.auction_date}
-                      onChange={() => {}}
+                      onChange={() => { }}
                       id="date"
                       placeholder="Enter the Date"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                   <div className="w-1/2">
@@ -1158,11 +1171,11 @@ const CollectionExecutiveReport = () => {
                       type="date"
                       name="next_date"
                       value={currentUpdateGroup?.next_date}
-                      onChange={() => {}}
+                      onChange={() => { }}
                       id="date"
                       placeholder="Enter the Date"
                       readOnly
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
                     />
                   </div>
                 </div>
@@ -1191,7 +1204,7 @@ const CollectionExecutiveReport = () => {
                   <button
                     type="submit"
                     className="w-full text-white bg-red-700 hover:bg-red-800
-                    focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                   >
                     Delete
                   </button>

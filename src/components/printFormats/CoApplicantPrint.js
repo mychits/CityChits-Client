@@ -12,11 +12,11 @@ import imageInput from "../../assets/images/Agent.png";
 //     const doc = new jsPDF("p", "mm", "a4");
 //     //doc.setFillColor(201, 216, 250);
 
-//     // doc.setFillColor(201, 216, 250); // Light blue
+//     // doc.setFillColor(201, 216, 250); // Light violet
 //     // doc.rect(0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height, 'F');
 
 //      const setBackground = () => {
-//       doc.setFillColor(201, 216, 250); // Light Blue color
+//       doc.setFillColor(201, 216, 250); // Light violet color
 //       doc.rect(0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height, 'F'); // Fill the whole page with color
 //     };
      
@@ -233,13 +233,13 @@ const handleCoApplicantPrint = async (id) => {
     
     // Color scheme
     const colors = {
-      primary: [0, 38, 124],        // Deep blue
-      secondary: [201, 216, 250],   // Light blue
+      primary: [0, 38, 124],        // Deep violet
+      secondary: [201, 216, 250],   // Light violet
       accent: [212, 175, 55],       // Gold
       text: [33, 33, 33],           // Dark gray
       lightText: [100, 100, 100],   // Light gray
       white: [255, 255, 255],
-      background: [248, 250, 252],  // Very light blue
+      background: [248, 250, 252],  // Very light violet
       border: [220, 224, 230]       // Light gray border
     };
     

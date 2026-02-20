@@ -388,8 +388,8 @@ const PayoutSalary = () => {
                       setIsEditing(true);
                     }}
                   >
-                    <span className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors duration-200">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <span className="w-9 h-9 rounded-lg bg-violet-50 flex items-center justify-center group-hover:bg-violet-100 transition-colors duration-200">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                       </svg>
                     </span>
@@ -672,7 +672,7 @@ const PayoutSalary = () => {
                   setShowSalaryModal(true);
                   resetForm();
                 }}
-                className="ml-4 bg-blue-900 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition duration-200 flex items-center"
+                className="ml-4 bg-violet-900 text-white px-4 py-2 rounded shadow-md hover:bg-violet-600 transition duration-200 flex items-center"
               >
                 <span className="mr-2">+</span> Salary Payment
               </button>
@@ -680,7 +680,7 @@ const PayoutSalary = () => {
           </div>
 
           <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-4 text-blue-800 border-b pb-2">Salary Payments</h2>
+            <h2 className="text-xl font-semibold mb-4 text-violet-800 border-b pb-2">Salary Payments</h2>
             {salaryPayments.length > 0 ? (
               <DataTable
                 data={salaryPayments}
@@ -710,7 +710,7 @@ const PayoutSalary = () => {
           <div className="bg-gradient-to-br from-slate-50 to-slate-100 py-6 px-6 lg:px-8 text-left max-h-[90vh] my-2">
             <div className="mb-6 pb-4 border-b border-slate-200">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-violet-600 flex items-center justify-center">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0 0c0 3.517 2.843 6.38 6.36 6.38a6.36 6.36 0 006.36-6.38 6.36 6.36 0 00-6.36-6.38c-3.517 0-6.36 2.863-6.36 6.38m0 0c0 3.517 2.843 6.38 6.36 6.38a6.36 6.36 0 006.36-6.38 6.36 6.36 0 00-6.36-6.38c-3.517 0-6.36 2.863-6.36 6.38z" />
                   </svg>
@@ -784,14 +784,14 @@ const PayoutSalary = () => {
                   {/* Month Range Toggle & Inputs */}
                   <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
                     <h3 className="font-medium text-gray-900 mb-3 flex items-center">
-                      <CalendarOutlined className="mr-2 text-blue-500" />
+                      <CalendarOutlined className="mr-2 text-violet-500" />
                       Salary Period
                     </h3>
                     <div className="flex items-center space-x-6 mb-5">
                       <label className="inline-flex items-center cursor-pointer">
                         <input
                           type="radio"
-                          className="form-radio text-blue-600"
+                          className="form-radio text-violet-600"
                           checked={dateMode === "month"}
                           onChange={() => setDateMode("month")}
                         />
@@ -800,7 +800,7 @@ const PayoutSalary = () => {
                       <label className="inline-flex items-center cursor-pointer">
                         <input
                           type="radio"
-                          className="form-radio text-blue-600"
+                          className="form-radio text-violet-600"
                           checked={dateMode === "custom"}
                           onChange={() => setDateMode("custom")}
                         />
@@ -820,7 +820,7 @@ const PayoutSalary = () => {
                             setOtherPaymentsList([{ reason: "", amount: "" }]);
                           }}
 
-                          className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                         />
                       </div>
                     )}
@@ -836,7 +836,7 @@ const PayoutSalary = () => {
                             value={salaryForm.from_date}
                             max={new Date().toISOString().split("T")[0]}
                             onChange={handleSalaryChange}
-                            className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                            className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-gray-900"
                           />
                           {errors.from_date && (
                             <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
@@ -852,7 +852,7 @@ const PayoutSalary = () => {
                             value={salaryForm.to_date}
                             max={new Date().toISOString().split("T")[0]}
                             onChange={handleSalaryChange}
-                            className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                            className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-gray-900"
                           />
                           {errors.to_date && (
                             <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
@@ -922,9 +922,9 @@ const PayoutSalary = () => {
 
                   {/* Calculated Salary Highlight */}
                   {calculatedSalary && !isSalaryAlreadyPaid && (
-                    <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-300 shadow-sm">
-                      <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-2">Total Payable Amount</p>
-                      <p className="text-3xl font-bold text-blue-900">₹{calculatedSalary}</p>
+                    <div className="bg-gradient-to-r from-violet-50 to-violet-100 rounded-xl p-5 border border-violet-300 shadow-sm">
+                      <p className="text-xs font-semibold text-violet-700 uppercase tracking-wider mb-2">Total Payable Amount</p>
+                      <p className="text-3xl font-bold text-violet-900">₹{calculatedSalary}</p>
                     </div>
                   )}
                   {/* Salary Breakdown Section */}
@@ -984,7 +984,7 @@ const PayoutSalary = () => {
                                     <td className="px-4 py-3 text-right font-medium text-red-600">
                                       ₹{m.deductions.reduce((sum, d) => sum + parseFloat(d.amount || 0), 0).toFixed(2)}
                                     </td>
-                                    <td className="px-4 py-3 text-right font-medium text-blue-700">
+                                    <td className="px-4 py-3 text-right font-medium text-violet-700">
                                       ₹{m.salary_amount ? m.salary_amount.toFixed(2) : "0.00"}
                                     </td>
                                   </tr>
@@ -1034,7 +1034,7 @@ const PayoutSalary = () => {
                         min="0"
                         value={manualPaidAmount}
                         onChange={(e) => setManualPaidAmount(e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-md ${errors.total_paid_amount ? 'border-red-500' : 'border-gray-300 focus:border-blue-500'
+                        className={`w-full px-3 py-2 border rounded-md ${errors.total_paid_amount ? 'border-red-500' : 'border-gray-300 focus:border-violet-500'
                           }`}
                         placeholder="Enter Payable amount"
                       />
@@ -1065,7 +1065,7 @@ const PayoutSalary = () => {
                               placeholder="e.g., Transport Reimbursement, Bonus"
                               value={item.reason}
                               onChange={(e) => handleOtherPaymentChange(index, "reason", e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
                             />
                           </div>
 
@@ -1080,7 +1080,7 @@ const PayoutSalary = () => {
                               placeholder="Enter amount"
                               value={item.amount}
                               onChange={(e) => handleOtherPaymentChange(index, "amount", e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
                             />
                           </div>
 
@@ -1128,7 +1128,7 @@ const PayoutSalary = () => {
                           name="pay_date"
                           value={salaryForm.pay_date}
                           onChange={handleSalaryChange}
-                          className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                          className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-gray-900"
                           disabled={!modifyPayment}
                         />
                       </div>
@@ -1162,7 +1162,7 @@ const PayoutSalary = () => {
                       <Input
                         value={salaryForm.transaction_id}
                         onChange={(e) => setSalaryForm({ ...salaryForm, transaction_id: e.target.value })}
-                        className={`w-full px-3 py-2 border rounded-md ${errors.transaction_id ? 'border-red-500' : 'border-gray-300 focus:border-blue-500'
+                        className={`w-full px-3 py-2 border rounded-md ${errors.transaction_id ? 'border-red-500' : 'border-gray-300 focus:border-violet-500'
                           }`}
                         placeholder="Enter transaction ID"
                       />
@@ -1180,7 +1180,7 @@ const PayoutSalary = () => {
                       <textarea
                         value={salaryForm.note}
                         onChange={(e) => setSalaryForm({ ...salaryForm, note: e.target.value })}
-                        className={`w-full px-3 py-2 border rounded-md ${errors.note ? 'border-red-500' : 'border-gray-300 focus:border-blue-500'
+                        className={`w-full px-3 py-2 border rounded-md ${errors.note ? 'border-red-500' : 'border-gray-300 focus:border-violet-500'
                           }`}
                         rows="3"
                         placeholder="Add any notes about this payment..."
@@ -1192,10 +1192,10 @@ const PayoutSalary = () => {
                   )}
 
                   {calculatedSalary && (
-                    <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-300 shadow-sm">
-                      <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-2">Disbursed By</p>
-                      <p className="text-lg font-bold text-blue-900 flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold">
+                    <div className="bg-gradient-to-r from-violet-50 to-violet-100 rounded-xl p-5 border border-violet-300 shadow-sm">
+                      <p className="text-xs font-semibold text-violet-700 uppercase tracking-wider mb-2">Disbursed By</p>
+                      <p className="text-lg font-bold text-violet-900 flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-violet-500 flex items-center justify-center text-white text-sm font-bold">
                           {adminName?.charAt(0).toUpperCase()}
                         </div>
                         {adminName}
@@ -1220,7 +1220,7 @@ const PayoutSalary = () => {
                       disabled={isLoading}
                       className={`px-5 py-2.5 rounded-lg text-white font-medium transition-colors ${isLoading
                         ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-700'
+                        : 'bg-violet-600 hover:bg-violet-700'
                         }`}
                     >
                       {isLoading ? (

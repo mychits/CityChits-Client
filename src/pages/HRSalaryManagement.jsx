@@ -546,7 +546,7 @@ const HRSalaryManagement = () => {
         label: (
           <div
             key={salaryPayment?._id}
-            className="text-blue-600"
+            className="text-violet-600"
             onClick={() => handlePrint(salaryPayment?._id)}>
             Print
           </div>
@@ -1111,7 +1111,7 @@ const HRSalaryManagement = () => {
                 <div>
                   <button
                     onClick={() => setIsOpenAddModal(true)}
-                    className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200">
+                    className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200">
                     + Add Salary
                   </button>
                 </div>
@@ -1123,20 +1123,20 @@ const HRSalaryManagement = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <Link
                     to="/payment-menu/payment-in-out-menu/payment-out/salary-payment"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group">
                     <RiMoneyRupeeCircleFill
-                      className="text-blue-600 group-hover:scale-110 transition-transform"
+                      className="text-violet-600 group-hover:scale-110 transition-transform"
                       size={24}
                     />
-                    <span className="font-medium text-gray-700 group-hover:text-blue-600">
+                    <span className="font-medium text-gray-700 group-hover:text-violet-600">
                       Accounts / Salary Payment
                     </span>
                   </Link>
                   <Link
                     to="/staff-menu/employee-menu/employee-statement"
-                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
-                    <MdOutlineMan className="text-blue-600 group-hover:scale-110 transition-transform text-lg" />
-                    <span className="font-medium text-gray-700 group-hover:text-blue-600">
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-violet-500 hover:bg-violet-50 transition-all group">
+                    <MdOutlineMan className="text-violet-600 group-hover:scale-110 transition-transform text-lg" />
+                    <span className="font-medium text-gray-700 group-hover:text-violet-600">
                       Employees / Employee Statement
                     </span>
                   </Link>
@@ -1342,7 +1342,7 @@ const HRSalaryManagement = () => {
                           value={formData?.earnings?.basic || 0}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(formData?.earnings?.basic || 0)}
                         </span>
                       </div>
@@ -1356,7 +1356,7 @@ const HRSalaryManagement = () => {
                           value={formData?.earnings?.hra || 0}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(formData?.earnings?.hra || 0)}
                         </span>
                       </div>
@@ -1370,7 +1370,7 @@ const HRSalaryManagement = () => {
                           value={formData?.earnings?.travel_allowance || 0}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             formData?.earnings?.travel_allowance || 0
                           )}
@@ -1386,7 +1386,7 @@ const HRSalaryManagement = () => {
                           value={formData?.earnings?.medical_allowance || 0}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             formData?.earnings?.medical_allowance || 0
                           )}
@@ -1402,7 +1402,7 @@ const HRSalaryManagement = () => {
                           value={formData?.earnings?.basket_of_benifits || 0}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             formData?.earnings?.basket_of_benifits || 0
                           )}
@@ -1418,7 +1418,7 @@ const HRSalaryManagement = () => {
                           value={formData?.earnings?.performance_bonus || 0}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             formData?.earnings?.performance_bonus || 0
                           )}
@@ -1434,7 +1434,7 @@ const HRSalaryManagement = () => {
                           value={formData?.earnings?.other_allowances || 0}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             formData?.earnings?.other_allowances || 0
                           )}
@@ -1450,7 +1450,7 @@ const HRSalaryManagement = () => {
                           value={formData?.earnings?.conveyance || 0}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             formData?.earnings?.conveyance || 0
                           )}
@@ -1473,7 +1473,7 @@ const HRSalaryManagement = () => {
                           value={formData?.deductions?.income_tax || 0}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             formData?.deductions?.income_tax || 0
                           )}
@@ -1489,7 +1489,7 @@ const HRSalaryManagement = () => {
                           value={formData?.deductions?.esi || 0}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(formData?.deductions?.esi || 0)}
                         </span>
                       </div>
@@ -1503,7 +1503,7 @@ const HRSalaryManagement = () => {
                           value={formData?.deductions?.epf || 0}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(formData?.deductions?.epf || 0)}
                         </span>
                       </div>
@@ -1517,7 +1517,7 @@ const HRSalaryManagement = () => {
                           value={formData?.deductions?.professional_tax || 0}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             formData?.deductions?.professional_tax || 0
                           )}
@@ -1533,7 +1533,7 @@ const HRSalaryManagement = () => {
                           value={totalDeductions.toFixed(2)}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(totalDeductions.toFixed(2))}
                         </span>
                       </div>
@@ -1544,7 +1544,7 @@ const HRSalaryManagement = () => {
                   {/* Header */}
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
+                      <div className="p-2 bg-gradient-to-br from-violet-500 to-violet-600 rounded-lg">
                         <BarChart3 className="w-6 h-6 text-white" />
                       </div>
                       <h3 className="font-semibold text-xl text-gray-900">
@@ -1557,7 +1557,7 @@ const HRSalaryManagement = () => {
                     {/* Monthly Target */}
                     <div className="flex flex-col">
                       <div className="flex items-center gap-2 mb-2">
-                        <Target className="w-4 h-4 text-blue-600" />
+                        <Target className="w-4 h-4 text-violet-600" />
                         <label className="font-semibold text-gray-700 text-sm">
                           Current Month Target
                         </label>
@@ -1567,9 +1567,9 @@ const HRSalaryManagement = () => {
                         onWheel={(e) => e.target.blur()}
                         value={formData?.monthly_business_info?.target || 0}
                         disabled
-                        className="w-full px-4 py-3 border border-slate-200 rounded-lg text-gray-900 font-semibold bg-slate-50 focus:bg-white focus:border-blue-300 focus:outline-none transition-colors disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 border border-slate-200 rounded-lg text-gray-900 font-semibold bg-slate-50 focus:bg-white focus:border-violet-300 focus:outline-none transition-colors disabled:cursor-not-allowed"
                       />
-                      <span className="mt-2 font-medium font-mono text-blue-600 text-sm">
+                      <span className="mt-2 font-medium font-mono text-violet-600 text-sm">
                         {numberToIndianWords(
                           formData?.monthly_business_info?.target ?? 0
                         )}
@@ -1679,7 +1679,7 @@ const HRSalaryManagement = () => {
                             <CheckCircle2 className="w-4 h-4 text-green-600" />
                           ),
                           container:
-                            "bg-green-50 text-green-700 border-green-200 shadow-sm shadow-blue-100/50",
+                            "bg-green-50 text-green-700 border-green-200 shadow-sm shadow-violet-100/50",
                           label: "Target Achieved",
                         },
                         shortfall: {
@@ -1752,7 +1752,7 @@ const HRSalaryManagement = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="flex flex-col">
-                        <label className="font-semibold text-gray-700 text-sm mb-2 text-blue-600">
+                        <label className="font-semibold text-gray-700 text-sm mb-2 text-violet-600">
                           Pigmy Collection Percentage (%)
                         </label>
                         <Input
@@ -1766,7 +1766,7 @@ const HRSalaryManagement = () => {
                       </div>
 
                       <div className="flex flex-col">
-                        <label className="font-semibold text-gray-700 text-sm mb-2 text-blue-600">
+                        <label className="font-semibold text-gray-700 text-sm mb-2 text-violet-600">
                           Loan Collection Percentage (%)
                         </label>
                         <Input
@@ -1800,8 +1800,8 @@ const HRSalaryManagement = () => {
                 </div>
 
                 {calculatedSalary && (
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <h3 className="text-lg font-semibold text-blue-800 mb-4">
+                  <div className="bg-violet-50 p-4 rounded-lg">
+                    <h3 className="text-lg font-semibold text-violet-800 mb-4">
                       Attendance Details
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1816,7 +1816,7 @@ const HRSalaryManagement = () => {
                           value={calculatedSalary.total_days}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             calculatedSalary.total_days || 0
                           )}
@@ -1833,7 +1833,7 @@ const HRSalaryManagement = () => {
                           value={calculatedSalary.present_days}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             calculatedSalary.present_days || 0
                           )}
@@ -1850,7 +1850,7 @@ const HRSalaryManagement = () => {
                           value={calculatedSalary.paid_days}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(calculatedSalary.paid_days || 0)}
                         </span>
                       </div>
@@ -1865,7 +1865,7 @@ const HRSalaryManagement = () => {
                           value={calculatedSalary.lop_days}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(calculatedSalary.lop_days || 0)}
                         </span>
                       </div>
@@ -1881,7 +1881,7 @@ const HRSalaryManagement = () => {
                           value={(calculatedSalary.lop || 0).toFixed(2)}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(calculatedSalary.lop_days || 0)}
                         </span>
                       </div>
@@ -1896,7 +1896,7 @@ const HRSalaryManagement = () => {
                           value={calculatedSalary.per_day_salary.toFixed(2)}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             calculatedSalary.per_day_salary.toFixed(2) || 0
                           )}
@@ -1913,7 +1913,7 @@ const HRSalaryManagement = () => {
                           value={calculatedSalary.calculated_salary.toFixed(2)}
                           disabled
                         />
-                        <span className="ml-2 font-medium font-mono text-blue-600">
+                        <span className="ml-2 font-medium font-mono text-violet-600">
                           {numberToIndianWords(
                             calculatedSalary.calculated_salary.toFixed(2) || 0
                           )}
@@ -1923,7 +1923,7 @@ const HRSalaryManagement = () => {
                     <div className="mt-6 bg-gradient-to-br from-white to-slate-50 rounded-2xl border border-slate-200 p-8 shadow-sm">
                       <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-3">
-                          <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
+                          <div className="p-2 bg-gradient-to-br from-violet-500 to-violet-600 rounded-lg">
                             <BarChart3 className="w-6 h-6 text-white" />
                           </div>
                           <h3 className="font-semibold text-xl text-gray-900">
@@ -1936,7 +1936,7 @@ const HRSalaryManagement = () => {
                               <Button
                                 type="primary"
                                 onClick={handlePayAsSalary}
-                                className="bg-blue-600 hover:bg-blue-700">
+                                className="bg-violet-600 hover:bg-violet-700">
                                 Pay as Salary
                               </Button>
                               <Button
@@ -1954,7 +1954,7 @@ const HRSalaryManagement = () => {
                         {/* Monthly Target */}
                         <div className="flex flex-col">
                           <div className="flex items-center gap-2 mb-2">
-                            <Target className="w-4 h-4 text-blue-600" />
+                            <Target className="w-4 h-4 text-violet-600" />
                             <label className="font-semibold text-gray-700 text-sm">
                               Current Month Target
                             </label>
@@ -1964,9 +1964,9 @@ const HRSalaryManagement = () => {
                             onWheel={(e) => e.target.blur()}
                             value={formData?.monthly_business_info?.target || 0}
                             disabled
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg text-gray-900 font-semibold bg-slate-50 focus:bg-white focus:border-blue-300 focus:outline-none transition-colors disabled:cursor-not-allowed"
+                            className="w-full px-4 py-3 border border-slate-200 rounded-lg text-gray-900 font-semibold bg-slate-50 focus:bg-white focus:border-violet-300 focus:outline-none transition-colors disabled:cursor-not-allowed"
                           />
-                          <span className="mt-2 font-medium font-mono text-blue-600 text-sm">
+                          <span className="mt-2 font-medium font-mono text-violet-600 text-sm">
                             {numberToIndianWords(
                               formData?.monthly_business_info?.target ?? 0
                             )}
@@ -2075,7 +2075,7 @@ const HRSalaryManagement = () => {
                                 <CheckCircle2 className="w-4 h-4 text-green-600" />
                               ),
                               container:
-                                "bg-green-50 text-green-700 border-green-200 shadow-sm shadow-blue-100/50",
+                                "bg-green-50 text-green-700 border-green-200 shadow-sm shadow-violet-100/50",
                               label: "Target Achieved",
                             },
                             shortfall: {
@@ -2169,7 +2169,7 @@ const HRSalaryManagement = () => {
                                 )
                               }
                             />
-                            <span className="ml-2 font-medium font-mono text-blue-600">
+                            <span className="ml-2 font-medium font-mono text-violet-600">
                               {numberToIndianWords(payment.value || 0)}
                             </span>
                           </div>
@@ -2254,8 +2254,8 @@ const HRSalaryManagement = () => {
                   </div>
                 )}
                 {calculatedSalary && showComponents && (
-                  <div className="bg-blue-50 p-6 rounded-xl mt-4 border border-blue-100 shadow-inner">
-                    <h3 className="text-lg font-semibold text-blue-800 mb-6 flex items-center gap-2">
+                  <div className="bg-violet-50 p-6 rounded-xl mt-4 border border-violet-100 shadow-inner">
+                    <h3 className="text-lg font-semibold text-violet-800 mb-6 flex items-center gap-2">
                       <RiMoneyRupeeCircleFill /> Final Transaction Adjustments
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -2267,31 +2267,31 @@ const HRSalaryManagement = () => {
                           value={formData.calculated_incentive}
                           disabled
                           prefix="₹"
-                          className="font-bold !text-blue-600 !bg-white"
+                          className="font-bold !text-violet-600 !bg-white"
                         />
                       </div>
 
                       {/* Pigmy Collection Incentive (Editable) */}
                       <div className="form-group">
-                        <label className="block text-xs font-bold text-blue-500 uppercase mb-2 tracking-wider">Pigmy Incentive (Edit)</label>
+                        <label className="block text-xs font-bold text-violet-500 uppercase mb-2 tracking-wider">Pigmy Incentive (Edit)</label>
                         <Input
                           type="number"
                           value={formData.pigmy_collection_incentive}
                           onChange={(e) => setFormData(prev => ({ ...prev, pigmy_collection_incentive: Number(e.target.value) }))}
                           prefix="₹"
-                          className="font-bold border-blue-300 bg-white hover:border-blue-500"
+                          className="font-bold border-violet-300 bg-white hover:border-violet-500"
                         />
                       </div>
 
                       {/* Loan Collection Incentive (Editable) */}
                       <div className="form-group">
-                        <label className="block text-xs font-bold text-blue-500 uppercase mb-2 tracking-wider">Loan Incentive (Edit)</label>
+                        <label className="block text-xs font-bold text-violet-500 uppercase mb-2 tracking-wider">Loan Incentive (Edit)</label>
                         <Input
                           type="number"
                           value={formData.loan_collection_incentive}
                           onChange={(e) => setFormData(prev => ({ ...prev, loan_collection_incentive: Number(e.target.value) }))}
                           prefix="₹"
-                          className="font-bold border-blue-300 bg-white hover:border-blue-500"
+                          className="font-bold border-violet-300 bg-white hover:border-violet-500"
                         />
                       </div>
 
@@ -2327,7 +2327,7 @@ const HRSalaryManagement = () => {
           ) : (
             <div className="flex items-center justify-center py-12">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-500 mx-auto"></div>
                 <p className="mt-4 text-gray-600">
                   Loading employee details...
                 </p>
@@ -2353,10 +2353,10 @@ const HRSalaryManagement = () => {
         <p className="text-lg font-medium mb-4">
           Are you sure you want to add the incentive amount as salary?
         </p>
-        <div className="bg-blue-50 p-4 rounded-lg">
+        <div className="bg-violet-50 p-4 rounded-lg">
           <div className="flex justify-between items-center mb-2">
             <span className="font-medium text-gray-700">Incentive Amount:</span>
-            <span className="font-bold text-blue-700 text-lg">
+            <span className="font-bold text-violet-700 text-lg">
               ₹{Number(calculatedIncentive).toLocaleString("en-IN")}
             </span>
           </div>
@@ -2523,8 +2523,8 @@ const HRSalaryManagement = () => {
             </div>
           </div>
           {/* Monthly Business Info */}
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold text-blue-800 mb-4">
+          <div className="bg-violet-50 p-4 rounded-lg">
+            <h3 className="text-lg font-semibold text-violet-800 mb-4">
               Monthly Business Info
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2560,8 +2560,8 @@ const HRSalaryManagement = () => {
             </div>
           </div>
           {/* Incentive */}
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold text-blue-800 mb-4">
+          <div className="bg-violet-50 p-4 rounded-lg">
+            <h3 className="text-lg font-semibold text-violet-800 mb-4">
               Calculated Incentive
             </h3>
             <Input
@@ -2779,7 +2779,7 @@ const HRSalaryManagement = () => {
             {/* Salary Period */}
             <section className="bg-gradient-to-br from-white to-slate-50 p-6 rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
               <h4 className="font-bold text-slate-900 mb-4 flex items-center text-lg">
-                <span className="w-1 h-6 bg-blue-600 rounded-full mr-3"></span>
+                <span className="w-1 h-6 bg-violet-600 rounded-full mr-3"></span>
                 Salary Period
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -2912,9 +2912,9 @@ const HRSalaryManagement = () => {
                 )}
               </ul>
             </section>
-            <section className="bg-gradient-to-br from-blue-50 to-blue-50 p-6 rounded-xl shadow-md border border-blue-200 hover:shadow-lg transition-shadow">
+            <section className="bg-gradient-to-br from-violet-50 to-violet-50 p-6 rounded-xl shadow-md border border-violet-200 hover:shadow-lg transition-shadow">
               <h4 className="font-bold text-slate-900 mb-4 flex items-center text-lg">
-                <span className="w-1 h-6 bg-blue-600 rounded-full mr-3"></span>
+                <span className="w-1 h-6 bg-violet-600 rounded-full mr-3"></span>
                 Target Details
               </h4>
               <ul className="space-y-2">
@@ -2923,11 +2923,11 @@ const HRSalaryManagement = () => {
                 ).map(([key, val]) => (
                   <li
                     key={key}
-                    className="flex justify-between items-center bg-white p-4 rounded-lg border border-blue-100 hover:border-blue-200 transition-colors">
+                    className="flex justify-between items-center bg-white p-4 rounded-lg border border-violet-100 hover:border-violet-200 transition-colors">
                     <span className="capitalize text-slate-700 font-medium">
                       {key.replace(/_/g, " ")}
                     </span>
-                    <span className="font-bold text-blue-700">
+                    <span className="font-bold text-violet-700">
                       ₹
                       {Number(val).toLocaleString("en-IN", {
                         minimumFractionDigits: 2,
@@ -2940,20 +2940,20 @@ const HRSalaryManagement = () => {
             </section>
             {/* Advance Payments */}
             {existingSalaryRecord.advance_payments?.length > 0 && (
-              <section className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl shadow-md border border-blue-200 hover:shadow-lg transition-shadow">
+              <section className="bg-gradient-to-br from-violet-50 to-cyan-50 p-6 rounded-xl shadow-md border border-violet-200 hover:shadow-lg transition-shadow">
                 <h4 className="font-bold text-slate-900 mb-4 flex items-center text-lg">
-                  <span className="w-1 h-6 bg-blue-600 rounded-full mr-3"></span>
+                  <span className="w-1 h-6 bg-violet-600 rounded-full mr-3"></span>
                   Advance Payments
                 </h4>
                 <ul className="space-y-2">
                   {existingSalaryRecord.advance_payments.map((pay, i) => (
                     <li
                       key={i}
-                      className="flex justify-between items-center bg-white p-4 rounded-lg border border-blue-100 hover:border-blue-200 transition-colors">
+                      className="flex justify-between items-center bg-white p-4 rounded-lg border border-violet-100 hover:border-violet-200 transition-colors">
                       <span className="text-slate-700 font-medium">
                         {pay.name || "Advance Payment"}
                       </span>
-                      <span className="font-bold text-blue-700">
+                      <span className="font-bold text-violet-700">
                         ₹
                         {Number(pay.value).toLocaleString("en-IN", {
                           minimumFractionDigits: 2,
@@ -2967,20 +2967,20 @@ const HRSalaryManagement = () => {
             )}
             {/* Additional Payments */}
             {existingSalaryRecord.additional_payments?.length > 0 && (
-              <section className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl shadow-md border border-blue-200 hover:shadow-lg transition-shadow">
+              <section className="bg-gradient-to-br from-violet-50 to-cyan-50 p-6 rounded-xl shadow-md border border-violet-200 hover:shadow-lg transition-shadow">
                 <h4 className="font-bold text-slate-900 mb-4 flex items-center text-lg">
-                  <span className="w-1 h-6 bg-blue-600 rounded-full mr-3"></span>
+                  <span className="w-1 h-6 bg-violet-600 rounded-full mr-3"></span>
                   Additional Payments
                 </h4>
                 <ul className="space-y-2">
                   {existingSalaryRecord.additional_payments.map((pay, i) => (
                     <li
                       key={i}
-                      className="flex justify-between items-center bg-white p-4 rounded-lg border border-blue-100 hover:border-blue-200 transition-colors">
+                      className="flex justify-between items-center bg-white p-4 rounded-lg border border-violet-100 hover:border-violet-200 transition-colors">
                       <span className="text-slate-700 font-medium">
                         {pay.name || "Payment"}
                       </span>
-                      <span className="font-bold text-blue-700">
+                      <span className="font-bold text-violet-700">
                         ₹
                         {Number(pay.value).toLocaleString("en-IN", {
                           minimumFractionDigits: 2,

@@ -20,6 +20,8 @@ import { IoMdMore } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { fieldSize } from "../data/fieldSize";
 
+import { numberToIndianWords } from "../helpers/numberToIndianWords"
+
 const PaymentReport = () => {
   const [groups, setGroups] = useState([]);
   const [TableDaybook, setTableDaybook] = useState([]);
@@ -91,7 +93,7 @@ const PaymentReport = () => {
     ) {
       const showPaymentsModes =
         userObj.admin_access_right_id?.access_permissions?.edit_payment ===
-        "true"
+          "true"
           ? true
           : false;
       setShowAllPaymentModes(showPaymentsModes);
@@ -107,7 +109,7 @@ const PaymentReport = () => {
     ) {
       const isModify =
         userObj.admin_access_right_id?.access_permissions?.edit_payment ===
-        "true"
+          "true"
           ? true
           : false;
       setHideAccountType(isModify);
@@ -330,8 +332,8 @@ const PaymentReport = () => {
             ticket: group?.loan
               ? group.loan?.loan_id
               : group?.pigme
-              ? group.pigme?.pigme_id
-              : group?.ticket,
+                ? group.pigme?.pigme_id
+                : group?.ticket,
             amount: group?.amount,
             transaction_date: group?.createdAt?.split("T")?.[0],
             mode: group?.pay_type,
@@ -353,7 +355,7 @@ const PaymentReport = () => {
                           <Link
                             target="_blank"
                             to={`/print/${group._id}`}
-                            className="text-blue-600 ">
+                            className="text-violet-600 ">
                             Print
                           </Link>
                         ),
@@ -526,8 +528,8 @@ const PaymentReport = () => {
 
   return (
     <>
-      <div className="w-screen">
-        <div className="flex ">
+      <div className="relative flex flex-col [height:calc(100vh-100px)] ">
+        <div className="flex-1 ">
           <Navbar
             onGlobalSearchChangeHandler={onGlobalSearchChangeHandler}
             visibility={true}
@@ -537,13 +539,13 @@ const PaymentReport = () => {
             isVisible={alertConfig.visibility}
             message={alertConfig.message}
           />
-          <div className="flex-grow p-8 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
+          <div className="flex-grow p-8 bg-gradient-to-br from-slate-50 via-violet-50 to-indigo-50 min-h-screen">
             {/* Header Section */}
             <div className="mb-8">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent p-2">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent p-2">
                 Reports - Payment
               </h1>
-              <p className="text-gray-600 mt-2">
+              <p className="text-gray-600 mt-2 ml-2">
                 Track and manage all receipt transactions
               </p>
             </div>
@@ -681,7 +683,7 @@ const PaymentReport = () => {
                       Payment Mode
                     </label>
 
-                     <Select
+                    <Select
                       mode="multiple"
                       value={selectedPaymentMode}
                       showSearch
@@ -698,7 +700,7 @@ const PaymentReport = () => {
                       }
                       className="w-full"
                       style={{ height: "44px" }}
-                    
+
                       options={[
                         { label: "Cash", value: "cash" },
                         { label: "Online", value: "online" },
@@ -732,6 +734,7 @@ const PaymentReport = () => {
                         { label: "Chit", value: "Chit" },
                         { label: "Pigme", value: "Pigme" },
                         { label: "Loan", value: "Loan" },
+                        {label: "Registration", value: "Registration"}
                       ]}
                     />
                   </div>
@@ -815,25 +818,47 @@ const PaymentReport = () => {
 
               {/* Total Amount Card */}
               <div className="mb-8">
-                <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-blue-600 to-indigo-700 rounded-2xl shadow-2xl p-8 transform transition-all  duration-300">
+                <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-violet-600 to-indigo-700 rounded-2xl shadow-2xl p-8 transform transition-all  duration-300">
                   <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
                   <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-16 -mb-16"></div>
                   <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
 
-                  <div className="relative z-10">
-                    <div className="flex items-center gap-3 mb-4">
-                      <p className="text-white/90 text-sm font-semibold uppercase tracking-wider">
+                  <div className="relative z-10 p-5  rounded-2xl border border-white/15 shadow-xl backdrop-blur-sm">
+                    <div className="mb-4">
+                      <p className="text-white/65 text-xs font-medium uppercase tracking-widest">
                         Total Amount
                       </p>
                     </div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-white text-5xl font-bold tracking-tight">
-                        ₹{payments?.toLocaleString() || 0}
-                      </span>
+
+                    <div className="space-y-2">
+                      <div>
+                        <span className="text-white text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/90">
+                          ₹{payments
+                            ? Number(payments).toLocaleString('en-IN', {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2
+                            })
+                            : '0.00'}
+                        </span>
+                      </div>
+
+                      <div className="pt-1">
+                        <span className="text-emerald-100/90 text-lg font-medium leading-tight break-words">
+                          {payments
+                            ? `${numberToIndianWords(Number(payments))} Only`
+                            : 'Zero Only'}
+                        </span>
+                      </div>
                     </div>
-                    <p className="text-white/70 text-sm mt-3">
-                      Based on current filters
-                    </p>
+
+                    <div className="mt-5 pt-4 border-t border-white/10">
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/70 animate-pulse"></div>
+                        <p className="text-white/55 text-xs font-medium">
+                          Live data • Reflects active filters
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12"></div>
@@ -869,7 +894,7 @@ const PaymentReport = () => {
                   />
 
                   <div className="flex justify-end mt-6 pt-6 border-t border-gray-200">
-                    <div className="bg-gradient-to-r from-indigo-50 to-blue-50 px-6 py-3 rounded-xl">
+                    <div className="bg-gradient-to-r from-indigo-50 to-violet-50 px-6 py-3 rounded-xl">
                       <span className="text-lg font-bold text-gray-800">
                         Total Amount:{" "}
                         <span className="text-indigo-600">

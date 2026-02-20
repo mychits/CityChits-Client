@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import Sidebar from "../components/layouts/Sidebar";
 import Modal from "../components/modals/Modal";
 import api from "../instance/TokenInstance";
+import DataTable from "../components/layouts/Datatable"; // Import DataTable
 import { Input, Select, Dropdown } from "antd";
 import { IoMdMore } from "react-icons/io";
+import { MdGridView, MdViewList, MdOutlineTableRows } from "react-icons/md"; // Import View Icons
 import Navbar from "../components/layouts/Navbar";
 import filterOption from "../helpers/filterOption";
 import CircularLoader from "../components/loaders/CircularLoader";
@@ -71,6 +73,9 @@ const UnApprovedCustomer = () => {
     selected_plan: "",
   });
 
+  // View Mode State
+  const [viewMode, setViewMode] = useState("grid"); 
+
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(9);
@@ -80,6 +85,119 @@ const UnApprovedCustomer = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+
+
+    const getStatusColor = (status) => {
+    switch (status) {
+      case 'Approved':
+        return 'bg-green-100 text-green-800';
+      case 'Pending':
+        return 'bg-red-200 border-red-600 border-2 ';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  
+  // Data formatting for Table View
+  const TableUsers = filteredUsers.map((user, index) => ({
+    id: index + 1,
+    _id: user._id,
+    name: user.name,
+    phone_number: user.phone_number,
+    customer_id: user.customer_id,
+    address: user.address,
+    approval_status: (
+      <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(user.approval_status)}`}>
+        {user.approval_status}
+      </span>
+    ),
+    createdAt: user.createdAt,
+    collection_area: user.collection_area,
+    action: (
+      <div className="flex justify-center gap-2">
+        <Dropdown
+          trigger={["click"]}
+          menu={{
+            items: [
+              {
+                key: "1",
+                label: (
+                  <div
+                    className="text-green-600 cursor-pointer"
+                    onClick={() => handleUpdateModalOpen(user._id)}
+                  >
+                    Edit
+                  </div>
+                ),
+              },
+              {
+                key: "2",
+                label: (
+                  <div
+                    className="text-red-600 cursor-pointer"
+                    onClick={() => handleDeleteModalOpen(user._id)}
+                  >
+                    Delete
+                  </div>
+                ),
+              },
+              {
+                key: "3",
+                label: (
+                  <div
+                    onClick={() => handleEnrollmentRequestPrint(user._id)}
+                    className="text-violet-600 cursor-pointer"
+                  >
+                    Print
+                  </div>
+                ),
+              },
+              {
+                key: "4",
+                label: (
+                  <div
+                    className={`cursor-pointer ${
+                      user.approval_status !== "Approved"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                    onClick={() =>
+                      handleCustomerStatus(
+                        user._id,
+                        user.approval_status !== "Approved"
+                          ? "Approved"
+                          : "Pending"
+                      )
+                    }
+                  >
+                    {user.approval_status !== "Approved"
+                      ? "Approve Customer"
+                      : "Un Approve Customer"}
+                  </div>
+                ),
+              },
+            ],
+          }}
+          placement="bottomRight"
+        >
+          <IoMdMore className="text-purple-700 cursor-pointer" />
+        </Dropdown>
+      </div>
+    ),
+  }));
+
+  const columns = [
+    { key: "id", header: "SL. NO" },
+    { key: "name", header: "Full Name" },
+    { key: "phone_number", header: "Phone Number" },
+    { key: "customer_id", header: "Customer ID" },
+    { key: "address", header: "Address" },
+    { key: "collection_area", header: "Area" },
+    { key: "approval_status", header: "Status" },
+    { key: "createdAt", header: "Joined Date" },
+    { key: "action", header: "Action" },
+  ];
 
   const GlobalSearchChangeHandler = (e) => {
     const { value } = e.target;
@@ -187,8 +305,8 @@ const UnApprovedCustomer = () => {
       ...prevData,
       [name]: value,
     }));
-    setErrors((prevData) => ({
-      ...prevData,
+    setErrors((prevErrors) => ({
+      ...prevErrors,
       [name]: "",
     }));
   };
@@ -508,166 +626,84 @@ const UnApprovedCustomer = () => {
     setCurrentPage(page);
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Approved':
-        return 'bg-green-100 text-green-800';
-      case 'Pending':
-        return 'bg-red-200 border-red-600 border-2 ';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
 
 
-  const SimplePagination = ({ currentPage, totalPages, onPageChange }) => {
-    if (totalPages <= 1) return null;
-    
-    const pages = [];
-    const maxPagesToShow = 5;
-    
- 
-    pages.push(1);
-    
-  
-    if (totalPages > maxPagesToShow) {
-      if (currentPage > 3) {
-        pages.push('...');
-      }
-      
-      // Add pages around current page
-      const startPage = Math.max(2, currentPage - 1);
-      const endPage = Math.min(totalPages - 1, currentPage + 1);
-      
-      for (let i = startPage; i <= endPage; i++) {
-        if (i !== 1 && i !== totalPages) {
-          pages.push(i);
-        }
-      }
-      
-      if (currentPage < totalPages - 2) {
-        pages.push('...');
-      }
-      
-      // Always show last page
-      if (totalPages > 1) {
-        pages.push(totalPages);
-      }
-    } else {
-      // Show all pages if total pages is small
-      for (let i = 2; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    }
-    
-    return (
-      <div className="flex items-center justify-center space-x-2 mt-6">
-        <button
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Previous
-        </button>
-        
-        {pages.map((page, index) => (
-          <button
-            key={index}
-            onClick={() => typeof page === 'number' && onPageChange(page)}
-            className={`px-3 py-2 text-sm font-medium rounded-lg ${
-              page === currentPage
-                ? 'bg-purple-600 text-white'
-                : typeof page === 'number'
-                ? 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
-                : 'bg-white text-gray-500 border border-gray-300 cursor-default'
-            }`}
-            disabled={typeof page !== 'number'}
-          >
-            {page}
-          </button>
-        ))}
-        
-        <button
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Next
-        </button>
-      </div>
-    );
-  };
+  // Action Dropdown Component to reuse
+  const ActionDropdown = ({ user }) => (
+    <Dropdown 
+      trigger={['click']} 
+      menu={{
+        items: [
+          {
+            key: "1",
+            label: (
+              <div
+                className="text-green-600 cursor-pointer"
+                onClick={() => handleUpdateModalOpen(user._id)}
+              >
+                Edit
+              </div>
+            ),
+          },
+          {
+            key: "2",
+            label: (
+              <div
+                className="text-red-600 cursor-pointer"
+                onClick={() => handleDeleteModalOpen(user._id)}
+              >
+                Delete
+              </div>
+            ),
+          },
+          {
+            key: "3",
+            label: (
+              <div
+                onClick={() => handleEnrollmentRequestPrint(user._id)}
+                className="text-violet-600 cursor-pointer"
+              >
+                Print
+              </div>
+            ),
+          },
+          {
+            key: "4",
+            label: (
+              <div
+                className={`cursor-pointer ${user.approval_status !== "Approved"
+                  ? "text-green-600"
+                  : "text-red-600"
+                }`}
+                onClick={() =>
+                  handleCustomerStatus(
+                    user._id,
+                    user.approval_status !== "Approved"
+                      ? "Approved"
+                      : "Pending"
+                  )
+                }
+              >
+                {user.approval_status !== "Approved"
+                  ? "Approve Customer"
+                  : "Un Approve Customer"}
+              </div>
+            ),
+          },
+        ],
+      }}
+      placement="bottomRight"
+    >
+      <IoMdMore className="text-purple-700 cursor-pointer" />
+    </Dropdown>
+  );
 
+  // Grid View Card
   const renderCustomerCard = (customer) => (
     <div key={customer.id} className="bg-red-50 border border-red-300 rounded-lg p-4 mb-4 hover:shadow-md transition-shadow duration-300">
       <div className="flex justify-between items-start">
         <h3 className="font-bold text-xl">{customer.name}</h3>
-        <Dropdown 
-          trigger={['click']} 
-          menu={{
-            items: [
-              {
-                key: "1",
-                label: (
-                  <div
-                    className="text-green-600 cursor-pointer"
-                    onClick={() => handleUpdateModalOpen(customer._id)}
-                  >
-                    Edit
-                  </div>
-                ),
-              },
-              {
-                key: "2",
-                label: (
-                  <div
-                    className="text-red-600 cursor-pointer"
-                    onClick={() => handleDeleteModalOpen(customer._id)}
-                  >
-                    Delete
-                  </div>
-                ),
-              },
-              {
-                key: "3",
-                label: (
-                  <div
-                    onClick={() => handleEnrollmentRequestPrint(customer._id)}
-                    className="text-violet-600 cursor-pointer"
-                  >
-                    Print
-                  </div>
-                ),
-              },
-              {
-                key: "4",
-                label: (
-                  <div
-                    className={`cursor-pointer ${customer.approval_status !== "Approved"
-                      ? "text-green-600"
-                      : "text-red-600"
-                    }`}
-                    onClick={() =>
-                      handleCustomerStatus(
-                        customer._id,
-                        customer.approval_status !== "Approved"
-                          ? "Approved"
-                          : "Pending"
-                      )
-                    }
-                  >
-                    {customer.approval_status !== "Approved"
-                      ? "Approve Customer"
-                      : "Un Approve Customer"}
-                  </div>
-                ),
-              },
-            ],
-          }}
-          placement="bottomRight"
-        >
-          <IoMdMore className="text-purple-700" />
-        </Dropdown>
+        <ActionDropdown user={customer} />
       </div>
       
       <div className="mt-7 grid grid-cols-3 gap-4">
@@ -711,68 +747,250 @@ const UnApprovedCustomer = () => {
           <span>Area: {customer.collection_area}</span>
         </div>
       )}
-      
-      {/* <div className="mt-4 text-center">
-        <button 
-          onClick={() => handleUpdateModalOpen(customer._id)}
-          className="text-purple-600 hover:text-purple-800 text-sm font-medium"
-        >
-          Show More
-        </button>
-      </div> */}
     </div>
   );
+
+  // List View Row
+  const UserRow = ({ user }) => (
+    <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-wrap items-baseline gap-2 mb-1">
+          <h3 className="text-lg font-semibold text-gray-800 truncate">{user.name}</h3>
+          <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded-full ${getStatusColor(user.approval_status)}`}>
+            {user.approval_status}
+          </span>
+        </div>
+        <div className="text-sm text-gray-600 space-y-1">
+          <p>
+            <span className="font-medium">ID:</span> {user.customer_id}
+          </p>
+          <p className="flex items-center">
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.707 12.707l-3.95 3.95a2 2 0 11-2.828-2.828l3.95-3.95-3.95-3.95a2 2 0 012.828-2.828l3.95 3.95 3.95-3.95a2 2 0 112.828 2.828l-3.95 3.95 3.95 3.95a2 2 0 01-2.828 2.828z"></path></svg>
+            {user.address}
+          </p>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3 w-full sm:w-auto sm:flex-none text-center">
+        <div className="bg-purple-50 px-3 py-2 rounded-lg border border-purple-100">
+          <p className="text-xs font-bold text-purple-800">Phone</p>
+          <p className="text-sm text-gray-700">{user.phone_number}</p>
+        </div>
+        <div className="bg-violet-50 px-3 py-2 rounded-lg border border-violet-100">
+          <p className="text-xs font-bold text-violet-800">Joined</p>
+          <p className="text-sm text-gray-700">{user.createdAt}</p>
+        </div>
+      </div>
+      <div className="flex-shrink-0">
+        <ActionDropdown user={user} />
+      </div>
+    </div>
+  );
+
+  // Main Render Function based on View Mode
+  const renderUsers = () => {
+    if (isLoading) {
+      return <CircularLoader isLoading={isLoading} failure={false} data="Customer Data" />;
+    }
+
+    if (filteredUsers.length === 0) {
+      return (
+         <div className="col-span-full p-12 bg-white rounded-xl shadow-sm text-center text-gray-600">
+          <p className="text-lg font-medium">No customers found</p>
+        </div>
+      );
+    }
+
+    if (viewMode === "grid") {
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {currentItems.map(renderCustomerCard)}
+        </div>
+      );
+    } else if (viewMode === "list") {
+      return (
+        <div className="space-y-4">
+          {currentItems.map((user) => (
+            <UserRow key={user.id} user={user} />
+          ))}
+        </div>
+      );
+    } else if (viewMode === "table") {
+      return (
+        <div className="w-full overflow-hidden rounded-xl border border-gray-200">
+          <DataTable
+            catcher="_id"
+            data={TableUsers}
+            columns={columns}
+            exportedPdfName="UnApproved_Customers"
+            exportedFileName={`UnApproved_Customers.csv`}
+          />
+        </div>
+      );
+    }
+  };
+
+  const SimplePagination = ({ currentPage, totalPages, onPageChange }) => {
+    if (totalPages <= 1) return null;
+    
+    const pages = [];
+    const maxPagesToShow = 5;
+    
+    pages.push(1);
+    
+    if (totalPages > maxPagesToShow) {
+      if (currentPage > 3) {
+        pages.push('...');
+      }
+      
+      const startPage = Math.max(2, currentPage - 1);
+      const endPage = Math.min(totalPages - 1, currentPage + 1);
+      
+      for (let i = startPage; i <= endPage; i++) {
+        if (i !== 1 && i !== totalPages) {
+          pages.push(i);
+        }
+      }
+      
+      if (currentPage < totalPages - 2) {
+        pages.push('...');
+      }
+      
+      if (totalPages > 1) {
+        pages.push(totalPages);
+      }
+    } else {
+      for (let i = 2; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    }
+    
+    return (
+      <div className="flex items-center justify-center space-x-2 mt-6">
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Previous
+        </button>
+        
+        {pages.map((page, index) => (
+          <button
+            key={index}
+            onClick={() => typeof page === 'number' && onPageChange(page)}
+            className={`px-3 py-2 text-sm font-medium rounded-lg ${
+              page === currentPage
+                ? 'bg-purple-600 text-white'
+                : typeof page === 'number'
+                ? 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
+                : 'bg-white text-gray-500 border border-gray-300 cursor-default'
+            }`}
+            disabled={typeof page !== 'number'}
+          >
+            {page}
+          </button>
+        ))}
+        
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Next
+        </button>
+      </div>
+    );
+  };
 
   return (
     <>
       <div>
-        
-        <div className="flex mt-20" >
-                  <Sidebar />
-                  <Navbar
-                    onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
-                    visibility={true}
-                  />
-                  <CustomAlertDialog
-                    type={alertConfig.type}
-                    isVisible={alertConfig.visibility}
-                    message={alertConfig.message}
-                    onClose={() =>
-                      setAlertConfig((prev) => ({ ...prev, visibility: false }))
-                    }
-                  />
-          <div className="flex-grow mt-9 p-7">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-3xl font-bold text-gray-800"> Unverified Customers</h1>
-             
+        <div className="flex mt-20">
+          <Sidebar />
+          <Navbar
+            onGlobalSearchChangeHandler={GlobalSearchChangeHandler}
+            visibility={true}
+          />
+          <CustomAlertDialog
+            type={alertConfig.type}
+            isVisible={alertConfig.visibility}
+            message={alertConfig.message}
+            onClose={() =>
+              setAlertConfig((prev) => ({ ...prev, visibility: false }))
+            }
+          />
+          <div className="flex-grow mt-9 p-7 bg-gray-50">
+            {/* Header and Controls */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+              <h1 className="text-3xl font-bold text-gray-800">Unverified Customers</h1>
+              
+              <div className="flex items-center gap-3">
+                {/* View Toggle Buttons */}
+                <div className="flex bg-white rounded-lg p-1 shadow-sm border border-gray-200">
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`p-2 rounded-md flex items-center gap-1 transition-colors ${
+                      viewMode === "grid"
+                        ? "bg-purple-600 text-white shadow-sm"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                    title="Grid View"
+                  >
+                    <MdGridView />
+                    <span className="hidden sm:inline">Grid</span>
+                  </button>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`p-2 rounded-md flex items-center gap-1 transition-colors ${
+                      viewMode === "list"
+                        ? "bg-purple-600 text-white shadow-sm"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                    title="List View"
+                  >
+                    <MdViewList />
+                    <span className="hidden sm:inline">List</span>
+                  </button>
+                  <button
+                    onClick={() => setViewMode("table")}
+                    className={`p-2 rounded-md flex items-center gap-1 transition-colors ${
+                      viewMode === "table"
+                        ? "bg-purple-600 text-white shadow-sm"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                    title="Table View"
+                  >
+                    <MdOutlineTableRows />
+                    <span className="hidden sm:inline">Table</span>
+                  </button>
+                </div>
+              </div>
             </div>
+
+            {/* Count Info */}
+            {!isLoading && filteredUsers.length > 0 && (
+               <div className="mb-4 text-md text-gray-600 flex justify-between items-center">
+                <span>Showing {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredUsers.length)} of {filteredUsers.length} customers</span>
+              </div>
+            )}
             
-            {isLoading ? (
-              <CircularLoader isLoading={isLoading} failure={false} data="Customer Data" />
-            ) : (
-              <>
-                <div className="mb-4 text-md text-gray-600">
-                  Showing {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredUsers.length)} of {filteredUsers.length} customers
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {currentItems.map(renderCustomerCard)}
-                </div>
-                
-                {filteredUsers.length > itemsPerPage && (
-                  <div className="mt-8">
-                    <SimplePagination
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      onPageChange={handlePageChange}
-                    />
-                  </div>
-                )}
-              </>
+            {/* Main Content */}
+            {renderUsers()}
+            
+            {/* Pagination - Hide for Table View as DataTable has its own */}
+            {viewMode !== 'table' && filteredUsers.length > itemsPerPage && (
+              <div className="mt-8">
+                <SimplePagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </div>
             )}
           </div>
         </div>
         
+        {/* Modals remain the same */}
         <Modal
           isVisible={showModalUpdate}
           onClose={() => setShowModalUpdate(false)}

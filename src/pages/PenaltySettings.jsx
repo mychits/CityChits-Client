@@ -445,7 +445,7 @@ const PenaltySettings = () => {
       dataIndex: "days_late_threshold",
       align: 'center',
       render: (v) => (
-        <Tag color="blue" style={{ fontWeight: '600', fontSize: '13px' }}>
+        <Tag color="violet" style={{ fontWeight: '600', fontSize: '13px' }}>
           {v} days
         </Tag>
       ),
@@ -1827,7 +1827,7 @@ const PenaltySettings = () => {
                   <Row gutter={[16, 16]}>
                     <Col span={8}>
                       <Text strong>Monthly Installment</Text>
-                      <div className="info-box blueBox">
+                      <div className="info-box violetBox">
                         ₹{penaltyPreview.monthly_installment}
                       </div>
                     </Col>
@@ -2050,7 +2050,7 @@ const PenaltySettings = () => {
   font-size: 16px;
 }
 
-.blueBox {
+.violetBox {
   background: #e0f2fe;
   border: 1px solid #bae6fd;
   color: #0369a1;

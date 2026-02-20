@@ -8,6 +8,8 @@ import duration from "dayjs/plugin/duration";
 
 dayjs.extend(duration);
 
+import { numberToIndianWords } from "../helpers/numberToIndianWords"
+
 // const EmployeeMonthlyReport = () => {
 //   const today = new Date();
 //   const currentYear = today.getFullYear();
@@ -63,7 +65,7 @@ dayjs.extend(duration);
 //   //     const attendanceResponse = res.data.attendanceDataResponse || [];
 
 //   //     if (selectedEmployee !== "all") {
- 
+
 //   //       const formatted = attendanceResponse.map((rec, index) => ({
 //   //         slNo: index + 1,
 //   //         key: rec._id || index,
@@ -355,12 +357,12 @@ dayjs.extend(duration);
 // }, [attendanceData, selectedEmployee]);
 
 //   return (
-//     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
+//     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-violet-50 to-indigo-50 p-6">
 //       <div className="max-w-7xl mx-auto">
 //         {/* Header Section */}
 //         <div className="bg-white rounded-2xl shadow-lg p-8 mb-6 border border-slate-200">
 //           <div className="flex items-center gap-3 mb-2">
-//             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+//             <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
 //               <CalendarOutlined className="text-white text-2xl" />
 //             </div>
 //             <div>
@@ -373,10 +375,10 @@ dayjs.extend(duration);
 //         {/* Filters Section */}
 //         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-slate-200">
 //           <div className="flex items-center gap-2 mb-4">
-//             <FilterOutlined className="text-blue-600 text-lg" />
+//             <FilterOutlined className="text-violet-600 text-lg" />
 //             <h3 className="text-lg font-semibold text-slate-700">Filters</h3>
 //           </div>
-          
+
 //           <div className="flex flex-wrap gap-4 items-end">
 //             <div className="flex-1 min-w-[200px]">
 //               <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -384,7 +386,7 @@ dayjs.extend(duration);
 //               </label>
 //               <input
 //                 type="month"
-//                 className="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-200 bg-slate-50 hover:bg-white"
+//                 className="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-violet-500 focus:outline-none transition-colors duration-200 bg-slate-50 hover:bg-white"
 //                 value={selectedDate}
 //                 onChange={(e) => setSelectedDate(e.target.value)}
 //                 max={currentYearMonth}
@@ -420,7 +422,7 @@ dayjs.extend(duration);
 //               type="primary" 
 //               size="large"
 //               onClick={fetchAttendanceData}
-//               className="px-8 h-11 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border-0 shadow-md hover:shadow-lg transition-all duration-200"
+//               className="px-8 h-11 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 border-0 shadow-md hover:shadow-lg transition-all duration-200"
 //             >
 //               Apply Filters
 //             </Button>
@@ -484,33 +486,33 @@ dayjs.extend(duration);
 //           </div>
 
 //           {/* Present % */}
-//           <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform duration-200">
+//           <div className="bg-gradient-to-br from-violet-500 to-indigo-600 rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform duration-200">
 //             <div className="flex items-center justify-between mb-2">
 //               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
 //                 <span className="text-2xl">%</span>
 //               </div>
 //             </div>
-//             <p className="text-blue-100 text-sm font-medium mb-1">Present Rate</p>
+//             <p className="text-violet-100 text-sm font-medium mb-1">Present Rate</p>
 //             <p className="text-4xl font-bold">{summaryStats.presentPercent}%</p>
 //           </div>
 
-//           <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform duration-200">
+//           <div className="bg-gradient-to-br from-violet-500 to-indigo-600 rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform duration-200">
 //             <div className="flex items-center justify-between mb-2">
 //               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
 //                 <span className="text-2xl"></span>
 //               </div>
 //             </div>
-//             <p className="text-blue-100 text-sm font-medium mb-1">On Leave</p>
+//             <p className="text-violet-100 text-sm font-medium mb-1">On Leave</p>
 //             <p className="text-4xl font-bold">{summaryStats.totalOnLeave}</p>
 //           </div>
 
-//           <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform duration-200">
+//           <div className="bg-gradient-to-br from-violet-500 to-indigo-600 rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform duration-200">
 //             <div className="flex items-center justify-between mb-2">
 //               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
 //                 <span className="text-2xl">%</span>
 //               </div>
 //             </div>
-//             <p className="text-blue-100 text-sm font-medium mb-1">Total Working Time</p>
+//             <p className="text-violet-100 text-sm font-medium mb-1">Total Working Time</p>
 //             <p className="text-4xl font-bold">{summaryStats.totalWorkingTime}</p>
 //           </div>
 //         </div>
@@ -531,11 +533,11 @@ dayjs.extend(duration);
 //                 exportedFileName={`EmployeeMonthlyAttendenceReport.csv`}
 //                 loading={loading}
 //               />
-              
+
 //               <div className="mt-6 pt-4 border-t border-slate-200">
 //                 <p className="text-slate-600 text-sm">
 //                   <span className="font-medium">Showing attendance for:</span>{" "}
-//                   <span className="text-blue-600 font-semibold">{selectedDate}</span>
+//                   <span className="text-violet-600 font-semibold">{selectedDate}</span>
 //                   {selectedEmployee !== "all" &&
 //                     ` • ${employees.find((e) => e._id === selectedEmployee)?.name || ""}`}
 //                 </p>
@@ -693,19 +695,19 @@ const EmployeeMonthlyReport = () => {
     { header: "Sl No", key: "slNo", },
     { header: "Employee Name", key: "EmployeeName" },
     { header: "Present Days", key: "PresentDays" },
-    { header: "Absent Days", key: "AbsentDays"},
-    { header: "Half Days", key: "HalfDays"},
-    {header: "On Leave", key: "OnLeave"}
+    { header: "Absent Days", key: "AbsentDays" },
+    { header: "Half Days", key: "HalfDays" },
+    { header: "On Leave", key: "OnLeave" }
   ];
 
   const individualColumns = [
     { header: "Sl No", key: "slNo" },
     { header: "Date", key: "date" },
     { header: "In-Time", key: "time" },
-    {header: "Out-Time", key: "outTime"},
-     {header: "Working Hours", key: "WorkingHours"},
+    { header: "Out-Time", key: "outTime" },
+    { header: "Working Hours", key: "WorkingHours" },
     { header: "Day", key: "day" },
-    {header: "Note", key: "Note"},
+    { header: "Note", key: "Note" },
     {
       header: "Status",
       key: "status",
@@ -717,7 +719,7 @@ const EmployeeMonthlyReport = () => {
         } else if (status?.toLowerCase() === "half day") {
           return <Tag color="orange">Half Day</Tag>;
         } else if (status?.toLowerCase() === "on leave") {
-          return <Tag color="blue">On Leave</Tag>;
+          return <Tag color="violet">On Leave</Tag>;
         }
         return status || "";
       },
@@ -776,10 +778,10 @@ const EmployeeMonthlyReport = () => {
         presentPercent:
           totalPresent + totalAbsent + totalHalfDays
             ? (
-                (totalPresent /
-                  (totalPresent + totalAbsent + totalHalfDays)) *
-                100
-              ).toFixed(1)
+              (totalPresent /
+                (totalPresent + totalAbsent + totalHalfDays)) *
+              100
+            ).toFixed(1)
             : 0,
       };
     }
@@ -810,12 +812,12 @@ const EmployeeMonthlyReport = () => {
   }, [attendanceData, selectedEmployee]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-violet-50 to-indigo-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-6 border border-slate-200">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
               <CalendarOutlined className="text-white text-2xl" />
             </div>
             <div>
@@ -828,10 +830,10 @@ const EmployeeMonthlyReport = () => {
         {/* Filters Section */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-slate-200">
           <div className="flex items-center gap-2 mb-4">
-            <FilterOutlined className="text-blue-600 text-lg" />
+            <FilterOutlined className="text-violet-600 text-lg" />
             <h3 className="text-lg font-semibold text-slate-700">Filters</h3>
           </div>
-          
+
           <div className="flex flex-wrap gap-4 items-end">
             <div className="flex-1 min-w-[200px]">
               <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -839,7 +841,7 @@ const EmployeeMonthlyReport = () => {
               </label>
               <input
                 type="month"
-                className="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-200 bg-slate-50 hover:bg-white"
+                className="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-violet-500 focus:outline-none transition-colors duration-200 bg-slate-50 hover:bg-white"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
                 max={currentYearMonth}
@@ -871,11 +873,11 @@ const EmployeeMonthlyReport = () => {
               </Select>
             </div>
 
-            <Button 
-              type="primary" 
+            <Button
+              type="primary"
               size="large"
               onClick={fetchAttendanceData}
-              className="px-8 h-11 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border-0 shadow-md hover:shadow-lg transition-all duration-200"
+              className="px-8 h-11 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 border-0 shadow-md hover:shadow-lg transition-all duration-200"
             >
               Apply Filters
             </Button>
@@ -883,7 +885,7 @@ const EmployeeMonthlyReport = () => {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {/* Total Employees / Total Days */}
           <div className="bg-gradient-to-br from-slate-700 to-slate-900 rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform duration-200">
             <div className="flex items-center justify-between mb-2">
@@ -897,6 +899,11 @@ const EmployeeMonthlyReport = () => {
                 ? summaryStats.totalEmployees
                 : summaryStats.totalDays}
             </p>
+            <span className={`text-sm font-mono text-white `}>
+              {numberToIndianWords(selectedEmployee === "all"
+                ? summaryStats.totalEmployees
+                : summaryStats.totalDays || 0)}
+            </span>
           </div>
 
           {/* Present */}
@@ -909,6 +916,9 @@ const EmployeeMonthlyReport = () => {
               </div>
               <p className="text-emerald-100 text-sm font-medium mb-1">Present</p>
               <p className="text-4xl font-bold">{summaryStats.present}</p>
+              <span className={`text-sm font-mono text-white `}>
+                {numberToIndianWords(summaryStats.present || 0)}
+              </span>
             </div>
           )}
 
@@ -922,6 +932,9 @@ const EmployeeMonthlyReport = () => {
               </div>
               <p className="text-rose-100 text-sm font-medium mb-1">Absent</p>
               <p className="text-4xl font-bold">{summaryStats.absent}</p>
+              <span className={`text-sm font-mono text-white `}>
+                {numberToIndianWords(summaryStats.absent || 0)}
+              </span>
             </div>
           )}
 
@@ -936,19 +949,25 @@ const EmployeeMonthlyReport = () => {
             <p className="text-4xl font-bold">
               {selectedEmployee === "all" ? summaryStats.totalHalfDays : summaryStats.halfDays}
             </p>
+            <span className={`text-sm font-mono text-white `}>
+              {numberToIndianWords(selectedEmployee === "all" ? summaryStats.totalHalfDays : summaryStats.halfDays || 0)}
+            </span>
           </div>
 
           {/* On Leave */}
-          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 center rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform duration-200">
+          <div className="bg-gradient-to-br from-violet-500 to-indigo-600 center rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform duration-200">
             {/* <div className="flex items-center justify-between mb-2">
               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                 <span className="text-2xl">📅</span>
               </div>
             </div> */}
-            <p className="text-blue-100 text-sm font-medium mb-1">On Leave</p>
+            <p className="text-violet-100 text-sm font-medium mb-1">On Leave</p>
             <p className="text-4xl font-bold">
               {selectedEmployee === "all" ? summaryStats.totalOnLeave : summaryStats.onLeave}
             </p>
+            <span className={`text-sm font-mono text-white `}>
+              {numberToIndianWords(selectedEmployee === "all" ? summaryStats.totalOnLeave : summaryStats.onLeave || 0)}
+            </span>
           </div>
 
           {/* Present % */}
@@ -960,6 +979,9 @@ const EmployeeMonthlyReport = () => {
             </div>
             <p className="text-purple-100 text-sm font-medium mb-1">Present Rate</p>
             <p className="text-4xl font-bold">{summaryStats.presentPercent}%</p>
+            <span className={`text-sm font-mono text-white `}>
+              {numberToIndianWords(summaryStats.presentPercent || 0)}
+            </span>
           </div>
 
           {/* Total Working Time - Only for single employee */}
@@ -992,11 +1014,11 @@ const EmployeeMonthlyReport = () => {
                 exportedFileName={`EmployeeMonthlyAttendenceReport.csv`}
                 loading={loading}
               />
-              
+
               <div className="mt-6 pt-4 border-t border-slate-200">
                 <p className="text-slate-600 text-sm">
                   <span className="font-medium">Showing attendance for:</span>{" "}
-                  <span className="text-blue-600 font-semibold">{selectedDate}</span>
+                  <span className="text-violet-600 font-semibold">{selectedDate}</span>
                   {selectedEmployee !== "all" &&
                     ` • ${employees.find((e) => e._id === selectedEmployee)?.name || ""}`}
                 </p>

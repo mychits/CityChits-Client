@@ -7,6 +7,11 @@ import api from "../instance/TokenInstance";
 import DataTable from "../components/layouts/Datatable";
 import { Select } from "antd";
 import CircularLoader from "../components/loaders/CircularLoader";
+import { Collapse } from "antd";
+import { Link } from "react-router-dom";
+import { FileTextOutlined, DollarOutlined } from "@ant-design/icons";
+import { FaMoneyBill } from "react-icons/fa";
+import { numberToIndianWords } from "../helpers/numberToIndianWords"
 
 const { RangePicker } = DatePicker;
 
@@ -187,7 +192,7 @@ const DueLoanReport = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold flex items-center gap-3">
-            <FileText className="w-7 h-7 text-blue-600" /> Customer OutStanding Loan Report
+            <FileText className="w-7 h-7 text-violet-600" /> Customer OutStanding Loan Report
           </h1>
           <p className="text-gray-600 ml-10">
             Overview of customer outstanding loans, payments & referral details
@@ -200,14 +205,120 @@ const DueLoanReport = () => {
           </div>
         ) : (
           <>
+
+          <div className="my-6">
+                <Collapse
+                  items={[
+                    {
+                      key: "1",
+                      label: (
+                        <span className="font-semibold text-gray-800 text-base">
+                          Shortcut Keys
+                        </span>
+                      ),
+                      children: (
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                          <Link
+                            to="/other-service-menu/loan"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-violet-500 hover:text-violet-600 transition-colors"
+                          >
+                            <FaMoneyBill className="text-violet-500" size={30} />
+                            Add Loan
+                          </Link>
+                          <Link
+                            to="/reports/customer-loan-report"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-violet-500 hover:text-violet-600 transition-colors"
+                          >
+                            <DollarOutlined
+                              className="text-violet-500"
+                              size={30}
+                            />
+                             Loan Summary Report
+                          </Link>
+
+                          <Link
+                            to="/reports/loan-completion-report"
+                            className="flex text-base items-center gap-2 border  border-gray-200 rounded-lg px-4 py-2 text-gray-700 hover:border-violet-500 hover:text-violet-600 transition-colors"
+                          >
+                            <FileTextOutlined
+                              className="text-violet-500"
+                              size={30}
+                            />
+                            Loan Completion Report
+                          </Link>
+                        </div>
+                      ),
+                    },
+                  ]}
+                  defaultActiveKey={["1"]}
+                  className="rounded-lg border border-gray-200 bg-white shadow-sm"
+                />
+              </div>
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <StatCard icon={FileText} label="Total Loans" value={summaryStats.totalLoans} color="bg-blue-600" />
-              <StatCard icon={IndianRupee} label="Total Loan Amount" value={`₹${summaryStats.totalAmount}`} color="bg-purple-600" />
-              <StatCard icon={TrendingUp} label="Total Payable" value={`₹${summaryStats.totalPayable}`} color="bg-blue-600" />
-              <StatCard icon={TrendingUp} label="Total Paid" value={`₹${summaryStats.totalPaid}`} color="bg-green-600" />
-              <StatCard icon={Calendar} label="Total Balance" value={`₹${summaryStats.totalBalance}`} color="bg-orange-600" />
-            </div>
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+  <div className="flex flex-col">
+    <StatCard
+      icon={FileText}
+      label="Total Loans"
+      value={summaryStats.totalLoans}
+      color="bg-violet-600"
+    />
+    <span className="text-sm font-mono text-green-700 mt-2 break-words">
+      {numberToIndianWords(summaryStats.totalLoans || 0)}
+    </span>
+  </div>
+
+  <div className="flex flex-col">
+    <StatCard
+      icon={IndianRupee}
+      label="Total Loan Amount"
+      value={`₹${summaryStats.totalAmount}`}
+      color="bg-purple-600"
+    />
+    <span className="text-sm font-mono text-green-700 mt-2 break-words">
+      {numberToIndianWords(summaryStats.totalAmount || 0)}
+    </span>
+  </div>
+
+  <div className="flex flex-col">
+    <StatCard
+      icon={TrendingUp}
+      label="Total Payable"
+      value={`₹${summaryStats.totalPayable}`}
+      color="bg-violet-600"
+    />
+    <span className="text-sm font-mono text-green-700 mt-2 break-words">
+      {numberToIndianWords(summaryStats.totalPayable || 0)}
+    </span>
+  </div>
+
+  <div className="flex flex-col">
+    <StatCard
+      icon={TrendingUp}
+      label="Total Paid"
+      value={`₹${summaryStats.totalPaid}`}
+      color="bg-green-600"
+    />
+    <span className="text-sm font-mono text-green-700 mt-2 break-words">
+      {numberToIndianWords(summaryStats.totalPaid || 0)}
+    </span>
+  </div>
+
+  {/* <div className="flex flex-col">
+    <StatCard
+      icon={Calendar}
+      label="Total Balance"
+      value={`₹${summaryStats.totalBalance}`}
+      color="bg-orange-600"
+    />
+    <span className="text-sm font-mono text-green-700 mt-2 break-words">
+      {numberToIndianWords(summaryStats.totalBalance || 0)}
+    </span>
+  </div> */}
+
+</div>
+
 
             {/* FILTERS */}
             <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
@@ -297,7 +408,21 @@ const DueLoanReport = () => {
               <DataTable
                 columns={loanReportColumns}
                 data={filteredLoanReport}
-                exportedPdfName="Customer Loan Report"
+                 printHeaderKeys={[
+                  "Total Loans",
+                  "Total Loan Amount",
+                  "Total Payable",
+                  "Total Paid",
+                  "Total Outstanding",
+                ]}
+                printHeaderValues={[
+                  summaryStats.totalLoans.toLocaleString("en-IN"),
+                  `₹ ${summaryStats.totalAmount.toLocaleString("en-IN")}`,
+                  `₹ ${summaryStats.totalPayable.toLocaleString("en-IN")}`,
+                  `₹ ${summaryStats.totalPaid.toLocaleString("en-IN")}`,
+                  `₹ ${summaryStats.totalBalance.toLocaleString("en-IN")}`,
+                ]}
+                exportedPdfName="OutStanding Customer Loan Report"
               />
             </div>
           </>
