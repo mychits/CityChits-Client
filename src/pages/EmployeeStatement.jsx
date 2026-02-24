@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Select, Tag, Space, Typography, Table, Button } from "antd";
 import {
-  DollarCircleOutlined,
   TeamOutlined,
   PlusCircleOutlined,
   MinusCircleOutlined,
@@ -21,6 +20,8 @@ import DataTable from "../components/layouts/Datatable";
 import CircularLoader from "../components/loaders/CircularLoader";
 import CustomAlertDialog from "../components/alerts/CustomAlertDialog";
 import api from "../instance/TokenInstance";
+
+import { FaRupeeSign } from "react-icons/fa";
 
 const { Text, Title } = Typography;
 
@@ -259,15 +260,15 @@ const EmployeeStatement = () => {
 
       <div className="flex mt-20">
         <Sidebar />
-        <div className="flex-grow p-7">
+        <div className="flex-grow p-7 overflow-x-hidden overflow-y-scroll">
        
           <section className="mb-8">
             <h1 className="text-lg font-bold font-mono p-2">Quick Navigator</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Link
                 to="/hr-menu/salary-management"
-                className="flex items-center gap-3 p-4 border rounded-lg hover:bg-violet-50 transition-all">
-                <MdOutlineMan className="text-violet-600" size={20} />
+                className="flex items-center gap-3 p-4 border rounded-lg hover:bg-blue-50 transition-all">
+                <MdOutlineMan className="text-blue-600" size={20} />
                 <span className="font-medium">HR / Salary Management</span>
               </Link>
             </div>
@@ -275,7 +276,7 @@ const EmployeeStatement = () => {
 
           <section className="mt-6 mb-8 flex flex-col sm:flex-row justify-between items-center gap-4">
             <h1 className="text-2xl font-semibold flex items-center">
-              <TeamOutlined className="mr-2 text-violet-600" /> Employee Statement
+              <TeamOutlined className="mr-2 text-blue-600" /> Employee Statement
             </h1>
             <Select
               showSearch
@@ -367,10 +368,10 @@ const EmployeeStatement = () => {
             </div>
           )}
 
-          <footer className="mt-8 p-4 bg-violet-50 rounded-lg text-sm text-violet-800 border border-violet-100">
+          <footer className="mt-8 p-4 bg-blue-50 rounded-lg text-sm text-blue-800 border border-blue-100">
             <Space>
               <CreditCardOutlined />
-              <Text className="text-violet-800">
+              <Text className="text-blue-800">
                 <strong>Running Balance:</strong> Positive (+) means company
                 owes employee | Negative (-) means employee has taken
                 excess/advance.
