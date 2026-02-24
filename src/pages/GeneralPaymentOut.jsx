@@ -161,7 +161,7 @@ const GeneralPaymentOut = () => {
     setTableAuctions([]);
     setIsLoading(true);
     try {
-      const { data } = await api.get(`/auction/get-group-auction/${groupId}`);
+      const { data } = await api.get(`/auction/group/${groupId}`);
       if (data?.length) {
         setFilteredAuction(data);
         const formatted = [
@@ -233,7 +233,7 @@ const GeneralPaymentOut = () => {
                         key: "2",
                         label: (
                           <div
-                            className="text-violet-600"
+                            className="text-blue-600"
                             onClick={() =>
                               handleUpdateModalOpen(g._id, idx + 2)
                             }

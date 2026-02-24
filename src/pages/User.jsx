@@ -221,7 +221,7 @@ const User = () => {
                           onClick={() =>
                             handleEnrollmentRequestPrint(group?._id)
                           }
-                          className=" text-violet-600 "
+                          className=" text-blue-600 "
                         >
                           Print
                         </div>
@@ -292,10 +292,11 @@ const User = () => {
     };
     fetchGroupData();
   }, [reloadTrigger]);
-  const handleAntDSelect = (field, value) => {
+  const handleAntDSelect = (field, value,option) => {
     setFormData((prevData) => ({
       ...prevData,
       [field]: value,
+      ...(field === "collection_area" ? { collection_area_select: option } : {}),
     }));
 
     setErrors((prevErrors) => ({
@@ -722,7 +723,7 @@ const User = () => {
                     setShowModal(true);
                     setErrors({});
                   }}
-                  className="ml-4 bg-violet-950 text-white px-4 py-2 rounded shadow-md hover:bg-violet-800 transition duration-200"
+                  className="ml-4 bg-blue-950 text-white px-4 py-2 rounded shadow-md hover:bg-blue-800 transition duration-200"
                 >
                   + Add Customer
                 </button>
@@ -770,7 +771,7 @@ const User = () => {
                   id="name"
                   placeholder="Enter the Full Name"
                   required
-                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                  className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                 />
                 {errors.full_name && (
                   <p className="mt-2 text-sm text-red-600">
@@ -794,7 +795,7 @@ const User = () => {
                     id="text"
                     placeholder="Enter Email"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.email && (
                     <p className="mt-2 text-sm text-red-600">{errors.email}</p>
@@ -815,7 +816,7 @@ const User = () => {
                     id="text"
                     placeholder="Enter Phone Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.phone_number && (
                     <p className="mt-2 text-sm text-red-600">
@@ -840,7 +841,7 @@ const User = () => {
                     id="text"
                     placeholder="Enter Password"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.password && (
                     <p className="mt-2 text-sm text-red-600">
@@ -863,7 +864,7 @@ const User = () => {
                     id="text"
                     placeholder="Enter Pincode"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.pincode && (
                     <p className="mt-2 text-sm text-red-600">
@@ -888,7 +889,7 @@ const User = () => {
                     id="text"
                     placeholder="Enter Adhaar Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.adhaar_no && (
                     <p className="mt-2 text-sm text-red-600">
@@ -911,7 +912,7 @@ const User = () => {
                     id="text"
                     placeholder="Enter Pan Number"
                     required
-                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                    className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.pan_no && (
                     <p className="mt-2 text-sm text-red-600">{errors.pan_no}</p>
@@ -959,8 +960,8 @@ const User = () => {
                       .includes(input.toLowerCase())
                   }
                   value={formData?.collection_area || undefined}
-                  onChange={(value) =>
-                    handleAntDSelect("collection_area", value)
+                  onChange={(value,option) =>
+                    handleAntDSelect("collection_area", value,option.children)
                   }
                 >
                   {areas.map((area) => (
@@ -974,8 +975,8 @@ const User = () => {
               <div className="w-full flex justify-end">
                 <button
                   type="submit"
-                  className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Save Customer
                 </button>
@@ -1077,7 +1078,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                     {errors.full_name && (
                       <p className="mt-2 text-sm text-red-600">
@@ -1110,7 +1111,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                     {errors.email && (
                       <p className="mt-2 text-sm text-red-600">
@@ -1140,7 +1141,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                     {errors.phone_number && (
                       <p className="mt-2 text-sm text-red-600">
@@ -1173,7 +1174,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                     {errors.adhaar_no && (
                       <p className="mt-2 text-sm text-red-600">
@@ -1203,7 +1204,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                     {errors.pan_no && (
                       <p className="mt-2 text-sm text-red-600">
@@ -1235,7 +1236,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                   />
                   {errors.address && (
                     <p className="mt-2 text-sm text-red-600">
@@ -1267,7 +1268,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                     {errors.pincode && (
                       <p className="mt-2 text-sm text-red-600">
@@ -1297,7 +1298,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1368,7 +1369,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                       onChange={handleInputChange}
                       id="date"
                       placeholder="Enter the Date of Birth"
@@ -1471,7 +1472,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1534,7 +1535,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1561,7 +1562,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
 
@@ -1586,7 +1587,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1651,7 +1652,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                     {/* )} */}
                   </div>
@@ -1679,7 +1680,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
 
@@ -1710,7 +1711,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1780,7 +1781,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1807,7 +1808,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
 
@@ -1832,7 +1833,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1858,7 +1859,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
 
@@ -1883,7 +1884,7 @@ const User = () => {
                           : "bg-gray-50 border-gray-300"
                       } ${
                         fieldSize.height
-                      } text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                      } text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                   </div>
                 </div>
@@ -1891,8 +1892,8 @@ const User = () => {
                 <div className="w-full flex justify-end">
                   <button
                     type="submit"
-                    className="w-1/4 text-white bg-violet-700 hover:bg-violet-800 border-2 border-black
-              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    className="w-1/4 text-white bg-blue-700 hover:bg-blue-800 border-2 border-black
+              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                   >
                     Update
                   </button>
@@ -1937,13 +1938,13 @@ const User = () => {
                     id="groupName"
                     placeholder="Enter the User Full Name"
                     required
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"
                   />
                 </div>
                 <button
                   type="submit"
                   className="w-full text-white bg-red-700 hover:bg-red-800
-          focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Delete
                 </button>

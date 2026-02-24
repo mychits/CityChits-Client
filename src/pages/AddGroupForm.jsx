@@ -80,10 +80,11 @@ const AddGroupForm = ({
     }));
   };
 
-    const handleAntDSelect = (field, value) => {
+    const handleAntDSelect = (field, value,option) => {
     setFormData((prevData) => ({
       ...prevData,
       [field]: value,
+      ...(field === "relationship_manager" ? { relationship_manager_select: option } : {}),
     }));
 
     setErrors((prevErrors) => ({
@@ -286,6 +287,11 @@ const handleSubmit = async () => {
       reg_fee: "",
       app_display_vacany_seat: "",
     });
+   // Delay closing so alert can show
+    setTimeout(() => {
+      window.close();
+    }, 2000); // 2 seconds
+
 
   } catch (error) {
     console.error("Error adding group:", error);
@@ -319,7 +325,7 @@ const handleSubmit = async () => {
                         id="name"
                         placeholder="Enter the Group Name"
                         required
-                        className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                        className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                     />
                     {errors.group_name && (
                         <p className="text-red-500 text-sm mt-1">
@@ -377,8 +383,8 @@ const handleSubmit = async () => {
                                 return text.toLowerCase().includes(input.toLowerCase());
                             }}
                             value={formData?.relationship_manager || undefined}
-                            onChange={(value) =>
-                                handleAntDSelect("relationship_manager", value)
+                            onChange={(value,option) =>
+                                handleAntDSelect("relationship_manager", value,option.children[0])
                             }
                         >
                             {(Array.isArray(employees) ? employees : []).map(
@@ -410,7 +416,7 @@ const handleSubmit = async () => {
                             id="text"
                             placeholder="Enter App Display Vacany Seat"
                             required
-                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                         {errors.app_display_vacany_seat && (
                             <p className="text-red-500 text-sm mt-1">
@@ -435,7 +441,7 @@ const handleSubmit = async () => {
                             id="text"
                             placeholder="Enter Group Value"
                             required
-                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                         {errors.group_value && (
                             <p className="text-red-500 text-sm mt-1">
@@ -459,7 +465,7 @@ const handleSubmit = async () => {
                             id="text"
                             placeholder="Enter Group Installment Amount"
                             required
-                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                         {errors?.group_install && (
                             <p className="text-red-500 text-sm mt-1">
@@ -484,7 +490,7 @@ const handleSubmit = async () => {
                             id="text"
                             placeholder="Enter Group Members"
                             required
-                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                         {errors.group_members && (
                             <p className="text-red-500 text-sm mt-1">
@@ -507,7 +513,7 @@ const handleSubmit = async () => {
                             id="text"
                             placeholder="Enter Group Duration"
                             required
-                            className={` no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={` no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                         {errors.group_duration && (
                             <p className="text-red-500 text-sm mt-1">
@@ -532,7 +538,7 @@ const handleSubmit = async () => {
                             id="text"
                             placeholder="Enter Daily Installment"
                             required
-                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                         {errors.daily_installment && (
                             <p className="text-red-500 text-sm mt-1">
@@ -555,7 +561,7 @@ const handleSubmit = async () => {
                             id="text"
                             placeholder="Enter Weekly Installment"
                             required
-                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                         {errors.weekly_installment && (
                             <p className="text-red-500 text-sm mt-1">
@@ -580,7 +586,7 @@ const handleSubmit = async () => {
                             id="monthly_install"
                             placeholder="Enter Monthly Installment"
                             required
-                            className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                         {errors.monthly_installment && (
                             <p className="text-red-500 text-sm mt-1">
@@ -603,7 +609,7 @@ const handleSubmit = async () => {
                             id="text"
                             placeholder="Enter Registration Fee"
                             required
-                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                         {errors.reg_fee && (
                             <p className="text-red-500 text-sm mt-1">
@@ -628,7 +634,7 @@ const handleSubmit = async () => {
                             id="date"
                             placeholder="Enter the Date"
                             required
-                            className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                         {errors.start_date && (
                             <p className="text-red-500 text-sm mt-1">
@@ -651,7 +657,7 @@ const handleSubmit = async () => {
                             id="date"
                             placeholder="Enter the Date"
                             required
-                            className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                         {errors.end_date && (
                             <p className="text-red-500 text-sm mt-1">
@@ -676,7 +682,7 @@ const handleSubmit = async () => {
                             id="text"
                             placeholder="Enter Minimum Bid"
                             required
-                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                         {errors.minimum_bid && (
                             <p className="text-red-500 text-sm mt-1">
@@ -699,7 +705,7 @@ const handleSubmit = async () => {
                             id="text"
                             placeholder="Enter Maximum Bid"
                             required
-                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                         {errors.maximum_bid && (
                             <p className="text-red-500 text-sm mt-1">
@@ -719,7 +725,7 @@ const handleSubmit = async () => {
                             value={formData?.commission}
                             onChange={handleChange}
                             placeholder="Enter Commission"
-                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                     </div>
 
@@ -733,7 +739,7 @@ const handleSubmit = async () => {
                             value={formData?.group_commission}
                             onChange={handleChange}
                             placeholder="Enter Group Commission"
-                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={`no-spinner bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                     </div>
 
@@ -747,7 +753,7 @@ const handleSubmit = async () => {
                             value={formData?.incentives}
                             onChange={handleChange}
                             placeholder="Enter Incentives"
-                            className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 w-full p-2.5`}
+                            className={`bg-gray-50 border border-gray-300 ${fieldSize.height} text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5`}
                         />
                     </div>
                 </div>
@@ -755,8 +761,8 @@ const handleSubmit = async () => {
                 <div className="w-full flex justify-center p-2">
                     <button
                         type="submit"
-                        className="w-1/4 text-white bg-violet-700 hover:bg-violet-800
-              focus:ring-4 focus:outline-none focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
+                        className="w-1/4 text-white bg-blue-700 hover:bg-blue-800
+              focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-2 border-black"
                     >
                         Save Group
                     </button>
