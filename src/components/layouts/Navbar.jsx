@@ -54,7 +54,7 @@ const Navbar = ({
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const usr = localStorage.getItem("admin");
+        const usr = localStorage.getItem("user");
         if (usr) {
           const admin = JSON.parse(usr);
           setAdminName(admin?.admin_name || "User");
